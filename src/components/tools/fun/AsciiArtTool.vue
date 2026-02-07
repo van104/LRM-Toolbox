@@ -184,7 +184,7 @@ function genTextBanner() {
         whitespaceBreak: true
     }, function (err, data) {
         if (err) {
-            console.log('Something went wrong...');
+            console.error('Something went wrong...', err);
             console.dir(err);
             return;
         }

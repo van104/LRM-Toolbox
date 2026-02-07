@@ -95,25 +95,32 @@ npm run preview
 
 ```
 toolbox/
+├── public/                 # 公共静态资源
 ├── src/
-│   ├── components/
-│   │   ├── tools/          # 所有工具组件存放目录
-│   │   │   ├── dev/        # 开发者工具
-│   │   │   ├── image/      # 图像工具
-│   │   │   ├── text/       # 文本工具
-│   │   │   ├── life/       # 生活工具
-│   │   │   ├── finance/    # 金融工具
-│   │   │   ├── edu/        # 教育工具
-│   │   │   ├── health/     # 健康工具
-│   │   │   ├── fun/        # 趣味工具
-│   │   │   ├── pdf/        # PDF 工具
-│   │   │   └── design/     # 设计工具
-│   ├── views/              # 页面视图 (Home, About, etc.)
+│   ├── api/                # API 接口封装
+│   ├── components/         # 组件库
+│   │   ├── common/         # 通用组件
+│   │   ├── icons/          # 图标组件
+│   │   ├── layout/         # 布局组件
+│   │   └── tools/          # 工具组件
+│   │       ├── dev/        # 开发者工具
+│   │       ├── image/      # 图像工具
+│   │       ├── text/       # 文本工具
+│   │       ├── life/       # 生活工具
+│   │       ├── finance/    # 金融工具
+│   │       ├── edu/        # 教育工具
+│   │       ├── health/     # 健康工具
+│   │       ├── fun/        # 趣味工具
+│   │       ├── pdf/        # PDF 工具
+│   │       └── design/     # 设计工具
+│   ├── data/               # 静态数据
 │   ├── router/             # 路由配置
 │   ├── stores/             # Pinia 状态管理
-│   ├── assets/             # 静态资源
-│   └── App.vue             # 根组件
-├── public/                 # 公共静态文件
+│   ├── styles/             # 全局样式
+│   ├── utils/              # 工具函数
+│   ├── views/              # 页面视图 (Home, History, Favorites)
+│   ├── App.vue             # 根组件
+│   └── main.js             # 入口文件
 ├── index.html              # 入口 HTML
 ├── package.json            # 项目配置与依赖
 └── vite.config.js          # Vite 配置

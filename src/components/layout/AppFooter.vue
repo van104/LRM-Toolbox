@@ -200,8 +200,6 @@ function submitFeedback() {
   }
 
   
-  console.log('反馈内容:', feedbackForm.value)
-
   ElMessage.success('感谢您的反馈！我们会尽快处理。')
   showFeedback.value = false
   feedbackForm.value = { type: '', content: '', contact: '' }
