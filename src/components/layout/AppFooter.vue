@@ -2,7 +2,7 @@
   <footer class="app-footer">
     <div class="footer-content">
       <div class="footer-main">
-        
+
         <div class="footer-brand">
           <div class="footer-logo">
             <LrmLogo :size="32" />
@@ -13,7 +13,7 @@
             无需下载，即开即用，让工作更高效。
           </p>
           <div class="social-links">
-            <a href="https://github.com/van104/toolk" target="_blank" title="GitHub" class="social-btn">
+            <a href="https://github.com/van104/LRM-Toolbox" target="_blank" title="GitHub" class="social-btn">
               <i class="fa-brands fa-github"></i>
             </a>
             <a href="mailto:powelabraham67@gmail.com" title="点击复制邮箱" class="social-btn"
@@ -23,9 +23,9 @@
           </div>
         </div>
 
-        
+
         <div class="footer-nav-grid">
-          
+
           <div class="footer-col">
             <h4 class="col-title">关于</h4>
             <ul class="col-links">
@@ -34,7 +34,7 @@
             </ul>
           </div>
 
-          
+
           <div class="footer-col">
             <h4 class="col-title">支持</h4>
             <ul class="col-links">
@@ -44,7 +44,7 @@
             </ul>
           </div>
 
-          
+
           <div class="footer-col">
             <h4 class="col-title">条款</h4>
             <ul class="col-links">
@@ -57,7 +57,7 @@
         </div>
       </div>
 
-      
+
       <div class="footer-bottom">
         <div class="copyright">
           © {{ currentYear }} <a href="https://www.lrm123.site">LRM工具箱</a> (www.lrm123.site). All Rights Reserved.
@@ -68,9 +68,9 @@
       </div>
     </div>
 
-    
+
     <el-dialog v-model="showFeedback" title="意见反馈" width="500px">
-      
+
       <el-form :model="feedbackForm" label-position="top">
         <el-form-item label="反馈类型">
           <el-select v-model="feedbackForm.type" placeholder="请选择" style="width: 100%">
@@ -88,7 +88,7 @@
       </el-form>
       <template #footer>
         <el-button @click="showFeedback = false">取消</el-button>
-        <el-button type="primary" @click="submitFeedback">提交反馈</el-button>
+        <el-button type="primary" @click="submitFeedback" :loading="isSubmitting">提交反馈</el-button>
       </template>
     </el-dialog>
 
@@ -178,9 +178,12 @@ import { ElMessage } from 'element-plus'
 import LrmLogo from '@/components/icons/LrmLogo.vue'
 
 
+import { submitFeedbackToBackend } from '@/api/feedback'
+
 const showFeedback = ref(false)
 const showChangelog = ref(false)
 const showDisclaimer = ref(false)
+const isSubmitting = ref(false)
 
 
 const currentYear = computed(() => new Date().getFullYear())
@@ -193,16 +196,25 @@ const feedbackForm = ref({
 })
 
 
-function submitFeedback() {
+async function submitFeedback() {
   if (!feedbackForm.value.type || !feedbackForm.value.content) {
     ElMessage.warning('请填写反馈类型和内容')
     return
   }
 
-  
-  ElMessage.success('感谢您的反馈！我们会尽快处理。')
-  showFeedback.value = false
-  feedbackForm.value = { type: '', content: '', contact: '' }
+  isSubmitting.value = true
+  try {
+    // 调用后端 API 提交
+    await submitFeedbackToBackend(feedbackForm.value)
+
+    ElMessage.success('感谢您的反馈！我们会尽快处理。')
+    showFeedback.value = false
+    feedbackForm.value = { type: '', content: '', contact: '' }
+  } catch (error) {
+    ElMessage.error('提交失败，请稍后重试或通过邮件联系我们')
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 
@@ -442,7 +454,6 @@ function handleEmailClick() {
 </style>
 
 <style>
-
 [data-theme="dark"] .el-dialog {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);

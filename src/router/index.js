@@ -669,7 +669,7 @@ const routes = [
         name: 'PublicServicesTool',
         component: () => import('@/components/tools/life/PublicServicesTool.vue')
     },
-    
+
     {
         path: '/tools/pdf-to-image',
         name: 'PdfToImageTool',
@@ -765,11 +765,16 @@ const routes = [
         name: 'PdfAttachmentExtractor',
         component: () => import('@/components/tools/pdf/PdfAttachmentExtractorTool.vue')
     },
-    
+
     {
         path: '/about',
         name: 'About',
         component: () => import('@/views/pages/About.vue')
+    },
+    {
+        path: '/admin/feedback',
+        name: 'FeedbackAdmin',
+        component: () => import('@/views/pages/FeedbackAdmin.vue')
     },
     {
         path: '/privacy',
@@ -781,7 +786,7 @@ const routes = [
         name: 'Terms',
         component: () => import('@/views/pages/Terms.vue')
     },
-    
+
     {
         path: '/favorites',
         name: 'Favorites',
@@ -888,7 +893,7 @@ const router = createRouter({
     history: createWebHistory(),
     routes,
     scrollBehavior(to, from, savedPosition) {
-        
+
         if (savedPosition) {
             return savedPosition
         }
@@ -896,7 +901,7 @@ const router = createRouter({
             return {
                 el: to.hash,
                 behavior: 'smooth',
-                top: 80 
+                top: 80
             }
         }
         return { top: 0 }

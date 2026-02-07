@@ -27,7 +27,12 @@ dist-ssr
 # Environment variables
 .env
 .env.*
+!.env.production
 !.env.example
+
+# Server Data
+server/data/feedback.json
+server/node_modules/
 
 # Backups
 _redundant_backup

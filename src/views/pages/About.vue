@@ -45,7 +45,8 @@
         <ul>
           <li>网站：<a href="https://www.lrm123.site" target="_blank">www.lrm123.site</a></li>
           <li>邮箱：<a href="mailto:powelabraham67@gmail.com">powelabraham67@gmail.com</a></li>
-          <li>GitHub：<a href="https://github.com/van104/toolk" target="_blank">github.com/van104/toolk</a></li>
+          <li>GitHub：<a href="https://github.com/van104/LRM-Toolbox" target="_blank">github.com/van104/LRM-Toolbox</a>
+          </li>
         </ul>
       </section>
     </main>
