@@ -15,7 +15,7 @@
 
         <main class="main-content">
             <div class="game-container">
-                
+
                 <div class="control-panel glass-card">
                     <div class="stats-group">
                         <div class="stat-item">
@@ -41,7 +41,7 @@
                     </button>
                 </div>
 
-                
+
                 <div class="hanoi-board glass-card">
                     <div v-for="(tower, index) in towers" :key="index" class="tower-area"
                         :class="{ 'selected': selectedTower === index, 'targetable': isTargetable(index) }"
@@ -61,7 +61,7 @@
                     <div class="floor"></div>
                 </div>
 
-                
+
                 <div class="rules-hint">
                     <p><el-icon>
                             <InfoFilled />
@@ -70,7 +70,7 @@
             </div>
         </main>
 
-        
+
         <el-dialog v-model="showVictory" title="挑战成功！" width="350px" center custom-class="game-dialog">
             <div class="victory-content">
                 <div class="victory-icon">🏆</div>
@@ -100,8 +100,8 @@ import { ElMessage } from 'element-plus'
 
 
 const diskCount = ref(4)
-const towers = ref([[], [], []]) 
-const selectedTower = ref(null) 
+const towers = ref([[], [], []])
+const selectedTower = ref(null)
 const moves = ref(0)
 const startTime = ref(0)
 const elapsedTime = ref(0)
@@ -120,13 +120,13 @@ const formattedTime = computed(() => {
 
 
 const getDiskStyle = (size) => {
-    
+
     const minWidth = 40
     const step = (140 - minWidth) / diskCount.value
     const width = minWidth + (size - 1) * step
 
-    
-    const hue = 200 + (size * 25) 
+
+    const hue = 200 + (size * 25)
     return {
         width: `${width}px`,
         backgroundColor: `hsl(${hue}, 70%, 65%)`
@@ -137,16 +137,17 @@ const getDiskStyle = (size) => {
 const initGame = () => {
     stopTimer()
     elapsedTime.value = 0
+    startTime.value = 0
     moves.value = 0
     selectedTower.value = null
     showVictory.value = false
 
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
 
     const newTowers = [[], [], []]
     for (let i = diskCount.value; i >= 1; i--) {
@@ -158,21 +159,21 @@ const initGame = () => {
 const handleTowerClick = (index) => {
     if (showVictory.value) return
 
-    
+
     if (moves.value === 0 && selectedTower.value === null && startTime.value === 0) {
         startTimer()
     }
 
-    
+
     if (selectedTower.value === null) {
-        if (towers.value[index].length === 0) return 
+        if (towers.value[index].length === 0) return
         selectedTower.value = index
     }
-    
+
     else if (selectedTower.value === index) {
         selectedTower.value = null
     }
-    
+
     else {
         attemptMove(selectedTower.value, index)
     }
@@ -186,16 +187,16 @@ const attemptMove = (from, to) => {
     const topTargetDisk = targetTower.length > 0 ? targetTower[targetTower.length - 1] : Infinity
 
     if (diskToMove < topTargetDisk) {
-        
+
         sourceTower.pop()
         targetTower.push(diskToMove)
         moves.value++
         selectedTower.value = null
         checkWin()
     } else {
-        
+
         ElMessage.warning('大的圆盘不能放在小的圆盘上面')
-        selectedTower.value = null 
+        selectedTower.value = null
     }
 }
 
@@ -213,8 +214,8 @@ const isTargetable = (index) => {
 }
 
 const checkWin = () => {
-    
-    
+
+
     if (towers.value[2].length === diskCount.value || towers.value[1].length === diskCount.value) {
         stopTimer()
         setTimeout(() => {
@@ -235,7 +236,7 @@ const stopTimer = () => {
         clearInterval(timerInterval)
         timerInterval = null
     }
-    
+
 }
 
 onMounted(() => {
@@ -407,14 +408,14 @@ onUnmounted(() => {
     position: relative;
     padding-bottom: 20px;
     user-select: none;
-    
+
 }
 
 
 .floor {
     position: absolute;
     bottom: 25px;
-    
+
     left: 20px;
     right: 20px;
     height: 8px;
@@ -470,7 +471,7 @@ onUnmounted(() => {
 .disks-container {
     position: absolute;
     bottom: 33px;
-    
+
     left: 0;
     width: 100%;
 
@@ -481,7 +482,7 @@ onUnmounted(() => {
     height: 240px;
     z-index: 2;
     pointer-events: none;
-    
+
 }
 
 
@@ -523,9 +524,9 @@ onUnmounted(() => {
 
 .disk-move-leave-active {
     position: absolute;
-    
+
     display: none;
-    
+
 }
 
 

@@ -127,6 +127,41 @@ app.post('/lrm-api/feedback/delete', (req, res) => {
     }
 });
 
+// AI 绘图代理 API
+app.post('/lrm-api/ai-proxy', async (req, res) => {
+    const { model, messages, max_tokens, temperature, apiUrl } = req.body;
+    const apiKey = process.env.SERVER_SILICONFLOW_API_KEY;
+
+    if (!apiKey) {
+        return res.status(500).json({ error: '后端未配置 SERVER_SILICONFLOW_API_KEY' });
+    }
+
+    try {
+        const response = await fetch(apiUrl || 'https://api.siliconflow.cn/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: model || 'Qwen/Qwen3-VL-32B-Instruct',
+                messages,
+                max_tokens: max_tokens || 50,
+                temperature: temperature || 0.1
+            })
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+            return res.status(response.status).json(data);
+        }
+        res.json(data);
+    } catch (error) {
+        console.error('AI 代理请求失败:', error);
+        res.status(500).json({ error: '代理请求失败', detail: error.message });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`反馈服务运行在 http://localhost:${PORT}`);
 });

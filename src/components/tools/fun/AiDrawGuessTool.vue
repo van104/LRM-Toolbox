@@ -20,7 +20,7 @@
         </nav>
 
         <main class="main-content">
-            
+
             <transition name="slide-fade">
                 <div v-show="showSettings" class="settings-card glass-card">
                     <h3>API 配置</h3>
@@ -37,7 +37,7 @@
                         <div class="form-item">
                             <label>API Key</label>
                             <input type="password" v-model="config.apiKey"
-                                :placeholder="'输入 ' + (currentProvider?.name || '') + ' 的 API Key'">
+                                :placeholder="hasBuiltInKey ? '已启用内置密钥 (可在此输入自定义 Key 覆盖)' : '输入 ' + (currentProvider?.name || '') + ' 的 API Key'">
                         </div>
                         <div class="form-item">
                             <label>API URL</label>
@@ -64,25 +64,39 @@
                                 @touchend="stopDrawing"></canvas>
                         </div>
 
-                        <div class="toolbar">
-                            <div class="color-picker">
-                                <button v-for="color in colors" :key="color" class="color-dot"
-                                    :style="{ backgroundColor: color }" :class="{ active: currentColor === color }"
-                                    @click="currentColor = color"></button>
-                                <div class="custom-color-picker">
-                                    <el-color-picker v-model="currentColor" size="small" />
+
+                        <div class="toolbar glass-card">
+                            <div class="tool-group">
+                                <button class="tool-btn" :class="{ active: !isEraser }" @click="setMode('brush')"
+                                    title="画笔">
+                                    <div class="color-indicator" :style="{ backgroundColor: currentColor }"></div>
+                                    <span>画笔</span>
+                                </button>
+                                <button class="tool-btn" :class="{ active: isEraser }" @click="setMode('eraser')"
+                                    title="橡皮擦">
+                                    <el-icon>
+                                        <Scissor />
+                                    </el-icon>
+                                    <span>橡皮</span>
+                                </button>
+                                <div class="divider-v"></div>
+                                <div class="color-picker" v-show="!isEraser">
+                                    <button v-for="color in colors" :key="color" class="color-dot"
+                                        :style="{ backgroundColor: color }" :class="{ active: currentColor === color }"
+                                        @click="currentColor = color"></button>
+                                    <div class="custom-color-picker">
+                                        <el-color-picker v-model="currentColor" size="small" />
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="brush-settings">
+                            <div class="tool-group">
                                 <div class="setting-item">
-                                    <el-icon title="画笔大小">
-                                        <EditPen />
-                                    </el-icon>
-                                    <input type="range" v-model.number="brushSize" min="1" max="50">
+                                    <span class="label-text">粗细</span>
+                                    <input type="range" v-model.number="brushSize" min="1" max="50" class="size-slider">
                                     <span class="size-text">{{ brushSize }}</span>
                                 </div>
-                                <div class="divider"></div>
+                                <div class="divider-v"></div>
                                 <div class="setting-item">
                                     <el-icon title="画布背景">
                                         <PictureFilled />
@@ -101,10 +115,15 @@
                             </div>
 
                             <div class="actions">
-                                <button class="action-btn clear" @click="clearCanvas">
+                                <button class="action-btn" @click="undo" :disabled="historyStep <= 0" title="撤销">
+                                    <el-icon>
+                                        <RefreshLeft />
+                                    </el-icon>
+                                </button>
+                                <button class="action-btn clear" @click="clearCanvas" title="清空画布">
                                     <el-icon>
                                         <Delete />
-                                    </el-icon> 清空
+                                    </el-icon>
                                 </button>
                                 <button class="action-btn guess" @click="guessDraw" :disabled="loading">
                                     <el-icon v-if="!loading">
@@ -165,11 +184,12 @@
                             <h3>关于此工具</h3>
                         </div>
                         <div class="info-content">
-                            <p><strong>隐私安全：</strong> 您的 API Key 仅保存在浏览器本地（LocalStorage），请求直接发往 SiliconFlow，不经过任何第三方服务器。
-                            </p>
-                            <p><strong>模型推荐：</strong>
-                                建议使用支持多模态（Vision）的模型。注意：受限于模型规模和后端负载，<strong>不同模型的回答速度会有明显差异。</strong></p>
-                            <p><strong>费用提示：</strong> 接口调用按 Token 计费，具体标准请查看 SiliconFlow 官网。</p>
+                            <p><strong>AI 驱动：</strong> 本工具接入了视觉大模型（如
+                                Qwen-VL），它拥有一双"慧眼"，能看懂您画的线条和形状。如您需要撤销操作，可以点击下方的“撤销”按钮。</p>
+                            <p>如果您需要使用其他模型可在设置中配置。</p>
+                            <p><strong>隐私安全：</strong> 支持双模式运行。配置自定义 Key
+                                时为直连模式，密钥仅保存在本地；使用内置服务时为代理模式，通过后端安全转发，保障密钥不泄露。</p>
+                            <p><strong>小贴士：</strong> 尽量抓住物体的特征来画。如果 AI 猜不出来，不妨给它一点颜色看看（使用彩色画笔）！</p>
                         </div>
                     </div>
                 </div>
@@ -184,7 +204,7 @@
 
 <script setup>
 import { ref, onMounted, reactive, watch, onUnmounted, computed } from 'vue'
-import { Back, Setting, EditPen, Delete, Cpu, ChatDotRound, Picture, InfoFilled, Plus, PictureFilled } from '@element-plus/icons-vue'
+import { Back, Setting, EditPen, Delete, Cpu, ChatDotRound, Picture, InfoFilled, Plus, PictureFilled, Scissor, RefreshLeft } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const canvasRef = ref(null)
@@ -211,19 +231,26 @@ const canvasSize = reactive({
 })
 
 const isDrawing = ref(false)
+const isEraser = ref(false)
+const history = ref([])
+const historyStep = ref(-1)
 
 const config = reactive({
     apiKey: localStorage.getItem('ai_guess_api_key') || '',
     apiUrl: localStorage.getItem('ai_guess_api_url') || 'https://api.siliconflow.cn/v1/chat/completions',
-    modelId: localStorage.getItem('ai_guess_model_id') || 'Qwen/Qwen2-VL-72B-Instruct'
+    modelId: localStorage.getItem('ai_guess_model_id') || 'Qwen/Qwen3-VL-32B-Instruct'
 })
+
+// 内置代理服务判断逻辑
+const hasBuiltInKey = computed(() => import.meta.env.VITE_HAS_AI_PROXY === 'true')
+const getEffectiveApiKey = () => config.apiKey || ''
 
 const providers = [
     {
         id: 'siliconflow',
-        name: 'SiliconFlow (推荐)',
+        name: 'SiliconFlow (硅基流动)',
         url: 'https://api.siliconflow.cn/v1/chat/completions',
-        defaultModel: 'Qwen/Qwen2-VL-72B-Instruct'
+        defaultModel: 'Qwen/Qwen3-VL-32B-Instruct'
     },
     {
         id: 'alicloud',
@@ -292,27 +319,62 @@ const initCanvas = () => {
     const dpr = window.devicePixelRatio || 1
     const rect = canvas.getBoundingClientRect()
 
-    
+
     canvas.width = rect.width * dpr
     canvas.height = rect.height * dpr
 
     ctx.value = canvas.getContext('2d')
     ctx.value.scale(dpr, dpr)
 
-    
+
     canvasSize.width = rect.width
     canvasSize.height = rect.height
 
     clearCanvas()
 }
 
+const saveHistory = () => {
+    if (!ctx.value) return
+    historyStep.value++
+    // 移除当前步骤之后的历史（如果有）
+    if (historyStep.value < history.value.length) {
+        history.value.length = historyStep.value
+    }
+    // 保存当前状态
+    const dataUrl = canvasRef.value.toDataURL()
+    history.value.push(dataUrl)
+    // 限制历史记录步数，例如 20 步
+    if (history.value.length > 20) {
+        history.value.shift()
+        historyStep.value--
+    }
+}
+
+const undo = () => {
+    if (historyStep.value <= 0) return
+    historyStep.value--
+    const dataUrl = history.value[historyStep.value]
+    const img = new Image()
+    img.src = dataUrl
+    img.onload = () => {
+        ctx.value.clearRect(0, 0, canvasSize.width, canvasSize.height)
+        // 强制缩放到逻辑尺寸，解决高清屏保存的 2 倍图被再次放大问题
+        ctx.value.drawImage(img, 0, 0, canvasSize.width, canvasSize.height)
+    }
+}
+
 const clearCanvas = () => {
     if (!ctx.value) return
-    
+
     ctx.value.clearRect(0, 0, canvasSize.width, canvasSize.height)
     ctx.value.fillStyle = currentBgColor.value
     ctx.value.fillRect(0, 0, canvasSize.width, canvasSize.height)
     guessResult.value = ''
+
+    // 清空历史并保存初始空白状态
+    history.value = []
+    historyStep.value = -1
+    saveHistory()
 }
 
 const changeBgColor = (color) => {
@@ -324,8 +386,8 @@ const getPoint = (e) => {
     const canvas = canvasRef.value
     const rect = canvas.getBoundingClientRect()
 
-    
-    
+
+
     const x = (e.clientX || e.touches?.[0]?.clientX) - rect.left
     const y = (e.clientY || e.touches?.[0]?.clientY) - rect.top
 
@@ -339,19 +401,33 @@ const startDrawing = (e) => {
     ctx.value.moveTo(x, y)
 }
 
+const setMode = (mode) => {
+    isEraser.value = mode === 'eraser'
+}
+
+
+
 const draw = (e) => {
     if (!isDrawing.value) return
     const { x, y } = getPoint(e)
     ctx.value.lineWidth = brushSize.value
     ctx.value.lineCap = 'round'
     ctx.value.lineJoin = 'round'
-    ctx.value.strokeStyle = currentColor.value
+
+    if (isEraser.value) {
+        ctx.value.strokeStyle = currentBgColor.value
+    } else {
+        ctx.value.strokeStyle = currentColor.value
+    }
+
     ctx.value.lineTo(x, y)
     ctx.value.stroke()
 }
 
 const stopDrawing = () => {
+    if (!isDrawing.value) return
     isDrawing.value = false
+    saveHistory()
 }
 
 const handleTouchStart = (e) => {
@@ -365,24 +441,18 @@ const handleTouchMove = (e) => {
 }
 
 const guessDraw = async () => {
-    if (!config.apiKey) {
-        showSettings.value = true
-        ElMessage.warning('请先配置 API Key')
-        return
-    }
-
     loading.value = true
     guessResult.value = ''
 
     try {
-        
-        
+
+
         const offscreen = document.createElement('canvas')
         const maxDim = 512
         let w = canvasRef.value.width
         let h = canvasRef.value.height
 
-        
+
         if (w > h) {
             if (w > maxDim) {
                 h = h * (maxDim / w)
@@ -398,19 +468,35 @@ const guessDraw = async () => {
         offscreen.width = w
         offscreen.height = h
         const offCtx = offscreen.getContext('2d')
-        
         offCtx.drawImage(canvasRef.value, 0, 0, w, h)
-        
+
         const dataURL = offscreen.toDataURL('image/jpeg', 0.8)
 
-        const response = await fetch(config.apiUrl, {
+        // 判断是否使用后端代理模式：无自定义 Key 且开启了代理功能
+        const isProxyMode = !config.apiKey && hasBuiltInKey.value
+
+        // 如果既没有 Key 也没有代理，拦截
+        if (!config.apiKey && !isProxyMode) {
+            showSettings.value = true
+            ElMessage.warning('请先配置 API Key')
+            return
+        }
+
+        const requestUrl = isProxyMode ? '/lrm-api/ai-proxy' : config.apiUrl
+
+        const headers = {
+            'Content-Type': 'application/json'
+        }
+        if (!isProxyMode) {
+            headers['Authorization'] = `Bearer ${config.apiKey}`
+        }
+
+        const response = await fetch(requestUrl, {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${config.apiKey}`,
-                'Content-Type': 'application/json'
-            },
+            headers,
             body: JSON.stringify({
                 model: config.modelId,
+                apiUrl: config.apiUrl,
                 messages: [
                     {
                         role: 'user',
@@ -489,6 +575,10 @@ const guessDraw = async () => {
     color: var(--primary);
 }
 
+.nav-center {
+    text-align: center;
+}
+
 .nav-center h1 {
     font-size: 1.25rem;
     font-weight: 700;
@@ -500,6 +590,7 @@ const guessDraw = async () => {
 }
 
 .nav-subtitle {
+    display: block;
     font-size: 0.75rem;
     color: var(--text-muted);
     text-transform: uppercase;
@@ -525,9 +616,12 @@ const guessDraw = async () => {
 }
 
 .main-content {
-    max-width: 1200px;
+    width: 100%;
+    max-width: 1300px;
     margin: 0 auto;
     padding: 2rem;
+    box-sizing: border-box;
+    display: block;
 }
 
 .glass-card {
@@ -660,8 +754,78 @@ canvas {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1.5rem;
-    padding: 0.5rem;
+    gap: 1rem;
+    padding: 0.8rem 1.2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    flex-wrap: wrap;
+}
+
+.tool-group {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.tool-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    gap: 4px;
+}
+
+.tool-btn:hover {
+    background: #f8fafc;
+    color: var(--primary);
+}
+
+.tool-btn.active {
+    border-color: var(--primary);
+    background: #eef2ff;
+    color: var(--primary);
+}
+
+.color-indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.divider-v {
+    width: 1px;
+    height: 30px;
+    background: var(--border);
+    margin: 0 0.2rem;
+}
+
+.label-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.size-slider {
+    width: 80px;
+}
+
+.action-btn.clear {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 10px;
 }
 
 .color-picker {
@@ -741,16 +905,24 @@ canvas {
 }
 
 .ai-badge {
-    font-size: 0.65rem;
-    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-    color: white;
-    padding: 2px 6px;
+    font-size: 0.7rem;
+    background: #ffcf33;
+    /* 使用亮黄色背景增加视觉冲击力 */
+    color: #000000 !important;
+    /* 强制使用黑色文字 */
+    -webkit-text-fill-color: #000000 !important;
+    /* 关键修复：覆盖父级的透明设置 */
+    padding: 1px 6px;
     border-radius: 4px;
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: 0.5px;
-    line-height: 1;
+    line-height: 1.2;
     margin-left: 8px;
     vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .size-text {

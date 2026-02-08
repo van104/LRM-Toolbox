@@ -23,7 +23,7 @@ export const tools = [
     id: 'json-formatter',
     name: 'JSON 格式化',
     category: 'dev',
-    
+
     customIcon: '/icons/json.svg',
     summary: '在线 JSON 格式化、压缩、校验工具',
     description: '支持 JSON 格式化美化、压缩混淆、语法校验、树形视图展示等功能。可自动检测和修复常见 JSON 语法错误。',
@@ -287,22 +287,22 @@ export const tools = [
   {
     id: 'ascii-art',
     name: 'ASCII 艺术生成',
-    category: 'dev', 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    category: 'dev',
+
+
+
+
+
+
+
+
+
+
+
+
+
     category: 'fun',
-    icon: 'MagicStick', 
+    icon: 'MagicStick',
     summary: '文字转字符画 Banner / 图片转 ASCII',
     description: '集成 Figlet 库将文字转换为 3D/手写体字符画，支持多种字体；同时提供图片转 ASCII 字符画功能，支持自定义字符集和分辨率。',
     usage: '1. 文字模式：输入文本 -> 选择字体\n2. 图片模式：上传图片 -> 调整宽度与字符集',
@@ -458,7 +458,7 @@ export const tools = [
     id: 'chemistry-lab',
     name: '化学模拟',
     category: 'fun',
-    icon: 'MagicStick', 
+    icon: 'MagicStick',
     summary: '即使不懂化学也能玩的实验模拟',
     description: '一个安全的虚拟化学实验室。拖拽元素到烧杯中，观察混合后的颜色变化和特殊反应（如气泡、变色、爆炸等）。支持拖拽操作。',
     usage: '1. 从左侧拖拽元素到中间的烧杯\n2. 点击“搅拌混合”观察反应\n3. 查看右侧的实验记录',
@@ -470,7 +470,7 @@ export const tools = [
     id: 'tower-defense',
     name: '塔防小游戏',
     category: 'fun',
-    icon: 'VideoPlay', 
+    icon: 'VideoPlay',
     summary: '策略塔防游戏',
     description: '经典的塔防小游戏。建造防御塔，阻止敌人到达终点。拥有不同类型的防御塔和无限的敌人波次。',
     usage: '1. 点击右侧面板选择防御塔\n2. 点击地图空白区域建造\n3. 点击“下一波敌人”开始战斗',
@@ -661,7 +661,7 @@ export const tools = [
     tags: ['替换', '正则', '批量', '清洗', '修饰']
   },
 
-  
+
   {
     id: 'text-diff',
     name: '文本对比',
@@ -711,7 +711,7 @@ export const tools = [
     tags: ['Markdown', '预览', '编辑']
   },
 
-  
+
   {
     id: 'image-compress',
     name: '图片压缩',
@@ -764,13 +764,13 @@ export const tools = [
     id: 'barcode-generator',
     name: '条形码生成器',
     category: 'image',
-    icon: 'FullScreen', 
-    
-    
-    
-    
-    
-    
+    icon: 'FullScreen',
+
+
+
+
+
+
     icon: 'Operation',
     summary: '生成各种格式的条形码（EAN, UPC, Code128等）',
     description: '支持生成 EAN, UPC, Code128, ITF, MSI, Pharmacode 等多种格式条形码，支持自定义尺寸、颜色和显示文本。',
@@ -783,7 +783,7 @@ export const tools = [
     id: 'image-converter',
     name: '图片格式转换',
     category: 'image',
-    icon: 'Picture', 
+    icon: 'Picture',
     summary: '支持 PNG, JPG, WEBP, BMP 等常见格式互转',
     description: '专业的图片格式转换工具，支持批量将图片转换为 PNG, JPG, WEBP 格式，支持自定义压缩质量。',
     usage: '1. 上传或拖拽图片文件\n2. 选择目标格式和质量\n3. 点击转换并下载',
@@ -795,7 +795,7 @@ export const tools = [
     id: 'image-resizer',
     name: '图片尺寸调整',
     category: 'image',
-    icon: 'ScaleToOriginal', 
+    icon: 'ScaleToOriginal',
     summary: '按比例或固定尺寸批量调整图片大小',
     description: '支持按百分比缩放或指定像素宽高调整图片尺寸，支持锁定纵横比与批量处理，提供即时质量预览。',
     usage: '1. 上传图片\n2. 设置缩放模式（百分比/固定尺寸）\n3. 调整参数预览效果\n4. 开始处理并下载',
@@ -854,7 +854,7 @@ export const tools = [
   },
 
 
-  
+
 
   {
     id: 'data-visualizer',
@@ -869,7 +869,7 @@ export const tools = [
     tags: ['图表', '可视化', 'Excel', '数据分析']
   },
 
-  
+
   {
     id: 'unit-converter',
     name: '单位转换器',
@@ -934,10 +934,10 @@ export const tools = [
     id: 'clothing-size',
     name: '服装尺码助手',
     category: 'life',
-    icon: 'Trophy', 
-    
-    
-    
+    icon: 'Trophy',
+
+
+
     summary: '国标/欧美/日韩服装鞋码对照',
     description: '专业的服装鞋帽尺码转换工具，涵盖男装、女装、童装及鞋码。支持中国国标、欧美、日韩等国际标准互转，助您海淘购物无忧。',
     usage: '1. 选择类别（男/女/童/鞋）\n2. 选择您当前的标准和已知尺码\n3. 即时查看对应国家/地区的标准尺码\n4. 下方提供完整对照表供参考',
@@ -949,7 +949,7 @@ export const tools = [
     id: 'date-calculator',
     name: '日期差计算器',
     category: 'life',
-    icon: 'Calendar', 
+    icon: 'Calendar',
     summary: '日期间隔计算与推算',
     description: '专业的日期时间计算工具。支持计算两个日期之间的天数、月数、周数；也支持根据基准日期向前或向后推算新的日期。适用倒计时、工龄计算、纪念日查询。',
     usage: '1. 间隔计算：选择开始与结束日期，查看详细时间差\n2. 日期推算：选择基准日期，输入增减天数，获取新日期',
@@ -973,7 +973,7 @@ export const tools = [
     id: 'workday-calculator',
     name: '工作日计算器',
     category: 'life',
-    icon: 'Suitcase', 
+    icon: 'Suitcase',
     summary: '精准计算工期与考勤天数',
     description: '自动剔除周末，支持自定义节假日和补班日期。输入起止时间，即可快速计算实际工作天数。适用于项目管理、HR考勤统计及工程排期。',
     usage: '1. 设置起止日期\n2. 默认勾选“剔除周末”\n3. 在右侧管理特殊的节假日（如春节）和补班日\n4. 即时获取精确工作日天数',
@@ -985,7 +985,7 @@ export const tools = [
     id: 'lunar-converter',
     name: '农历阳历转换',
     category: 'life',
-    icon: 'Moon', 
+    icon: 'Moon',
     summary: '公农历互转与黄历查询',
     description: '全面的中国传统历法工具。支持公历与农历日期的相互转换，提供每日宜忌、干支纪年、节气、生肖及星座信息，是您查看黄道吉日的好帮手。',
     usage: '1. 选择“公历转农历”或“农历转公历”模式\n2. 设定日期\n3. 查看对应的日期信息、宜忌、节气等详情',
@@ -1056,8 +1056,8 @@ export const tools = [
   {
     id: 'mortgage-calculator',
     name: '房贷计算器',
-    category: 'finance', 
-    icon: 'House', 
+    category: 'finance',
+    icon: 'House',
     summary: '房贷月供与利息计算',
     description: '支持等额本息与等额本金两种方式。输入贷款金额、期限和利率，自动计算每月还款额、利息总额，并提供详细的最后还款明细表。',
     usage: '1. 选择还款方式（等额本息/等额本金）\n2. 输入贷款总额、年限和年利率\n3. 点击计算，查看月供分析图表和明细',
@@ -1080,7 +1080,7 @@ export const tools = [
   {
     id: 'discount-calculator',
     name: '折扣计算器',
-    category: 'finance', 
+    category: 'finance',
     icon: 'ShoppingBag',
     summary: '购物打折与凑单助手',
     description: '商场购物、电商大促必备工具。支持单品折扣计算（X折/百分比）和跨店满减凑单计算（满X减Y），帮你快速算清到手价和节省金额。',
@@ -1092,9 +1092,9 @@ export const tools = [
   {
     id: 'bmi-calculator',
     name: 'BMI 体脂计算',
-    category: 'health', 
-    icon: 'DataAnalysis', 
-    
+    category: 'health',
+    icon: 'DataAnalysis',
+
     icon: 'User',
     summary: '身体质量指数(BMI)计算与健康评估',
     description: '输入身高体重，快速计算 BMI 指数，对照中国成人标准判断偏瘦、正常、超重或肥胖，并提供健康体重范围建议。',
@@ -1107,7 +1107,7 @@ export const tools = [
     id: 'calorie-calculator',
     name: '卡路里计算器',
     category: 'health',
-    icon: 'Bowl', 
+    icon: 'Bowl',
     summary: '热量查询与每日消耗测算',
     description: '健身减肥必备。提供常见食物热量查询，支持计算每日热量消耗（TDEE），并给出减脂、维持或增肌的热量摄入建议。',
     usage: '1. 计算 TDEE：输入身体数据与活动量，获取每日消耗\n2. 查询热量：输入食物名称，添加至今日清单，统计总摄入',
@@ -1118,7 +1118,7 @@ export const tools = [
   {
     id: 'random-number-generator',
     name: '随机数生成器',
-    category: 'fun', 
+    category: 'fun',
     icon: 'More',
     summary: '自定义范围生成随机数字',
     description: '支持自定义数值范围（最小值/最大值）和生成数量。可选择是否去重、是否自动排序。适用于抽奖、分组、数学练习等场景。',
@@ -1143,8 +1143,8 @@ export const tools = [
   {
     id: 'pinyin-tool',
     name: '拼音查询器',
-    category: 'edu', 
-    icon: 'EditPen', 
+    category: 'edu',
+    icon: 'EditPen',
     summary: '汉字转拼音与语音标注助手',
     description: '支持将汉字转换为完整拼音。提供多种声调标注模式（符号/数字/无声调）以及“对照模式”，可为朗诵文案进行逐字注音。',
     usage: '1. 输入或粘贴汉字文本\n2. 选择声调格式和展示模式\n3. 复制结果或查看拼音对照',
@@ -1155,8 +1155,8 @@ export const tools = [
   {
     id: 'mind-map',
     name: '思维导图生成',
-    category: 'design', 
-    icon: 'Connection', 
+    category: 'design',
+    icon: 'Connection',
     summary: '文本大纲一键转思维导图',
     description: '通过 Markdown 大纲语法（# 标题，- 列表）快速自动生成精美的思维导图。支持实时预览、缩放查看及 SVG 图片导出，助您快速梳理思路。',
     usage: '1. 在左侧输入或粘贴 Markdown 文本\n2. 右侧实时预览思维导图\n3. 可拖拽、缩放画布\n4. 点击导出按钮保存为 SVG',
@@ -1167,9 +1167,9 @@ export const tools = [
   {
     id: 'formula-editor',
     name: '公式编辑器',
-    category: 'edu', 
-    
-    
+    category: 'edu',
+
+
     icon: 'Edit',
     summary: '可视化数学公式编辑与导出',
     description: '所见即所得的数学公式编辑器。支持数学、物理、化学公式的可视化输入，自动生成标准 LaTeX 代码，支持导出高清公式图片，适配文档与课件制作。',
@@ -1181,8 +1181,8 @@ export const tools = [
   {
     id: 'utility-bill',
     name: '电费/水费计算',
-    category: 'finance', 
-    icon: 'Lightning', 
+    category: 'finance',
+    icon: 'Lightning',
     summary: '水电费用估算与阶梯计价计算',
     description: '支持单一电价与阶梯电价两种模式。输入用量可快速计算月度费用。支持自定义阶梯档位和价格，适合租房核算与家庭记账。',
     usage: '1. 选择电费或水费模式\n2. 输入月度用量\n3. 选择计价模式（单一/阶梯）并设置价格\n4. 查看预估费用及明细',
@@ -1242,7 +1242,7 @@ export const tools = [
     id: 'volume-weight',
     name: '快递体积重计算',
     category: 'life',
-    icon: 'Box', 
+    icon: 'Box',
     summary: '体积重量与计费重量计算',
     description: '快速就算快递包裹的体积重量。支持自定义抛比系数（6000/5000/8000），自动对比实际重量，判断计费重量与是否为抛货，寄件发货必备。',
     usage: '1. 输入包裹长、宽、高 (cm)\n2. 输入实际重量 (kg)\n3. 选择抛比系数（默认 6000）\n4. 查看体积重与计费重量',
@@ -1253,8 +1253,8 @@ export const tools = [
   {
     id: 'screen-ruler',
     name: '屏幕尺寸测量',
-    category: 'design', 
-    icon: 'FullScreen', 
+    category: 'design',
+    icon: 'FullScreen',
     summary: '屏幕像素标尺与测量工具',
     description: '提供可视化的水平和垂直像素标尺。支持拖拽测量，实时显示坐标像素值。适合前端工程师和 UI 设计师快速校对页面元素位置与尺寸。',
     usage: '1. 点击添加水平或垂直标尺\n2. 拖动标尺线至目标位置\n3. 查看实时像素坐标\n4. 双击标尺可旋转方向',
@@ -1265,8 +1265,8 @@ export const tools = [
   {
     id: 'name-stroke',
     name: '名字笔画计算',
-    category: 'edu', 
-    icon: 'Edit', 
+    category: 'edu',
+    icon: 'Edit',
     summary: '姓名笔画数查询与计算',
     description: '输入姓名自动拆解并计算每个汉字的笔画数及总笔画。支持简体和繁体字输入，适用于学生作业自查、姓名民俗研究等场景。',
     usage: '1. 输入中文姓名\n2. 自动显示每个字的笔画\n3. 查看总笔画数统计',
@@ -1277,8 +1277,8 @@ export const tools = [
   {
     id: 'blood-type',
     name: '血型遗传计算',
-    category: 'fun', 
-    icon: 'FirstAidKit', 
+    category: 'fun',
+    icon: 'FirstAidKit',
     summary: '父母血型推算子女可能血型',
     description: '输入父亲和母亲的血型（ABO系统），基于遗传学规律推算子女可能出现的血型以及不可能出现的血型。科普向趣味工具。',
     usage: '1. 选择父亲的血型\n2. 选择母亲的血型\n3. 查看推算结果',
@@ -1290,19 +1290,19 @@ export const tools = [
     id: 'weather-guide',
     name: '天气生活指南',
     category: 'life',
-    icon: 'Sunny', 
+    icon: 'Sunny',
     summary: '天气查询与生活指数建议',
     description: '查询全球城市天气，并生成穿衣、出行、运动等生活指南关键词。数据支持由 Open-Meteo 提供。',
     usage: '1. 输入城市名称（支持中文城市名，如"Beijing"或"北京"）\n2. 点击查询\n3. 查看实时天气及生活建议',
     route: '/tools/weather-guide',
-    isLocal: false, 
+    isLocal: false,
     tags: ['天气', '生活', '穿衣', '运动', '查询', 'API']
   },
   {
     id: 'text-line-break',
     name: '文案分行整理',
-    category: 'text', 
-    icon: 'Memo', 
+    category: 'text',
+    icon: 'Memo',
     summary: '长文本自动分行排版',
     description: '适配朋友圈、小红书、短视频文案排版。支持智能语义分行、自定义字数截断，一键生成居中诗意排版。',
     usage: '1. 粘贴长文本\n2. 调节每行字数与分行模式\n3. 预览并复制结果',
@@ -1313,8 +1313,8 @@ export const tools = [
   {
     id: 'plug-standard',
     name: '各国插座查询',
-    category: 'life', 
-    icon: 'Place', 
+    category: 'life',
+    icon: 'Place',
     summary: '出国旅行插座与电压查询',
     description: '查询全球主要国家和地区的电源插座类型、电压标准及频率。提供可视化插座图鉴，帮助您准备旅行转换插头。',
     usage: '1. 搜索国家名称（如"日本"、"英国"）\n2. 查看该国的电压、频率及插座类型\n3. 对照图鉴确认转换头',
@@ -1325,20 +1325,20 @@ export const tools = [
   {
     id: 'ip-location',
     name: 'IP 属地查询',
-    category: 'dev', 
-    icon: 'LocationInformation', 
+    category: 'dev',
+    icon: 'LocationInformation',
     summary: 'IP 地址归属地与运营商查询',
     description: '查询 IP 地址的地理位置（国家、城市）、运营商 (ISP)、经纬度及时区信息。支持查询本机 IP。纯前端实现，无需服务器中转。',
     usage: '1. 输入 IP 地址（或直接点击查询本机）\n2. 查看解析结果\n3. 点击坐标可跳转地图',
     route: '/tools/ip-location',
-    isLocal: false, 
+    isLocal: false,
     tags: ['IP', '定位', '网络', '查询', 'ISP']
   },
   {
     id: 'encoding-tool',
     name: '编码格式查看',
     category: 'dev',
-    icon: 'DocumentCopy', 
+    icon: 'DocumentCopy',
     summary: 'UTF-8/GBK 字节分析',
     description: '实时分析文本在 UTF-8 和 GBK 编码下的字节长度，并展示 16 进制字节码，帮助排查乱码问题。',
     usage: '输入文本即可查看编码分析结果。',
@@ -1350,7 +1350,7 @@ export const tools = [
     id: 'port-tool',
     name: '端口号查询',
     category: 'dev',
-    icon: 'Connection', 
+    icon: 'Connection',
     summary: '常用端口默认服务查询',
     description: '查询端口号对应的默认服务（HTTP, MySQL, SSH 等），提供常见端口列表参考。',
     usage: '输入端口号查询，或点击分类标签。',
@@ -1362,7 +1362,7 @@ export const tools = [
     id: 'url-encoder',
     name: 'URL 编解码',
     category: 'dev',
-    icon: 'Link', 
+    icon: 'Link',
     summary: 'URL Encode / Decode',
     description: '对 URL 进行编码和解码处理 (encodeURIComponent)，处理链接参数中的特殊字符。',
     usage: '输入文本点击编码或解码。',
@@ -1374,7 +1374,7 @@ export const tools = [
     id: 'html-entity',
     name: 'HTML 转义',
     category: 'dev',
-    icon: 'Reading', 
+    icon: 'Reading',
     summary: 'HTML 实体字符转换',
     description: '特殊字符与 HTML 实体互转 (如 < 转 &lt;)，包含常用实体对照表。',
     usage: '输入 HTML 代码进行转义或与还原。',
@@ -1386,7 +1386,7 @@ export const tools = [
     id: 'screen-size',
     name: '屏幕分辨率',
     category: 'design',
-    icon: 'Monitor', 
+    icon: 'Monitor',
     summary: '常见设备分辨率与倍率',
     description: '收录常见手机、平板、电脑的逻辑分辨率、物理分辨率和 PPI 数据，辅助 UI 设计与适配。',
     usage: '搜索设备名称或切换分类查看。',
@@ -1398,7 +1398,7 @@ export const tools = [
     id: 'list-to-table',
     name: '列表转表格',
     category: 'text',
-    icon: 'Grid', 
+    icon: 'Grid',
     summary: '文本转 HTML/Markdown 表格',
     description: '将分行粘贴的文本一键转换为 Markdown 表格或 HTML 表格代码，支持自动识别分隔符。',
     usage: '粘贴文本，选择分隔符，转换预览或复制。',
@@ -1410,7 +1410,7 @@ export const tools = [
     id: 'emoji-picker',
     name: 'Emoji 表情检索',
     category: 'fun',
-    icon: 'Sugar', 
+    icon: 'Sugar',
     summary: '分类 Emoji 复制',
     description: '提供按心情、节日、食物、动物等分类的 Emoji 表情面板，点击即可复制。',
     usage: '选择分类，点击表情。',
@@ -1422,7 +1422,7 @@ export const tools = [
     id: 'special-text',
     name: '特殊文字生成',
     category: 'fun',
-    icon: 'MagicStick', 
+    icon: 'MagicStick',
     summary: '花体/空心/下划线生成',
     description: '生成花体英文 (Script)、空心字 (Hollow)、删除线、下划线等特殊样式文本，用于社交平台昵称或文案。',
     usage: '输入文本，选择样式，点击复制。',
@@ -1434,7 +1434,7 @@ export const tools = [
     id: 'tone-converter',
     name: '语气句式转换',
     category: 'text',
-    icon: 'ChatDotRound', 
+    icon: 'ChatDotRound',
     summary: '疑问/委婉/正式语气转换',
     description: '将句子转换为疑问句、委婉语气、正式书面语或客服体，辅助文案修改。',
     usage: '输入句子，选择目标语气。',
@@ -1446,7 +1446,7 @@ export const tools = [
     id: 'keyword-extractor',
     name: '标题关键词提取',
     category: 'text',
-    icon: 'Crop', 
+    icon: 'Crop',
     summary: '高频核心词提取',
     description: '分析长文本，自动提取出现频率最高的核心关键词 (Top 20)，辅助标题拟定或标签生成。',
     usage: '粘贴文章，点击提取。',
@@ -1637,7 +1637,7 @@ export const tools = [
     usage: '1. 输入关键词搜索诗词\n2. 点击某首诗进入详情赏析\n3. 切换纵向排版或生成名句分享图',
     route: '/tools/chinese-poetry',
     isLocal: true,
-    tags: ['诗词', '文学', '文化', '教育']
+    tags: ['诗词', '文学', '文化', '教育', '古诗', '诗']
   },
   {
     id: 'chinese-dictionary',
@@ -1748,7 +1748,7 @@ export const tools = [
     tags: ['时间', '时区', '世界钟', '工具']
   },
 
-  
+
   {
     id: 'pdf-to-image',
     name: 'PDF 转图片',
