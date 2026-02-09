@@ -1,6 +1,6 @@
-# 🛠️ Toolbox (Online Utilities)
+# 🛠️ LRM工具箱 (Online Utilities)
 
-一个功能强大的在线工具箱，基于 **Vue 3** + **Vite** + **TailwindCSS** + **Element Plus** 构建。提供了包括开发、图像、文本、生活、金融、教育、健康、趣味游戏和 PDF 处理等和 PDF 处理等在内的 100+ 种实用工具。
+**LRM工具箱** 是一个功能强大的在线开源工具箱，基于 **Vue 3** + **Vite** + **TailwindCSS** + **Element Plus** 构建。提供了包括开发运维、图像处理、文本清洗、生活常用、金融理财、教育学习、健康运动、趣味游戏和 PDF 处理等在内的 100+ 种实用工具。
 
 **🌐 演示地址：[https://www.lrm123.site/](https://www.lrm123.site/)**
 

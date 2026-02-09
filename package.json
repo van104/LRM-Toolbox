@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "A powerful online toolbox built with Vue 3, Vite, and TailwindCSS, featuring 100+ utilities for developers, designers, and daily use.",
+  "description": "LRM工具箱 - 一个功能强大的在线开发者工具箱 (Online Toolbox for Developers)，集成 100+ 实用工具。",
   "author": "van104",
   "license": "MIT",
   "homepage": "https://github.com/van104/LRM-Toolbox#readme",
@@ -15,13 +15,13 @@
     "url": "https://github.com/van104/LRM-Toolbox/issues"
   },
   "keywords": [
+    "LRM工具箱",
+    "toolbox",
+    "online-tools",
+    "开发者工具",
     "vue3",
     "vite",
-    "tailwindcss",
-    "toolbox",
-    "utilities",
-    "tools",
-    "online-tools"
+    "tailwindcss"
   ],
   "scripts": {
     "dev": "vite",
