@@ -1,6 +1,7 @@
 {
     "name": "toolbox-feedback-server",
     "version": "1.0.0",
+    "type": "module",
     "description": "Simple feedback backend for Toolbox",
     "main": "server.js",
     "scripts": {
