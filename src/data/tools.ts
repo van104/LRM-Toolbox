@@ -44,8 +44,7 @@ export const tools: Tool[] = [
     id: 'json-formatter',
     name: 'JSON 格式化',
     category: 'dev',
-
-    customIcon: '/icons/json.svg',
+    icon: 'Operation',
     summary: '在线 JSON 格式化、压缩、校验工具',
     description: '支持 JSON 格式化美化、压缩混淆、语法校验、树形视图展示等功能。可自动检测和修复常见 JSON 语法错误。',
     usage: '1. 将 JSON 数据粘贴到左侧编辑器\n2. 点击格式化按钮美化代码\n3. 可选择不同缩进风格和排序方式',
