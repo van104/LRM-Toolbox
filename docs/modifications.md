@@ -36,6 +36,10 @@
     - 在 `package.json` 中增加了“LRM工具箱”中文描述及关键搜索词（keywords）。
     - 优化了 `README.md` 的首段描述，加入加粗关键词。
     - 将 `README.md` 标题正式更名为中文，以提升 GitHub 中文搜索的权重。
+- **修复登录异常** [18:22]：
+    - 修正了 `.env.production` 中的 `VITE_API_URL`，为其添加了前导斜杠 `/`。
+    - 解决了在子路由页面（如 `/admin/feedback`）下 API 请求路径解析错误导致的 `Unexpected token '<'` (JSON 解析 HTML 报错) 问题。
 - **标题汉化** [17:26]：将 `README.md` 的顶部标题修改为中文：`🛠️ LRM工具箱 (Online Utilities)`。
+
 
 ---
