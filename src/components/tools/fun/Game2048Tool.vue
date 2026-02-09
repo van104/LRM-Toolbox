@@ -48,7 +48,8 @@
                     </div>
                 </div>
 
-                <div class="game-container" :class="'size-' + size">
+                <div class="game-container" :class="'size-' + size" @touchstart="handleTouchStart"
+                    @touchend="handleTouchEnd" @touchmove.prevent>
                     <div class="game-message" :class="gameStatusClass">
                         <p>{{ gameStatusText }}</p>
                         <div class="lower">
@@ -139,6 +140,34 @@ const touchStartPos = { x: 0, y: 0 }
 const totalScore = ref(0)
 const gamesPlayed = ref(0)
 const gameHistory = ref([]) // 用于存储历史记录
+
+const handleTouchStart = (event) => {
+    if (event.touches.length > 1) return
+    touchStartPos.x = event.touches[0].clientX
+    touchStartPos.y = event.touches[0].clientY
+}
+
+const handleTouchEnd = (event) => {
+    if (event.changedTouches.length > 1) return
+    const touchEndPos = {
+        x: event.changedTouches[0].clientX,
+        y: event.changedTouches[0].clientY
+    }
+
+    const dx = touchEndPos.x - touchStartPos.x
+    const dy = touchEndPos.y - touchStartPos.y
+
+    const absDx = Math.abs(dx)
+    const absDy = Math.abs(dy)
+
+    if (Math.max(absDx, absDy) > 20) {
+        // 0: up, 1: right, 2: down, 3: left
+        const direction = absDx > absDy
+            ? (dx > 0 ? 1 : 3)
+            : (dy > 0 ? 2 : 0)
+        move(direction)
+    }
+}
 
 
 const gameStatusText = computed(() => {
@@ -422,8 +451,6 @@ watch([score, gameOver], () => saveStats())
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css?family=Clear+Sans:400,500,700");
-
 .game-2048-tool {
     --bg: #f5f7fa;
     --card: #ffffff;
@@ -435,7 +462,7 @@ watch([score, gameOver], () => saveStats())
 
     background: var(--bg);
     color: var(--text);
-    font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+    font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -708,6 +735,8 @@ watch([score, gameOver], () => saveStats())
     height: 460px;
     max-width: 100%;
     box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
 
     --grid-size: 4;
     --grid-gap: 12px;

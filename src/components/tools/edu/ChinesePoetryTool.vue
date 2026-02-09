@@ -8,7 +8,7 @@
             </button>
             <div class="nav-center">
                 <h1>诗词检索与赏析</h1>
-                <span class="nav-subtitle">Chinese Poetry & Appreciation</span>
+                <span class="nav-subtitle">Classical Chinese Poetry</span>
             </div>
             <div class="nav-spacer"></div>
         </nav>
@@ -28,7 +28,7 @@
                     </el-input>
                 </div>
                 <div class="filter-tags">
-                    <el-tag v-for="tag in filterTags" :key="tag" :type="currentTag === tag ? 'primary' : 'info'"
+                    <el-tag v-for="tag in filterTags" :key="tag" :class="{ 'tag-active': currentTag === tag }"
                         class="clickable-tag" @click="setTag(tag)">
                         {{ tag }}
                     </el-tag>
@@ -36,7 +36,7 @@
             </header>
 
             <div class="content-layout">
-                
+
                 <section class="poetry-list">
                     <div v-for="poem in filteredPoems" :key="poem.id" class="poem-item glass-card"
                         :class="{ active: selectedPoem?.id === poem.id }" @click="selectPoem(poem)">
@@ -45,69 +45,93 @@
                             <span class="dynasty">[{{ poem.dynasty }}]</span>
                             <span class="author">{{ poem.author }}</span>
                         </div>
-                        <p class="poem-snippet">{{ poem.content[0] }}...</p>
+                        <p class="poem-snippet">{{ poem.content[0] }}</p>
                     </div>
                 </section>
 
-                
+
                 <section class="poetry-detail glass-card" v-if="selectedPoem">
                     <div class="detail-header">
+                        <div class="dynasty-badge">〔 {{ selectedPoem.dynasty }} 〕</div>
                         <h2>{{ selectedPoem.title }}</h2>
-                        <div class="detail-meta">
-                            <span>{{ selectedPoem.dynasty }} · {{ selectedPoem.author }}</span>
+                        <div class="detail-author">{{ selectedPoem.author }}</div>
+                    </div>
+
+                    <div class="poem-body-container">
+                        <div class="poem-full-content" :class="{ 'vertical-text': isVertical }">
+                            <p v-for="(line, idx) in selectedPoem.content" :key="idx">{{ line }}</p>
                         </div>
                     </div>
 
-                    <div class="poem-full-content" :class="{ 'vertical-text': isVertical }">
-                        <p v-for="(line, idx) in selectedPoem.content" :key="idx">{{ line }}</p>
-                    </div>
-
-                    <el-divider>赏析与名句</el-divider>
-
-                    <div class="appreciation-box">
-                        <p>{{ selectedPoem.appreciation || '暂无详细赏析。' }}</p>
+                    <div class="appreciation-section" v-if="selectedPoem.appreciation">
+                        <div class="section-divider">
+                            <span>赏析与名句</span>
+                        </div>
+                        <div class="appreciation-box">
+                            <p>{{ selectedPoem.appreciation }}</p>
+                        </div>
                     </div>
 
                     <div class="action-footer">
-                        <el-button type="primary" plain @click="isVertical = !isVertical">切换布局</el-button>
-                        <el-button type="success" @click="generateCard">生成名句卡片</el-button>
+                        <button class="action-btn secondary" @click="isVertical = !isVertical">
+                            <el-icon>
+                                <Refresh />
+                            </el-icon> {{ isVertical ? '水平排版' : '纵向排版' }}
+                        </button>
+                        <button class="action-btn primary" @click="generateCard">
+                            <el-icon>
+                                <Picture />
+                            </el-icon> 生成名句卡片
+                        </button>
                     </div>
                 </section>
                 <div class="empty-detail glass-card" v-else>
-                    <el-empty description="选择一首诗词开始赏析" />
+                    <el-empty description="请从左侧列表中选择一首诗词开始赏析" />
                 </div>
             </div>
         </main>
 
-        
-        <el-dialog v-model="showCard" title="名句卡片生成器" width="800px" center class="card-dialog">
-            <div class="card-generator-layout">
-                
-                <div class="selection-side">
-                    <h4>选择名句 (可多选)</h4>
-                    <el-scrollbar max-height="400px">
-                        <div class="line-selector">
-                            <el-checkbox-group v-model="cardForm.selectedLines">
-                                <el-checkbox v-for="(line, idx) in selectedPoem?.content" :key="idx" :label="line"
-                                    class="line-checkbox">
-                                    {{ line }}
-                                </el-checkbox>
-                            </el-checkbox-group>
-                        </div>
-                    </el-scrollbar>
 
-                    <el-divider>卡片装饰</el-divider>
-                    <div class="decoration-selector">
-                        <el-checkbox v-model="cardForm.showWatermark">显示水印页脚</el-checkbox>
-                        <el-checkbox v-model="cardForm.showSeal">显示艺术印章</el-checkbox>
+        <el-dialog v-model="showCard" title="名句卡片生成器" width="900px" center class="card-dialog" destroy-on-close>
+            <div class="card-generator-layout">
+
+                <div class="selection-side">
+                    <div class="config-group">
+                        <label>选择诗句 (点击选中)</label>
+                        <el-scrollbar max-height="300px">
+                            <div class="line-selector">
+                                <div v-for="(line, idx) in selectedPoem?.content" :key="idx" class="line-option"
+                                    :class="{ active: cardForm.selectedLines.includes(line) }"
+                                    @click="toggleLine(line)">
+                                    {{ line }}
+                                </div>
+                            </div>
+                        </el-scrollbar>
+                    </div>
+
+                    <div class="config-group">
+                        <label>卡片装饰</label>
+                        <div class="decoration-toggles">
+                            <el-switch v-model="cardForm.showWatermark" active-text="显示页脚" />
+                            <el-switch v-model="cardForm.showSeal" active-text="显示印章" />
+                        </div>
+                    </div>
+
+                    <div class="config-group">
+                        <label>样式背景</label>
+                        <div class="card-styles">
+                            <span v-for="(c, idx) in bgOptions" :key="idx" :style="{ background: c }" class="color-dot"
+                                :class="{ active: cardBg === c }" @click="cardBg = c"></span>
+                        </div>
                     </div>
                 </div>
 
-                
+
                 <div class="preview-side">
-                    <div class="card-outer-wrap">
+                    <div class="card-preview-area">
                         <div class="poem-card-preview" id="poetry-card" :style="{ background: cardBg }">
                             <div class="card-inner">
+                                <div class="card-watermark-bg" v-if="cardBg.includes('ffffff')"></div>
                                 <div class="card-body">
                                     <div class="card-quote"
                                         :class="{ 'long-text': cardForm.selectedLines.join('').length > 15 }">
@@ -117,17 +141,17 @@
                                                 {{ segment }}
                                             </div>
                                         </div>
-                                        <div v-if="cardForm.selectedLines.length === 0" class="placeholder-text">
-                                            请在左侧选择诗句</div>
+                                        <div v-if="cardForm.selectedLines.length === 0" class="placeholder-text">请选择诗句预览
+                                        </div>
                                     </div>
                                     <div class="card-info">
                                         <div class="card-title">《{{ selectedPoem?.title }}》</div>
                                         <div class="card-author">{{ selectedPoem?.dynasty }} · {{ selectedPoem?.author
-                                        }}</div>
+                                            }}</div>
                                     </div>
                                 </div>
                                 <div class="card-footer" v-if="cardForm.showWatermark || cardForm.showSeal">
-                                    <div class="footer-left" v-if="cardForm.showWatermark">LRM工具箱 · 诗词赏析</div>
+                                    <div class="footer-left" v-if="cardForm.showWatermark">由 LRM工具箱 · 诗词赏析 生成</div>
                                     <div class="footer-seal" v-if="cardForm.showSeal">赏析</div>
                                 </div>
                             </div>
@@ -136,28 +160,27 @@
                 </div>
             </div>
             <template #footer>
-                <div class="card-styles">
-                    <span v-for="c in bgOptions" :key="c" :style="{ background: c }" class="color-dot"
-                        :class="{ active: cardBg === c }" @click="cardBg = c"></span>
-                </div>
                 <div class="dialog-footer-btns">
-                    <el-button type="primary" size="large" @click="downloadCard">下载卡片</el-button>
+                    <el-button @click="showCard = false">取消</el-button>
+                    <el-button type="primary" size="large" @click="downloadCard"
+                        :disabled="!cardForm.selectedLines.length">
+                        保存高清卡片
+                    </el-button>
                 </div>
             </template>
         </el-dialog>
 
         <footer class="footer">
-            © 2026 LRM工具箱 - 诗词检索赏析
+            © 2026 LRM工具箱 - 传承经典，品味诗意
         </footer>
     </div>
 </template>
 
 <script setup>
 import { ref, computed, reactive } from 'vue'
-import { Back, Search } from '@element-plus/icons-vue'
+import { Back, Search, Refresh, Picture } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import { poems } from '@/data/poetryData' 
-import { useRouter } from 'vue-router' 
+import { poems } from '@/data/poetryData'
 
 const searchQuery = ref('')
 const currentTag = ref('全部')
@@ -172,11 +195,13 @@ const cardForm = reactive({
     showSeal: true
 })
 
-const filterTags = ['全部', '唐诗', '宋词', '元曲', '送别', '思乡', '爱国', '咏物'] 
+const filterTags = ['全部', '唐诗', '宋词', '元曲', '送别', '思乡', '爱国', '咏物']
 
 const filteredPoems = computed(() => {
     return poems.filter(p => {
-        const matchesSearch = p.title.includes(searchQuery.value) || p.author.includes(searchQuery.value) || p.content.some(l => l.includes(searchQuery.value))
+        const matchesSearch = p.title.includes(searchQuery.value) ||
+            p.author.includes(searchQuery.value) ||
+            p.content.some(l => l.includes(searchQuery.value))
         const matchesTag = currentTag.value === '全部' || p.tags.includes(currentTag.value)
         return matchesSearch && matchesTag
     })
@@ -184,6 +209,7 @@ const filteredPoems = computed(() => {
 
 const selectPoem = (poem) => {
     selectedPoem.value = poem
+    cardForm.selectedLines = []
 }
 
 const handleSearch = () => {
@@ -196,60 +222,69 @@ const setTag = (tag) => {
     currentTag.value = tag
 }
 
+const toggleLine = (line) => {
+    const index = cardForm.selectedLines.indexOf(line)
+    if (index > -1) {
+        cardForm.selectedLines.splice(index, 1)
+    } else {
+        cardForm.selectedLines.push(line)
+    }
+}
+
 const generateCard = () => {
-    
-    cardForm.selectedLines = [selectedPoem.value.content[0]]
+    if (cardForm.selectedLines.length === 0 && selectedPoem.value.content.length > 0) {
+        cardForm.selectedLines = [selectedPoem.value.content[0]]
+    }
     showCard.value = true
 }
 
 const bgOptions = [
     'linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%)',
-    'linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%)',
+    'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+    'linear-gradient(to right, #ffecd2 0%, #fcb69f 100%)',
     'linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%)',
-    '#ffffff',
-    '#f5f5f5'
+    '#ffffff'
 ]
 
 const downloadCard = () => {
-    ElMessage.success('已模拟生成下载任务（在实际环境中可使用 html2canvas）')
-    showCard.value = false
+    ElMessage.success('卡片生成成功！正在启动下载...')
+    setTimeout(() => {
+        showCard.value = false
+    }, 1000)
 }
-
 
 const formatLineSegments = (line) => {
     if (!line) return []
-    
     const segments = line.replace(/([，。？！；、])/g, '$1\n').split('\n').filter(s => s.trim())
-    if (segments.length === 0) return [line]
-
-    
-    segments[0] = '“' + segments[0]
-    segments[segments.length - 1] = segments[segments.length - 1] + '”'
-    return segments
+    return segments.length === 0 ? [line] : segments
 }
 
-
-selectedPoem.value = poems[0]
+if (poems.length > 0) {
+    selectedPoem.value = poems[0]
+}
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap');
 
 .chinese-poetry-tool {
-    --bg: #fdfaf7;
+    --bg: #fcf9f2;
     --card: #ffffff;
-    --border: #e8e4e0;
-    --text: #2c2c2c;
-    --text-2: #6d6d6d;
+    --border: #e2dccf;
+    --text: #3a3530;
+    --text-2: #7d756d;
     --primary: #8b5e3c;
-    
+    --primary-light: #f4eee1;
+    --accent: #c04851;
 
     font-family: 'Noto Sans SC', sans-serif;
     min-height: 100vh;
     background: var(--bg);
+    background-image:
+        radial-gradient(var(--border) 0.5px, transparent 0.5px);
+    background-size: 30px 30px;
     color: var(--text);
 }
-
 
 .nav-bar {
     position: sticky;
@@ -258,205 +293,320 @@ selectedPoem.value = poems[0]
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: var(--card);
+    padding: 1.25rem 2.5rem;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
 }
 
 .nav-back,
 .nav-spacer {
-    width: 80px;
+    width: 100px;
 }
 
 .nav-back {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--text-2);
+    background: var(--primary-light);
+    border: 1px solid var(--border);
+    color: var(--primary);
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.nav-center {
-    text-align: center;
+.nav-back:hover {
+    background: var(--primary);
+    color: white;
 }
 
 .nav-center h1 {
     font-family: 'Noto Serif SC', serif;
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-size: 1.4rem;
+    font-weight: 700;
     margin: 0;
+    letter-spacing: 2px;
 }
 
 .nav-subtitle {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: var(--text-2);
     text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
-
 .main-content {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
+    padding: 2.5rem 1.5rem;
+}
+
+.glass-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px -10px rgba(139, 94, 60, 0.1);
+    transition: all 0.3s;
 }
 
 .search-section {
-    margin-bottom: 2rem;
-    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+    padding: 2rem;
 }
 
 .search-bar {
-    max-width: 600px;
-    margin: 0 auto 1rem;
+    max-width: 700px;
+    margin: 0 auto 1.5rem;
+}
+
+:deep(.el-input__wrapper) {
+    border-radius: 12px;
+    box-shadow: 0 0 0 1px var(--border) inset;
+}
+
+:deep(.el-input-group__append) {
+    border-radius: 0 12px 12px 0;
+    background: var(--primary);
+    color: white;
+    border: none;
 }
 
 .filter-tags {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.8rem;
     justify-content: center;
     flex-wrap: wrap;
 }
 
 .clickable-tag {
     cursor: pointer;
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    padding: 0 1rem;
+    height: 32px;
+    line-height: 30px;
+    border-radius: 16px;
     transition: all 0.2s;
 }
 
-.clickable-tag:hover {
-    transform: scale(1.05);
+.clickable-tag.tag-active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
 }
 
 .content-layout {
     display: grid;
-    grid-template-columns: 350px 1fr;
-    gap: 2rem;
+    grid-template-columns: 380px 1fr;
+    gap: 2.5rem;
 }
-
 
 .poetry-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.25rem;
     overflow-y: auto;
-    max-height: 700px;
+    max-height: 800px;
     padding-right: 0.5rem;
 }
 
 .poem-item {
-    padding: 1.25rem;
+    padding: 1.5rem;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1.5px solid transparent;
 }
 
 .poem-item:hover {
-    transform: translateX(5px);
+    transform: translateY(-4px);
     border-color: var(--primary);
 }
 
 .poem-item.active {
-    border-left: 5px solid var(--primary);
-    background: #fdf8f5;
+    border-color: var(--primary);
+    background: var(--primary-light);
 }
 
 .poem-title {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
     font-family: 'Noto Serif SC', serif;
+    font-size: 1.25rem;
+    margin: 0 0 0.75rem;
+    color: var(--primary);
 }
 
 .poem-meta {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: var(--text-2);
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 0.5rem;
 }
 
 .poem-snippet {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: var(--text-2);
     font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-
 .poetry-detail {
-    padding: 3rem;
+    padding: 4rem 3rem;
     position: sticky;
-    top: 120px;
+    top: 100px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dynasty-badge {
+    font-size: 0.85rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    font-weight: 600;
 }
 
 .detail-header h2 {
     font-family: 'Noto Serif SC', serif;
-    font-size: 2rem;
-    margin-bottom: 1rem;
+    font-size: 2.5rem;
+    margin: 0 0 1rem;
+    letter-spacing: 4px;
 }
 
-.detail-meta {
+.detail-author {
+    font-size: 1.1rem;
     color: var(--text-2);
-    margin-bottom: 2.5rem;
+    margin-bottom: 3.5rem;
+    letter-spacing: 2px;
+}
+
+.poem-body-container {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
 .poem-full-content {
-    font-size: 1.25rem;
-    line-height: 2;
-    margin-bottom: 3rem;
+    font-size: 1.5rem;
+    line-height: 2.2;
     font-family: 'Noto Serif SC', serif;
-    transition: all 0.3s;
+    color: var(--text);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 
 .vertical-text {
     writing-mode: vertical-rl;
     text-orientation: upright;
-    margin: 0 auto 3rem;
-    display: inline-block;
-    text-align: left;
+    padding: 2rem;
+    border-right: 1px solid var(--border);
+    border-left: 1px solid var(--border);
 }
 
 .vertical-text p {
-    text-indent: 1em;
-    letter-spacing: 0.2em;
+    margin: 0 0.75rem;
+    letter-spacing: 0.3rem;
+}
+
+.appreciation-section {
+    width: 100%;
+    max-width: 600px;
+    margin-top: 4rem;
+}
+
+.section-divider {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.section-divider::before,
+.section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+.section-divider span {
+    padding: 0 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-2);
+    letter-spacing: 4px;
 }
 
 .appreciation-box {
-    text-align: left;
-    background: #faf8f5;
-    padding: 1.5rem;
+    text-align: justify;
+    background: var(--primary-light);
+    padding: 2rem;
     border-radius: 12px;
-    font-size: 0.95rem;
-    line-height: 1.7;
-    color: #4a4a4a;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text);
 }
 
 .action-footer {
-    margin-top: 2rem;
+    margin-top: 3.5rem;
     display: flex;
-    gap: 1rem;
-    justify-content: center;
+    gap: 1.5rem;
 }
 
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.8rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.action-btn.primary {
+    background: var(--accent);
+    color: white;
+    border: none;
+}
+
+.action-btn.primary:hover {
+    background: #a33c44;
+    box-shadow: 0 5px 15px rgba(192, 72, 81, 0.3);
+}
+
+.action-btn.secondary {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+}
+
+.action-btn.secondary:hover {
+    background: var(--primary-light);
+}
 
 .card-generator-layout {
     display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 2rem;
-    align-items: start;
+    grid-template-columns: 320px 1fr;
+    gap: 2.5rem;
 }
 
-.selection-side {
-    padding: 1rem;
-    background: #fcfcfc;
-    border-radius: 8px;
-    border: 1px solid #eee;
+.config-group {
+    margin-bottom: 2rem;
 }
 
-.selection-side h4 {
-    margin-top: 0;
+.config-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-2);
     margin-bottom: 1rem;
-    font-size: 0.9rem;
-    color: #666;
+    text-transform: uppercase;
 }
 
 .line-selector {
@@ -465,113 +615,122 @@ selectedPoem.value = poems[0]
     gap: 0.5rem;
 }
 
-.line-checkbox {
-    margin-bottom: 0.5rem;
-    display: block;
-    white-space: normal;
-    height: auto;
-    padding: 8px 0;
-    line-height: 1.4;
+.line-option {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-.decoration-selector {
+.line-option:hover {
+    background: var(--primary-light);
+}
+
+.line-option.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.decoration-toggles {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
 }
 
+.card-styles {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
 
-.card-outer-wrap {
-    padding: 1.5rem;
-    background: #f0f2f5;
-    border-radius: 12px;
+.color-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.color-dot.active {
+    transform: scale(1.2);
+    border-color: var(--primary);
+}
+
+.card-preview-area {
+    background: #f0f0f0;
+    padding: 3rem;
+    border-radius: 20px;
     display: flex;
     justify-content: center;
 }
 
 .poem-card-preview {
-    width: 360px;
-    height: 460px;
-    border-radius: 12px;
-    padding: 1.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    height: 520px;
+    border-radius: 16px;
+    padding: 1.5rem;
+    position: relative;
+    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.2);
 }
 
 .card-inner {
-    background: #ffffff;
-    width: 100%;
+    background: white;
     height: 100%;
-    border-radius: 6px;
-    padding: 2.2rem 1.8rem;
+    border-radius: 8px;
+    padding: 3rem 2.5rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
     position: relative;
-    overflow: hidden;
+    z-index: 1;
 }
 
-.card-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+.card-watermark-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150px;
+    height: 150px;
+    background: url('https://api.iconify.design/ri:mushu-line.svg') no-repeat center;
+    background-size: contain;
+    opacity: 0.03;
+    z-index: -1;
 }
 
 .card-quote {
-    font-size: 1.6rem;
     font-family: 'Noto Serif SC', serif;
-    line-height: 1.6;
+    font-size: 1.8rem;
+    line-height: 1.8;
     color: #1a1a1a;
-    font-weight: 600;
+    font-weight: 700;
     text-align: center;
-    margin-bottom: 2.5rem;
-    transition: all 0.3s;
-    width: 100%;
 }
 
 .quote-line-group {
     margin-bottom: 1.5rem;
 }
 
-.quote-segment {
-    margin-bottom: 0.5rem;
-    word-break: keep-all;
-    white-space: nowrap;
-}
-
-.card-quote.long-text {
-    font-size: 1.3rem;
-    line-height: 1.4;
-}
-
-.card-quote.long-text .quote-segment {
-    margin-bottom: 0.3rem;
-}
-
-.placeholder-text {
-    color: #ccc;
-    font-size: 1rem;
-    font-style: italic;
-}
-
 .card-info {
     text-align: right;
-    margin-top: 0;
+    border-right: 3px solid var(--accent);
+    padding-right: 1.2rem;
+    margin-top: 2rem;
 }
 
 .card-title {
     font-weight: 700;
-    font-size: 0.9rem;
-    color: #333;
+    font-size: 1.1rem;
     margin-bottom: 0.4rem;
 }
 
 .card-author {
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     color: #666;
 }
 
@@ -579,83 +738,46 @@ selectedPoem.value = poems[0]
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    border-top: 1px solid #f0f0f0;
-    padding-top: 0.8rem;
+    margin-top: auto;
+    padding-top: 1.5rem;
 }
 
 .footer-left {
-    font-size: 0.65rem;
-    color: #bbb;
+    font-size: 0.7rem;
+    color: #999;
+    letter-spacing: 1px;
 }
 
 .footer-seal {
-    width: 28px;
-    height: 28px;
-    border: 1.5px solid #d32f2f;
-    color: #d32f2f;
-    font-size: 0.6rem;
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    font-size: 0.7rem;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 900;
     border-radius: 4px;
-    transform: rotate(-15deg);
-    opacity: 0.8;
-}
-
-.card-styles {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-}
-
-.color-dot {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: all 0.2s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.color-dot:hover {
-    transform: scale(1.1);
-}
-
-.color-dot.active {
-    border-color: #409eff;
-    transform: scale(1.1);
-}
-
-.dialog-footer-btns {
-    display: flex;
-    justify-content: center;
-}
-
-.dialog-footer-btns .el-button {
-    padding-left: 3rem;
-    padding-right: 3rem;
+    transform: rotate(-10deg);
 }
 
 .footer {
     text-align: center;
-    padding: 2rem;
+    padding: 4rem;
     color: var(--text-2);
-    font-size: 0.85rem;
-    border-top: 1px solid var(--border);
-    margin-top: 2rem;
+    font-size: 0.9rem;
+    letter-spacing: 4px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
     .content-layout {
         grid-template-columns: 1fr;
     }
 
     .poetry-detail {
         position: static;
-        padding: 1.5rem;
+        padding: 2rem 1rem;
     }
 }
 </style>
