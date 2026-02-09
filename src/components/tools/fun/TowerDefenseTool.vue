@@ -87,162 +87,170 @@
                     </div>
                 </div>
 
-                <div class="controls-panel glass-card">
+                <div class="controls-panel">
                     <div class="control-main-grid">
                         <!-- 左侧：状态与技能 -->
                         <div class="panel-section-left">
-                            <div class="stats-grid">
-                                <div class="stat-item">
-                                    <span class="label">生命</span>
-                                    <span class="value heart">❤️ {{ lives }}</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="label">金钱</span>
-                                    <span class="value money">💰 {{ money }}</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="label">波次</span>
-                                    <span class="value">🌊 {{ wave }}/{{ gameMode === 'endless' ? '∞' :
-                                        (LEVEL_CONFIG[gameLevel
-                                            - 1]?.waves ||
-                                            10) }}</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="label">能量</span>
-                                    <span class="value mana">⚡ {{ Math.floor(mana) }}</span>
-                                </div>
-                            </div>
-
-
-                            <div class="skills-panel">
-                                <h3>主动技能</h3>
-                                <div class="skill-btns">
-                                    <button class="skill-btn"
-                                        :class="{ active: selectedSkill === 'meteor', disabled: mana < 40 || !isWaveActive }"
-                                        @click="selectSkill('meteor')" title="陨石冲击 (40能量)">
-                                        <span class="icon">☄️</span>
-                                        <span class="cost">40</span>
-                                    </button>
-                                    <button class="skill-btn"
-                                        :class="{ active: selectedSkill === 'freeze', disabled: mana < 60 || !isWaveActive }"
-                                        @click="selectSkill('freeze')" title="全场冻结 (60能量)">
-                                        <span class="icon">🧊</span>
-                                        <span class="cost">60</span>
-                                    </button>
+                            <div class="panel-card stats-card">
+                                <div class="stats-grid">
+                                    <div class="stat-item">
+                                        <span class="label">生命</span>
+                                        <span class="value heart">❤️ {{ lives }}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="label">金钱</span>
+                                        <span class="value money">💰 {{ money }}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="label">波次</span>
+                                        <span class="value">🌊 {{ wave }}/{{ gameMode === 'endless' ? '∞' :
+                                            (LEVEL_CONFIG[gameLevel
+                                                - 1]?.waves ||
+                                                10) }}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="label">能量</span>
+                                        <span class="value mana">⚡ {{ Math.floor(mana) }}</span>
+                                    </div>
                                 </div>
                             </div>
 
+                            <div class="panel-card actions-card">
+                                <div class="skills-panel">
+                                    <h3>主动技能</h3>
+                                    <div class="skill-btns">
+                                        <button class="skill-btn"
+                                            :class="{ active: selectedSkill === 'meteor', disabled: mana < 40 || !isWaveActive }"
+                                            @click="selectSkill('meteor')" title="陨石冲击 (40能量)">
+                                            <span class="icon">☄️</span>
+                                            <span class="cost">40</span>
+                                        </button>
+                                        <button class="skill-btn"
+                                            :class="{ active: selectedSkill === 'freeze', disabled: mana < 60 || !isWaveActive }"
+                                            @click="selectSkill('freeze')" title="全场冻结 (60能量)">
+                                            <span class="icon">🧊</span>
+                                            <span class="cost">60</span>
+                                        </button>
+                                    </div>
+                                </div>
 
-                            <div class="game-actions">
-                                <button class="wave-btn" @click="spawnNextWave"
-                                    :disabled="isWaveActive || gameState !== 'playing'">
-                                    {{ isWaveActive ? '波次进行中...' : '下一波敌人' }}
-                                </button>
-                                <div class="sub-actions">
-                                    <button class="restart-btn" @click="restartGame">
-                                        <el-icon>
-                                            <Refresh />
-                                        </el-icon> 重新开始
+                                <div class="game-actions">
+                                    <button class="wave-btn" @click="spawnNextWave"
+                                        :disabled="isWaveActive || gameState !== 'playing'">
+                                        {{ isWaveActive ? '波次进行中...' : '下一波敌人' }}
                                     </button>
-                                    <button class="menu-btn" @click="gameState = 'start'">
-                                        <el-icon>
-                                            <HomeFilled />
-                                        </el-icon> 返回菜单
-                                    </button>
+                                    <div class="sub-actions">
+                                        <button class="restart-btn" @click="restartGame">
+                                            <el-icon>
+                                                <Refresh />
+                                            </el-icon> 重新开始
+                                        </button>
+                                        <button class="menu-btn" @click="gameState = 'start'">
+                                            <el-icon>
+                                                <HomeFilled />
+                                            </el-icon> 返回菜单
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- 右侧：防御塔操作 -->
                         <div class="panel-section-right">
-                            <div v-if="!selectedTowerInstance && !selectedObstacle" class="towers-selection">
-                                <h3>建造防御塔</h3>
-                                <div class="tower-options">
-                                    <div v-for="(type, key) in TOWER_TYPES" :key="key" class="tower-card"
-                                        :class="{ active: selectedTowerType === key, disabled: money < type.cost }"
-                                        @click="selectTowerType(key)">
-                                        <div class="tower-icon-wrapper" :class="key">
-                                            <span class="tower-emoji">{{ type.emoji }}</span>
-                                        </div>
-                                        <div class="tower-info">
-                                            <span class="name">{{ type.name }}</span>
-                                            <span class="cost">💰{{ type.cost }}</span>
+                            <div class="panel-card towers-card">
+                                <div v-if="!selectedTowerInstance && !selectedObstacle" class="towers-selection">
+                                    <h3>建造防御塔</h3>
+                                    <div class="tower-options">
+                                        <div v-for="(type, key) in TOWER_TYPES" :key="key" class="tower-card"
+                                            :class="{ active: selectedTowerType === key, disabled: money < type.cost }"
+                                            @click="selectTowerType(key)">
+                                            <div class="tower-icon-wrapper" :class="key">
+                                                <span class="tower-emoji">{{ type.emoji }}</span>
+                                            </div>
+                                            <div class="tower-info">
+                                                <span class="name">{{ type.name }}</span>
+                                                <span class="cost">💰{{ type.cost }}</span>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div v-if="selectedTowerType" class="selected-type-info">
+                                        <p class="type-desc">{{ TOWER_TYPES[selectedTowerType].desc }}</p>
+                                    </div>
                                 </div>
-                                <div v-if="selectedTowerType" class="selected-type-info">
-                                    <p class="type-desc">{{ TOWER_TYPES[selectedTowerType].desc }}</p>
-                                </div>
-                            </div>
 
-                            <div v-else-if="selectedObstacle" class="upgrade-panel">
-                                <h3>清理障碍物</h3>
-                                <div class="selected-tower-preview">
-                                    <span class="preview-emoji">{{ selectedObstacle.type === 4 ? '🪨' : '🌳' }}</span>
-                                    <div class="preview-info">
-                                        <span class="name">{{ selectedObstacle.type === 4 ? '坚硬的岩石' : '茂密的树木' }}</span>
-                                        <span class="stats">位置: ({{ selectedObstacle.c }}, {{ selectedObstacle.r
-                                            }})</span>
+                                <div v-else-if="selectedObstacle" class="upgrade-panel">
+                                    <h3>清理障碍物</h3>
+                                    <div class="selected-tower-preview">
+                                        <span class="preview-emoji">{{ selectedObstacle.type === 4 ? '🪨' : '🌳'
+                                        }}</span>
+                                        <div class="preview-info">
+                                            <span class="name">{{ selectedObstacle.type === 4 ? '坚硬的岩石' : '茂密的树木'
+                                            }}</span>
+                                            <span class="stats">位置: ({{ selectedObstacle.c }}, {{ selectedObstacle.r
+                                                }})</span>
+                                        </div>
+                                    </div>
+                                    <div class="upgrade-actions">
+                                        <button class="upgrade-btn" :disabled="money < 200"
+                                            @click="clearObstacleConfirm">
+                                            <div class="btn-content">
+                                                <el-icon>
+                                                    <Delete />
+                                                </el-icon> 确认清理 (💰200)
+                                            </div>
+                                        </button>
+                                        <button class="cancel-btn" @click="selectedObstacle = null">
+                                            <el-icon>
+                                                <Close />
+                                            </el-icon> 取消
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="upgrade-actions">
-                                    <button class="upgrade-btn" :disabled="money < 200" @click="clearObstacleConfirm">
-                                        <div class="btn-content">
+
+                                <div v-else-if="selectedTowerInstance" class="upgrade-panel">
+                                    <h3>防御塔升级</h3>
+                                    <div class="selected-tower-preview">
+                                        <span class="preview-emoji">{{ selectedTowerInstance.type.emoji }}</span>
+                                        <div class="preview-info">
+                                            <span class="name">{{ selectedTowerInstance.type.name }} (Lv.{{
+                                                selectedTowerInstance.level }})</span>
+                                            <span class="stats">攻击: {{ getTowerDamage(selectedTowerInstance) }} | 射速: {{
+                                                ((60 / getTowerRate(selectedTowerInstance)) * 60 / 60).toFixed(1)
+                                                }}/s</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="upgrade-actions">
+                                        <button v-if="selectedTowerInstance.level < 3" class="upgrade-btn"
+                                            :disabled="money < getUpgradeCost(selectedTowerInstance)"
+                                            @click="upgradeTower">
+                                            <div class="btn-content">
+                                                <el-icon>
+                                                    <Top />
+                                                </el-icon> 升级 (💰{{ getUpgradeCost(selectedTowerInstance) }})
+                                            </div>
+                                            <span class="upgrade-desc">
+                                                Lv.{{ selectedTowerInstance.level + 1 }}: 伤害+50% 攻速+10%
+                                            </span>
+                                        </button>
+                                        <button v-else class="upgrade-btn max-level" disabled>
+                                            <el-icon>
+                                                <Trophy />
+                                            </el-icon> 已升至顶级
+                                        </button>
+
+                                        <button class="sell-btn" @click="sellTower">
                                             <el-icon>
                                                 <Delete />
-                                            </el-icon> 确认清理 (💰200)
-                                        </div>
-                                    </button>
-                                    <button class="cancel-btn" @click="selectedObstacle = null">
-                                        <el-icon>
-                                            <Close />
-                                        </el-icon> 取消
-                                    </button>
-                                </div>
-                            </div>
+                                            </el-icon> 出售 (💰{{ Math.floor(selectedTowerInstance.totalCost * 0.6) }})
+                                        </button>
 
-                            <div v-else-if="selectedTowerInstance" class="upgrade-panel">
-                                <h3>防御塔升级</h3>
-                                <div class="selected-tower-preview">
-                                    <span class="preview-emoji">{{ selectedTowerInstance.type.emoji }}</span>
-                                    <div class="preview-info">
-                                        <span class="name">{{ selectedTowerInstance.type.name }} (Lv.{{
-                                            selectedTowerInstance.level }})</span>
-                                        <span class="stats">攻击: {{ getTowerDamage(selectedTowerInstance) }} | 射速: {{
-                                            ((60 / getTowerRate(selectedTowerInstance)) * 60 / 60).toFixed(1)
-                                            }}/s</span>
-                                    </div>
-                                </div>
-
-                                <div class="upgrade-actions">
-                                    <button v-if="selectedTowerInstance.level < 3" class="upgrade-btn"
-                                        :disabled="money < getUpgradeCost(selectedTowerInstance)" @click="upgradeTower">
-                                        <div class="btn-content">
+                                        <button class="cancel-btn" @click="deselectTower">
                                             <el-icon>
-                                                <Top />
-                                            </el-icon> 升级 (💰{{ getUpgradeCost(selectedTowerInstance) }})
-                                        </div>
-                                        <span class="upgrade-desc">
-                                            Lv.{{ selectedTowerInstance.level + 1 }}: 伤害+50% 攻速+10%
-                                        </span>
-                                    </button>
-                                    <button v-else class="upgrade-btn max-level" disabled>
-                                        <el-icon>
-                                            <Trophy />
-                                        </el-icon> 已升至顶级
-                                    </button>
-
-                                    <button class="sell-btn" @click="sellTower">
-                                        <el-icon>
-                                            <Delete />
-                                        </el-icon> 出售 (💰{{ Math.floor(selectedTowerInstance.totalCost * 0.6) }})
-                                    </button>
-
-                                    <button class="cancel-btn" @click="deselectTower">
-                                        <el-icon>
-                                            <Close />
-                                        </el-icon> 取消选择
-                                    </button>
+                                                <Close />
+                                            </el-icon> 取消选择
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -275,7 +283,7 @@ const TOWER_TYPES = {
     sniper: { name: '狙击塔', cost: 400, range: 280, baseDamage: 60, baseRate: 70, color: '#f56c6c', projectileSpeed: 18, emoji: '🎯', desc: '超远射程，高额单体伤害。' },
     slow: { name: '冰霜塔', cost: 200, range: 130, baseDamage: 5, baseRate: 40, color: '#00ffff', projectileSpeed: 10, emoji: '❄️', effect: 'slow', desc: '减速敌人，争取更多输出时间。' },
     missile: { name: '导弹塔', cost: 600, range: 200, baseDamage: 40, baseRate: 60, color: '#8e44ad', projectileSpeed: 10, emoji: '🚀', effect: 'aoe', desc: '范围爆炸伤害，防御核心。' },
-    mine: { name: '金矿', cost: 300, range: 0, baseDamage: 0, baseRate: 0, color: '#ffd700', emoji: '💰', effect: 'gold', desc: '每波开始产生丰厚金币奖励。' },
+    mine: { name: '金矿', cost: 300, range: 0, baseDamage: 0, baseRate: 0, color: '#ffd700', emoji: '💰', effect: 'gold', desc: '每波开始后每隔5秒产出金币，波次结束停止。' },
     buff: { name: '增益塔', cost: 450, range: 100, baseDamage: 0, baseRate: 0, color: '#2ecc71', emoji: '🧪', effect: 'buff', desc: '提升范围内防御塔30%伤害和射程。' },
     radar: { name: '雷达', cost: 350, range: 150, baseDamage: 0, baseRate: 0, color: '#3498db', emoji: '📡', effect: 'radar', desc: '探测并揭示范围内的隐身敌人。' },
 }
@@ -654,6 +662,7 @@ function spawnEnemy(hp, type = 'normal') {
         type: type, emoji: emoji,
         reward: isBoss ? 500 : (type === 'tank' ? 25 : 15 + Math.floor(wave.value)),
         frozen: 0,
+        slowed: 0, // 新增减速状态
         revealed: false // 隐身可见性
     })
 }
@@ -695,6 +704,9 @@ function update() {
         if (e.frozen > 0) {
             currentSpeed = 0 // 完全静止
             e.frozen--
+        } else if (e.slowed > 0) {
+            currentSpeed = e.speed * 0.5 // 减速50%
+            e.slowed--
         }
 
 
@@ -724,7 +736,19 @@ function update() {
     towers.forEach(t => {
         if (t.cooldown > 0) t.cooldown--
         else {
-            if (t.type.effect === 'gold') return // 金矿现在由波次触发，不再持续产金
+            if (t.type.effect === 'gold') {
+                if (isWaveActive.value) {
+                    if (t.cooldown > 0) t.cooldown--
+                    else {
+                        const amount = 25 * t.level
+                        money.value += amount
+                        t.cooldown = 300 // 5秒
+                        createParticles(t.x, t.y, '#ffd700', 8)
+                        // 显示+金币浮动文字效果可以通过粒子系统扩展，这里暂时只用粒子和总金额增加
+                    }
+                }
+                return
+            }
 
             const target = findTarget(t)
             if (target) {
@@ -755,8 +779,8 @@ function update() {
 
 
             if (b.effect === 'slow') {
-
-                b.target.frozen = Math.max(b.target.frozen, 120)
+                // 冰霜塔造成减速而非冻结
+                b.target.slowed = Math.max(b.target.slowed, 120) // 减速持续2秒
             } else if (b.effect === 'aoe') {
                 // 导弹塔 AOE 效果: 对目标周围 60 像素内的敌人造成 50% 伤害
                 enemies.forEach(e => {
@@ -1196,6 +1220,15 @@ function draw() {
             ctx.beginPath()
             ctx.arc(e.x, e.y, size / 2 + 2, 0, Math.PI * 2)
             ctx.stroke()
+        } else if (e.slowed > 0) {
+            // 减速状态显示淡蓝色光环
+            ctx.strokeStyle = 'rgba(64, 158, 255, 0.5)'
+            ctx.lineWidth = 1.5
+            ctx.setLineDash([2, 5])
+            ctx.beginPath()
+            ctx.arc(e.x, e.y, size / 2 + 1, 0, Math.PI * 2)
+            ctx.stroke()
+            ctx.setLineDash([])
         }
 
 
@@ -1301,7 +1334,7 @@ function castFreeze() {
     enemies.forEach(e => {
         e.frozen = Math.max(e.frozen, 240) // 冻结 4 秒
     })
-    ElMessage.success('时间静止！')
+    ElMessage.success('时间静止！(全场冻结)')
 }
 
 function gameLoop() {
@@ -1429,25 +1462,32 @@ onUnmounted(() => {
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    padding: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 canvas {
     background: #fcfcfc;
     border: 1px solid #eee;
     cursor: crosshair;
+    display: block;
 }
 
 .controls-panel {
     width: 600px;
     flex-shrink: 0;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
 .control-main-grid {
     display: grid;
     grid-template-columns: 240px 1fr;
-    gap: 1.5rem;
+    gap: 1rem;
+    align-items: flex-start;
 }
 
 .panel-section-left,
@@ -1457,121 +1497,270 @@ canvas {
     gap: 1rem;
 }
 
-.glass-card {
-    background: var(--card);
+/* 模块化卡片样式 */
+.panel-card {
+    background: #fff;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    padding: 1.2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    padding: 0.6rem;
+    border: 1px solid rgba(0, 0, 0, 0.02);
+    transition: all 0.3s ease;
 }
 
+.panel-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+}
+
+.panel-card h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* 状态栏增强 */
 .stats-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    padding-bottom: 0.8rem;
-    border-bottom: 1px solid #eee;
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
 }
 
 .stat-item {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    background: #f8f9fa;
-    padding: 0.5rem;
-    border-radius: 8px;
+    justify-content: space-between;
+    background: #f8fafc;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    border: 1px solid #f1f5f9;
 }
 
 .stat-item .label {
-    font-size: 0.7rem;
-    color: #999;
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 500;
 }
 
 .stat-item .value {
-    font-size: 1rem;
-    font-weight: bold;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #334155;
 }
 
+.stat-item .value.heart {
+    color: #ef4444;
+}
+
+.stat-item .value.money {
+    color: #eab308;
+}
+
+.stat-item .value.mana {
+    color: #3b82f6;
+}
+
+/* 技能与操作 */
+.skills-panel {
+    margin-bottom: 1.5rem;
+}
+
+.skill-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+}
+
+.skill-btn {
+    height: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.skill-btn:hover:not(.disabled) {
+    border-color: var(--primary);
+    background: #eff6ff;
+    transform: translateY(-2px);
+}
+
+.skill-btn.active {
+    border-color: #f97316;
+    background: #fff7ed;
+    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2);
+}
+
+.skill-btn.disabled {
+    opacity: 0.5;
+    background: #f1f5f9;
+    cursor: not-allowed;
+}
+
+.skill-btn .icon {
+    font-size: 1.8rem;
+    margin-bottom: 2px;
+}
+
+.skill-btn .cost {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #f97316;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 1px 6px;
+    border-radius: 10px;
+}
+
+.game-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.wave-btn {
+    width: 100%;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
+    transition: all 0.2s;
+}
+
+.wave-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px -1px rgba(37, 99, 235, 0.4);
+}
+
+.wave-btn:disabled {
+    background: #cbd5e1;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+.sub-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+}
+
+.restart-btn,
+.menu-btn {
+    padding: 0.6rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+}
+
+.restart-btn:hover,
+.menu-btn:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+    color: #334155;
+    transform: translateY(-1px);
+}
+
+/* 防御塔选择区优化 */
 .tower-options {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    gap: 0.8rem;
 }
 
 .tower-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    padding: 8px 4px;
+    gap: 6px;
+    padding: 10px 4px;
     border: 2px solid transparent;
-    border-radius: 8px;
-    background: #f9f9f9;
+    border-radius: 10px;
+    background: #f8fafc;
     cursor: pointer;
     transition: all 0.2s;
+    position: relative;
 }
 
 .tower-card:hover {
-    background: #f0f2f5;
+    background: #f1f5f9;
+    transform: translateY(-3px);
 }
 
 .tower-card.active {
     border-color: var(--primary);
-    background: #ecf5ff;
+    background: #eff6ff;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
 }
 
 .tower-card.disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
     filter: grayscale(1);
+    transform: none;
 }
 
 .tower-icon-wrapper {
-    width: 36px;
-    height: 36px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     background: white;
-    border: 1px solid #eee;
-    font-size: 24px;
-}
-
-.tower-icon-wrapper.basic {
-    box-shadow: 0 0 5px rgba(64, 158, 255, 0.2);
-}
-
-.tower-icon-wrapper.rapid {
-    box-shadow: 0 0 5px rgba(230, 162, 60, 0.2);
-}
-
-.tower-icon-wrapper.sniper {
-    box-shadow: 0 0 5px rgba(245, 108, 108, 0.2);
-}
-
-.tower-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    font-size: 26px;
 }
 
 .tower-info .name {
-    font-weight: bold;
+    font-weight: 600;
     font-size: 0.75rem;
-    white-space: nowrap;
+    color: #334155;
+    margin-top: 4px;
 }
 
 .tower-info .cost {
     font-size: 0.7rem;
-    color: #e6a23c;
+    color: #d97706;
+    font-weight: bold;
 }
 
+.selected-type-info {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    background: #eff6ff;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary);
+    color: #1e293b;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
 
+/* 升级面板优化 */
 .upgrade-panel {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.2rem;
 }
 
 .selected-tower-preview {
@@ -1579,26 +1768,14 @@ canvas {
     align-items: center;
     gap: 1rem;
     padding: 1rem;
-    background: #f8f9fa;
-    border-radius: 8px;
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
 }
 
 .preview-emoji {
-    font-size: 2rem;
-}
-
-.preview-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.preview-info .name {
-    font-weight: bold;
-}
-
-.preview-info .stats {
-    font-size: 0.8rem;
-    color: #666;
+    font-size: 2.5rem;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
 }
 
 .upgrade-actions {
@@ -1610,39 +1787,42 @@ canvas {
 .upgrade-btn,
 .sell-btn,
 .cancel-btn {
-    padding: 0.8rem;
+    padding: 0.9rem;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    font-weight: bold;
+    gap: 8px;
+    font-weight: 600;
     transition: all 0.2s;
+    font-size: 0.9rem;
 }
 
 .upgrade-btn {
-    background: #67c23a;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
     color: white;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
+    box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.3);
 }
 
 .upgrade-btn:hover:not(:disabled) {
-    opacity: 0.9;
     transform: translateY(-2px);
+    box-shadow: 0 6px 10px -1px rgba(22, 163, 74, 0.4);
 }
 
 .upgrade-btn:disabled {
-    background: #dcdfe6;
+    background: #cbd5e1;
+    box-shadow: none;
     cursor: not-allowed;
-    transform: none;
 }
 
 .upgrade-btn.max-level {
-    background: #e6a23c;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     cursor: default;
+    box-shadow: none;
 }
 
 .upgrade-desc {
@@ -1651,101 +1831,35 @@ canvas {
     font-weight: normal;
 }
 
-.btn-content {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
 .sell-btn {
-    background: #f56c6c;
-    color: white;
+    background: #fee2e2;
+    color: #ef4444;
+    border: 1px solid #fecaca;
 }
 
 .sell-btn:hover {
-    opacity: 0.9;
+    background: #fecaca;
 }
 
 .cancel-btn {
-    background: #f0f2f5;
-    color: #606266;
+    background: transparent;
+    border: 1px solid #cbd5e1;
+    color: #64748b;
 }
 
 .cancel-btn:hover {
-    background: #e6e8eb;
+    background: #f1f5f9;
+    color: #334155;
 }
 
-.game-actions {
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-}
-
-.sub-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-}
-
-.wave-btn {
-    width: 100%;
-    padding: 1rem;
-    border: none;
-    border-radius: 8px;
-    background: #409eff;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.wave-btn:hover:not(:disabled) {
-    opacity: 0.9;
-}
-
-.wave-btn:disabled {
-    background: #dcdfe6;
-    cursor: not-allowed;
-}
-
-.restart-btn {
-    padding: 0.6rem;
-    border: 1px solid #dcdfe6;
-    background: white;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-}
-
-.restart-btn:hover {
-    color: var(--primary);
-    border-color: var(--primary);
-}
-
-.menu-btn {
-    width: 100%;
-    padding: 0.6rem;
-    background: white;
-    border: 1px solid #dcdfe6;
-    color: var(--text-sec);
-    border-radius: 8px;
-    display: flex;
-    font-size: 0.85rem;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.menu-btn:hover {
-    color: var(--primary);
-    border-color: var(--primary);
-    background: #f8fafc;
+.footer {
+    text-align: center;
+    padding: 1rem 0;
+    color: #94a3b8;
+    font-size: 0.8rem;
+    border-top: 1px solid #e2e8f0;
+    background: #fff;
+    margin-top: 2rem;
 }
 
 .overlay {
@@ -1770,6 +1884,7 @@ canvas {
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     width: 80%;
+    max-width: 400px;
 }
 
 .overlay-btns {
@@ -1778,6 +1893,26 @@ canvas {
     gap: 1rem;
     align-items: center;
     width: 100%;
+    margin-top: 2rem;
+}
+
+.start-btn {
+    min-width: 150px;
+    padding: 12px 40px;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
+}
+
+.start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px -1px rgba(37, 99, 235, 0.4);
 }
 
 /* 关卡网格样式 */
@@ -1791,9 +1926,9 @@ canvas {
 
 .level-btn {
     padding: 10px;
-    background: #eef2ff;
-    border: 1px solid #c7d2fe;
-    color: #4f46e5;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #2563eb;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
@@ -1801,36 +1936,11 @@ canvas {
 }
 
 .level-btn:hover {
-    background: #4f46e5;
+    background: #2563eb;
     color: white;
 }
 
-.cancel-btn {
-    padding: 10px 20px;
-    background: transparent;
-    border: 1px solid #999;
-    color: #666;
-    border-radius: 20px;
-    cursor: pointer;
-}
-
-.start-btn {
-    min-width: 150px;
-    padding: 12px 40px;
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 25px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.start-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(64, 158, 255, 0.3);
-}
-
+/* 导航栏右侧 */
 .nav-right {
     display: flex;
     align-items: center;
@@ -1853,95 +1963,16 @@ canvas {
     font-size: 0.8rem;
     cursor: pointer;
     transition: all 0.2s;
-    color: #666;
+    color: #64748b;
 }
 
 .speed-btn.active {
-    background: var(--primary);
+    background: #3b82f6;
     color: white;
-    box-shadow: 0 2px 4px rgba(64, 158, 255, 0.3);
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 }
 
-.skills-panel {
-    padding-top: 0.5rem;
-}
-
-.skills-panel h3 {
-    font-size: 0.9rem;
-    margin-bottom: 0.8rem;
-    color: var(--text);
-}
-
-.skill-btns {
-    display: flex;
-    gap: 8px;
-}
-
-.skill-btn {
-    flex: 1;
-    height: 50px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: white;
-    border: 1px solid #eee;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-}
-
-.skill-btn:hover:not(.disabled) {
-    border-color: var(--primary);
-    background: #f0f7ff;
-    transform: translateY(-2px);
-}
-
-.skill-btn.active {
-    border-color: #ff4400;
-    background: #fff5f0;
-    box-shadow: 0 0 10px rgba(255, 68, 0, 0.2);
-}
-
-.skill-btn.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background: #fcfcfc;
-}
-
-.skill-btn .icon {
-    font-size: 1.5rem;
-}
-
-.skill-btn .cost {
-    position: absolute;
-    bottom: 2px;
-    right: 5px;
-    font-size: 0.65rem;
-    font-weight: bold;
-    color: #ff9800;
-}
-
-.stat-item .value.mana {
-    color: #409eff;
-}
-
-.selected-type-info {
-    margin-top: 5px;
-    padding: 8px;
-    background: #f8fafc;
-    border-radius: 6px;
-    border-left: 3px solid var(--primary);
-}
-
-.type-desc {
-    font-size: 0.75rem;
-    color: #666;
-    line-height: 1.4;
-}
-
-/* 建造菜单样式 */
+/* 悬浮建造菜单 */
 .build-menu {
     position: absolute;
     background: white;
@@ -1994,8 +2025,8 @@ canvas {
 }
 
 .build-option:hover:not(.disabled) {
-    background: #ecf5ff;
-    border-color: #409eff;
+    background: #eff6ff;
+    border-color: #3b82f6;
     transform: translateY(-2px);
 }
 
@@ -2011,13 +2042,13 @@ canvas {
 
 .build-option .name {
     font-size: 0.65rem;
-    color: #666;
+    color: #64748b;
 }
 
 .build-option .cost {
     font-size: 0.7rem;
     font-weight: bold;
-    color: #e6a23c;
+    color: #d97706;
 }
 
 .build-menu-close {
@@ -2026,22 +2057,13 @@ canvas {
     right: -8px;
     width: 24px;
     height: 24px;
-    background: #f56c6c;
+    background: #ef4444;
     color: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(245, 108, 108, 0.3);
-}
-
-.footer {
-    text-align: center;
-    padding: 1rem 0;
-    color: #999;
-    font-size: 0.9rem;
-    border-top: 1px solid #eef2f7;
-    background: var(--card);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
 }
 </style>

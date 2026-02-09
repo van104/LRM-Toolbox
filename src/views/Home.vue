@@ -1,5 +1,6 @@
 <template>
   <div class="home-page" @keydown="handleKeydown">
+
     <ParticlesBackground class="particles-bg" :particleCount="300" :particleSpread="10" :speed="0.1"
       :particleColors="['#ffffff', '#aaaaaa']" :moveParticlesOnHover="true" :particleHoverFactor="1"
       :alphaParticles="true" :particleBaseSize="100" :sizeRandomness="1" :cameraDistance="20"

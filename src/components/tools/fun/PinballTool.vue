@@ -17,13 +17,14 @@
             <div class="game-layout">
                 <div class="game-view glass-card">
                     <div class="canvas-container" ref="containerRef">
-                        <canvas ref="canvasRef" @mousemove="handleMouseMove" @click="handleCanvasClick"></canvas>
+                        <canvas ref="canvasRef" @click="handleCanvasClick"></canvas>
 
-                        
+
                         <div v-if="gameState !== 'playing'" class="game-overlay">
                             <div class="overlay-content">
                                 <h2 v-if="gameState === 'start'">弹球大冒险</h2>
                                 <h2 v-else-if="gameState === 'gameover'">游戏结束</h2>
+                                <h2 v-else-if="gameState === 'paused'">游戏暂停</h2>
                                 <h2 v-else-if="gameState === 'level_up'">进入下一关</h2>
                                 <h2 v-else-if="gameState === 'victory'">全关卡通关!</h2>
 
@@ -35,6 +36,10 @@
                                     <button v-if="gameState === 'start'" class="action-btn primary" @click="startGame">
                                         开始游戏
                                     </button>
+                                    <template v-else-if="gameState === 'paused'">
+                                        <button class="action-btn primary" @click="resumeGame">继续游戏</button>
+                                        <button class="action-btn secondary" @click="resetGame">重新开始</button>
+                                    </template>
                                     <button v-else-if="gameState === 'level_up'" class="action-btn primary"
                                         @click="nextLevel">
                                         进入第 {{ level + 1 }} 关
@@ -100,44 +105,44 @@ import { Back, Refresh } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
 
-const CANVAS_WIDTH = 600
-const CANVAS_HEIGHT = 500
-const PADDLE_WIDTH = 100
-const PADDLE_HEIGHT = 12
-const BALL_RADIUS = 8
+const CANVAS_WIDTH = 800
+const CANVAS_HEIGHT = 600
+const PADDLE_WIDTH = 120
+const PADDLE_HEIGHT = 16
+const BALL_RADIUS = 10
 const BRICK_ROWS = 10
-const BRICK_COLS = 8
-const BRICK_PADDING = 8
-const BRICK_OFFSET_TOP = 40
-const BRICK_OFFSET_LEFT = 35
+const BRICK_COLS = 10
+const BRICK_PADDING = 10
+const BRICK_OFFSET_TOP = 50
+const BRICK_OFFSET_LEFT = 55
 const BRICK_WIDTH = 60
-const BRICK_HEIGHT = 20
+const BRICK_HEIGHT = 24
 
 
 const LEVELS = [
-    
+
     {
-        bricks: Array(5).fill().map(() => Array(8).fill(1))
+        bricks: Array(5).fill().map(() => Array(10).fill(1))
     },
-    
+
     {
         bricks: [
-            [0, 0, 0, 1, 1, 0, 0, 0],
-            [0, 0, 1, 1, 1, 1, 0, 0],
-            [0, 1, 1, 1, 1, 1, 1, 0],
-            [1, 1, 1, 1, 1, 1, 1, 1],
-            [1, 2, 2, 2, 2, 2, 2, 1]
+            [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+            [0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
+            [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 2, 2, 2, 2, 2, 2, 1, 1]
         ]
     },
-    
+
     {
         bricks: [
-            [1, 1, 2, 2, 2, 2, 1, 1],
-            [1, 2, 3, 3, 3, 3, 2, 1],
-            [2, 3, 0, 0, 0, 0, 3, 2],
-            [2, 2, 2, 2, 2, 2, 2, 2],
-            [1, 1, 1, 1, 1, 1, 1, 1],
-            [0, 1, 0, 1, 0, 1, 0, 1]
+            [1, 1, 1, 2, 2, 2, 2, 1, 1, 1],
+            [1, 1, 2, 3, 3, 3, 3, 2, 1, 1],
+            [1, 2, 3, 0, 0, 0, 0, 3, 2, 1],
+            [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
         ]
     }
 ]
@@ -145,7 +150,7 @@ const LEVELS = [
 
 const canvasRef = ref(null)
 const containerRef = ref(null)
-const gameState = ref('start') 
+const gameState = ref('start')
 const score = ref(0)
 const level = ref(1)
 const lives = ref(3)
@@ -186,9 +191,9 @@ function initBricks() {
 }
 
 function getBrickColor(status) {
-    if (status === 1) return '#409eff' 
-    if (status === 2) return '#e6a23c' 
-    if (status === 3) return '#f56c6c' 
+    if (status === 1) return '#409eff'
+    if (status === 2) return '#e6a23c'
+    if (status === 3) return '#f56c6c'
     return 'transparent'
 }
 
@@ -199,6 +204,10 @@ function startGame() {
     resetLevel()
     gameState.value = 'playing'
     gameLoop()
+    // 尝试锁定鼠标以获得更好的控制体验
+    nextTick(() => {
+        if (canvasRef.value) canvasRef.value.requestPointerLock()
+    })
 }
 
 function nextLevel() {
@@ -217,30 +226,63 @@ function resetLevel() {
 function resetBall() {
     ballX.value = CANVAS_WIDTH / 2
     ballY.value = CANVAS_HEIGHT - 30
-    
+
     ballDX.value = (Math.random() * 4 + 2) * (Math.random() > 0.5 ? 1 : -1)
     ballDY.value = -4
 }
 
 function resetGame() {
     cancelAnimationFrame(animationId)
+    document.exitPointerLock()
     startGame()
+}
+
+function resumeGame() {
+    gameState.value = 'playing'
+    gameLoop()
+    nextTick(() => {
+        if (canvasRef.value) canvasRef.value.requestPointerLock()
+    })
+}
+
+function handleKeyDown(e) {
+    if (e.key === 'Escape') {
+        if (gameState.value === 'playing') {
+            gameState.value = 'paused'
+            document.exitPointerLock()
+            cancelAnimationFrame(animationId)
+        } else if (gameState.value === 'paused') {
+            resumeGame()
+        }
+    }
 }
 
 function handleMouseMove(e) {
     if (gameState.value !== 'playing') return
-    const rect = canvasRef.value.getBoundingClientRect()
-    const relativeX = e.clientX - rect.left
-    if (relativeX > 0 && relativeX < CANVAS_WIDTH) {
+
+    if (document.pointerLockElement === canvasRef.value) {
+        // 锁定模式：使用相对移动，消除边界死区
+        paddleX.value += e.movementX
+    } else {
+        // 非锁定模式：使用绝对坐标
+        const rect = canvasRef.value.getBoundingClientRect()
+        const scaleX = CANVAS_WIDTH / rect.width
+        const relativeX = (e.clientX - rect.left) * scaleX
         paddleX.value = relativeX - PADDLE_WIDTH / 2
-        
-        if (paddleX.value < 0) paddleX.value = 0
-        if (paddleX.value > CANVAS_WIDTH - PADDLE_WIDTH) paddleX.value = CANVAS_WIDTH - PADDLE_WIDTH
     }
+
+    // 限制挡板不出界
+    if (paddleX.value < 0) paddleX.value = 0
+    if (paddleX.value > CANVAS_WIDTH - PADDLE_WIDTH) paddleX.value = CANVAS_WIDTH - PADDLE_WIDTH
 }
 
 function handleCanvasClick() {
-    if (gameState.value === 'start') startGame()
+    if (gameState.value === 'start') {
+        startGame()
+    } else if (gameState.value === 'playing') {
+        // 游戏中点击再次锁定鼠标
+        if (canvasRef.value) canvasRef.value.requestPointerLock()
+    }
 }
 
 function collisionDetection() {
@@ -270,6 +312,7 @@ function collisionDetection() {
     }
 
     if (allCleared) {
+        document.exitPointerLock() // 解锁鼠标
         if (level.value < LEVELS.length) {
             gameState.value = 'level_up'
             cancelAnimationFrame(animationId)
@@ -309,7 +352,7 @@ function drawBricks() {
                 ctx.roundRect(brickX, brickY, BRICK_WIDTH, BRICK_HEIGHT, 4)
                 ctx.fillStyle = b.color
                 ctx.fill()
-                
+
                 ctx.strokeStyle = "rgba(255,255,255,0.3)"
                 ctx.lineWidth = 2
                 ctx.stroke()
@@ -326,24 +369,25 @@ function draw() {
     drawPaddle()
     collisionDetection()
 
-    
+
     if (ballX.value + ballDX.value > CANVAS_WIDTH - BALL_RADIUS || ballX.value + ballDX.value < BALL_RADIUS) {
         ballDX.value = -ballDX.value
     }
     if (ballY.value + ballDY.value < BALL_RADIUS) {
         ballDY.value = -ballDY.value
     } else if (ballY.value + ballDY.value > CANVAS_HEIGHT - BALL_RADIUS - 5) {
-        
+
         if (ballX.value > paddleX.value && ballX.value < paddleX.value + PADDLE_WIDTH) {
-            
+
             const hitPos = (ballX.value - (paddleX.value + PADDLE_WIDTH / 2)) / (PADDLE_WIDTH / 2)
             ballDX.value = hitPos * 5
             ballDY.value = -ballDY.value
         } else {
-            
+
             lives.value--
             if (lives.value === 0) {
                 gameState.value = 'gameover'
+                document.exitPointerLock() // 解锁鼠标
                 cancelAnimationFrame(animationId)
             } else {
                 resetBall()
@@ -367,12 +411,17 @@ onMounted(() => {
         canvasRef.value.width = CANVAS_WIDTH
         canvasRef.value.height = CANVAS_HEIGHT
         ctx = canvasRef.value.getContext('2d')
+        // 使用 window 监听鼠标，防止移出画布失控
+        window.addEventListener('mousemove', handleMouseMove)
+        window.addEventListener('keydown', handleKeyDown)
         initBricks()
-        draw() 
+        draw()
     }
 })
 
 onUnmounted(() => {
+    window.removeEventListener('mousemove', handleMouseMove)
+    window.removeEventListener('keydown', handleKeyDown)
     cancelAnimationFrame(animationId)
 })
 
@@ -436,7 +485,7 @@ onUnmounted(() => {
 .game-layout {
     display: flex;
     gap: 2rem;
-    max-width: 1000px;
+    max-width: 1200px;
     width: 100%;
 }
 
@@ -449,7 +498,7 @@ onUnmounted(() => {
 
 .canvas-container {
     position: relative;
-    aspect-ratio: 6/5;
+    aspect-ratio: 4/3;
     background: #fff;
     border-radius: 8px;
     overflow: hidden;
@@ -499,6 +548,13 @@ canvas {
     background: var(--primary);
     color: white;
     box-shadow: 0 4px 15px rgba(64, 158, 255, 0.3);
+}
+
+.action-btn.secondary {
+    background: #fff;
+    color: #666;
+    border: 1px solid #dcdfe6;
+    margin-left: 1rem;
 }
 
 .action-btn:hover {
