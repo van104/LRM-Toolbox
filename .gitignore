@@ -38,3 +38,6 @@ server/node_modules/
 
 # Backups
 _redundant_backup
+
+# Internal Docs
+docs/modifications.md
