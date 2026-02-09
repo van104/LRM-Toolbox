@@ -9,5 +9,5 @@
     "emitDeclarationOnly": true,
     "outDir": "dist-config"
   },
-  "include": ["vite.config.js"]
+  "include": ["vite.config.ts"]
 }
