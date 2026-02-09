@@ -24,7 +24,7 @@ export async function submitFeedbackToBackend(
   feedbackData: FeedbackData
 ): Promise<FeedbackResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/lrm-api/feedback`, {
+    const response = await fetch(`${API_BASE_URL}/feedback`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -55,7 +55,7 @@ export async function submitFeedbackToBackend(
  */
 export async function getFeedbackFromBackend(password: string): Promise<any[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/lrm-api/feedback`, {
+    const response = await fetch(`${API_BASE_URL}/feedback`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ export async function updateFeedbackStatus(
   password: string
 ): Promise<any> {
   try {
-    const response = await fetch(`${API_BASE_URL}/lrm-api/feedback/update`, {
+    const response = await fetch(`${API_BASE_URL}/feedback/update`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -117,7 +117,7 @@ export async function updateFeedbackStatus(
  */
 export async function deleteFeedback(id: string, password: string): Promise<any> {
   try {
-    const response = await fetch(`${API_BASE_URL}/lrm-api/feedback/delete`, {
+    const response = await fetch(`${API_BASE_URL}/feedback/delete`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
