@@ -11,7 +11,7 @@
                 <span class="tool-subtitle">PDF Page Rotation</span>
             </div>
             <div class="header-right">
-                <el-button type="primary" :disabled="!pdfFile" @click="saveRotation" :loading="processing">
+                <el-button type="primary" :disabled="!pdfFile" :loading="processing" @click="saveRotation">
                     <el-icon>
                         <Download />
                     </el-icon> 保存并下载
@@ -20,14 +20,15 @@
         </header>
 
         <main class="tool-content">
-            <div v-if="!pdfFile" class="upload-container glass-card" @click="triggerUpload" @dragover.prevent
+            <div
+v-if="!pdfFile" class="upload-container glass-card" @click="triggerUpload" @dragover.prevent
                 @drop.prevent="handleDrop">
                 <el-icon class="upload-icon">
                     <RefreshRight />
                 </el-icon>
                 <h3>上传 PDF 文件</h3>
                 <p>支持 90° / 180° 旋转任意页面</p>
-                <input type="file" ref="fileRef" hidden accept=".pdf" @change="handleUpload" />
+                <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
             </div>
 
             <div v-else class="workspace">

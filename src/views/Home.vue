@@ -1,12 +1,13 @@
 <template>
-  <div class="home-page" @keydown="handleKeydown">
+  <div class="home-page">
+    <ParticlesBackground
+class="particles-bg" :particle-count="300" :particle-spread="10" :speed="0.1"
+      :particle-colors="['#ffffff', '#aaaaaa']" :move-particles-on-hover="true" :particle-hover-factor="1"
+      :alpha-particles="true" :particle-base-size="100" :size-randomness="1" :camera-distance="20"
+      :disable-rotation="false" />
 
-    <ParticlesBackground class="particles-bg" :particleCount="300" :particleSpread="10" :speed="0.1"
-      :particleColors="['#ffffff', '#aaaaaa']" :moveParticlesOnHover="true" :particleHoverFactor="1"
-      :alphaParticles="true" :particleBaseSize="100" :sizeRandomness="1" :cameraDistance="20"
-      :disableRotation="false" />
-
-    <AppHeader :active-category="activeCategory" :show-search="false" @category-change="handleCategoryChange"
+    <AppHeader
+:active-category="activeCategory" :show-search="false" @category-change="handleCategoryChange"
       @search="handleSearch" />
 
 
@@ -23,7 +24,8 @@
           <span class="update-badge">工具持续更新中...</span>
         </div>
         <div class="hero-search-wrapper">
-          <el-input v-model="searchKeyword" :placeholder="`搜索 ${tools.length}+ 个实用工具 (Ctrl + K)...`" size="large"
+          <el-input
+v-model="searchKeyword" :placeholder="`搜索 ${tools.length}+ 个实用工具 (Ctrl + K)...`" size="large"
             class="hero-search-input" :prefix-icon="Search" clearable @input="handleSearch">
             <template #suffix>
               <div class="search-shortcut">
@@ -35,7 +37,7 @@
       </section>
 
 
-      <div class="all-tools-header" v-if="activeCategory === 'all' && !searchKeyword">
+      <div v-if="activeCategory === 'all' && !searchKeyword" class="all-tools-header">
         <h2 class="section-title">
           <el-icon>
             <Grid />
@@ -51,10 +53,12 @@
 
 
       <section v-else class="tools-grid-wrapper">
-        <AnimatedContent :trigger-key="activeCategory + searchKeyword" :distance="50" direction="vertical"
+        <AnimatedContent
+:trigger-key="activeCategory + searchKeyword" :distance="50" direction="vertical"
           :duration="0.6" :scale="0.95" :threshold="0.01">
           <div class="tools-grid animate-stagger">
-            <ToolCard v-for="tool in filteredTools" :key="tool.id" :tool="tool"
+            <ToolCard
+v-for="tool in filteredTools" :key="tool.id" :tool="tool"
               :is-favorite="userStore.isFavorite(tool.id)" @click="handleToolClick" @view-detail="openToolModal"
               @toggle-favorite="handleToggleFavorite" />
           </div>
@@ -78,7 +82,8 @@
 
 
     <el-dialog v-model="searchDialogVisible" title="快速搜索" width="500px" :show-close="false" @opened="focusSearchInput">
-      <el-input ref="searchInputRef" v-model="quickSearchKeyword" placeholder="输入工具名称搜索..." size="large" clearable
+      <el-input
+ref="searchInputRef" v-model="quickSearchKeyword" placeholder="输入工具名称搜索..." size="large" clearable
         @input="handleQuickSearch">
         <template #prefix>
           <el-icon>
@@ -87,8 +92,9 @@
         </template>
       </el-input>
 
-      <div class="quick-search-results" v-if="quickSearchResults.length > 0">
-        <div v-for="tool in quickSearchResults" :key="tool.id" class="quick-search-item"
+      <div v-if="quickSearchResults.length > 0" class="quick-search-results">
+        <div
+v-for="tool in quickSearchResults" :key="tool.id" class="quick-search-item"
           @click="selectQuickSearchTool(tool)">
           <div class="quick-search-icon">
             <el-icon :size="24">
@@ -126,7 +132,7 @@ import { useRoute, useRouter } from 'vue-router'
 defineOptions({
   name: 'Home'
 })
-import { Search, Clock, Star, Grid } from '@element-plus/icons-vue'
+import { Search, Grid } from '@element-plus/icons-vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 import ParticlesBackground from '@/components/common/ParticlesBackground.vue'
@@ -135,7 +141,7 @@ import ToolModal from '@/components/tools/ToolModal.vue'
 import SkeletonCard from '@/components/common/SkeletonCard.vue'
 import DecryptedText from '@/components/common/DecryptedText.vue'
 import AnimatedContent from '@/components/common/AnimatedContent.vue'
-import { categories, tools, getToolsByCategory, searchTools } from '@/data/tools'
+import { tools, getToolsByCategory, searchTools } from '@/data/tools'
 import { useUserStore } from '@/stores/user'
 import { watch } from 'vue'
 
@@ -168,11 +174,6 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('keydown', handleGlobalKeydown)
-})
-
-
-const favoriteTools = computed(() => {
-  return tools.filter(tool => userStore.isFavorite(tool.id))
 })
 
 
@@ -237,28 +238,6 @@ function handleToolClick(tool) {
 }
 
 
-function goToTool(item) {
-  if (item.route) {
-    const tool = tools.find(t => t.id === item.id)
-    if (tool) {
-      userStore.addToHistory(tool)
-      if (tool.isLocal === false || item.route.startsWith('http')) {
-        window.open(item.route, '_blank')
-      } else {
-        router.push(item.route)
-      }
-    } else {
-
-      if (item.route.startsWith('http')) {
-        window.open(item.route, '_blank')
-      } else {
-        router.push(item.route)
-      }
-    }
-  }
-}
-
-
 function handleGlobalKeydown(e) {
 
   if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -270,11 +249,6 @@ function handleGlobalKeydown(e) {
   if (e.key === 'Escape' && searchDialogVisible.value) {
     searchDialogVisible.value = false
   }
-}
-
-
-function handleKeydown(e) {
-
 }
 
 

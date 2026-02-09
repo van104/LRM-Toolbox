@@ -1,4 +1,20 @@
-export const subjects = [
+export interface CheatSheetItem {
+  cmd: string;
+  desc: string;
+}
+
+export interface CheatSheetSection {
+  title: string;
+  items: CheatSheetItem[];
+}
+
+export interface CheatSheetSubject {
+  id: string;
+  name: string;
+  sections: CheatSheetSection[];
+}
+
+export const subjects: CheatSheetSubject[] = [
     {
         id: 'git',
         name: 'Git 版本控制',

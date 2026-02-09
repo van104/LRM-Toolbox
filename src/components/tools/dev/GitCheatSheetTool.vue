@@ -1,7 +1,7 @@
 <template>
   <div class="git-cheatsheet">
     <nav class="nav-bar">
-      <button @click="$router.back()" class="nav-back">
+      <button class="nav-back" @click="$router.back()">
         <el-icon>
           <Back />
         </el-icon> 返回
@@ -16,7 +16,8 @@
     <main class="main-content">
       
       <div class="search-section">
-        <el-input v-model="searchQuery" placeholder="搜索 Git 命令或关键词 (例如: merge, undo, config)..." prefix-icon="Search"
+        <el-input
+v-model="searchQuery" placeholder="搜索 Git 命令或关键词 (例如: merge, undo, config)..." prefix-icon="Search"
           class="search-bar" clearable />
       </div>
 
@@ -37,7 +38,7 @@
               <div class="code-box">
                 <code>{{ cmd.code }}</code>
               </div>
-              <div class="cmd-tips" v-if="cmd.tips">
+              <div v-if="cmd.tips" class="cmd-tips">
                 <el-icon>
                   <InfoFilled />
                 </el-icon> {{ cmd.tips }}

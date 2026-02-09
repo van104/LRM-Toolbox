@@ -1,7 +1,7 @@
 <template>
     <div class="birthday-reminder-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -15,7 +15,7 @@
 
         <main class="main-content">
             
-            <div class="stats-card glass-card" v-if="events.length">
+            <div v-if="events.length" class="stats-card glass-card">
                 <div class="stat-item">
                     <span class="stat-val">{{ events.length }}</span>
                     <span class="stat-label">总事件</span>
@@ -49,7 +49,8 @@
                     <button class="link-btn" @click="showAddModal = true">点击添加</button>
                 </div>
 
-                <div v-for="event in sortedEvents" :key="event.id" class="event-card glass-card"
+                <div
+v-for="event in sortedEvents" :key="event.id" class="event-card glass-card"
                     :class="{ 'is-near': event.daysLeft <= 30, 'is-today': event.daysLeft === 0 }">
                     <div class="card-left">
                         <div class="event-icon" :class="event.type">
@@ -70,14 +71,14 @@
                             <span v-else class="days-num">{{ event.daysLeft }}</span>
                             <span v-if="event.daysLeft !== 0" class="days-label">天后</span>
                         </div>
-                        <div class="meta-info" v-if="event.type === 'birthday'">
+                        <div v-if="event.type === 'birthday'" class="meta-info">
                             <span title="周岁">{{ event.age }}岁</span> /
                             <span title="虚岁">{{ event.age + 1 }}虚</span>
                         </div>
-                        <div class="meta-info" v-else>
+                        <div v-else class="meta-info">
                             {{ event.anniversary }}周年
                         </div>
-                        <button class="delete-btn" @click="deleteEvent(event.id)" title="删除">
+                        <button class="delete-btn" title="删除" @click="deleteEvent(event.id)">
                             <el-icon>
                                 <Delete />
                             </el-icon>
@@ -88,7 +89,7 @@
         </main>
 
         
-        <div class="modal-overlay" v-if="showAddModal" @click.self="showAddModal = false">
+        <div v-if="showAddModal" class="modal-overlay" @click.self="showAddModal = false">
             <div class="modal glass-card">
                 <div class="modal-header">
                     <h3>添加重要日期</h3>
@@ -104,7 +105,8 @@
                     <div class="form-group">
                         <label>日期类型</label>
                         <div class="type-selector">
-                            <button v-for="t in types" :key="t.value" :class="{ active: newEvent.type === t.value }"
+                            <button
+v-for="t in types" :key="t.value" :class="{ active: newEvent.type === t.value }"
                                 @click="newEvent.type = t.value">
                                 {{ t.label }}
                             </button>
@@ -112,13 +114,14 @@
                     </div>
                     <div class="form-group">
                         <label>选择日期</label>
-                        <el-date-picker v-model="newEvent.date" type="date" placeholder="选择日期" style="width: 100%"
+                        <el-date-picker
+v-model="newEvent.date" type="date" placeholder="选择日期" style="width: 100%"
                             :clearable="false" />
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn cancel" @click="showAddModal = false">取消</button>
-                    <button class="btn confirm" @click="addEvent" :disabled="!isValid">确定添加</button>
+                    <button class="btn confirm" :disabled="!isValid" @click="addEvent">确定添加</button>
                 </div>
             </div>
         </div>

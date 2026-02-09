@@ -65,7 +65,13 @@ export const wasteCategories = [
 ]
 
 
-export const wasteItems = [
+export interface WasteItem {
+  name: string;
+  category: string;
+  tips?: string;
+}
+
+export const wasteItems: WasteItem[] = [
     
     { name: '纸板箱', category: '可回收物', tips: '请压扁后投放' },
     { name: '废纸箱', category: '可回收物', tips: '请压扁后投放' },
@@ -369,21 +375,20 @@ export const wasteItems = [
 ]
 
 
-export function getCategoryTagType(categoryName) {
-    switch (categoryName) {
-        case '可回收物': return 'primary'
-        case '厨余垃圾': return 'success'
-        case '有害垃圾': return 'danger'
-        case '其他垃圾': return 'info'
-        default: return ''
-    }
+export function searchWaste(keyword: string): WasteItem[] {
+  const lowerKeyword = keyword.toLowerCase();
+  return wasteItems.filter(item =>
+    item.name.toLowerCase().includes(lowerKeyword)
+  );
 }
 
 
-export function searchWaste(query) {
-    if (!query || !query.trim()) return []
-    const q = query.trim().toLowerCase()
-    return wasteItems.filter(item =>
-        item.name.toLowerCase().includes(q)
-    )
+export function getCategoryTagType(category: string): string {
+  const map: Record<string, string> = {
+    '可回收物': 'primary',
+    '厨余垃圾': 'success',
+    '有害垃圾': 'danger',
+    '其他垃圾': 'info'
+  };
+  return map[category] || 'info';
 }

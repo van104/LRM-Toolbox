@@ -1,7 +1,7 @@
 <template>
     <div class="public-services">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -34,7 +34,8 @@
                     </div>
 
                     <div class="services-grid">
-                        <div v-for="service in category.items" :key="service.title" class="service-card card"
+                        <div
+v-for="service in category.items" :key="service.title" class="service-card card"
                             @click="openService(service)">
                             <div class="service-icon" :style="{ backgroundColor: service.color }">
                                 <el-icon size="24">

@@ -1,7 +1,7 @@
 <template>
     <div class="rates-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -58,7 +58,7 @@
                         </el-tabs>
                     </div>
 
-                    <div class="bank-grid" v-if="activeType === 'regular'">
+                    <div v-if="activeType === 'regular'" class="bank-grid">
                         <div v-for="bank in banks" :key="bank.name" class="bank-card glass-card">
                             <div class="bank-header">
                                 <span class="bank-name">{{ bank.name }}</span>
@@ -81,8 +81,9 @@
                         </div>
                     </div>
 
-                    <div class="cd-section" v-else>
-                        <el-alert title="大额存单申购提示" type="warning"
+                    <div v-else class="cd-section">
+                        <el-alert
+title="大额存单申购提示" type="warning"
                             description="大额存单通常有起存金额要求（如20万、30万、50万起），且额度有限，建议通过网上银行或线下网点确认实时额度。" show-icon
                             :closable="false" />
                         <el-table :data="cdData" class="mt-4" border stripe>

@@ -25,14 +25,15 @@
         <main class="tool-content">
             <div class="layout-container">
                 <div class="workbench glass-card">
-                    <div v-if="!images.length" class="upload-placeholder" @click="triggerUpload" @dragover.prevent
+                    <div
+v-if="!images.length" class="upload-placeholder" @click="triggerUpload" @dragover.prevent
                         @drop.prevent="handleDrop">
                         <div class="upload-icon"><el-icon>
                                 <PictureFilled />
                             </el-icon></div>
                         <h3>点击或拖拽上传图片</h3>
                         <p>支持 JPG、PNG、WebP 等格式，可多选</p>
-                        <input type="file" ref="fileRef" multiple hidden accept="image/*" @change="handleUpload" />
+                        <input ref="fileRef" type="file" multiple hidden accept="image/*" @change="handleUpload" />
                     </div>
 
                     <div v-else class="preview-stage">
@@ -40,10 +41,11 @@
                             <el-button type="primary" text @click="triggerUpload"><el-icon>
                                     <Plus />
                                 </el-icon> 添加图片</el-button>
-                            <input type="file" ref="fileRef" multiple hidden accept="image/*" @change="handleUpload" />
+                            <input ref="fileRef" type="file" multiple hidden accept="image/*" @change="handleUpload" />
                             <span class="count-badge">共 {{ images.length }} 张</span>
                         </div>
-                        <draggable v-model="images" item-key="id" handle=".drag-handle" class="images-list"
+                        <draggable
+v-model="images" item-key="id" handle=".drag-handle" class="images-list"
                             ghost-class="ghost">
                             <template #item="{ element: img, index }">
                                 <div class="image-item">
@@ -75,7 +77,7 @@
                             <el-option label="自适应图片" value="auto" />
                         </el-select>
                     </div>
-                    <div class="settings-group" v-if="config.pageSize !== 'auto'">
+                    <div v-if="config.pageSize !== 'auto'" class="settings-group">
                         <div class="label">页面方向</div>
                         <el-radio-group v-model="config.orientation">
                             <el-radio-button value="portrait">纵向</el-radio-button>
@@ -87,8 +89,9 @@
                         <el-input v-model="config.filename" placeholder="output" />
                     </div>
                     <el-divider />
-                    <el-button type="primary" size="large" :disabled="!images.length" :loading="generating"
-                        @click="generatePdf" style="width:100%;">
+                    <el-button
+type="primary" size="large" :disabled="!images.length" :loading="generating"
+                        style="width:100%;" @click="generatePdf">
                         <el-icon>
                             <Download />
                         </el-icon> {{ generating ? '生成中...' : '生成 PDF' }}

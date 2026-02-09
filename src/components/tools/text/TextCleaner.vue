@@ -2,7 +2,7 @@
     <div class="text-cleaner">
         
         <nav class="nav-bar">
-            <button @click="goHome" class="nav-back">
+            <button class="nav-back" @click="goHome">
                 <el-icon>
                     <ArrowLeft />
                 </el-icon>
@@ -23,14 +23,14 @@
                     <div class="panel-header">
                         <span class="panel-title">输入文本</span>
                         <div class="panel-actions">
-                            <span class="stats-info" v-if="inputText">{{ inputText.length }} 字符 | {{ inputLines }}
+                            <span v-if="inputText" class="stats-info">{{ inputText.length }} 字符 | {{ inputLines }}
                                 行</span>
-                            <button class="icon-btn" @click="pasteText" title="粘贴">
+                            <button class="icon-btn" title="粘贴" @click="pasteText">
                                 <el-icon>
                                     <CopyDocument />
                                 </el-icon>
                             </button>
-                            <button class="icon-btn" @click="clearInput" title="清空">
+                            <button class="icon-btn" title="清空" @click="clearInput">
                                 <el-icon>
                                     <Delete />
                                 </el-icon>
@@ -38,7 +38,8 @@
                         </div>
                     </div>
                     <div class="editor-wrapper">
-                        <textarea v-model="inputText" class="text-editor" placeholder="在此输入或粘贴需要处理的文本..."
+                        <textarea
+v-model="inputText" class="text-editor" placeholder="在此输入或粘贴需要处理的文本..."
                             spellcheck="false"></textarea>
                     </div>
                 </section>
@@ -47,15 +48,17 @@
                 <section class="tools-panel">
                     
                     <div class="action-bar">
-                        <button class="action-btn execute-btn" @click="executeSelected"
-                            :disabled="selectedFunctions.length === 0">
+                        <button
+class="action-btn execute-btn" :disabled="selectedFunctions.length === 0"
+                            @click="executeSelected">
                             <el-icon>
                                 <Check />
                             </el-icon>
                             执行 ({{ selectedFunctions.length }})
                         </button>
-                        <button class="action-btn clear-btn" @click="clearSelection"
-                            :disabled="selectedFunctions.length === 0">
+                        <button
+class="action-btn clear-btn" :disabled="selectedFunctions.length === 0"
+                            @click="clearSelection">
                             <el-icon>
                                 <Close />
                             </el-icon>
@@ -66,15 +69,20 @@
                     <div class="tool-group">
                         <div class="group-title">基础清洗</div>
                         <div class="group-content">
-                            <button class="tool-btn" :class="{ active: isSelected('removeEmptyLines') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('removeEmptyLines') }"
                                 @click="toggleFunction('removeEmptyLines')">删除空行</button>
-                            <button class="tool-btn" :class="{ active: isSelected('trimLines') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('trimLines') }"
                                 @click="toggleFunction('trimLines')">删除行首尾空格</button>
-                            <button class="tool-btn" :class="{ active: isSelected('removeAllSpaces') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('removeAllSpaces') }"
                                 @click="toggleFunction('removeAllSpaces')">删除所有空格</button>
-                            <button class="tool-btn" :class="{ active: isSelected('mergeSpaces') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('mergeSpaces') }"
                                 @click="toggleFunction('mergeSpaces')">多空格转单空格</button>
-                            <button class="tool-btn" :class="{ active: isSelected('removeDuplicates') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('removeDuplicates') }"
                                 @click="toggleFunction('removeDuplicates')">按行去重</button>
                         </div>
                     </div>
@@ -82,17 +90,23 @@
                     <div class="tool-group">
                         <div class="group-title">排序与反转</div>
                         <div class="group-content">
-                            <button class="tool-btn" :class="{ active: isSelected('sortLinesAsc') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('sortLinesAsc') }"
                                 @click="toggleFunction('sortLinesAsc')">按行升序 A-Z</button>
-                            <button class="tool-btn" :class="{ active: isSelected('sortLinesDesc') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('sortLinesDesc') }"
                                 @click="toggleFunction('sortLinesDesc')">按行降序 Z-A</button>
-                            <button class="tool-btn" :class="{ active: isSelected('shuffleLines') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('shuffleLines') }"
                                 @click="toggleFunction('shuffleLines')">按行打乱</button>
-                            <button class="tool-btn" :class="{ active: isSelected('reverseLines') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('reverseLines') }"
                                 @click="toggleFunction('reverseLines')">整行反转</button>
-                            <button class="tool-btn" :class="{ active: isSelected('reverseText') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('reverseText') }"
                                 @click="toggleFunction('reverseText')">全文倒序</button>
-                            <button class="tool-btn" :class="{ active: isSelected('reverseEachLine') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('reverseEachLine') }"
                                 @click="toggleFunction('reverseEachLine')">逐行文本反转</button>
                         </div>
                     </div>
@@ -100,17 +114,23 @@
                     <div class="tool-group">
                         <div class="group-title">格式转换</div>
                         <div class="group-content">
-                            <button class="tool-btn" :class="{ active: isSelected('toUpperCase') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('toUpperCase') }"
                                 @click="toggleFunction('toUpperCase')">全大写</button>
-                            <button class="tool-btn" :class="{ active: isSelected('toLowerCase') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('toLowerCase') }"
                                 @click="toggleFunction('toLowerCase')">全小写</button>
-                            <button class="tool-btn" :class="{ active: isSelected('capitalizeLines') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('capitalizeLines') }"
                                 @click="toggleFunction('capitalizeLines')">首字母大写</button>
-                            <button class="tool-btn" :class="{ active: isSelected('toHalfWidth') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('toHalfWidth') }"
                                 @click="toggleFunction('toHalfWidth')">全角转半角</button>
-                            <button class="tool-btn" :class="{ active: isSelected('toFullWidth') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('toFullWidth') }"
                                 @click="toggleFunction('toFullWidth')">半角转全角</button>
-                            <button class="tool-btn" :class="{ active: isSelected('normalizePunctuation') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('normalizePunctuation') }"
                                 @click="toggleFunction('normalizePunctuation')">中英文标点规整</button>
                         </div>
                     </div>
@@ -118,13 +138,17 @@
                     <div class="tool-group">
                         <div class="group-title">排版</div>
                         <div class="group-content">
-                            <button class="tool-btn" :class="{ active: isSelected('addSequence') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('addSequence') }"
                                 @click="toggleFunction('addSequence')">添加行号 (1.)</button>
-                            <button class="tool-btn" :class="{ active: isSelected('addIndent') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('addIndent') }"
                                 @click="toggleFunction('addIndent')">添加缩进 (2格)</button>
-                            <button class="tool-btn" :class="{ active: isSelected('removeIndent') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('removeIndent') }"
                                 @click="toggleFunction('removeIndent')">删除缩进</button>
-                            <button class="tool-btn" :class="{ active: isSelected('jsonOneLine') }"
+                            <button
+class="tool-btn" :class="{ active: isSelected('jsonOneLine') }"
                                 @click="toggleFunction('jsonOneLine')">JSON 转单行</button>
                         </div>
                     </div>
@@ -136,9 +160,9 @@
                     <div class="panel-header">
                         <span class="panel-title">处理结果</span>
                         <div class="panel-actions">
-                            <span class="stats-info" v-if="outputText">{{ outputText.length }} 字符 | {{ outputLines }}
+                            <span v-if="outputText" class="stats-info">{{ outputText.length }} 字符 | {{ outputLines }}
                                 行</span>
-                            <button class="icon-btn" @click="copyResult" title="复制结果">
+                            <button class="icon-btn" title="复制结果" @click="copyResult">
                                 <el-icon>
                                     <CopyDocument />
                                 </el-icon>
@@ -146,7 +170,8 @@
                         </div>
                     </div>
                     <div class="editor-wrapper">
-                        <textarea v-model="outputText" class="text-editor result-editor" readonly
+                        <textarea
+v-model="outputText" class="text-editor result-editor" readonly
                             placeholder="处理结果将显示在这里..."></textarea>
                     </div>
                 </section>

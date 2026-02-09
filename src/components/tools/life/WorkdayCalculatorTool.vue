@@ -1,7 +1,7 @@
 <template>
     <div class="workday-calculator-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -34,12 +34,14 @@
                         </el-icon> 日期范围</h3>
                     <div class="form-group">
                         <label>开始日期</label>
-                        <el-date-picker v-model="startDate" type="date" placeholder="开始日期" class="full-width"
+                        <el-date-picker
+v-model="startDate" type="date" placeholder="开始日期" class="full-width"
                             :clearable="false" />
                     </div>
                     <div class="form-group">
                         <label>结束日期</label>
-                        <el-date-picker v-model="endDate" type="date" placeholder="结束日期" class="full-width"
+                        <el-date-picker
+v-model="endDate" type="date" placeholder="结束日期" class="full-width"
                             :clearable="false" />
                     </div>
 
@@ -70,9 +72,10 @@
 
                     <div class="date-manager">
                         <div class="add-box">
-                            <el-date-picker v-model="tempDate" type="date" placeholder="选择日期添加" size="small"
+                            <el-date-picker
+v-model="tempDate" type="date" placeholder="选择日期添加" size="small"
                                 style="width: 140px" />
-                            <button class="add-btn" @click="addSpecialDate" :disabled="!tempDate">
+                            <button class="add-btn" :disabled="!tempDate" @click="addSpecialDate">
                                 <el-icon>
                                     <Plus />
                                 </el-icon>

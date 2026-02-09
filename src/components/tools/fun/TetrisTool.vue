@@ -2,7 +2,7 @@
     <div class="tetris-tool">
         
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -23,9 +23,11 @@
                             <h3>暂存 (HOLD)</h3>
                             <div class="mini-grid">
                                 <div v-if="holdPiece" class="piece-preview">
-                                    <div v-for="(row, rIndex) in getPieceGrid(holdPiece)" :key="rIndex"
+                                    <div
+v-for="(row, rIndex) in getPieceGrid(holdPiece)" :key="rIndex"
                                         class="preview-row">
-                                        <div v-for="(cell, cIndex) in row" :key="cIndex" class="preview-cell"
+                                        <div
+v-for="(cell, cIndex) in row" :key="cIndex" class="preview-cell"
                                             :class="{ filled: cell }"
                                             :style="{ backgroundColor: cell ? holdPiece.color : 'transparent' }"></div>
                                     </div>
@@ -51,7 +53,8 @@
                     <div class="board-wrapper glass-card">
                         <div class="game-board">
                             <div v-for="(row, rIndex) in displayGrid" :key="rIndex" class="board-row">
-                                <div v-for="(cell, cIndex) in row" :key="cIndex" class="board-cell" :class="{
+                                <div
+v-for="(cell, cIndex) in row" :key="cIndex" class="board-cell" :class="{
                                     'filled': cell !== 0,
                                     'ghost': isGhost(rIndex, cIndex),
                                     'flash': isFlashing(rIndex)
@@ -86,9 +89,11 @@
                             <h3>下一个 (NEXT)</h3>
                             <div class="mini-grid">
                                 <div v-if="nextPiece" class="piece-preview">
-                                    <div v-for="(row, rIndex) in getPieceGrid(nextPiece)" :key="rIndex"
+                                    <div
+v-for="(row, rIndex) in getPieceGrid(nextPiece)" :key="rIndex"
                                         class="preview-row">
-                                        <div v-for="(cell, cIndex) in row" :key="cIndex" class="preview-cell"
+                                        <div
+v-for="(cell, cIndex) in row" :key="cIndex" class="preview-cell"
                                             :class="{ filled: cell }"
                                             :style="{ backgroundColor: cell ? nextPiece.color : 'transparent' }"></div>
                                     </div>
@@ -116,19 +121,20 @@
                 
                 <div class="mobile-controls">
                     <div class="d-pad">
-                        <button @touchstart.prevent="move(-1)" @click="move(-1)" class="control-btn">←</button>
-                        <button @touchstart.prevent="softDrop" @click="softDrop" class="control-btn">↓</button>
-                        <button @touchstart.prevent="move(1)" @click="move(1)" class="control-btn">→</button>
+                        <button class="control-btn" @touchstart.prevent="move(-1)" @click="move(-1)">←</button>
+                        <button class="control-btn" @touchstart.prevent="softDrop" @click="softDrop">↓</button>
+                        <button class="control-btn" @touchstart.prevent="move(1)" @click="move(1)">→</button>
                     </div>
                     <div class="action-buttons">
-                        <button @touchstart.prevent="rotate" @click="rotate" class="control-btn rotate-btn">↻</button>
-                        <button @touchstart.prevent="hardDrop" @click="hardDrop" class="control-btn drop-btn">⤓</button>
+                        <button class="control-btn rotate-btn" @touchstart.prevent="rotate" @click="rotate">↻</button>
+                        <button class="control-btn drop-btn" @touchstart.prevent="hardDrop" @click="hardDrop">⤓</button>
                     </div>
                     
-                    <div class="extra-controls"
+                    <div
+class="extra-controls"
                         style="margin-top: 10px; display: flex; gap: 15px; justify-content: center;">
-                        <button @click="hold" class="control-btn small-btn">C</button>
-                        <button @click="togglePause" class="control-btn small-btn">{{ isPaused ? '▶' : '||' }}</button>
+                        <button class="control-btn small-btn" @click="hold">C</button>
+                        <button class="control-btn small-btn" @click="togglePause">{{ isPaused ? '▶' : '||' }}</button>
                     </div>
                 </div>
             </div>

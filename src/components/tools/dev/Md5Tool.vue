@@ -40,7 +40,8 @@
             </el-icon> 粘贴
           </el-button>
         </div>
-        <el-input v-model="inputText" type="textarea" :rows="6" placeholder="在此输入要计算 MD5 的文本..." resize="none"
+        <el-input
+v-model="inputText" type="textarea" :rows="6" placeholder="在此输入要计算 MD5 的文本..." resize="none"
           @input="calculateTextMd5" />
       </div>
 
@@ -56,12 +57,13 @@
         </div>
         <div class="result-box">
           <div class="hash-value">{{ textMd5 || '等待输入...' }}</div>
-          <el-button v-if="textMd5" type="primary" icon="CopyDocument" class="copy-btn"
+          <el-button
+v-if="textMd5" type="primary" icon="CopyDocument" class="copy-btn"
             @click="copyToClipboard(textMd5)">
             复制
           </el-button>
         </div>
-        <div class="sub-result" v-if="textMd5">
+        <div v-if="textMd5" class="sub-result">
           <div class="sub-item">
             <span class="sub-label">16位:</span>
             <span class="sub-value">{{ textMd5.substring(8, 24) }}</span>
@@ -79,7 +81,8 @@
     
     <div v-show="activeTab === 'file'" class="content-container">
       <div class="upload-section">
-        <el-upload class="file-uploader" drag action="#" :auto-upload="false" :show-file-list="false"
+        <el-upload
+class="file-uploader" drag action="#" :auto-upload="false" :show-file-list="false"
           :on-change="handleFileChange">
           <el-icon class="el-icon--upload">
             <UploadFilled />

@@ -24,7 +24,8 @@
     <div class="tool-content">
       
       <div v-if="!originalImage" class="upload-container">
-        <el-upload class="image-uploader" drag action="#" :auto-upload="false" :show-file-list="false"
+        <el-upload
+class="image-uploader" drag action="#" :auto-upload="false" :show-file-list="false"
           :on-change="handleFileChange" accept="image/*">
           <el-icon class="el-icon--upload">
             <UploadFilled />
@@ -51,14 +52,16 @@
               <span>压缩质量</span>
               <span class="value">{{ Math.round(options.quality * 100) }}%</span>
             </div>
-            <el-slider v-model="options.quality" :min="0.1" :max="1" :step="0.01"
+            <el-slider
+v-model="options.quality" :min="0.1" :max="1" :step="0.01"
               :format-tooltip="val => Math.round(val * 100) + '%'" @change="compressImage" />
           </div>
 
           <div class="setting-item">
             <div class="setting-label">最大尺寸 (px)</div>
             <div class="size-inputs">
-              <el-input v-model.number="options.maxWidthOrHeight" placeholder="自动" type="number"
+              <el-input
+v-model.number="options.maxWidthOrHeight" placeholder="自动" type="number"
                 @change="compressImage">
                 <template #prepend>宽/高</template>
               </el-input>
@@ -76,14 +79,15 @@
           </div>
 
           <div class="actions">
-            <el-button type="primary" size="large" @click="downloadImage" :disabled="!compressedImage"
-              class="full-width">
+            <el-button
+type="primary" size="large" :disabled="!compressedImage" class="full-width"
+              @click="downloadImage">
               <el-icon>
                 <Download />
               </el-icon>
               下载压缩图
             </el-button>
-            <el-button size="large" @click="clearAll" class="full-width">
+            <el-button size="large" class="full-width" @click="clearAll">
               重新上传
             </el-button>
           </div>

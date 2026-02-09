@@ -1,7 +1,7 @@
 <template>
     <div class="reaction-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -16,7 +16,7 @@
         <main class="main-content">
             <div class="game-container glass-card">
                 
-                <div class="stats-panel" v-if="history.length > 0">
+                <div v-if="history.length > 0" class="stats-panel">
                     <div class="stat-item">
                         <span class="label">平均</span>
                         <span class="value">{{ averageScore }}<span class="unit">ms</span></span>
@@ -71,10 +71,11 @@
                 </div>
 
                 
-                <div class="history-list" v-if="history.length > 0">
+                <div v-if="history.length > 0" class="history-list">
                     <h3>最近记录</h3>
                     <div class="list-container">
-                        <div v-for="(rec, index) in history.slice().reverse().slice(0, 5)" :key="index"
+                        <div
+v-for="(rec, index) in history.slice().reverse().slice(0, 5)" :key="index"
                             class="history-item">
                             <span class="idx">#{{ history.length - index }}</span>
                             <span class="val">{{ rec }} ms</span>

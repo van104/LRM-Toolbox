@@ -2,7 +2,7 @@
   <div class="text-counter">
     
     <nav class="nav-bar">
-      <button @click="goHome" class="nav-back">
+      <button class="nav-back" @click="goHome">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
@@ -19,17 +19,18 @@
     <main class="main-content">
       
       <section class="input-section">
-        <textarea v-model="textContent" @input="updateStats" placeholder="在此输入或粘贴文本..." class="text-input"
-          rows="8"></textarea>
+        <textarea
+v-model="textContent" placeholder="在此输入或粘贴文本..." class="text-input" rows="8"
+          @input="updateStats"></textarea>
         <div class="input-actions">
-          <button @click="clearText" class="action-btn secondary">
+          <button class="action-btn secondary" @click="clearText">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="3 6 5 6 21 6"></polyline>
               <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
             </svg>
             清空
           </button>
-          <button @click="saveManually" class="action-btn secondary">
+          <button class="action-btn secondary" @click="saveManually">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
               <polyline points="17 21 17 13 7 13 7 21"></polyline>
@@ -37,14 +38,14 @@
             </svg>
             保存
           </button>
-          <button @click="copyText" class="action-btn secondary">
+          <button class="action-btn secondary" @click="copyText">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
             </svg>
             {{ copyBtnText }}
           </button>
-          <button @click="showExportModal = true" class="action-btn primary">
+          <button class="action-btn primary" @click="showExportModal = true">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
               <polyline points="7 10 12 15 17 10"></polyline>
@@ -59,7 +60,7 @@
       <section class="stats-section">
         <h2 class="section-title">统计结果</h2>
         <div class="stats-grid">
-          <div class="stat-card" v-for="stat in statsCards" :key="stat.label">
+          <div v-for="stat in statsCards" :key="stat.label" class="stat-card">
             <div class="stat-icon" v-html="stat.icon"></div>
             <div class="stat-info">
               <span class="stat-value">{{ stat.value }}</span>
@@ -75,7 +76,7 @@
           <h2 class="section-title">高级统计</h2>
           <div class="toggle-options">
             <label class="checkbox-wrap">
-              <input type="checkbox" v-model="includeSpaces" @change="updateStats">
+              <input v-model="includeSpaces" type="checkbox" @change="updateStats">
               <span class="checkmark"></span>
               包含空格
             </label>
@@ -116,11 +117,11 @@
       <section class="history-section">
         <div class="section-header">
           <h2 class="section-title">最近分析</h2>
-          <button v-if="history.length > 0" @click="clearHistory" class="clear-btn">清空历史</button>
+          <button v-if="history.length > 0" class="clear-btn" @click="clearHistory">清空历史</button>
         </div>
         <div class="history-list">
           <div v-if="history.length === 0" class="no-data center">暂无历史记录</div>
-          <div v-for="(item, idx) in history" :key="item.id" @click="loadHistory(item)" class="history-item">
+          <div v-for="(item, idx) in history" :key="item.id" class="history-item" @click="loadHistory(item)">
             <div class="history-preview">{{ item.preview }}</div>
             <div class="history-meta">
               <span>{{ item.date }}</span>
@@ -145,18 +146,18 @@
         <div class="modal-box">
           <div class="modal-header">
             <h3>导出统计结果</h3>
-            <button @click="showExportModal = false" class="close-btn">✕</button>
+            <button class="close-btn" @click="showExportModal = false">✕</button>
           </div>
           <div class="modal-body">
             <div class="export-options">
-              <label class="radio-option" v-for="opt in exportFormats" :key="opt.value">
-                <input type="radio" v-model="exportFormat" :value="opt.value">
+              <label v-for="opt in exportFormats" :key="opt.value" class="radio-option">
+                <input v-model="exportFormat" type="radio" :value="opt.value">
                 <span>{{ opt.label }}</span>
               </label>
             </div>
           </div>
           <div class="modal-footer">
-            <button @click="exportStats" class="action-btn primary">导出</button>
+            <button class="action-btn primary" @click="exportStats">导出</button>
           </div>
         </div>
       </div>

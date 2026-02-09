@@ -1,7 +1,7 @@
 <template>
     <div class="screen-ruler-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -14,23 +14,23 @@
         </nav>
 
         <main class="main-content">
-            <div class="ruler-workspace" ref="workspaceRef">
+            <div ref="workspaceRef" class="ruler-workspace">
                 
                 <div class="control-panel glass-card">
                     <div class="panel-row">
                         <span class="info">当前视口: {{ vpWidth }} x {{ vpHeight }} px</span>
                         <div class="actions">
-                            <button @click="addRuler('h')" class="action-btn">
+                            <button class="action-btn" @click="addRuler('h')">
                                 <el-icon>
                                     <DCaret />
                                 </el-icon> 添加水平标尺
                             </button>
-                            <button @click="addRuler('v')" class="action-btn">
+                            <button class="action-btn" @click="addRuler('v')">
                                 <el-icon class="rotate-90">
                                     <DCaret />
                                 </el-icon> 添加垂直标尺
                             </button>
-                            <button @click="clearRulers" class="action-btn danger">清空</button>
+                            <button class="action-btn danger" @click="clearRulers">清空</button>
                         </div>
                     </div>
                     <div class="tips">拖动标尺测量，双击标尺旋转</div>
@@ -38,7 +38,8 @@
 
                 
                 <div class="rulers-container">
-                    <div v-for="ruler in rulers" :key="ruler.id" class="ruler"
+                    <div
+v-for="ruler in rulers" :key="ruler.id" class="ruler"
                         :class="[ruler.type, { dragging: ruler.isDragging }]" :style="getRulerStyle(ruler)"
                         @mousedown.stop="startDrag($event, ruler)" @dblclick.stop="fileRuler(ruler)">
                         <div class="ruler-line"></div>

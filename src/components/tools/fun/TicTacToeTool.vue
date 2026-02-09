@@ -1,7 +1,7 @@
 <template>
     <div class="tictactoe-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -33,7 +33,8 @@
 
                     <div class="board-container">
                         <div class="board">
-                            <div v-for="(cell, index) in board" :key="index" class="board-cell"
+                            <div
+v-for="(cell, index) in board" :key="index" class="board-cell"
                                 :class="{ 'winning-cell': isWinningCell(index) }" @click="makeMove(index)">
                                 <Transition name="pop">
                                     <span v-if="cell" class="cell-content" :class="cell">
@@ -41,7 +42,8 @@
                                     </span>
                                 </Transition>
                                 
-                                <span v-if="!cell && canPlace(index) && hoverCell === index" class="cell-preview"
+                                <span
+v-if="!cell && canPlace(index) && hoverCell === index" class="cell-preview"
                                     :class="currentPlayer">
                                     {{ currentPlayer === 'X' ? '✕' : '○' }}
                                 </span>
@@ -55,7 +57,7 @@
                                 <Refresh />
                             </el-icon> 重新开始
                         </button>
-                        <button class="control-btn" @click="undoMove" :disabled="moveHistory.length === 0 || gameOver">
+                        <button class="control-btn" :disabled="moveHistory.length === 0 || gameOver" @click="undoMove">
                             <el-icon>
                                 <RefreshLeft />
                             </el-icon> 悔棋
@@ -83,7 +85,8 @@
                         <div class="settings-group">
                             <h3>游戏模式</h3>
                             <div class="mode-selector">
-                                <button v-for="mode in gameModes" :key="mode.value" class="mode-btn"
+                                <button
+v-for="mode in gameModes" :key="mode.value" class="mode-btn"
                                     :class="{ active: gameMode === mode.value }" @click="setGameMode(mode.value)">
                                     <el-icon>
                                         <component :is="mode.icon" />
@@ -93,10 +96,11 @@
                             </div>
                         </div>
 
-                        <div class="settings-group" v-if="gameMode === 'ai'">
+                        <div v-if="gameMode === 'ai'" class="settings-group">
                             <h3>AI 难度</h3>
                             <div class="difficulty-selector">
-                                <button v-for="diff in difficulties" :key="diff.value" class="diff-btn"
+                                <button
+v-for="diff in difficulties" :key="diff.value" class="diff-btn"
                                     :class="{ active: aiDifficulty === diff.value }" @click="aiDifficulty = diff.value">
                                     {{ diff.label }}
                                 </button>
@@ -106,11 +110,13 @@
                         <div class="settings-group">
                             <h3>先手选择</h3>
                             <div class="first-selector">
-                                <button class="first-btn" :class="{ active: playerFirst }"
+                                <button
+class="first-btn" :class="{ active: playerFirst }"
                                     @click="setPlayerFirst(true)">
                                     <span class="player-icon X">✕</span> 玩家先手 (X)
                                 </button>
-                                <button class="first-btn" :class="{ active: !playerFirst }"
+                                <button
+class="first-btn" :class="{ active: !playerFirst }"
                                     @click="setPlayerFirst(false)">
                                     <span class="player-icon O">○</span>
                                     {{ gameMode === 'ai' ? 'AI 先手 (X)' : '对手先手 (X)' }}

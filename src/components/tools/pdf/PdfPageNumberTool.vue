@@ -11,7 +11,7 @@
                 <span class="tool-subtitle">PDF Page Numbering</span>
             </div>
             <div class="header-right">
-                <el-button type="primary" :disabled="!pdfFile" @click="savePdf" :loading="processing">
+                <el-button type="primary" :disabled="!pdfFile" :loading="processing" @click="savePdf">
                     <el-icon>
                         <Download />
                     </el-icon> 保存并下载
@@ -22,14 +22,15 @@
         <main class="tool-content">
             <div class="layout-container">
                 <div class="workbench glass-card">
-                    <div v-if="!pdfFile" class="upload-placeholder" @click="triggerUpload" @dragover.prevent
+                    <div
+v-if="!pdfFile" class="upload-placeholder" @click="triggerUpload" @dragover.prevent
                         @drop.prevent="handleDrop">
                         <el-icon class="upload-icon">
                             <Document />
                         </el-icon>
                         <h3>上传 PDF 文件</h3>
                         <p>添加自定义页码、页眉或页脚</p>
-                        <input type="file" ref="fileRef" hidden accept=".pdf" @change="handleUpload" />
+                        <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
                     </div>
 
                     <div v-else class="preview-area">
@@ -47,13 +48,14 @@
                     </div>
                 </div>
 
-                <div class="settings-panel glass-card" v-if="pdfFile">
+                <div v-if="pdfFile" class="settings-panel glass-card">
                     <h3>页码设置</h3>
 
                     <div class="form-item">
                         <span class="label">位置</span>
                         <div class="position-grid">
-                            <div v-for="pos in positions" :key="pos.value" class="pos-box"
+                            <div
+v-for="pos in positions" :key="pos.value" class="pos-box"
                                 :class="{ active: config.position === pos.value }" @click="config.position = pos.value">
                                 <span class="dot"></span>
                             </div>

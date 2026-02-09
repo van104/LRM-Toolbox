@@ -44,7 +44,8 @@
             </el-button>
           </div>
         </div>
-        <textarea v-model="inputText" class="code-editor" placeholder="在此输入要编码的文本..." spellcheck="false"
+        <textarea
+v-model="inputText" class="code-editor" placeholder="在此输入要编码的文本..." spellcheck="false"
           @input="handleTextInput"></textarea>
       </div>
 
@@ -77,7 +78,8 @@
             </el-button>
           </div>
         </div>
-        <textarea v-model="outputText" class="code-editor output" placeholder="Base64 编码结果..."
+        <textarea
+v-model="outputText" class="code-editor output" placeholder="Base64 编码结果..."
           @input="handleBase64Input"></textarea>
       </div>
     </div>
@@ -86,7 +88,8 @@
     <div v-else class="image-mode-container">
       
       <div class="upload-section">
-        <el-upload class="image-uploader" drag action="#" :auto-upload="false" :show-file-list="false"
+        <el-upload
+class="image-uploader" drag action="#" :auto-upload="false" :show-file-list="false"
           :on-change="handleFileChange" accept="image/*">
           <el-icon class="el-icon--upload">
             <UploadFilled />

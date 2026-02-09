@@ -1,7 +1,7 @@
 <template>
     <div class="weather-guide-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -18,9 +18,10 @@
                 
                 <div class="search-section">
                     <div class="input-wrapper">
-                        <input type="text" v-model="cityInput" placeholder="输入城市名称 (如: 北京 / Shanghai)"
+                        <input
+v-model="cityInput" type="text" placeholder="输入城市名称 (如: 北京 / Shanghai)"
                             @keyup.enter="fetchWeather" />
-                        <button class="search-btn" @click="fetchWeather" :disabled="loading">
+                        <button class="search-btn" :disabled="loading" @click="fetchWeather">
                             <el-icon v-if="loading" class="is-loading">
                                 <Loading />
                             </el-icon>

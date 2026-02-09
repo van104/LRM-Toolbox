@@ -1,7 +1,7 @@
 <template>
     <div class="clothing-size-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -16,7 +16,8 @@
         <main class="main-content">
             
             <div class="category-tabs glass-card">
-                <button v-for="cat in categories" :key="cat.id"
+                <button
+v-for="cat in categories" :key="cat.id"
                     :class="['tab-btn', { active: currentCategory === cat.id }]" @click="currentCategory = cat.id">
                     <span class="tab-icon">{{ cat.icon }}</span>
                     <span>{{ cat.name }}</span>
@@ -25,7 +26,8 @@
 
             
             <div v-if="subCategories.length > 1" class="sub-category-tabs">
-                <button v-for="sub in subCategories" :key="sub.id"
+                <button
+v-for="sub in subCategories" :key="sub.id"
                     :class="['sub-tab', { active: currentSubCategory === sub.id }]"
                     @click="currentSubCategory = sub.id">
                     {{ sub.name }}
@@ -59,7 +61,8 @@
                 <div class="result-area">
                     <label>对应其他标准：</label>
                     <div class="result-grid">
-                        <div v-for="(val, code) in convertedSizes" :key="code" class="result-card"
+                        <div
+v-for="(val, code) in convertedSizes" :key="code" class="result-card"
                             :class="{ highlight: code === 'CN' }">
                             <span class="region-label">{{ getRegionName(code) }}</span>
                             <span class="size-value">{{ val || '-' }}</span>
@@ -95,7 +98,8 @@
         </main>
 
         <div class="disclaimer-wrap" style="max-width: 900px; margin: 0 auto; padding: 0 1.5rem 2rem;">
-            <div class="disclaimer-card"
+            <div
+class="disclaimer-card"
                 style="display: flex; gap: 0.8rem; padding: 1rem; background: #f8fafc; color: #475569; border-radius: 12px; font-size: 0.8rem; align-items: start;">
                 <el-icon>
                     <InfoFilled />

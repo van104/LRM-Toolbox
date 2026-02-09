@@ -1,7 +1,22 @@
 
 
 
-export const serviceCategories = [
+export interface ServiceItem {
+  title: string;
+  desc: string;
+  icon: string;
+  color: string;
+  url: string;
+}
+
+export interface ServiceCategory {
+  id: string;
+  name: string;
+  icon: string;
+  items: ServiceItem[];
+}
+
+export const serviceCategories: ServiceCategory[] = [
     {
         id: 'government',
         name: '政务与社保',
@@ -453,17 +468,15 @@ export const serviceCategories = [
 ]
 
 
-export function searchServices(query) {
-    if (!query || !query.trim()) return serviceCategories
-
-    const q = query.trim().toLowerCase()
-    return serviceCategories.map(cat => ({
-        ...cat,
-        items: cat.items.filter(item =>
-            item.title.toLowerCase().includes(q) ||
-            item.desc.toLowerCase().includes(q)
-        )
-    })).filter(cat => cat.items.length > 0)
+export function searchServices(keyword: string): ServiceCategory[] {
+  const lowerKeyword = keyword.toLowerCase();
+  return serviceCategories.map(category => ({
+    ...category,
+    items: category.items.filter(item =>
+      item.title.toLowerCase().includes(lowerKeyword) ||
+      item.desc.toLowerCase().includes(lowerKeyword)
+    )
+  })).filter(category => category.items.length > 0);
 }
 
 

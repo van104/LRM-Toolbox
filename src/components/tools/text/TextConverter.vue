@@ -2,7 +2,7 @@
     <div class="text-converter">
         
         <nav class="nav-bar">
-            <button @click="goHome" class="nav-back">
+            <button class="nav-back" @click="goHome">
                 <el-icon>
                     <ArrowLeft />
                 </el-icon>
@@ -23,16 +23,16 @@
                     <div class="panel-header">
                         <span class="panel-title">源文本</span>
                         <div class="panel-actions">
-                            <span class="stats-info" v-if="inputText">{{ inputText.length }} 字符</span>
-                            <button class="icon-btn" @click="fillDemoData" title="示例数据">
+                            <span v-if="inputText" class="stats-info">{{ inputText.length }} 字符</span>
+                            <button class="icon-btn" title="示例数据" @click="fillDemoData">
                                 <span style="font-size: 13px; font-weight: bold;">Demo</span>
                             </button>
-                            <button class="icon-btn" @click="pasteText" title="粘贴">
+                            <button class="icon-btn" title="粘贴" @click="pasteText">
                                 <el-icon>
                                     <CopyDocument />
                                 </el-icon>
                             </button>
-                            <button class="icon-btn" @click="clearInput" title="清空">
+                            <button class="icon-btn" title="清空" @click="clearInput">
                                 <el-icon>
                                     <Delete />
                                 </el-icon>
@@ -40,7 +40,8 @@
                         </div>
                     </div>
                     <div class="editor-wrapper">
-                        <textarea ref="inputRef" v-model="inputText" class="text-editor" placeholder="在此输入需要转换的文本..."
+                        <textarea
+ref="inputRef" v-model="inputText" class="text-editor" placeholder="在此输入需要转换的文本..."
                             spellcheck="false"></textarea>
                     </div>
                 </section>
@@ -115,13 +116,13 @@
                     <div class="panel-header">
                         <span class="panel-title">转换结果</span>
                         <div class="panel-actions">
-                            <span class="stats-info" v-if="outputText">{{ outputText.length }} 字符</span>
-                            <button class="icon-btn" @click="copyResult" title="复制结果">
+                            <span v-if="outputText" class="stats-info">{{ outputText.length }} 字符</span>
+                            <button class="icon-btn" title="复制结果" @click="copyResult">
                                 <el-icon>
                                     <CopyDocument />
                                 </el-icon>
                             </button>
-                            <button class="icon-btn" @click="clearOutput" title="清空">
+                            <button class="icon-btn" title="清空" @click="clearOutput">
                                 <el-icon>
                                     <Delete />
                                 </el-icon>
@@ -129,7 +130,8 @@
                         </div>
                     </div>
                     <div class="editor-wrapper">
-                        <textarea v-model="outputText" class="text-editor result-editor" readonly
+                        <textarea
+v-model="outputText" class="text-editor result-editor" readonly
                             placeholder="结果将显示在这里..."></textarea>
                     </div>
                 </section>

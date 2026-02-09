@@ -35,14 +35,16 @@
 
             <div class="typing-area glass-card" @click="focusInput">
                 <div class="words-container" :style="{ transform: `translateY(-${currentRow * 36}px)` }">
-                    <div v-for="(word, wIdx) in words" :key="wIdx" class="word"
+                    <div
+v-for="(word, wIdx) in words" :key="wIdx" class="word"
                         :class="{ active: currentWordIdx === wIdx, error: wordStates[wIdx] === 'error', success: wordStates[wIdx] === 'success' }">
                         <span v-for="(char, cIdx) in word" :key="cIdx" class="char" :class="getCharClass(wIdx, cIdx)">{{
                             char }}</span>
                     </div>
                 </div>
-                <input ref="inputRef" v-model="userInput" type="text" class="hidden-input" @input="handleInput"
-                    @keydown="handleKeydown" :disabled="isFinished" />
+                <input
+ref="inputRef" v-model="userInput" type="text" class="hidden-input" :disabled="isFinished"
+                    @input="handleInput" @keydown="handleKeydown" />
                 <div v-if="!isActive && !isFinished" class="start-hint">点击此处或按任意键开始测试</div>
                 <div v-if="isFinished" class="result-overlay">
                     <h3>测试完成！</h3>

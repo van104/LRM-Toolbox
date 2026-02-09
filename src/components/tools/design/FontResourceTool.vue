@@ -22,7 +22,8 @@
                 <el-icon class="search-icon" :size="24">
                     <Search />
                 </el-icon>
-                <input type="text" v-model="searchKeyword" placeholder="输入字体名称关键词，尝试在下方平台搜索..." class="search-input"
+                <input
+v-model="searchKeyword" type="text" placeholder="输入字体名称关键词，尝试在下方平台搜索..." class="search-input"
                     @keyup.enter="handleGlobalSearch" />
                 <button v-if="searchKeyword" class="clear-btn" @click="searchKeyword = ''">
                     <el-icon>
@@ -46,7 +47,7 @@
                 <p class="lib-desc">{{ lib.description }}</p>
 
                 <div class="lib-stats">
-                    <span class="tag" v-for="tag in lib.tags" :key="tag">{{ tag }}</span>
+                    <span v-for="tag in lib.tags" :key="tag" class="tag">{{ tag }}</span>
                 </div>
 
                 <div class="lib-actions">
@@ -57,7 +58,8 @@
                         </el-icon>
                     </button>
 
-                    <button class="btn-search" :disabled="!searchKeyword || !lib.searchUrl" :title="getSearchTitle(lib)"
+                    <button
+class="btn-search" :disabled="!searchKeyword || !lib.searchUrl" :title="getSearchTitle(lib)"
                         @click="searchInLibrary(lib)">
                         <span>搜索</span>
                         <el-icon>

@@ -1,7 +1,7 @@
 <template>
     <div class="encoding-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -17,7 +17,8 @@
             <div class="tool-card glass-card">
                 <div class="input-group">
                     <label>输入文本</label>
-                    <textarea v-model="encodingText" placeholder="在此输入文字，实时分析 UTF-8、GBK、ASCII 编码长度..."
+                    <textarea
+v-model="encodingText" placeholder="在此输入文字，实时分析 UTF-8、GBK、ASCII 编码长度..."
                         rows="6"></textarea>
                 </div>
 
@@ -33,7 +34,8 @@
                         <div class="visual-bytes">
                             <span v-for="(b, i) in getBytes(encodingText).slice(0, 12)" :key="i" class="byte-box">{{ b
                                 }}</span>
-                            <span v-if="encodingText && getByteLen(encodingText, 'utf8') > 12"
+                            <span
+v-if="encodingText && getByteLen(encodingText, 'utf8') > 12"
                                 class="more-dots">...</span>
                         </div>
                     </div>

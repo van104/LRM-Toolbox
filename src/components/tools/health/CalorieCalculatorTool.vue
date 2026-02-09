@@ -1,7 +1,7 @@
 <template>
     <div class="calorie-calculator-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -33,18 +33,18 @@
                         </div>
                         <div class="input-group">
                             <label>年龄</label>
-                            <input type="number" v-model.number="age" placeholder="岁" />
+                            <input v-model.number="age" type="number" placeholder="岁" />
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="input-group">
                             <label>身高 (cm)</label>
-                            <input type="number" v-model.number="height" placeholder="cm" />
+                            <input v-model.number="height" type="number" placeholder="cm" />
                         </div>
                         <div class="input-group">
                             <label>体重 (kg)</label>
-                            <input type="number" v-model.number="weight" placeholder="kg" />
+                            <input v-model.number="weight" type="number" placeholder="kg" />
                         </div>
                     </div>
 
@@ -62,7 +62,7 @@
                     </div>
                 </div>
 
-                <div class="tdee-result" v-if="bmr">
+                <div v-if="bmr" class="tdee-result">
                     <div class="result-item">
                         <span class="label">BMR (基础代谢)</span>
                         <span class="val">{{ bmr }} kcal</span>
@@ -73,7 +73,7 @@
                     </div>
                 </div>
 
-                <div class="goals-grid" v-if="tdee">
+                <div v-if="tdee" class="goals-grid">
                     <div class="goal-card loss">
                         <span class="g-title">减脂期 (-500)</span>
                         <span class="g-val">{{ tdee - 500 }}</span>
@@ -104,11 +104,12 @@
                     <el-icon class="search-icon">
                         <Search />
                     </el-icon>
-                    <input type="text" v-model="searchQuery" placeholder="搜索食物热量 (如: 米饭, 鸡肉)..."
+                    <input
+v-model="searchQuery" type="text" placeholder="搜索食物热量 (如: 米饭, 鸡肉)..."
                         @input="handleSearch" />
                 </div>
 
-                <div class="search-results" v-if="searchResults.length">
+                <div v-if="searchResults.length" class="search-results">
                     <div v-for="food in searchResults" :key="food.name" class="food-item" @click="addToRef(food)">
                         <div class="f-info">
                             <span class="f-name">{{ food.name }}</span>
@@ -122,11 +123,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="no-result" v-else-if="searchQuery && !searchResults.length">
+                <div v-else-if="searchQuery && !searchResults.length" class="no-result">
                     未找到相关食物数据
                 </div>
 
-                <div class="intake-log" v-if="todayLog.length">
+                <div v-if="todayLog.length" class="intake-log">
                     <div class="log-header">今日记录</div>
                     <div class="log-list">
                         <div v-for="(item, i) in todayLog" :key="i" class="log-item">
@@ -144,7 +145,8 @@
         </main>
 
         <div class="disclaimer-wrap" style="max-width: 600px; margin: 0 auto; padding: 0 1.5rem 2rem;">
-            <div class="disclaimer-card"
+            <div
+class="disclaimer-card"
                 style="display: flex; gap: 0.8rem; padding: 1rem; background: #fef2f2; color: #991b1b; border-radius: 12px; font-size: 0.8rem; align-items: start;">
                 <el-icon>
                     <InfoFilled />

@@ -1,7 +1,7 @@
 <template>
     <div class="emoji-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -16,15 +16,17 @@
         <main class="main-content">
             <div class="tool-card glass-card">
                 <div class="category-tabs">
-                    <button v-for="cat in categories" :key="cat.id" :class="{ active: currentCat === cat.id }"
+                    <button
+v-for="cat in categories" :key="cat.id" :class="{ active: currentCat === cat.id }"
                         @click="currentCat = cat.id">
                         {{ cat.name }}
                     </button>
                 </div>
 
                 <div class="emoji-grid animate-fade-in">
-                    <button v-for="emoji in currentEmojis" :key="emoji" class="emoji-item" @click="copy(emoji)"
-                        title="点击复制">
+                    <button
+v-for="emoji in currentEmojis" :key="emoji" class="emoji-item" title="点击复制"
+                        @click="copy(emoji)">
                         {{ emoji }}
                     </button>
                 </div>

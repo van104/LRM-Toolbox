@@ -29,8 +29,8 @@
                 <div class="editor-footer">
                     <span class="save-status">{{ saveStatus }}</span>
                     <div class="actions">
-                        <el-button text @click="copyContent" :disabled="!content">复制</el-button>
-                        <el-button text @click="downloadNote" :disabled="!content">下载</el-button>
+                        <el-button text :disabled="!content" @click="copyContent">复制</el-button>
+                        <el-button text :disabled="!content" @click="downloadNote">下载</el-button>
                         <el-button text type="danger" @click="clearContent">清空</el-button>
                     </div>
                 </div>

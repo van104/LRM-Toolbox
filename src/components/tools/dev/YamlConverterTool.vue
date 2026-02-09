@@ -27,12 +27,13 @@
                             <el-button text size="small" @click="clearInput">清空</el-button>
                         </div>
                     </div>
-                    <el-input v-model="inputText" type="textarea" :rows="18"
+                    <el-input
+v-model="inputText" type="textarea" :rows="18"
                         :placeholder="`输入 ${inputFormat.toUpperCase()} 内容...`" />
                 </div>
 
                 <div class="convert-center">
-                    <el-button type="primary" circle size="large" @click="convert" :disabled="!inputText">
+                    <el-button type="primary" circle size="large" :disabled="!inputText" @click="convert">
                         <el-icon>
                             <Right />
                         </el-icon>
@@ -52,9 +53,10 @@
                             <el-option label="Properties" value="properties" />
                         </el-select>
                         <div class="panel-actions">
-                            <el-button text size="small" type="primary" @click="copyOutput"
-                                :disabled="!outputText">复制</el-button>
-                            <el-button text size="small" @click="downloadOutput" :disabled="!outputText">下载</el-button>
+                            <el-button
+text size="small" type="primary" :disabled="!outputText"
+                                @click="copyOutput">复制</el-button>
+                            <el-button text size="small" :disabled="!outputText" @click="downloadOutput">下载</el-button>
                         </div>
                     </div>
                     <el-input v-model="outputText" type="textarea" :rows="18" readonly placeholder="转换结果..." />

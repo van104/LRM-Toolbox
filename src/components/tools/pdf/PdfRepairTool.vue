@@ -56,7 +56,8 @@
                         </div>
 
                         <div class="action-buttons">
-                            <el-button v-if="status === 'ready'" type="primary" size="large" :loading="processing"
+                            <el-button
+v-if="status === 'ready'" type="primary" size="large" :loading="processing"
                                 @click="startRepair">
                                 <el-icon>
                                     <FirstAidKit />
@@ -64,7 +65,8 @@
                                 开始修复
                             </el-button>
 
-                            <el-button v-if="status === 'success'" type="success" size="large"
+                            <el-button
+v-if="status === 'success'" type="success" size="large"
                                 @click="downloadRepaired">
                                 <el-icon>
                                     <Download />
@@ -78,7 +80,7 @@
                         </div>
                     </div>
 
-                    <input type="file" ref="fileRef" hidden accept=".pdf" @change="handleUpload" />
+                    <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
                 </div>
 
                 <div class="info-card glass-card">

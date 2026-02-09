@@ -1,7 +1,7 @@
 <template>
     <div class="date-calculator-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -33,19 +33,21 @@
                 <div class="date-inputs">
                     <div class="input-group">
                         <label>开始日期</label>
-                        <el-date-picker v-model="startDate" type="date" placeholder="选择开始日期" :clearable="false"
+                        <el-date-picker
+v-model="startDate" type="date" placeholder="选择开始日期" :clearable="false"
                             class="full-width" />
                     </div>
                     <div class="separator">至</div>
                     <div class="input-group">
                         <label>结束日期</label>
-                        <el-date-picker v-model="endDate" type="date" placeholder="选择结束日期" :clearable="false"
+                        <el-date-picker
+v-model="endDate" type="date" placeholder="选择结束日期" :clearable="false"
                             class="full-width" />
                         <button class="today-btn" @click="setToday('end')">今天</button>
                     </div>
                 </div>
 
-                <div class="result-display" v-if="diffResult">
+                <div v-if="diffResult" class="result-display">
                     <div class="primary-result">
                         <span class="label">相隔天数</span>
                         <span class="value">{{ diffResult.days }}</span>
@@ -77,7 +79,8 @@
                 <div class="date-inputs">
                     <div class="input-group">
                         <label>基准日期</label>
-                        <el-date-picker v-model="baseDate" type="date" placeholder="选择基准日期" :clearable="false"
+                        <el-date-picker
+v-model="baseDate" type="date" placeholder="选择基准日期" :clearable="false"
                             class="full-width" />
                     </div>
                     <div class="operation-group">
@@ -86,7 +89,7 @@
                                 <option value="+">往后 (+)</option>
                                 <option value="-">往前 (-)</option>
                             </select>
-                            <input type="number" v-model.number="calcValue" min="0" placeholder="数值" />
+                            <input v-model.number="calcValue" type="number" min="0" placeholder="数值" />
                             <select v-model="calcUnit">
                                 <option value="days">天</option>
                                 <option value="weeks">周</option>
@@ -97,7 +100,7 @@
                     </div>
                 </div>
 
-                <div class="result-display" v-if="calcResult">
+                <div v-if="calcResult" class="result-display">
                     <div class="primary-result">
                         <span class="label">推算结果</span>
                         <span class="value date-val">{{ formatDate(calcResult) }}</span>

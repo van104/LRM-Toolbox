@@ -1,7 +1,7 @@
 <template>
     <div class="healthy-diet-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -27,7 +27,8 @@
                             </el-select>
                         </el-form-item>
                         <el-form-item label="每日卡路里目标 (kcal)">
-                            <el-input-number v-model="form.calories" :step="50" :min="1200" :max="5000"
+                            <el-input-number
+v-model="form.calories" :step="50" :min="1200" :max="5000"
                                 style="width: 100%" />
                             <p class="hint">建议参考 TDEE 计算结果</p>
                         </el-form-item>
@@ -45,7 +46,8 @@
                 
                 <section class="main-workspace glass-card">
                     <div class="macro-summary">
-                        <div v-for="macro in macros" :key="macro.name" class="macro-card"
+                        <div
+v-for="macro in macros" :key="macro.name" class="macro-card"
                             :style="{ borderColor: macro.color + '44' }">
                             <div class="macro-icon" :style="{ backgroundColor: macro.color }">{{ macro.icon }}</div>
                             <div class="macro-info">
@@ -64,7 +66,8 @@
                                     <span class="label">{{ meal.label }}</span>
                                     <span class="kcal">{{ Math.round(form.calories * meal.ratio) }} kcal</span>
                                 </div>
-                                <div class="meal-bar"
+                                <div
+class="meal-bar"
                                     :style="{ width: meal.ratio * 200 + '%', backgroundColor: '#3b82f6' }"></div>
                             </div>
                         </div>
@@ -94,7 +97,8 @@
         </main>
 
         <div class="disclaimer-wrap" style="padding: 0 1.5rem 2rem; text-align: center;">
-            <div class="disclaimer-card"
+            <div
+class="disclaimer-card"
                 style="display: inline-flex; gap: 0.8rem; padding: 1rem; background: #eff6ff; color: #1e40af; border-radius: 12px; font-size: 0.8rem; align-items: start; text-align: left; border: 1px solid #dbeafe;">
                 <el-icon style="margin-top: 2px;">
                     <InfoFilled />

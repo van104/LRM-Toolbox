@@ -15,9 +15,10 @@
 
         <main class="tool-content">
             <div class="layout-container">
-                <input type="file" ref="fileRef" hidden accept="image/*" @change="handleUpload" />
+                <input ref="fileRef" type="file" hidden accept="image/*" @change="handleUpload" />
                 <div class="main-section glass-card">
-                    <div v-if="!imageUrl" class="upload-area" @click="triggerUpload" @dragover.prevent
+                    <div
+v-if="!imageUrl" class="upload-area" @click="triggerUpload" @dragover.prevent
                         @drop.prevent="handleDrop">
                         <el-icon class="upload-icon">
                             <UploadFilled />
@@ -28,7 +29,8 @@
 
                     <div v-else class="preview-area">
                         <div class="image-wrapper">
-                            <img ref="imgRef" :src="imageUrl" alt="Original" crossorigin="anonymous"
+                            <img
+ref="imgRef" :src="imageUrl" alt="Original" crossorigin="anonymous"
                                 @load="extractColors" />
                         </div>
                         <div class="actions">
@@ -49,7 +51,8 @@
                     </div>
 
                     <div v-else class="palette-grid">
-                        <div v-for="(color, index) in palette" :key="index" class="color-card"
+                        <div
+v-for="(color, index) in palette" :key="index" class="color-card"
                             :style="{ backgroundColor: `rgb(${color.join(',')})` }" @click="copyColor(color)">
                             <div class="color-info" :class="{ 'light-text': isDark(color) }">
                                 <span class="hex">{{ rgbToHex(color) }}</span>

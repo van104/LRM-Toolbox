@@ -43,33 +43,35 @@
                 <div class="settings-grid">
                     <div class="form-group">
                         <label>宽度 (Width)</label>
-                        <input type="number" v-model.number="barcodeWidth" min="1" max="4" step="0.5"
+                        <input
+v-model.number="barcodeWidth" type="number" min="1" max="4" step="0.5"
                             class="number-input">
                     </div>
                     <div class="form-group">
                         <label>高度 (Height)</label>
-                        <input type="number" v-model.number="barcodeHeight" min="10" max="150" step="5"
+                        <input
+v-model.number="barcodeHeight" type="number" min="10" max="150" step="5"
                             class="number-input">
                     </div>
                     <div class="form-group">
                         <label>条码颜色</label>
-                        <input type="color" v-model="lineColor" class="color-input">
+                        <input v-model="lineColor" type="color" class="color-input">
                     </div>
                     <div class="form-group">
                         <label>背景颜色</label>
-                        <input type="color" v-model="background" class="color-input">
+                        <input v-model="background" type="color" class="color-input">
                     </div>
                 </div>
 
                 <div class="form-group checkbox-group">
                     <label class="checkbox-label">
-                        <input type="checkbox" v-model="displayValue">
+                        <input v-model="displayValue" type="checkbox">
                         显示文本内容
                     </label>
                 </div>
 
                 <div class="action-buttons">
-                    <button class="btn-download" @click="downloadBarcode" :disabled="!isValid">
+                    <button class="btn-download" :disabled="!isValid" @click="downloadBarcode">
                         <el-icon>
                             <Download />
                         </el-icon>
@@ -83,7 +85,7 @@
                 <div class="preview-header">
                     <h3>实时预览</h3>
                 </div>
-                <div class="barcode-container" ref="barcodeContainer">
+                <div ref="barcodeContainer" class="barcode-container">
                     <svg ref="barcodeSvg"></svg>
                     <div v-if="!isValid && barcodeValue" class="error-msg">
                         该内容不符合选定格式的要求

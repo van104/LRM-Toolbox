@@ -1,7 +1,7 @@
 <template>
     <div class="social-mockup-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -18,7 +18,8 @@
                 
                 <div class="edit-section glass-card">
                     <div class="tabs">
-                        <button v-for="t in platforms" :key="t.id" :class="{ active: activePlatform === t.id }"
+                        <button
+v-for="t in platforms" :key="t.id" :class="{ active: activePlatform === t.id }"
                             @click="activePlatform = t.id">
                             {{ t.name }}
                         </button>
@@ -28,7 +29,7 @@
                         <div class="form-group">
                             <label>头像</label>
                             <div class="avatar-upload">
-                                <img :src="config.avatar" v-if="config.avatar" class="preview-avatar" />
+                                <img v-if="config.avatar" :src="config.avatar" class="preview-avatar" />
                                 <input type="file" accept="image/*" @change="handleAvatarUpload" />
                             </div>
                         </div>
@@ -52,7 +53,7 @@
                                 </div>
                                 <label v-if="config.images.length < 9" class="add-img">
                                     <span>+</span>
-                                    <input type="file" accept="image/*" @change="handleImageUpload" hidden />
+                                    <input type="file" accept="image/*" hidden @change="handleImageUpload" />
                                 </label>
                             </div>
                         </div>
@@ -68,7 +69,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group" v-if="activePlatform === 'moments'">
+                        <div v-if="activePlatform === 'moments'" class="form-group">
                             <label>点赞列表</label>
                             <input v-model="config.likes" placeholder="名字用逗号分隔" />
                         </div>
@@ -83,7 +84,7 @@
                 
                 <div class="preview-section">
                     <div class="phone-frame">
-                        <div class="phone-content" id="mockup-content">
+                        <div id="mockup-content" class="phone-content">
                             
                             <div v-if="activePlatform === 'moments'" class="wechat-moments">
                                 <div class="header-bar">
@@ -104,7 +105,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="location-label" v-if="config.location">{{ config.location }}</div>
+                                        <div v-if="config.location" class="location-label">{{ config.location }}</div>
 
                                         <div class="footer-row">
                                             <span class="time-label">{{ config.time || '刚刚' }}</span>
@@ -112,7 +113,7 @@
                                         </div>
 
                                         
-                                        <div class="interaction-card" v-if="config.likes">
+                                        <div v-if="config.likes" class="interaction-card">
                                             <div class="likes-list">
                                                 <span class="heart">❤️</span>
                                                 <span class="likes-names">{{ config.likes }}</span>

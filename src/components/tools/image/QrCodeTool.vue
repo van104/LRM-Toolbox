@@ -30,7 +30,8 @@
         <aside class="settings-panel">
           <div class="input-group">
             <div class="label">内容输入</div>
-            <el-input v-model="generate.content" type="textarea" :rows="5" placeholder="输入文本或网址..." resize="none"
+            <el-input
+v-model="generate.content" type="textarea" :rows="5" placeholder="输入文本或网址..." resize="none"
               @input="debouncedGenerate" />
           </div>
 
@@ -49,13 +50,15 @@
 
             <div class="setting-item">
               <span class="label">尺寸 (px)</span>
-              <el-slider v-model="generate.options.width" :min="100" :max="1000" :step="10" show-input
+              <el-slider
+v-model="generate.options.width" :min="100" :max="1000" :step="10" show-input
                 @change="generateQRCode" />
             </div>
 
             <div class="setting-item">
               <span class="label">边距</span>
-              <el-input-number v-model="generate.options.margin" :min="0" :max="10" size="small"
+              <el-input-number
+v-model="generate.options.margin" :min="0" :max="10" size="small"
                 @change="generateQRCode" />
             </div>
 
@@ -66,7 +69,8 @@
               </div>
               <div class="color-item">
                 <span class="label">背景色</span>
-                <el-color-picker v-model="generate.options.color.light" size="default" show-alpha
+                <el-color-picker
+v-model="generate.options.color.light" size="default" show-alpha
                   @change="generateQRCode" />
               </div>
             </div>
@@ -101,9 +105,10 @@
       
       <div v-if="currentTab === 'scan'" class="layout-container vertical">
         
-        <div class="upload-area" @dragover.prevent @drop.prevent="handleDrop" @paste="handlePaste"
+        <div
+class="upload-area" @dragover.prevent @drop.prevent="handleDrop" @paste="handlePaste"
           @click="triggerUpload">
-          <input type="file" ref="fileInput" accept="image/*" class="hidden-input" @change="handleFileChange" />
+          <input ref="fileInput" type="file" accept="image/*" class="hidden-input" @change="handleFileChange" />
           <div v-if="scan.imageUrl" class="preview-wrapper">
             <img :src="scan.imageUrl" class="scan-preview" />
             <div class="overlay-hint">点击或粘贴更换图片</div>
@@ -121,11 +126,11 @@
           <div class="panel-header">
             <span class="panel-title">解析结果</span>
             <div class="panel-actions">
-              <el-button size="small" @click="copyScanResult" :disabled="!scan.result">复制</el-button>
-              <el-button size="small" type="danger" plain @click="clearScan" :disabled="!scan.result">清空</el-button>
+              <el-button size="small" :disabled="!scan.result" @click="copyScanResult">复制</el-button>
+              <el-button size="small" type="danger" plain :disabled="!scan.result" @click="clearScan">清空</el-button>
             </div>
           </div>
-          <textarea class="scan-textarea" readonly v-model="scan.result" placeholder="解析结果将显示在这里..."></textarea>
+          <textarea v-model="scan.result" class="scan-textarea" readonly placeholder="解析结果将显示在这里..."></textarea>
         </div>
       </div>
 

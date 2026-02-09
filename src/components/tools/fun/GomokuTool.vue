@@ -1,7 +1,7 @@
 <template>
     <div class="gomoku-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -35,32 +35,38 @@
                             
                             <svg class="grid-lines" :viewBox="`0 0 ${boardPixelSize} ${boardPixelSize}`">
                                 
-                                <line v-for="i in boardSize" :key="'h' + i" :x1="cellSize / 2"
+                                <line
+v-for="i in boardSize" :key="'h' + i" :x1="cellSize / 2"
                                     :y1="cellSize / 2 + (i - 1) * cellSize" :x2="boardPixelSize - cellSize / 2"
                                     :y2="cellSize / 2 + (i - 1) * cellSize" stroke="#8B4513" stroke-width="1" />
                                 
-                                <line v-for="i in boardSize" :key="'v' + i" :x1="cellSize / 2 + (i - 1) * cellSize"
+                                <line
+v-for="i in boardSize" :key="'v' + i" :x1="cellSize / 2 + (i - 1) * cellSize"
                                     :y1="cellSize / 2" :x2="cellSize / 2 + (i - 1) * cellSize"
                                     :y2="boardPixelSize - cellSize / 2" stroke="#8B4513" stroke-width="1" />
                                 
-                                <circle v-for="(pos, idx) in starPoints" :key="'star' + idx"
+                                <circle
+v-for="(pos, idx) in starPoints" :key="'star' + idx"
                                     :cx="cellSize / 2 + pos.x * cellSize" :cy="cellSize / 2 + pos.y * cellSize" r="4"
                                     fill="#8B4513" />
                             </svg>
 
                             
                             <template v-for="(row, y) in board" :key="y">
-                                <div v-for="(cell, x) in row" :key="x" class="board-cell" :style="cellStyle"
+                                <div
+v-for="(cell, x) in row" :key="x" class="board-cell" :style="cellStyle"
                                     @click="makeMove(x, y)" @mouseenter="hoverCell = { x, y }"
                                     @mouseleave="hoverCell = null">
                                     
-                                    <div v-if="cell" class="stone" :class="cell"
+                                    <div
+v-if="cell" class="stone" :class="cell"
                                         :style="{ animationDelay: getStoneDelay(x, y) }">
                                         <span v-if="showMoveNumbers" class="move-number">{{ getMoveNumber(x, y)
                                             }}</span>
                                     </div>
                                     
-                                    <div v-else-if="canPlace(x, y) && hoverCell?.x === x && hoverCell?.y === y"
+                                    <div
+v-else-if="canPlace(x, y) && hoverCell?.x === x && hoverCell?.y === y"
                                         class="stone preview" :class="currentPlayer"></div>
                                     
                                     <div v-if="isLastMove(x, y)" class="last-move-marker"></div>
@@ -77,7 +83,7 @@
                                 <Refresh />
                             </el-icon> 重新开始
                         </button>
-                        <button class="control-btn" @click="undoMove" :disabled="moveHistory.length === 0 || gameOver">
+                        <button class="control-btn" :disabled="moveHistory.length === 0 || gameOver" @click="undoMove">
                             <el-icon>
                                 <RefreshLeft />
                             </el-icon> 悔棋
@@ -105,7 +111,8 @@
                         <div class="settings-group">
                             <h3>游戏模式</h3>
                             <div class="mode-selector">
-                                <button v-for="mode in gameModes" :key="mode.value" class="mode-btn"
+                                <button
+v-for="mode in gameModes" :key="mode.value" class="mode-btn"
                                     :class="{ active: gameMode === mode.value }" @click="setGameMode(mode.value)">
                                     <el-icon>
                                         <component :is="mode.icon" />
@@ -118,17 +125,19 @@
                         <div class="settings-group">
                             <h3>棋盘大小</h3>
                             <div class="size-selector">
-                                <button v-for="size in boardSizes" :key="size" class="size-btn"
+                                <button
+v-for="size in boardSizes" :key="size" class="size-btn"
                                     :class="{ active: boardSize === size }" @click="setBoardSize(size)">
                                     {{ size }} × {{ size }}
                                 </button>
                             </div>
                         </div>
 
-                        <div class="settings-group" v-if="gameMode === 'ai'">
+                        <div v-if="gameMode === 'ai'" class="settings-group">
                             <h3>AI 难度</h3>
                             <div class="difficulty-selector">
-                                <button v-for="diff in difficulties" :key="diff.value" class="diff-btn"
+                                <button
+v-for="diff in difficulties" :key="diff.value" class="diff-btn"
                                     :class="{ active: aiDifficulty === diff.value }" @click="aiDifficulty = diff.value">
                                     {{ diff.label }}
                                 </button>
@@ -138,11 +147,13 @@
                         <div class="settings-group">
                             <h3>先手选择</h3>
                             <div class="first-selector">
-                                <button class="first-btn" :class="{ active: playerFirst }"
+                                <button
+class="first-btn" :class="{ active: playerFirst }"
                                     @click="setPlayerFirst(true)">
                                     <span class="stone-icon black"></span> 玩家先手（黑）
                                 </button>
-                                <button class="first-btn" :class="{ active: !playerFirst }"
+                                <button
+class="first-btn" :class="{ active: !playerFirst }"
                                     @click="setPlayerFirst(false)">
                                     <span class="stone-icon white"></span>
                                     {{ gameMode === 'ai' ? 'AI 先手（黑）' : '白棋先手' }}
@@ -153,7 +164,7 @@
                         <div class="settings-group">
                             <h3>显示选项</h3>
                             <label class="checkbox-label">
-                                <input type="checkbox" v-model="showMoveNumbers" />
+                                <input v-model="showMoveNumbers" type="checkbox" />
                                 <span>显示落子顺序</span>
                             </label>
                         </div>

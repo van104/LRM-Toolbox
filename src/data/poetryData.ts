@@ -1,4 +1,14 @@
-﻿export const poems = [
+export interface Poem {
+  id: number;
+  title: string;
+  author: string;
+  dynasty: string;
+  tags: string[];
+  content: string[];
+  appreciation: string;
+}
+
+export const poems: Poem[] = [
     {
         id: 1,
         title: '静夜思',

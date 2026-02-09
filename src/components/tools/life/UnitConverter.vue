@@ -2,7 +2,7 @@
   <div class="unit-converter">
     
     <nav class="nav-bar">
-      <button @click="goHome" class="nav-back">
+      <button class="nav-back" @click="goHome">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
@@ -20,8 +20,9 @@
       
       <section class="category-section">
         <div class="category-scroll">
-          <button v-for="(data, key) in unitData" :key="key" @click="updateCategory(key)"
-            :class="['category-chip', { active: currentCategory === key }]">
+          <button
+v-for="(data, key) in unitData" :key="key" :class="['category-chip', { active: currentCategory === key }]"
+            @click="updateCategory(key)">
             <span class="chip-icon">{{ getCategoryIcon(key) }}</span>
             <span>{{ data.name }}</span>
           </button>
@@ -34,7 +35,7 @@
         <div v-if="currentCategory === 'resolution'" class="dpi-section animate-fade-in">
           <label class="section-label">像素密度 (DPI/PPI)</label>
           <div class="dpi-row">
-            <input type="number" v-model.number="dpi" @input="convert" class="dpi-input" />
+            <input v-model.number="dpi" type="number" class="dpi-input" @input="convert" />
             <span class="dpi-suffix">像素/英寸</span>
             <div class="dpi-presets">
               <span @click="dpi = 72; convert()">72 (屏)</span>
@@ -48,8 +49,8 @@
         <div class="input-section">
           <label class="section-label">输入</label>
           <div class="value-row">
-            <input type="number" v-model.number="inputValue" @input="convert" placeholder="请输入数值" class="value-input" />
-            <select v-model="inputUnit" @change="convert" class="unit-select">
+            <input v-model.number="inputValue" type="number" placeholder="请输入数值" class="value-input" @input="convert" />
+            <select v-model="inputUnit" class="unit-select" @change="convert">
               <option v-for="unit in currentUnits" :key="unit.id" :value="unit.id">
                 {{ unit.name }}
               </option>
@@ -60,7 +61,7 @@
         
         <div class="swap-row">
           <div class="divider-line"></div>
-          <button @click="swapUnits" class="swap-btn">
+          <button class="swap-btn" @click="swapUnits">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M7 16V4M7 4L3 8M7 4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" />
             </svg>
@@ -73,7 +74,7 @@
           <label class="section-label">结果</label>
           <div class="value-row">
             <div class="output-display">{{ outputValue || '—' }}</div>
-            <select v-model="outputUnit" @change="convert" class="unit-select">
+            <select v-model="outputUnit" class="unit-select" @change="convert">
               <option v-for="unit in currentUnits" :key="unit.id" :value="unit.id">
                 {{ unit.name }}
               </option>
@@ -86,7 +87,7 @@
       <section class="shortcuts-section">
         <h3 class="section-title">常用转换</h3>
         <div class="shortcuts-list">
-          <button v-for="(shortcut, key) in shortcuts" :key="key" @click="applyShortcut(key)" class="shortcut-item">
+          <button v-for="(shortcut, key) in shortcuts" :key="key" class="shortcut-item" @click="applyShortcut(key)">
             {{ shortcut.label }}
           </button>
         </div>
@@ -96,7 +97,7 @@
       <section class="history-section">
         <div class="section-header">
           <h3 class="section-title">转换历史</h3>
-          <button v-if="history.length > 0" @click="clearHistory" class="clear-btn">
+          <button v-if="history.length > 0" class="clear-btn" @click="clearHistory">
             清空
           </button>
         </div>
@@ -104,7 +105,7 @@
           <div v-if="history.length === 0" class="history-empty">
             暂无记录
           </div>
-          <div v-for="(item, index) in history" :key="index" @click="applyHistory(item)" class="history-item">
+          <div v-for="(item, index) in history" :key="index" class="history-item" @click="applyHistory(item)">
             <span class="history-value">{{ item.value }} <small>{{ item.fromUnitName }}</small></span>
             <span class="history-arrow">→</span>
             <span class="history-result">{{ item.result }} <small>{{ item.toUnitName }}</small></span>
@@ -116,7 +117,7 @@
       <section class="features-section">
         <h3 class="section-title">功能特点</h3>
         <div class="features-grid">
-          <div class="feature-item" v-for="f in features" :key="f">
+          <div v-for="f in features" :key="f" class="feature-item">
             <span class="feature-check">✓</span>
             {{ f }}
           </div>

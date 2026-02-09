@@ -1,7 +1,7 @@
 <template>
     <div class="pension-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -54,11 +54,11 @@
                         </div>
                     </div>
 
-                    <el-button type="warning" class="calc-btn" @click="calculate" size="large">立即估算</el-button>
+                    <el-button type="warning" class="calc-btn" size="large" @click="calculate">立即估算</el-button>
                 </section>
 
                 
-                <div class="results-area" v-if="result">
+                <div v-if="result" class="results-area">
                     <section class="result-hero glass-card">
                         <div class="hero-header">退休后预计每月领取</div>
                         <div class="pension-value">

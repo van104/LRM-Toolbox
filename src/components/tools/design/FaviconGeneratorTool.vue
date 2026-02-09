@@ -11,7 +11,7 @@
                 <span class="tool-subtitle">Favicon Generator</span>
             </div>
             <div class="header-right">
-                <el-button type="primary" @click="generateAll" :disabled="!sourceImage">
+                <el-button type="primary" :disabled="!sourceImage" @click="generateAll">
                     <el-icon>
                         <Download />
                     </el-icon> 生成并下载
@@ -22,14 +22,15 @@
         <main class="tool-content">
             <div class="layout-container">
                 <div class="upload-section glass-card">
-                    <div v-if="!sourceImage" class="upload-placeholder" @click="triggerUpload" @dragover.prevent
+                    <div
+v-if="!sourceImage" class="upload-placeholder" @click="triggerUpload" @dragover.prevent
                         @drop.prevent="handleDrop">
                         <div class="upload-icon"><el-icon>
                                 <UploadFilled />
                             </el-icon></div>
                         <h3>上传原始图片</h3>
                         <p>推荐 512×512 像素正方形图片</p>
-                        <input type="file" ref="fileRef" hidden accept="image/*" @change="handleUpload" />
+                        <input ref="fileRef" type="file" hidden accept="image/*" @change="handleUpload" />
                     </div>
                     <div v-else class="source-preview">
                         <img :src="sourceImage" alt="Source" />

@@ -16,7 +16,8 @@
             <a href="https://github.com/van104/LRM-Toolbox" target="_blank" title="GitHub" class="social-btn">
               <i class="fa-brands fa-github"></i>
             </a>
-            <a href="mailto:powelabraham67@gmail.com" title="点击复制邮箱" class="social-btn"
+            <a
+href="mailto:powelabraham67@gmail.com" title="点击复制邮箱" class="social-btn"
               @click.prevent="handleEmailClick">
               <i class="fa-solid fa-envelope"></i>
             </a>
@@ -88,7 +89,7 @@
       </el-form>
       <template #footer>
         <el-button @click="showFeedback = false">取消</el-button>
-        <el-button type="primary" @click="submitFeedback" :loading="isSubmitting">提交反馈</el-button>
+        <el-button type="primary" :loading="isSubmitting" @click="submitFeedback">提交反馈</el-button>
       </template>
     </el-dialog>
 

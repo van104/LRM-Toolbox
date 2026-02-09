@@ -20,7 +20,8 @@
                 <div class="workbench glass-card">
                     <div class="input-section">
                         <h3>输入 User Agent 字符串</h3>
-                        <el-input v-model="uaString" type="textarea" :rows="4" placeholder="粘贴 User Agent 字符串..."
+                        <el-input
+v-model="uaString" type="textarea" :rows="4" placeholder="粘贴 User Agent 字符串..."
                             @input="parseUA" />
                         <div class="input-actions">
                             <el-button text type="primary" @click="useCurrentUA">获取当前 UA</el-button>
@@ -78,7 +79,7 @@
 
                         <div class="detail-table">
                             <h4>详细信息</h4>
-                            <div class="table-row" v-for="(value, key) in flatResult" :key="key">
+                            <div v-for="(value, key) in flatResult" :key="key" class="table-row">
                                 <span class="key">{{ key }}</span>
                                 <span class="value">{{ value || '-' }}</span>
                             </div>
@@ -89,7 +90,8 @@
                 <div class="settings-panel glass-card">
                     <h3 class="panel-title">常见 UA 示例</h3>
                     <div class="ua-examples">
-                        <div v-for="(ua, idx) in uaExamples" :key="idx" class="ua-example"
+                        <div
+v-for="(ua, idx) in uaExamples" :key="idx" class="ua-example"
                             @click="uaString = ua.value; parseUA()">
                             <div class="ua-name">{{ ua.name }}</div>
                             <div class="ua-preview">{{ ua.value.substring(0, 50) }}...</div>

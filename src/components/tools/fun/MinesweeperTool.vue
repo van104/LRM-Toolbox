@@ -1,7 +1,7 @@
 <template>
     <div class="minesweeper-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -23,7 +23,7 @@
                                 <span class="info-icon">💣</span>
                                 <span class="info-value">{{ remainingMines }}</span>
                             </div>
-                            <button class="reset-btn" @click="resetGame" :class="gameStatusClass">
+                            <button class="reset-btn" :class="gameStatusClass" @click="resetGame">
                                 {{ gameStatusEmoji }}
                             </button>
                             <div class="info-item">
@@ -36,11 +36,13 @@
                     <div class="board-container" :style="boardContainerStyle">
                         <div class="board" :style="boardStyle">
                             <div v-for="(row, y) in board" :key="y" class="board-row">
-                                <div v-for="(cell, x) in row" :key="x" class="cell" :class="getCellClass(cell)"
+                                <div
+v-for="(cell, x) in row" :key="x" class="cell" :class="getCellClass(cell)"
                                     @click="revealCell(x, y)" @contextmenu.prevent="toggleFlag(x, y)"
                                     @mousedown="handleMouseDown($event, x, y)" @mouseup="handleMouseUp">
                                     <span v-if="cell.revealed && cell.mine" class="mine">💣</span>
-                                    <span v-else-if="cell.revealed && cell.adjacentMines > 0" class="number"
+                                    <span
+v-else-if="cell.revealed && cell.adjacentMines > 0" class="number"
                                         :class="'n' + cell.adjacentMines">
                                         {{ cell.adjacentMines }}
                                     </span>
@@ -80,7 +82,8 @@
                         <div class="settings-group">
                             <h3>难度选择</h3>
                             <div class="difficulty-selector">
-                                <button v-for="diff in difficulties" :key="diff.value" class="diff-btn"
+                                <button
+v-for="diff in difficulties" :key="diff.value" class="diff-btn"
                                     :class="{ active: difficulty === diff.value }" @click="setDifficulty(diff.value)">
                                     <span class="diff-name">{{ diff.label }}</span>
                                     <span class="diff-info">{{ diff.cols }}×{{ diff.rows }} · {{ diff.mines }}雷</span>
@@ -88,20 +91,20 @@
                             </div>
                         </div>
 
-                        <div class="settings-group" v-if="difficulty === 'custom'">
+                        <div v-if="difficulty === 'custom'" class="settings-group">
                             <h3>自定义设置</h3>
                             <div class="custom-inputs">
                                 <div class="input-group">
                                     <label>列数</label>
-                                    <input type="number" v-model.number="customCols" min="5" max="30" />
+                                    <input v-model.number="customCols" type="number" min="5" max="30" />
                                 </div>
                                 <div class="input-group">
                                     <label>行数</label>
-                                    <input type="number" v-model.number="customRows" min="5" max="24" />
+                                    <input v-model.number="customRows" type="number" min="5" max="24" />
                                 </div>
                                 <div class="input-group">
                                     <label>地雷数</label>
-                                    <input type="number" v-model.number="customMines" min="1" :max="maxCustomMines" />
+                                    <input v-model.number="customMines" type="number" min="1" :max="maxCustomMines" />
                                 </div>
                                 <button class="apply-btn" @click="applyCustomSettings">应用设置</button>
                             </div>

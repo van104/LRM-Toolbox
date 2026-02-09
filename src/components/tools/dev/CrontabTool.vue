@@ -1,7 +1,7 @@
 <template>
   <div class="crontab-tool">
     <nav class="nav-bar">
-      <button @click="$router.back()" class="nav-back">
+      <button class="nav-back" @click="$router.back()">
         <el-icon>
           <Back />
         </el-icon> 返回
@@ -72,8 +72,9 @@
           <div class="glass-card mt-6">
             <h3 class="section-title">常用场景模版</h3>
             <div class="template-grid">
-              <el-button v-for="tmp in templates" :key="tmp.name" plain @click="applyTemplate(tmp.value)"
-                class="template-btn">
+              <el-button
+v-for="tmp in templates" :key="tmp.name" plain class="template-btn"
+                @click="applyTemplate(tmp.value)">
                 {{ tmp.name }}
               </el-button>
             </div>

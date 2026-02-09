@@ -61,12 +61,14 @@
                             <div class="form-row">
                                 <div class="form-item">
                                     <label>创建日期 (Creation Date)</label>
-                                    <el-date-picker v-model="metadata.creationDate" type="datetime" placeholder="选择日期"
+                                    <el-date-picker
+v-model="metadata.creationDate" type="datetime" placeholder="选择日期"
                                         style="width: 100%;" />
                                 </div>
                                 <div class="form-item">
                                     <label>修改日期 (Modification Date)</label>
-                                    <el-date-picker v-model="metadata.modificationDate" type="datetime"
+                                    <el-date-picker
+v-model="metadata.modificationDate" type="datetime"
                                         placeholder="选择日期" style="width: 100%;" />
                                 </div>
                             </div>
@@ -75,20 +77,21 @@
                         <div class="original-info glass-card">
                             <h4>原始元数据</h4>
                             <div class="info-grid">
-                                <div class="info-item" v-for="(value, key) in originalMetadata" :key="key">
+                                <div v-for="(value, key) in originalMetadata" :key="key" class="info-item">
                                     <span class="info-label">{{ key }}</span>
                                     <span class="info-value">{{ value || '(空)' }}</span>
                                 </div>
                             </div>
                         </div>
 
-                        <el-button type="primary" size="large" class="action-btn" :loading="processing"
+                        <el-button
+type="primary" size="large" class="action-btn" :loading="processing"
                             @click="saveMetadata">
                             保存元数据并下载
                         </el-button>
                     </div>
 
-                    <input type="file" ref="fileRef" hidden accept=".pdf" @change="handleUpload" />
+                    <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
                 </div>
             </div>
         </main>

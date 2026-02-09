@@ -12,10 +12,10 @@
             </div>
             <div class="header-right">
                 <el-button-group>
-                    <el-button @click="formatXml" :disabled="!inputText"><el-icon>
+                    <el-button :disabled="!inputText" @click="formatXml"><el-icon>
                             <MagicStick />
                         </el-icon> 格式化</el-button>
-                    <el-button @click="minifyXml" :disabled="!inputText"><el-icon>
+                    <el-button :disabled="!inputText" @click="minifyXml"><el-icon>
                             <Minus />
                         </el-icon> 压缩</el-button>
                 </el-button-group>
@@ -32,7 +32,8 @@
                             <el-button text size="small" @click="clearInput">清空</el-button>
                         </div>
                     </div>
-                    <el-input v-model="inputText" type="textarea" :rows="20" placeholder="粘贴 XML 内容..."
+                    <el-input
+v-model="inputText" type="textarea" :rows="20" placeholder="粘贴 XML 内容..."
                         @input="autoValidate" />
                     <div class="validation-status" :class="validationStatus.type">
                         <el-icon v-if="validationStatus.type === 'success'">
@@ -49,9 +50,10 @@
                     <div class="panel-header">
                         <span class="panel-title">输出结果</span>
                         <div class="panel-actions">
-                            <el-button text size="small" type="primary" @click="copyOutput"
-                                :disabled="!outputText">复制</el-button>
-                            <el-button text size="small" @click="downloadOutput" :disabled="!outputText">下载</el-button>
+                            <el-button
+text size="small" type="primary" :disabled="!outputText"
+                                @click="copyOutput">复制</el-button>
+                            <el-button text size="small" :disabled="!outputText" @click="downloadOutput">下载</el-button>
                         </div>
                     </div>
                     <el-input v-model="outputText" type="textarea" :rows="20" readonly placeholder="输出结果..." />
@@ -61,12 +63,12 @@
             <div class="converter-section glass-card">
                 <h3>XML ⇄ JSON 互转</h3>
                 <div class="converter-actions">
-                    <el-button type="primary" @click="xmlToJson" :disabled="!inputText">
+                    <el-button type="primary" :disabled="!inputText" @click="xmlToJson">
                         <el-icon>
                             <Right />
                         </el-icon> XML → JSON
                     </el-button>
-                    <el-button type="success" @click="jsonToXml" :disabled="!inputText">
+                    <el-button type="success" :disabled="!inputText" @click="jsonToXml">
                         <el-icon>
                             <Right />
                         </el-icon> JSON → XML

@@ -1,7 +1,7 @@
 <template>
     <div class="lunar-converter-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -29,7 +29,8 @@
                 
                 <div v-if="mode === 'solarToLunar'" class="input-group">
                     <label>选择公历日期</label>
-                    <el-date-picker v-model="solarInput" type="date" placeholder="选择日期" format="YYYY年MM月DD日"
+                    <el-date-picker
+v-model="solarInput" type="date" placeholder="选择日期" format="YYYY年MM月DD日"
                         :clearable="false" class="full-width" @change="handleSolarChange" />
                 </div>
 
@@ -54,14 +55,14 @@
                     
                     <div class="checkbox-wrapper">
                         <label>
-                            <input type="checkbox" v-model="isLeapMonth" @change="handleLunarChange"> 闰月
+                            <input v-model="isLeapMonth" type="checkbox" @change="handleLunarChange"> 闰月
                         </label>
                     </div>
                 </div>
             </section>
 
             
-            <section class="result-section glass-card" v-if="lunarObj">
+            <section v-if="lunarObj" class="result-section glass-card">
                 
                 <div class="main-result">
                     <div class="result-col">

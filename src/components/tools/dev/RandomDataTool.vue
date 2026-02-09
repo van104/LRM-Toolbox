@@ -18,11 +18,13 @@
                 
                 <aside class="config-panel">
                     <div class="tabs-header">
-                        <button :class="['tab-btn', { active: currentTab === 'basic' }]"
+                        <button
+:class="['tab-btn', { active: currentTab === 'basic' }]"
                             @click="currentTab = 'basic'">🧱 基础数据</button>
                         <button :class="['tab-btn', { active: currentTab === 'text' }]" @click="currentTab = 'text'">📄
                             文本文章</button>
-                        <button :class="['tab-btn', { active: currentTab === 'persona' }]"
+                        <button
+:class="['tab-btn', { active: currentTab === 'persona' }]"
                             @click="currentTab = 'persona'">👤 个人信息</button>
                         <button :class="['tab-btn', { active: currentTab === 'mock' }]" @click="currentTab = 'mock'">🔧
                             JSON 模拟</button>
@@ -34,7 +36,8 @@
                             <div class="config-item">
                                 <span class="label">UUID / GUID</span>
                                 <div class="flex-row">
-                                    <el-input-number v-model="basic.uuidCount" :min="1" :max="100" size="small"
+                                    <el-input-number
+v-model="basic.uuidCount" :min="1" :max="100" size="small"
                                         label="数量" />
                                     <el-button type="primary" size="small" @click="genUUID">生成</el-button>
                                 </div>
@@ -50,7 +53,8 @@
                                         <el-checkbox v-model="basic.strSymbol">!@#</el-checkbox>
                                     </div>
                                     <div class="flex-row">
-                                        <el-input-number v-model="basic.strLen" :min="1" :max="128" size="small"
+                                        <el-input-number
+v-model="basic.strLen" :min="1" :max="128" size="small"
                                             placeholder="长度" />
                                         <el-button type="primary" size="small" @click="genString">生成</el-button>
                                     </div>
@@ -132,7 +136,8 @@
                                 <span class="label">Mock.js 模板</span>
                                 <span class="desc">输入 Mock 模板对象</span>
                                 <div class="editor-wrapper">
-                                    <textarea v-model="mockTemplate" class="code-editor" spellcheck="false"
+                                    <textarea
+v-model="mockTemplate" class="code-editor" spellcheck="false"
                                         placeholder="{'list|5': [{'id|+1': 1, 'name': '@cname'}]}"></textarea>
                                 </div>
                             </div>
@@ -151,13 +156,14 @@
                         <span class="panel-title">生成结果</span>
                         <div class="actions">
                             <span v-if="resultText" class="count-info">{{ resultText.length }} chars</span>
-                            <el-button size="small" @click="copyResult" :disabled="!resultText">
+                            <el-button size="small" :disabled="!resultText" @click="copyResult">
                                 <el-icon>
                                     <CopyDocument />
                                 </el-icon> 复制
                             </el-button>
-                            <el-button size="small" type="danger" plain @click="resultText = ''"
-                                :disabled="!resultText">
+                            <el-button
+size="small" type="danger" plain :disabled="!resultText"
+                                @click="resultText = ''">
                                 <el-icon>
                                     <Delete />
                                 </el-icon> 清空
@@ -165,7 +171,8 @@
                         </div>
                     </div>
                     <div class="result-wrapper">
-                        <textarea readonly v-model="resultText" class="result-editor"
+                        <textarea
+v-model="resultText" readonly class="result-editor"
                             placeholder="结果将显示在这里..."></textarea>
                     </div>
                 </main>

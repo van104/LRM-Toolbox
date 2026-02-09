@@ -1,7 +1,7 @@
 <template>
     <div class="shooter-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -15,7 +15,7 @@
 
         <main class="main-content">
             <div class="game-wrapper">
-                <div class="canvas-container" ref="containerRef">
+                <div ref="containerRef" class="canvas-container">
                     <canvas ref="canvasRef"></canvas>
 
                     

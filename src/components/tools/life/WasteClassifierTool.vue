@@ -1,7 +1,7 @@
 <template>
     <div class="waste-classifier">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -15,7 +15,8 @@
 
         <div class="tool-container">
             <div class="search-section card">
-                <el-input v-model="searchQuery" placeholder="搜索垃圾名称，如：电池、剩菜、纸箱..." size="large" class="search-input"
+                <el-input
+v-model="searchQuery" placeholder="搜索垃圾名称，如：电池、剩菜、纸箱..." size="large" class="search-input"
                     clearable @input="handleSearch">
                     <template #prefix>
                         <el-icon>

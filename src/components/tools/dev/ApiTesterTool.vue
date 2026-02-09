@@ -1,7 +1,7 @@
 <template>
     <div class="api-tester-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -27,7 +27,7 @@
                     <div class="url-divider"></div>
                     <el-input v-model="url" placeholder="https://..." class="url-main-input" />
                 </div>
-                <el-button type="primary" :loading="loading" @click="sendRequest" class="send-btn">
+                <el-button type="primary" :loading="loading" class="send-btn" @click="sendRequest">
                     <span>发送请求</span>
                 </el-button>
             </section>
@@ -41,8 +41,9 @@
                                 <div v-for="(item, index) in headers" :key="index" class="kv-row">
                                     <el-input v-model="item.key" placeholder="Key" />
                                     <el-input v-model="item.value" placeholder="Value" />
-                                    <el-button :icon="Delete" circle @click="removeHeader(index)"
-                                        v-if="headers.length > 1" />
+                                    <el-button
+v-if="headers.length > 1" :icon="Delete" circle
+                                        @click="removeHeader(index)" />
                                 </div>
                                 <el-button type="primary" link :icon="Plus" @click="addHeader">添加参数</el-button>
                             </div>
@@ -55,15 +56,17 @@
                                     <el-radio-button label="form">Form Data</el-radio-button>
                                 </el-radio-group>
 
-                                <el-input v-if="bodyType === 'json'" v-model="rawBody" type="textarea" :rows="10"
+                                <el-input
+v-if="bodyType === 'json'" v-model="rawBody" type="textarea" :rows="10"
                                     placeholder='请输入 JSON 格式内容, 例如: { "name": "lrm" }' />
 
                                 <div v-if="bodyType === 'form'" class="kv-list">
                                     <div v-for="(item, index) in forms" :key="index" class="kv-row">
                                         <el-input v-model="item.key" placeholder="Key" />
                                         <el-input v-model="item.value" placeholder="Value" />
-                                        <el-button :icon="Delete" circle @click="removeForm(index)"
-                                            v-if="forms.length > 1" />
+                                        <el-button
+v-if="forms.length > 1" :icon="Delete" circle
+                                            @click="removeForm(index)" />
                                     </div>
                                     <el-button type="primary" link :icon="Plus" @click="addForm">添加字段</el-button>
                                 </div>
@@ -78,8 +81,9 @@
                                 <div v-for="(item, index) in params" :key="index" class="kv-row">
                                     <el-input v-model="item.key" placeholder="Key" />
                                     <el-input v-model="item.value" placeholder="Value" />
-                                    <el-button :icon="Delete" circle @click="removeParam(index)"
-                                        v-if="params.length > 1" />
+                                    <el-button
+v-if="params.length > 1" :icon="Delete" circle
+                                        @click="removeParam(index)" />
                                 </div>
                                 <el-button type="primary" link :icon="Plus" @click="addParam">添加参数</el-button>
                             </div>
@@ -89,7 +93,7 @@
 
                 
                 <section class="response-panel glass-card">
-                    <div class="response-header" v-if="response">
+                    <div v-if="response" class="response-header">
                         <div class="status-wrap">
                             状态码: <span :class="getStatusClass(response.status)">{{ response.status }} {{
                                 response.statusText
@@ -102,7 +106,8 @@
                     <el-tabs v-model="activeResponseTab">
                         <el-tab-pane label="响应体 (Body)" name="resBody">
                             <div class="res-body-container">
-                                <pre v-if="response && !resError"
+                                <pre
+v-if="response && !resError"
                                     class="json-preview"><code>{{ formattedRes }}</code></pre>
                                 <div v-else-if="resError" class="res-error">
                                     <el-icon>
@@ -117,7 +122,7 @@
                             </div>
                         </el-tab-pane>
                         <el-tab-pane label="响应头 (Headers)" name="resHeaders">
-                            <el-table :data="resHeadersData" size="small" border stripe v-if="resHeadersData.length">
+                            <el-table v-if="resHeadersData.length" :data="resHeadersData" size="small" border stripe>
                                 <el-table-column prop="key" label="Key" width="180" />
                                 <el-table-column prop="value" label="Value" />
                             </el-table>

@@ -1,7 +1,7 @@
 <template>
     <div class="hanoi-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -30,11 +30,12 @@
 
                     <div class="settings-group">
                         <label>层数: {{ diskCount }}</label>
-                        <el-slider v-model="diskCount" :min="3" :max="8" @change="initGame" size="small"
-                            class="disk-slider" />
+                        <el-slider
+v-model="diskCount" :min="3" :max="8" size="small" class="disk-slider"
+                            @change="initGame" />
                     </div>
 
-                    <button class="restart-btn" @click="initGame" title="重置">
+                    <button class="restart-btn" title="重置" @click="initGame">
                         <el-icon>
                             <RefreshRight />
                         </el-icon>
@@ -43,13 +44,15 @@
 
 
                 <div class="hanoi-board glass-card">
-                    <div v-for="(tower, index) in towers" :key="index" class="tower-area"
+                    <div
+v-for="(tower, index) in towers" :key="index" class="tower-area"
                         :class="{ 'selected': selectedTower === index, 'targetable': isTargetable(index) }"
                         @click="handleTowerClick(index)">
                         <div class="pole"></div>
                         <div class="disks-container">
                             <transition-group name="disk-move">
-                                <div v-for="disk in tower" :key="disk" class="disk"
+                                <div
+v-for="disk in tower" :key="disk" class="disk"
                                     :class="{ 'is-selected': selectedTower === index && disk === tower[tower.length - 1] }"
                                     :style="getDiskStyle(disk)">
                                     <span v-if="diskCount <= 5">{{ disk }}</span>

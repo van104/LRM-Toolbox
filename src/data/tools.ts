@@ -3,7 +3,28 @@
 
 
 
-export const categories = [
+export interface Category {
+  id: string;
+  name: string;
+  icon: string;
+}
+
+export interface Tool {
+  id: string;
+  name: string;
+  category: string;
+  icon?: string;
+  customIcon?: string;
+  summary: string;
+  description: string;
+  usage: string;
+  route: string;
+  isLocal: boolean;
+  isAi?: boolean;
+  tags: string[];
+}
+
+export const categories: Category[] = [
   { id: 'all', name: '全部工具', icon: 'Grid' },
   { id: 'dev', name: '开发运维', icon: 'Monitor' },
   { id: 'text', name: '文本处理', icon: 'Document' },
@@ -18,7 +39,7 @@ export const categories = [
 ]
 
 
-export const tools = [
+export const tools: Tool[] = [
   {
     id: 'json-formatter',
     name: 'JSON 格式化',
@@ -287,20 +308,6 @@ export const tools = [
   {
     id: 'ascii-art',
     name: 'ASCII 艺术生成',
-    category: 'dev',
-
-
-
-
-
-
-
-
-
-
-
-
-
     category: 'fun',
     icon: 'MagicStick',
     summary: '文字转字符画 Banner / 图片转 ASCII',
@@ -764,13 +771,6 @@ export const tools = [
     id: 'barcode-generator',
     name: '条形码生成器',
     category: 'image',
-    icon: 'FullScreen',
-
-
-
-
-
-
     icon: 'Operation',
     summary: '生成各种格式的条形码（EAN, UPC, Code128等）',
     description: '支持生成 EAN, UPC, Code128, ITF, MSI, Pharmacode 等多种格式条形码，支持自定义尺寸、颜色和显示文本。',
@@ -1093,8 +1093,6 @@ export const tools = [
     id: 'bmi-calculator',
     name: 'BMI 体脂计算',
     category: 'health',
-    icon: 'DataAnalysis',
-
     icon: 'User',
     summary: '身体质量指数(BMI)计算与健康评估',
     description: '输入身高体重，快速计算 BMI 指数，对照中国成人标准判断偏瘦、正常、超重或肥胖，并提供健康体重范围建议。',
@@ -2124,19 +2122,19 @@ export const tools = [
 ]
 
 
-export function getToolsByCategory(categoryId) {
+export function getToolsByCategory(categoryId: string): Tool[] {
   if (categoryId === 'all') {
-    return tools
+    return tools;
   }
-  return tools.filter(tool => tool.category === categoryId)
+  return tools.filter(tool => tool.category === categoryId);
 }
 
 
-export function searchTools(keyword) {
-  const lowerKeyword = keyword.toLowerCase()
+export function searchTools(keyword: string): Tool[] {
+  const lowerKeyword = keyword.toLowerCase();
   return tools.filter(tool =>
     tool.name.toLowerCase().includes(lowerKeyword) ||
     tool.summary.toLowerCase().includes(lowerKeyword) ||
     tool.tags.some(tag => tag.toLowerCase().includes(lowerKeyword))
-  )
+  );
 }

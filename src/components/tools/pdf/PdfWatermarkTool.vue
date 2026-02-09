@@ -11,7 +11,7 @@
                 <span class="tool-subtitle">PDF Watermark Tool</span>
             </div>
             <div class="header-right">
-                <el-button type="primary" :disabled="!pdfFile" @click="applyWatermark" :loading="processing">
+                <el-button type="primary" :disabled="!pdfFile" :loading="processing" @click="applyWatermark">
                     <el-icon>
                         <Download />
                     </el-icon> 添加水印并下载
@@ -22,14 +22,15 @@
         <main class="tool-content">
             <div class="layout-container">
                 <div class="workbench glass-card">
-                    <div v-if="!pdfFile" class="upload-placeholder" @click="triggerUpload" @dragover.prevent
+                    <div
+v-if="!pdfFile" class="upload-placeholder" @click="triggerUpload" @dragover.prevent
                         @drop.prevent="handleDrop">
                         <div class="upload-icon"><el-icon>
                                 <Document />
                             </el-icon></div>
                         <h3>上传 PDF 文件</h3>
                         <p>添加文字或图片水印</p>
-                        <input type="file" ref="fileRef" hidden accept=".pdf" @change="handleUpload" />
+                        <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
                     </div>
                     <div v-else class="preview-area">
                         <div class="file-info-bar">
@@ -41,16 +42,16 @@
                                 <span class="file-meta">{{ pageCount }} 页</span>
                             </div>
                             <el-button text type="primary" @click="triggerUpload">重新选择</el-button>
-                            <input type="file" ref="fileRef" hidden accept=".pdf" @change="handleUpload" />
+                            <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
                         </div>
                         <div class="preview-canvas-wrap">
                             <canvas ref="previewCanvas"></canvas>
                             <div class="page-nav">
-                                <el-button :disabled="currentPage <= 1" @click="currentPage--" circle><el-icon>
+                                <el-button :disabled="currentPage <= 1" circle @click="currentPage--"><el-icon>
                                         <ArrowLeft />
                                     </el-icon></el-button>
                                 <span>{{ currentPage }} / {{ pageCount }}</span>
-                                <el-button :disabled="currentPage >= pageCount" @click="currentPage++" circle><el-icon>
+                                <el-button :disabled="currentPage >= pageCount" circle @click="currentPage++"><el-icon>
                                         <ArrowRight />
                                     </el-icon></el-button>
                             </div>
@@ -83,7 +84,8 @@
                                     <div v-else class="logo-placeholder"><el-icon>
                                             <Plus />
                                         </el-icon><span>选择图片</span></div>
-                                    <input type="file" ref="logoRef" hidden accept="image/*"
+                                    <input
+ref="logoRef" type="file" hidden accept="image/*"
                                         @change="handleLogoUpload" />
                                 </div>
                             </div>
@@ -105,7 +107,8 @@
                     <div v-if="config.mode === 'single'" class="settings-group">
                         <div class="label">位置</div>
                         <div class="position-grid">
-                            <div v-for="p in positions" :key="p" class="pos-dot"
+                            <div
+v-for="p in positions" :key="p" class="pos-dot"
                                 :class="{ active: config.position === p }"
                                 @click="config.position = p; renderPreview()"></div>
                         </div>

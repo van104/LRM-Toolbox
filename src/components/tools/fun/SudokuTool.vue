@@ -1,7 +1,7 @@
 <template>
     <div class="sudoku-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -18,7 +18,8 @@
 
                 <div class="top-bar">
                     <div class="difficulty-select">
-                        <span v-for="d in difficulties" :key="d.value" :class="{ active: difficulty === d.value }"
+                        <span
+v-for="d in difficulties" :key="d.value" :class="{ active: difficulty === d.value }"
                             @click="setDifficulty(d.value)">{{ d.label }}</span>
                     </div>
                     <div class="settings-toggle">
@@ -35,7 +36,8 @@
 
                 <div class="sudoku-grid">
                     <div v-for="(row, ri) in board" :key="ri" class="sudoku-row">
-                        <div v-for="(cell, ci) in row" :key="ci" class="sudoku-cell" :class="{
+                        <div
+v-for="(cell, ci) in row" :key="ci" class="sudoku-cell" :class="{
                             'is-fixed': cell.fixed,
                             'is-selected': selectedCell?.row === ri && selectedCell?.col === ci,
                             'is-same-value': assistMode && cell.value && selectedCell && board[selectedCell.row][selectedCell.col].value === cell.value,
@@ -55,7 +57,8 @@
 
 
                 <div class="numpad">
-                    <button v-for="n in 9" :key="n" class="num-btn"
+                    <button
+v-for="n in 9" :key="n" class="num-btn"
                         :class="{ 'is-complete': assistMode && isNumberComplete(n) }" @click="inputNumber(n)">{{ n
                         }}</button>
                 </div>
@@ -67,7 +70,7 @@
                             <Delete />
                         </el-icon> 清除
                     </button>
-                    <button class="action-btn" @click="toggleNoteMode" :class="{ active: noteMode }">
+                    <button class="action-btn" :class="{ active: noteMode }" @click="toggleNoteMode">
                         <el-icon>
                             <Edit />
                         </el-icon> 笔记

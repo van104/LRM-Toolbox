@@ -1,7 +1,7 @@
 <template>
     <div class="name-stroke-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -16,11 +16,12 @@
         <main class="main-content">
             <div class="tool-card glass-card">
                 <div class="input-section">
-                    <input type="text" v-model="nameInput" placeholder="请输入中文姓名" class="name-input" maxlength="10"
+                    <input
+v-model="nameInput" type="text" placeholder="请输入中文姓名" class="name-input" maxlength="10"
                         @input="calculate" />
                 </div>
 
-                <div class="result-section" v-if="results.length > 0">
+                <div v-if="results.length > 0" class="result-section">
                     <div class="chars-grid">
                         <div v-for="(char, index) in results" :key="index" class="char-card">
                             <div class="char-pinyin">{{ char.pinyin }}</div>
@@ -43,7 +44,7 @@
                     </div>
                 </div>
 
-                <div class="empty-state" v-else>
+                <div v-else class="empty-state">
                     请输入姓名开始计算
                 </div>
             </div>

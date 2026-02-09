@@ -1,7 +1,7 @@
 <template>
     <div class="html-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -21,11 +21,12 @@
                         <div class="pane-header">
                             <label>HTML 字符 (Raw)</label>
                             <div class="actions">
-                                <span class="clear-btn" @click="htmlRaw = ''" v-if="htmlRaw">清空</span>
+                                <span v-if="htmlRaw" class="clear-btn" @click="htmlRaw = ''">清空</span>
                                 <button class="action-btn encode" @click="doHtmlEscape">转义 Escape &gt;&gt;</button>
                             </div>
                         </div>
-                        <textarea v-model="htmlRaw" placeholder="输入 HTML 代码，如：<div>Hello</div>..."
+                        <textarea
+v-model="htmlRaw" placeholder="输入 HTML 代码，如：<div>Hello</div>..."
                             class="pane-input code-font"></textarea>
                     </div>
 
@@ -35,10 +36,11 @@
                             <label>Escaped Output (实体)</label>
                             <div class="actions">
                                 <button class="action-btn decode" @click="doHtmlUnescape">&lt;&lt; 还原 Unescape</button>
-                                <span class="clear-btn" @click="htmlEscaped = ''" v-if="htmlEscaped">清空</span>
+                                <span v-if="htmlEscaped" class="clear-btn" @click="htmlEscaped = ''">清空</span>
                             </div>
                         </div>
-                        <textarea v-model="htmlEscaped" placeholder="输出实体代码，如：&lt;div&gt;Hello&lt;/div&gt;..."
+                        <textarea
+v-model="htmlEscaped" placeholder="输出实体代码，如：&lt;div&gt;Hello&lt;/div&gt;..."
                             class="pane-input code-font"></textarea>
                     </div>
                 </div>

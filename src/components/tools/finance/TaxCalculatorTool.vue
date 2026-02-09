@@ -1,7 +1,7 @@
 <template>
     <div class="tax-calculator-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -19,18 +19,18 @@
                 <section class="settings-panel glass-card">
                     <div class="form-group">
                         <label>税前月薪 (元)</label>
-                        <input type="number" v-model.number="salary" placeholder="0" class="main-input" />
+                        <input v-model.number="salary" type="number" placeholder="0" class="main-input" />
                     </div>
 
                     <div class="form-group">
                         <label>专项附加扣除 (元)</label>
-                        <input type="number" v-model.number="deduction" placeholder="0" class="sub-input" />
+                        <input v-model.number="deduction" type="number" placeholder="0" class="sub-input" />
                         <span class="tip">含子女教育、赡养老人、房租房贷等总额</span>
                     </div>
 
                     <div class="form-group">
                         <label>起征点</label>
-                        <input type="number" v-model.number="threshold" disabled class="sub-input disabled" />
+                        <input v-model.number="threshold" type="number" disabled class="sub-input disabled" />
                     </div>
 
                     <div class="insurance-section">
@@ -41,32 +41,32 @@
                             </el-icon>
                         </div>
 
-                        <div class="insurance-form" v-if="showInsurance">
+                        <div v-if="showInsurance" class="insurance-form">
                             <div class="ins-row">
                                 <label>社保基数</label>
-                                <input type="number" v-model.number="socialBase" placeholder="基数" />
+                                <input v-model.number="socialBase" type="number" placeholder="基数" />
                             </div>
                             <div class="ins-row">
                                 <label>公积金基数</label>
-                                <input type="number" v-model.number="fundBase" placeholder="基数" />
+                                <input v-model.number="fundBase" type="number" placeholder="基数" />
                             </div>
 
                             <div class="rate-grid">
                                 <div class="rate-item">
                                     <span>养老</span>
-                                    <input type="number" v-model.number="rates.pension" />%
+                                    <input v-model.number="rates.pension" type="number" />%
                                 </div>
                                 <div class="rate-item">
                                     <span>医疗</span>
-                                    <input type="number" v-model.number="rates.medical" />%
+                                    <input v-model.number="rates.medical" type="number" />%
                                 </div>
                                 <div class="rate-item">
                                     <span>失业</span>
-                                    <input type="number" v-model.number="rates.unemployment" />%
+                                    <input v-model.number="rates.unemployment" type="number" />%
                                 </div>
                                 <div class="rate-item">
                                     <span>公积金</span>
-                                    <input type="number" v-model.number="rates.fund" />%
+                                    <input v-model.number="rates.fund" type="number" />%
                                 </div>
                             </div>
                         </div>
@@ -76,7 +76,7 @@
                 </section>
 
                 
-                <section class="result-panel glass-card" v-if="result">
+                <section v-if="result" class="result-panel glass-card">
                     <div class="result-header">
                         <h2>¥{{ formatMoney(result.netSalary) }}</h2>
                         <span>实发工资</span>
@@ -114,7 +114,7 @@
                     </div>
                 </section>
 
-                <section class="result-panel glass-card empty-state" v-else>
+                <section v-else class="result-panel glass-card empty-state">
                     <div class="empty-content">
                         <el-icon>
                             <Money />

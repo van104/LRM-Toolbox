@@ -1,7 +1,7 @@
 <template>
     <div class="cheat-sheet-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -17,7 +17,8 @@
             <div class="layout-container">
                 
                 <aside class="side-nav glass-card">
-                    <div v-for="sub in subjects" :key="sub.id" class="nav-item"
+                    <div
+v-for="sub in subjects" :key="sub.id" class="nav-item"
                         :class="{ active: currentSubject.id === sub.id }" @click="currentSubject = sub">
                         <el-icon>
                             <collection />
@@ -46,7 +47,8 @@
                         <div v-for="section in filteredSections" :key="section.title" class="cheat-card">
                             <h4 class="section-title">{{ section.title }}</h4>
                             <div class="command-list">
-                                <div v-for="item in section.items" :key="item.cmd" class="command-item"
+                                <div
+v-for="item in section.items" :key="item.cmd" class="command-item"
                                     @click="copy(item.cmd)">
                                     <div class="cmd-info">
                                         <code class="code-text">{{ item.cmd }}</code>

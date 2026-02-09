@@ -2,7 +2,7 @@
     <div class="text-extractor">
         
         <nav class="nav-bar">
-            <button @click="goHome" class="nav-back">
+            <button class="nav-back" @click="goHome">
                 <el-icon>
                     <ArrowLeft />
                 </el-icon>
@@ -23,17 +23,17 @@
                     <div class="panel-header">
                         <span class="panel-title">源文本</span>
                         <div class="panel-actions">
-                            <span class="stats-info" v-if="inputText">{{ inputText.length }} 字符 | {{ inputLines }}
+                            <span v-if="inputText" class="stats-info">{{ inputText.length }} 字符 | {{ inputLines }}
                                 行</span>
-                            <button class="icon-btn" @click="fillDemoData" title="生成示例数据">
+                            <button class="icon-btn" title="生成示例数据" @click="fillDemoData">
                                 <span style="font-size: 14px; font-weight: bold;">示例数据</span>
                             </button>
-                            <button class="icon-btn" @click="pasteText" title="粘贴">
+                            <button class="icon-btn" title="粘贴" @click="pasteText">
                                 <el-icon>
                                     <CopyDocument />
                                 </el-icon>
                             </button>
-                            <button class="icon-btn" @click="clearInput" title="清空">
+                            <button class="icon-btn" title="清空" @click="clearInput">
                                 <el-icon>
                                     <Delete />
                                 </el-icon>
@@ -41,7 +41,8 @@
                         </div>
                     </div>
                     <div class="editor-wrapper">
-                        <textarea v-model="inputText" class="text-editor" placeholder="在此输入或粘贴包含目标信息的文本..."
+                        <textarea
+v-model="inputText" class="text-editor" placeholder="在此输入或粘贴包含目标信息的文本..."
                             spellcheck="false"></textarea>
                     </div>
                 </section>
@@ -56,16 +57,16 @@
                         
                         <div class="options-bar">
                             <label class="checkbox-label">
-                                <input type="checkbox" v-model="options.append"> 追加模式
+                                <input v-model="options.append" type="checkbox"> 追加模式
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" v-model="options.unique"> 去重
+                                <input v-model="options.unique" type="checkbox"> 去重
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" v-model="options.sort"> 排序
+                                <input v-model="options.sort" type="checkbox"> 排序
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" v-model="options.trim"> 去空字符
+                                <input v-model="options.trim" type="checkbox"> 去空字符
                             </label>
                         </div>
 
@@ -106,7 +107,7 @@
                         <div class="tool-group">
                             <div class="group-title">正则提取</div>
                             <div class="custom-input-group">
-                                <input type="text" v-model="customRegex" placeholder="/\d+/" class="custom-input">
+                                <input v-model="customRegex" type="text" placeholder="/\d+/" class="custom-input">
                                 <button class="action-btn small-btn" @click="extract('customRegex')">提取</button>
                             </div>
                         </div>
@@ -115,11 +116,11 @@
                         <div class="tool-group">
                             <div class="group-title">按行筛选</div>
                             <div class="custom-input-group mb-2">
-                                <input type="text" v-model="includeKeyword" placeholder="包含关键词..." class="custom-input">
+                                <input v-model="includeKeyword" type="text" placeholder="包含关键词..." class="custom-input">
                                 <button class="action-btn small-btn" @click="filterLines('include')">保留</button>
                             </div>
                             <div class="custom-input-group">
-                                <input type="text" v-model="excludeKeyword" placeholder="不含关键词..." class="custom-input">
+                                <input v-model="excludeKeyword" type="text" placeholder="不含关键词..." class="custom-input">
                                 <button class="action-btn small-btn" @click="filterLines('exclude')">剔除</button>
                             </div>
                         </div>
@@ -128,7 +129,7 @@
                         <div class="tool-group">
                             <div class="group-title">关键词统计</div>
                             <div class="custom-input-group">
-                                <input type="text" v-model="countKeyword" placeholder="输入关键词..." class="custom-input">
+                                <input v-model="countKeyword" type="text" placeholder="输入关键词..." class="custom-input">
                                 <button class="action-btn small-btn" @click="countOccurrences">统计</button>
                             </div>
                         </div>
@@ -141,13 +142,13 @@
                     <div class="panel-header">
                         <span class="panel-title">提取结果</span>
                         <div class="panel-actions">
-                            <span class="stats-info" v-if="matchCount > 0">{{ matchCount }} 项</span>
-                            <button class="icon-btn" @click="copyResult" title="复制结果">
+                            <span v-if="matchCount > 0" class="stats-info">{{ matchCount }} 项</span>
+                            <button class="icon-btn" title="复制结果" @click="copyResult">
                                 <el-icon>
                                     <CopyDocument />
                                 </el-icon>
                             </button>
-                            <button class="icon-btn" @click="clearOutput" title="清空结果">
+                            <button class="icon-btn" title="清空结果" @click="clearOutput">
                                 <el-icon>
                                     <Delete />
                                 </el-icon>
@@ -155,7 +156,8 @@
                         </div>
                     </div>
                     <div class="editor-wrapper">
-                        <textarea v-model="outputText" class="text-editor result-editor" readonly
+                        <textarea
+v-model="outputText" class="text-editor result-editor" readonly
                             placeholder="提取结果列表..."></textarea>
                     </div>
                 </section>

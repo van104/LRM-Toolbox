@@ -1,7 +1,7 @@
 <template>
     <div class="life-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -11,10 +11,12 @@
                 <span class="nav-subtitle">Text Life Simulator</span>
             </div>
             <div class="nav-actions">
-                <el-button size="small" @click="saveGame"
-                    v-if="gameState.isAlive && gameStage === 'game'">保存存档</el-button>
-                <el-button size="small" type="danger" @click="restart"
-                    v-if="gameState.isAlive || gameStage !== 'intro'">重开</el-button>
+                <el-button
+v-if="gameState.isAlive && gameStage === 'game'" size="small"
+                    @click="saveGame">保存存档</el-button>
+                <el-button
+v-if="gameState.isAlive || gameStage !== 'intro'" size="small" type="danger"
+                    @click="restart">重开</el-button>
             </div>
         </nav>
 
@@ -28,7 +30,7 @@
                         <p>你的天赋由上天决定，但命运掌握在自己手中。</p>
                     </div>
 
-                    <div class="load-section" v-if="hasSave">
+                    <div v-if="hasSave" class="load-section">
                         <el-button type="success" size="large" @click="loadGame">读取存档</el-button>
                         <el-divider>或者</el-divider>
                     </div>
@@ -44,7 +46,8 @@
                 <div class="card glass-panel wide-panel">
                     <h2>请选择你的天赋命格 (3选1)</h2>
                     <div class="talent-cards">
-                        <div v-for="talent in talentOptions" :key="talent.id" class="talent-card"
+                        <div
+v-for="talent in talentOptions" :key="talent.id" class="talent-card"
                             :class="['rarity-' + talent.rarity, { selected: selectedTalent?.id === talent.id }]"
                             @click="selectTalent(talent)">
                             <div class="talent-header">
@@ -56,7 +59,8 @@
                     </div>
                     <div class="actions">
                         <el-button @click="gameStage = 'intro'">返回</el-button>
-                        <el-button type="primary" :disabled="!selectedTalent"
+                        <el-button
+type="primary" :disabled="!selectedTalent"
                             @click="confirmTalentAndNext">下一步</el-button>
                     </div>
                 </div>
@@ -73,33 +77,37 @@
                             <span class="label"><el-icon>
                                     <FirstAidKit />
                                 </el-icon> 健康</span>
-                            <el-slider v-model="tempStats.health" :min="0" :max="100" show-input
-                                @input="val => handlePointChange('health', val)" class="alloc-slider" />
+                            <el-slider
+v-model="tempStats.health" :min="0" :max="100" show-input
+                                class="alloc-slider" @input="val => handlePointChange('health', val)" />
                         </div>
                         <div class="alloc-row">
                             <span class="label"><el-icon>
                                     <Reading />
                                 </el-icon> 智力</span>
-                            <el-slider v-model="tempStats.smarts" :min="0" :max="100" show-input
-                                @input="val => handlePointChange('smarts', val)" class="alloc-slider" />
+                            <el-slider
+v-model="tempStats.smarts" :min="0" :max="100" show-input
+                                class="alloc-slider" @input="val => handlePointChange('smarts', val)" />
                         </div>
                         <div class="alloc-row">
                             <span class="label"><el-icon>
                                     <Camera />
                                 </el-icon> 颜值</span>
-                            <el-slider v-model="tempStats.looks" :min="0" :max="100" show-input
-                                @input="val => handlePointChange('looks', val)" class="alloc-slider" />
+                            <el-slider
+v-model="tempStats.looks" :min="0" :max="100" show-input
+                                class="alloc-slider" @input="val => handlePointChange('looks', val)" />
                         </div>
                         <div class="alloc-row">
                             <span class="label"><el-icon>
                                     <Sunny />
                                 </el-icon> 家境</span>
-                            <el-slider v-model="tempStats.happiness" :min="0" :max="100" show-input
-                                @input="val => handlePointChange('happiness', val)" class="alloc-slider" />
+                            <el-slider
+v-model="tempStats.happiness" :min="0" :max="100" show-input
+                                class="alloc-slider" @input="val => handlePointChange('happiness', val)" />
                         </div>
                     </div>
 
-                    <div class="talent-summary" v-if="selectedTalent">
+                    <div v-if="selectedTalent" class="talent-summary">
                         当前天赋: <strong>{{ selectedTalent.name }}</strong> ({{ selectedTalent.desc }})
                     </div>
 
@@ -132,8 +140,9 @@
                         <div class="asset-row" title="车辆">{{ gameState.cars.length }} 辆</div>
                     </div>
                     <div class="hud-item date-info">
-                        <el-button type="primary" class="next-year-btn" @click="ageUp"
-                            :disabled="pendingChoice !== null">
+                        <el-button
+type="primary" class="next-year-btn" :disabled="pendingChoice !== null"
+                            @click="ageUp">
                             下一年
                         </el-button>
                     </div>
@@ -215,7 +224,8 @@
 
                             <div class="assets-preview glass-panel">
                                 <h3>我的资产</h3>
-                                <div v-if="gameState.houses.length === 0 && gameState.cars.length === 0"
+                                <div
+v-if="gameState.houses.length === 0 && gameState.cars.length === 0"
                                     class="empty-assets">
                                     暂无资产，继续奋斗吧！
                                 </div>
@@ -240,7 +250,8 @@
                                     </el-icon> 外出 (城市地图)
                                 </el-button>
                                 <el-button v-if="gameState.job" @click="workHard">努力工作</el-button>
-                                <el-button v-if="!gameState.job && gameState.age >= 18"
+                                <el-button
+v-if="!gameState.job && gameState.age >= 18"
                                     @click="openBuilding('company')">找工作</el-button>
                             </div>
                         </div>
@@ -251,14 +262,16 @@
                                 <el-tag v-if="gameState.degree !== 'none'">学历: {{ getDegreeName(gameState.degree)
                                 }}</el-tag>
                             </div>
-                            <div class="log-scroll" ref="scrollContainerRef">
+                            <div ref="scrollContainerRef" class="log-scroll">
                                 <div v-for="(log, i) in currentLogs" :key="i" class="log-item fade-in-up">
                                     <div class="log-age">{{ log.age }}岁</div>
                                     <div class="log-content">
                                         <div class="log-text">{{ log.text }}</div>
-                                        <div v-if="log.choices && log === gameState.log[gameState.log.length - 1] && pendingChoice"
+                                        <div
+v-if="log.choices && log === gameState.log[gameState.log.length - 1] && pendingChoice"
                                             class="log-choices">
-                                            <button v-for="(choice, cIdx) in log.choices" :key="cIdx" class="choice-btn"
+                                            <button
+v-for="(choice, _cIdx) in log.choices" :key="_cIdx" class="choice-btn"
                                                 @click="makeChoice(choice)">
                                                 {{ choice.text }}
                                             </button>
@@ -301,7 +314,8 @@
                                 <span v-if="house.rent > 0">租金: ￥{{ house.rent }}/月</span>
                                 <span v-else>售价: ￥{{ (house.price / 10000).toFixed(0) }}万</span>
                             </div>
-                            <el-button v-if="house.type === 'buy'" type="primary"
+                            <el-button
+v-if="house.type === 'buy'" type="primary"
                                 :disabled="gameState.wealth < house.price || hasHouse(house.id)"
                                 @click="buyHouse(house)">
                                 {{ hasHouse(house.id) ? '已拥有' : '购买' }}
@@ -318,7 +332,8 @@
                             <h4>{{ car.name }}</h4>
                             <p class="desc">{{ car.desc }}</p>
                             <div class="price">￥{{ (car.price / 10000).toFixed(1) }}万</div>
-                            <el-button type="primary" :disabled="gameState.wealth < car.price || hasCar(car.id)"
+                            <el-button
+type="primary" :disabled="gameState.wealth < car.price || hasCar(car.id)"
                                 @click="buyCar(car)">
                                 {{ hasCar(car.id) ? '已拥有' : '购买' }}
                             </el-button>
@@ -328,7 +343,8 @@
 
                 <div v-if="currentBuilding === 'school'">
                     <div class="school-list">
-                        <div v-for="edu in lifeData.education.levels" :key="edu.id" class="edu-item card"
+                        <div
+v-for="edu in lifeData.education.levels" :key="edu.id" class="edu-item card"
                             :class="{ 'active': canStudy(edu), 'completed': hasDegree(edu.id) }">
                             <h4>{{ edu.name }}</h4>
                             <p v-if="edu.cost">学费: ￥{{ edu.cost }}/年</p>
@@ -337,7 +353,8 @@
                                 <span v-if="edu.req" :class="{ 'text-danger': gameState.smarts < edu.req.smarts }">智力 >
                                     {{ edu.req.smarts }}</span>
                             </div>
-                            <el-button v-if="!hasDegree(edu.id)" :type="checkEduReq(edu) ? 'primary' : 'info'"
+                            <el-button
+v-if="!hasDegree(edu.id)" :type="checkEduReq(edu) ? 'primary' : 'info'"
                                 :disabled="!checkEduReq(edu) || (edu.cost > gameState.wealth && edu.cost > 0) || gameState.hasStudied"
                                 @click="enroll(edu)">
                                 {{ gameState.hasStudied ? '明年再来' : (checkEduReq(edu) ? '入学' : '未满足条件') }}
@@ -373,27 +390,32 @@
                     <div v-else>
                         <h3>人才市场</h3>
                         <div class="job-list">
-                            <div v-for="job in availableJobs" :key="job.id" class="job-item"
+                            <div
+v-for="job in availableJobs" :key="job.id" class="job-item"
                                 :class="{ disabled: !checkJobReq(job) }">
                                 <div>
                                     <strong>{{ job.name }}</strong>
                                     <div class="salary">￥{{ job.salary }}/月</div>
                                 </div>
                                 <div class="reqs">
-                                    <span v-if="job.req.smarts"
+                                    <span
+v-if="job.req.smarts"
                                         :class="{ 'text-danger': gameState.smarts < job.req.smarts }">智力{{
                                             job.req.smarts }}+
                                     </span>
-                                    <span v-if="job.req.looks"
+                                    <span
+v-if="job.req.looks"
                                         :class="{ 'text-danger': gameState.looks < job.req.looks }">颜值{{ job.req.looks
                                         }}+
                                     </span>
-                                    <span v-if="job.req.health"
+                                    <span
+v-if="job.req.health"
                                         :class="{ 'text-danger': gameState.health < job.req.health }">健康{{
                                             job.req.health }}+
                                     </span>
                                 </div>
-                                <el-button size="small" :type="checkJobReq(job) ? 'primary' : 'info'"
+                                <el-button
+size="small" :type="checkJobReq(job) ? 'primary' : 'info'"
                                     :disabled="!checkJobReq(job)" @click="applyJob(job)">
                                     {{ checkJobReq(job) ? '应聘' : '能力不足' }}
                                 </el-button>
@@ -411,7 +433,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, nextTick, computed, onMounted, watch } from 'vue';
+import { ref, reactive, nextTick, computed, onMounted } from 'vue';
 // ... (rest of script is unchanged, just showing context for replacement if needed, 
 // but actually I can just target the closing </main> tag to insert footer and then update styles)
 // However, the tool replaces based on line numbers or context.
@@ -419,13 +441,13 @@ import { ref, reactive, nextTick, computed, onMounted, watch } from 'vue';
 // And update styles for nav-center and footer.
 
 import {
-    Back, Wallet, FirstAidKit, Sunny, Reading, Camera, Trophy,
+    Back, Wallet, FirstAidKit, Sunny, Reading, Camera,
     House, Van, School, OfficeBuilding, Money, Position
 } from '@element-plus/icons-vue';
 
 const BankIcon = Money;
 
-import { lifeData, initialStats } from '@/data/lifeSimulatorData.js';
+import { lifeData, initialStats } from '@/data/lifeSimulatorData';
 
 
 
@@ -437,7 +459,6 @@ import { ElMessage } from 'element-plus';
 const gameState = reactive({ ...initialStats });
 const tempStats = ref(null);
 const pendingChoice = ref(null);
-const logRef = ref(null);
 const scrollContainerRef = ref(null); // Added this
 const hasSave = ref(false);
 
@@ -472,7 +493,7 @@ const currentLogs = computed(() => {
 });
 
 const availableJobs = computed(() => {
-    return lifeData.careers.filter(c => {
+    return lifeData.careers.filter(() => {
 
         return true;
     });
@@ -562,7 +583,7 @@ function confirmTalentAndNext() {
     if (selectedTalent.value && selectedTalent.value.effect) {
         const ef = selectedTalent.value.effect;
         for (const k in ef) {
-            if (tempStats.value.hasOwnProperty(k)) {
+            if (Object.prototype.hasOwnProperty.call(tempStats.value, k)) {
                 tempStats.value[k] += ef[k];
             }
         }
@@ -788,7 +809,7 @@ function applyEffect(ef) {
     }
     for (const k in ef) {
         if (k === 'death') continue;
-        if (gameState.hasOwnProperty(k)) {
+        if (Object.prototype.hasOwnProperty.call(gameState, k)) {
             if (k === 'wealth' || k === 'savings') {
                 gameState[k] += ef[k];
             } else {

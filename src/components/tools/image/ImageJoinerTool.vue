@@ -42,7 +42,7 @@
                         </div>
                         <h3>点击或拖拽上传多张图片</h3>
                         <p>支持横向、纵向及网格智能拼接，所有处理均在本地进行，不上传服务器</p>
-                        <input type="file" ref="fileRef" multiple hidden accept="image/*" @change="handleUpload" />
+                        <input ref="fileRef" type="file" multiple hidden accept="image/*" @change="handleUpload" />
                     </div>
 
                     <div v-else class="joiner-stage">
@@ -52,13 +52,14 @@
                         </div>
 
                         <div class="preview-scroll">
-                            <div class="canvas-container" ref="stageContainer">
+                            <div ref="stageContainer" class="canvas-container">
                                 <canvas ref="resultCanvas"></canvas>
                             </div>
                         </div>
 
                         <div class="image-list">
-                            <div v-for="(img, idx) in images" :key="img.id" class="image-item shadow-sm"
+                            <div
+v-for="(img, idx) in images" :key="img.id" class="image-item shadow-sm"
                                 :class="{ dragging: dragSourceIdx === idx }" draggable="true"
                                 @dragstart="handleDragStart(idx)" @dragover.prevent
                                 @dragenter.prevent="handleDragEnter(idx)" @dragend="handleDragEnd">
@@ -145,7 +146,7 @@
 
                         <div class="settings-group">
                             <div class="label">对齐模式 (当尺寸不一时)</div>
-                            <el-select v-model="config.align" @change="debouncedRender" class="full-width">
+                            <el-select v-model="config.align" class="full-width" @change="debouncedRender">
                                 <el-option label="缩放填满 (等高/等宽)" value="fill" />
                                 <el-option label="居中对齐" value="center" />
                                 <el-option label="顶部/左侧对齐" value="start" />
@@ -154,8 +155,9 @@
 
                         <div class="settings-group mt-4">
                             <div class="label">输出宽度 ({{ config.outputWidth }}px)</div>
-                            <el-input-number v-model="config.outputWidth" :min="200" :max="8000" :step="100"
-                                @change="debouncedRender" class="full-width" />
+                            <el-input-number
+v-model="config.outputWidth" :min="200" :max="8000" :step="100"
+                                class="full-width" @change="debouncedRender" />
                             <p class="hint mt-1">高度将根据比例自动计算</p>
                         </div>
 

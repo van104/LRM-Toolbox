@@ -1,7 +1,7 @@
 <template>
     <div class="pet-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -18,7 +18,7 @@
                 <div class="gameboy-frame">
                     <div class="screen-container">
                         <div class="screen" :class="{ 'night-mode': isSleeping }">
-                            <div class="stats-overlay" v-if="petStage !== 'egg'">
+                            <div v-if="petStage !== 'egg'" class="stats-overlay">
                                 <div class="stat-row">
                                     <el-icon>
                                         <Burger />
@@ -46,7 +46,7 @@
                             </div>
 
                             
-                            <div class="poops" v-if="poops.length > 0">
+                            <div v-if="poops.length > 0" class="poops">
                                 <div v-for="(p, i) in poops" :key="i" class="poop" :style="p.style">💩</div>
                             </div>
 
@@ -89,7 +89,7 @@
                                     </div>
 
                                     
-                                    <div class="emote-bubble" v-if="currentEmote">
+                                    <div v-if="currentEmote" class="emote-bubble">
                                         {{ currentEmote }}
                                     </div>
                                 </div>
@@ -102,22 +102,22 @@
                     <div class="controls-area">
                         <div class="brand">NINTENDO-PET</div>
                         <div class="btn-group">
-                            <button class="action-btn red" @click="feed" :disabled="isBusy" title="喂食">
+                            <button class="action-btn red" :disabled="isBusy" title="喂食" @click="feed">
                                 <el-icon>
                                     <Burger />
                                 </el-icon>
                             </button>
-                            <button class="action-btn blue" @click="play" :disabled="isBusy" title="玩耍">
+                            <button class="action-btn blue" :disabled="isBusy" title="玩耍" @click="play">
                                 <el-icon>
                                     <Baseball />
                                 </el-icon>
                             </button>
-                            <button class="action-btn green" @click="clean" :disabled="isBusy" title="清理">
+                            <button class="action-btn green" :disabled="isBusy" title="清理" @click="clean">
                                 <el-icon>
                                     <Delete />
                                 </el-icon>
                             </button>
-                            <button class="action-btn yellow" @click="toggleSleep" title="睡觉">
+                            <button class="action-btn yellow" title="睡觉" @click="toggleSleep">
                                 <el-icon v-if="!isSleeping">
                                     <Moon />
                                 </el-icon>

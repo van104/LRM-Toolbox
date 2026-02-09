@@ -1,7 +1,7 @@
 <template>
   <div class="config-templates-tool">
     <nav class="nav-bar">
-      <button @click="$router.back()" class="nav-back">
+      <button class="nav-back" @click="$router.back()">
         <el-icon>
           <Back />
         </el-icon> 返回
@@ -33,10 +33,10 @@
               <el-form-item label="监听域名">
                 <el-input v-model="vars.domain" placeholder="example.com" />
               </el-form-item>
-              <el-form-item label="下游端口/地址" v-if="selectedType === 'nginx-proxy'">
+              <el-form-item v-if="selectedType === 'nginx-proxy'" label="下游端口/地址">
                 <el-input v-model="vars.proxyPass" placeholder="127.0.0.1:3000" />
               </el-form-item>
-              <el-form-item label="静态文件根目录" v-if="selectedType === 'nginx-static'">
+              <el-form-item v-if="selectedType === 'nginx-static'" label="静态文件根目录">
                 <el-input v-model="vars.root" placeholder="/var/www/html" />
               </el-form-item>
             </div>

@@ -32,7 +32,7 @@
                         <button class="adjust-btn" @click="bpm--"><el-icon>
                                 <Minus />
                             </el-icon></button>
-                        <button class="play-btn" @click="togglePlay" :class="{ playing: isPlaying }">
+                        <button class="play-btn" :class="{ playing: isPlaying }" @click="togglePlay">
                             <el-icon v-if="!isPlaying">
                                 <VideoPlay />
                             </el-icon>

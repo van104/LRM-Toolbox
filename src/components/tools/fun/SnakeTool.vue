@@ -2,7 +2,7 @@
     <div class="snake-tool">
         
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -34,10 +34,11 @@
                             <div class="setting-item">
                                 <label>皮肤主题</label>
                                 <div class="skin-selector">
-                                    <button v-for="s in skins" :key="s.id" class="skin-btn"
+                                    <button
+v-for="s in skins" :key="s.id" class="skin-btn"
                                         :class="{ active: currentSkin.id === s.id }"
-                                        :style="{ background: s.snakeHead }" @click="setSkin(s)"
-                                        :title="s.name"></button>
+                                        :style="{ background: s.snakeHead }" :title="s.name"
+                                        @click="setSkin(s)"></button>
                                 </div>
                             </div>
                         </div>
@@ -45,16 +46,18 @@
 
                     
                     <div class="board-wrapper glass-card">
-                        <div class="game-board" :style="boardStyle" ref="boardRef">
+                        <div ref="boardRef" class="game-board" :style="boardStyle">
                             
                             <div class="grid-bg"></div>
 
                             
-                            <div v-if="food" class="game-cell food" :class="{ 'pulse-anim': true }"
+                            <div
+v-if="food" class="game-cell food" :class="{ 'pulse-anim': true }"
                                 :style="getFoodStyle()"></div>
 
                             
-                            <div v-for="(segment, index) in snake" :key="index" class="game-cell snake-body"
+                            <div
+v-for="(segment, index) in snake" :key="index" class="game-cell snake-body"
                                 :class="{ 'snake-head': index === 0 }" :style="getSnakeStyle(segment, index)">
                                 
                                 <div v-if="index === 0" class="snake-eyes">
@@ -111,18 +114,23 @@
                         <span>得分: {{ score }}</span>
                     </div>
                     <div class="d-pad-circle">
-                        <div class="d-btn up" @touchstart.prevent="changeDirection({ x: 0, y: -1 })"
+                        <div
+class="d-btn up" @touchstart.prevent="changeDirection({ x: 0, y: -1 })"
                             @mousedown.prevent="changeDirection({ x: 0, y: -1 })">↑</div>
-                        <div class="d-btn left" @touchstart.prevent="changeDirection({ x: -1, y: 0 })"
+                        <div
+class="d-btn left" @touchstart.prevent="changeDirection({ x: -1, y: 0 })"
                             @mousedown.prevent="changeDirection({ x: -1, y: 0 })">←</div>
                         <div class="d-btn center" @touchstart.prevent="togglePause" @mousedown.prevent="togglePause">P
                         </div>
-                        <div class="d-btn right" @touchstart.prevent="changeDirection({ x: 1, y: 0 })"
+                        <div
+class="d-btn right" @touchstart.prevent="changeDirection({ x: 1, y: 0 })"
                             @mousedown.prevent="changeDirection({ x: 1, y: 0 })">→</div>
-                        <div class="d-btn down" @touchstart.prevent="changeDirection({ x: 0, y: 1 })"
+                        <div
+class="d-btn down" @touchstart.prevent="changeDirection({ x: 0, y: 1 })"
                             @mousedown.prevent="changeDirection({ x: 0, y: 1 })">↓</div>
                     </div>
-                    <button class="boost-btn" @touchstart.prevent="toggleBoost(true)"
+                    <button
+class="boost-btn" @touchstart.prevent="toggleBoost(true)"
                         @touchend.prevent="toggleBoost(false)" @mousedown.prevent="toggleBoost(true)"
                         @mouseup.prevent="toggleBoost(false)">
                         ⚡

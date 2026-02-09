@@ -1,7 +1,7 @@
 <template>
     <div class="random-number-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -18,29 +18,29 @@
                 <div class="input-section">
                     <div class="input-group">
                         <label>最小值</label>
-                        <input type="number" v-model.number="minVal" placeholder="1" />
+                        <input v-model.number="minVal" type="number" placeholder="1" />
                     </div>
                     <div class="input-group">
                         <label>最大值</label>
-                        <input type="number" v-model.number="maxVal" placeholder="100" />
+                        <input v-model.number="maxVal" type="number" placeholder="100" />
                     </div>
                     <div class="input-group">
                         <label>生成数量</label>
-                        <input type="number" v-model.number="quantity" placeholder="1" />
+                        <input v-model.number="quantity" type="number" placeholder="1" />
                     </div>
                 </div>
 
                 <div class="options-section">
                     <label class="checkbox-label">
-                        <input type="checkbox" v-model="unique" /> 不重复 (Unique)
+                        <input v-model="unique" type="checkbox" /> 不重复 (Unique)
                     </label>
-                    <label class="checkbox-label" v-if="quantity > 1">
-                        <input type="checkbox" v-model="sort" /> 结果排序
+                    <label v-if="quantity > 1" class="checkbox-label">
+                        <input v-model="sort" type="checkbox" /> 结果排序
                     </label>
                 </div>
 
                 <div class="action-section">
-                    <button class="generate-btn" @click="generate" :disabled="isAnimating">
+                    <button class="generate-btn" :disabled="isAnimating" @click="generate">
                         <el-icon :class="{ spinning: isAnimating }">
                             <Refresh />
                         </el-icon>
@@ -48,13 +48,14 @@
                     </button>
                 </div>
 
-                <div class="result-display" v-if="results.length > 0">
+                <div v-if="results.length > 0" class="result-display">
                     <div class="result-header">
                         <span>生成结果 ({{ results.length }}个)</span>
                         <button class="copy-btn" @click="copyResults">复制全部</button>
                     </div>
                     <div class="numbers-grid">
-                        <div v-for="(num, idx) in results" :key="idx" class="num-ball" :class="{ animate: isAnimating }"
+                        <div
+v-for="(num, idx) in results" :key="idx" class="num-ball" :class="{ animate: isAnimating }"
                             :style="{ animationDelay: `${idx * 0.05}s` }">
                             {{ num }}
                         </div>

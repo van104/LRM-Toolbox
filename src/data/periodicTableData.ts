@@ -1,4 +1,16 @@
-export const elements = [
+export interface Element {
+  number: number;
+  symbol: string;
+  name: string;
+  weight: string;
+  row: number;
+  col: number;
+  category: string;
+  config: string;
+  history?: string;
+}
+
+export const elements: Element[] = [
     { number: 1, symbol: 'H', name: '氢', weight: '1.008', row: 1, col: 1, category: 'nonmetal', config: '1s1', history: '1766年由亨利·卡文迪什发现。' },
     { number: 2, symbol: 'He', name: '氦', weight: '4.0026', row: 1, col: 18, category: 'noble', config: '1s2', history: '1868年由詹森和洛克耶发现。' },
     { number: 3, symbol: 'Li', name: '锂', weight: '6.94', row: 2, col: 1, category: 'alkali', config: '[He] 2s1' },

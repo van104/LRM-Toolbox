@@ -1,7 +1,7 @@
 <template>
     <div class="compound-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -42,11 +42,11 @@
                             <el-input-number v-model="years" :min="1" :max="50" class="w-full" />
                         </div>
                     </div>
-                    <el-button type="primary" class="calc-btn" @click="calculate" size="large">开始复利运算</el-button>
+                    <el-button type="primary" class="calc-btn" size="large" @click="calculate">开始复利运算</el-button>
                 </section>
 
                 
-                <div class="results-area" v-if="history.length > 0">
+                <div v-if="history.length > 0" class="results-area">
                     <section class="summary-card glass-card">
                         <div class="summary-grid">
                             <div class="summary-item main">

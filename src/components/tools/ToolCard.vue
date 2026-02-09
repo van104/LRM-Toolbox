@@ -1,20 +1,22 @@
 <template>
   <div class="tool-card-wrapper">
-    <TiltedCard :rotateAmplitude="12" :scaleOnHover="1.02" :showTooltip="false" containerHeight="100%"
-      containerWidth="100%" class="tool-card-tilt">
+    <TiltedCard
+:rotate-amplitude="12" :scale-on-hover="1.02" :show-tooltip="false" container-height="100%"
+      container-width="100%" class="tool-card-tilt">
       <div class="tool-card" @click="handleCardClick">
         
         <div class="card-actions">
           
-          <button class="action-btn detail-btn" @click.stop="$emit('view-detail', tool)" title="查看详情">
+          <button class="action-btn detail-btn" title="查看详情" @click.stop="$emit('view-detail', tool)">
             <el-icon :size="16">
               <InfoFilled />
             </el-icon>
           </button>
 
           
-          <button class="action-btn favorite-btn" :class="{ active: isFavorite }"
-            @click.stop="$emit('toggle-favorite', tool.id)" :title="isFavorite ? '取消收藏' : '添加收藏'">
+          <button
+class="action-btn favorite-btn" :class="{ active: isFavorite }"
+            :title="isFavorite ? '取消收藏' : '添加收藏'" @click.stop="$emit('toggle-favorite', tool.id)">
             <el-icon :size="16">
               <StarFilled v-if="isFavorite" />
               <Star v-else />

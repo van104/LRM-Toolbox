@@ -2,7 +2,7 @@
   <div class="batch-renamer">
     
     <nav class="nav-bar">
-      <button @click="goHome" class="nav-back">
+      <button class="nav-back" @click="goHome">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
@@ -18,9 +18,10 @@
     <main class="main-content">
       
       <section class="upload-section">
-        <div class="upload-card" :class="{ dragover: isDragOver }" @click="triggerFileInput"
+        <div
+class="upload-card" :class="{ dragover: isDragOver }" @click="triggerFileInput"
           @dragover.prevent="isDragOver = true" @dragleave.prevent="isDragOver = false" @drop.prevent="handleDrop">
-          <input type="file" ref="fileInput" multiple accept="image/*" @change="handleFileSelect" hidden />
+          <input ref="fileInput" type="file" multiple accept="image/*" hidden @change="handleFileSelect" />
           <div class="upload-icon">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -48,7 +49,7 @@
           <div class="settings-grid">
             <div class="form-group">
               <label>新文件名前缀</label>
-              <input type="text" v-model="config.prefix" placeholder="留空使用原文件名" class="form-input" />
+              <input v-model="config.prefix" type="text" placeholder="留空使用原文件名" class="form-input" />
             </div>
 
             <div class="form-group">
@@ -66,17 +67,17 @@
 
           <div class="options-row">
             <label class="checkbox-label">
-              <input type="checkbox" v-model="config.keepOriginal">
+              <input v-model="config.keepOriginal" type="checkbox">
               <span class="check-box"></span>
               保留原文件名
             </label>
             <label class="checkbox-label">
-              <input type="checkbox" v-model="config.addNumbers">
+              <input v-model="config.addNumbers" type="checkbox">
               <span class="check-box"></span>
               添加序号
             </label>
             <label class="checkbox-label">
-              <input type="checkbox" v-model="config.addTimestamp">
+              <input v-model="config.addTimestamp" type="checkbox">
               <span class="check-box"></span>
               添加时间戳
             </label>
@@ -88,13 +89,15 @@
           <div class="section-header">
             <h3>预览与处理</h3>
             <div class="section-actions">
-              <button @click="clearAll" class="btn text-danger">清空列表</button>
-              <button @click="downloadAll" class="btn primary" :disabled="isDownloading">
-                <svg v-if="isDownloading" class="spinner" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              <button class="btn text-danger" @click="clearAll">清空列表</button>
+              <button class="btn primary" :disabled="isDownloading" @click="downloadAll">
+                <svg
+v-if="isDownloading" class="spinner" width="16" height="16" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2">
                   <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                 </svg>
-                <svg v-else width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                <svg
+v-else width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                   stroke-width="2">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
                 </svg>
@@ -107,7 +110,7 @@
             <div v-for="(file, index) in processedFiles" :key="index" class="preview-item">
               <div class="preview-thumb">
                 <img :src="file.previewUrl" loading="lazy" />
-                <button @click="removeFile(index)" class="remove-btn" title="移除">
+                <button class="remove-btn" title="移除" @click="removeFile(index)">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -121,11 +124,12 @@
                 </div>
                 
                 <div class="name-edit-container">
-                  <input type="text" class="name-input" :value="file.customBase"
-                    @input="(e) => updateCustomBase(index, e.target.value)" :placeholder="file.generatedBase" />
+                  <input
+type="text" class="name-input" :value="file.customBase"
+                    :placeholder="file.generatedBase" @input="(e) => updateCustomBase(index, e.target.value)" />
                   <span class="name-suffix">{{ file.previewSuffix }}</span>
                 </div>
-                <button @click="downloadSingle(file)" class="btn-icon" title="下载此文件">
+                <button class="btn-icon" title="下载此文件" @click="downloadSingle(file)">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
                   </svg>

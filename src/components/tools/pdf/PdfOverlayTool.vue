@@ -70,19 +70,21 @@
 
                             <div class="setting-item">
                                 <label>透明度</label>
-                                <el-slider v-model="opacity" :min="10" :max="100"
+                                <el-slider
+v-model="opacity" :min="10" :max="100"
                                     :format-tooltip="(val) => val + '%'" />
                             </div>
                         </div>
                     </div>
 
-                    <el-button v-if="basePdf && overlayPdf" type="primary" size="large" class="action-btn"
+                    <el-button
+v-if="basePdf && overlayPdf" type="primary" size="large" class="action-btn"
                         :loading="processing" @click="mergeOverlay">
                         合并并下载
                     </el-button>
 
-                    <input type="file" ref="baseFileRef" hidden accept=".pdf" @change="handleBaseUpload" />
-                    <input type="file" ref="overlayFileRef" hidden accept=".pdf" @change="handleOverlayUpload" />
+                    <input ref="baseFileRef" type="file" hidden accept=".pdf" @change="handleBaseUpload" />
+                    <input ref="overlayFileRef" type="file" hidden accept=".pdf" @change="handleOverlayUpload" />
                 </div>
             </div>
         </main>

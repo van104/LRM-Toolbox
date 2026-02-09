@@ -87,7 +87,8 @@
         </h2>
         <div class="converter-box">
           <div class="input-group">
-            <el-date-picker v-model="dateInput" type="datetime" placeholder="选择日期时间" style="width: 100%"
+            <el-date-picker
+v-model="dateInput" type="datetime" placeholder="选择日期时间" style="width: 100%"
               @change="convertDateToTs" />
           </div>
           <div class="arrow-divider">

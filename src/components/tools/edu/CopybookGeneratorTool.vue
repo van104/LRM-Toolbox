@@ -1,7 +1,7 @@
 <template>
     <div class="copybook-generator-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -20,23 +20,28 @@
                     <h3 class="panel-title">字帖设置</h3>
                     <el-form label-position="top">
                         <el-form-item label="练习内容">
-                            <el-input v-model="form.content" type="textarea" :rows="4" placeholder="输入想要练习的文字..."
+                            <el-input
+v-model="form.content" type="textarea" :rows="4" placeholder="输入想要练习的文字..."
                                 @input="draw" />
                         </el-form-item>
                         <el-form-item label="选择字体">
-                            <el-select v-model="form.fontFamily" placeholder="请选择字体" @change="draw" class="w-full mb-2">
-                                <el-option v-for="font in builtInFonts" :key="font.value" :label="font.label"
+                            <el-select v-model="form.fontFamily" placeholder="请选择字体" class="w-full mb-2" @change="draw">
+                                <el-option
+v-for="font in builtInFonts" :key="font.value" :label="font.label"
                                     :value="font.value" />
-                                <el-option v-if="customFontName" :label="`自定义: ${customFontName}`"
+                                <el-option
+v-if="customFontName" :label="`自定义: ${customFontName}`"
                                     :value="customFontName" />
                             </el-select>
-                            <el-upload action="#" :auto-upload="false" :show-file-list="false"
+                            <el-upload
+action="#" :auto-upload="false" :show-file-list="false"
                                 :on-change="handleFontUpload" accept=".ttf,.otf,.woff,.woff2">
                                 <el-button size="small" type="info" plain class="w-full">导入自定义字体 (.ttf/.otf)</el-button>
                             </el-upload>
                         </el-form-item>
                         <el-form-item label="格局类型">
-                            <el-radio-group v-for="type in gridTypes" :key="type.value" v-model="form.type"
+                            <el-radio-group
+v-for="type in gridTypes" :key="type.value" v-model="form.type"
                                 style="margin-right: 15px;" @change="draw">
                                 <el-radio-button :value="type.value">{{ type.label }}</el-radio-button>
                             </el-radio-group>
@@ -58,7 +63,7 @@
 
                 
                 <section class="preview-area glass-card">
-                    <div class="canvas-container" id="copybook-canvas-wrap">
+                    <div id="copybook-canvas-wrap" class="canvas-container">
                         <canvas ref="canvasRef"></canvas>
                     </div>
                 </section>

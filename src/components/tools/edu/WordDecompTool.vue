@@ -1,7 +1,7 @@
 <template>
     <div class="word-decomp-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -18,7 +18,7 @@
                 <div class="input-section">
                     <label>输入单个汉字</label>
                     <div class="search-box">
-                        <input v-model="inputText" maxlength="1" @input="searchWord" placeholder="请输入汉字，如：春" />
+                        <input v-model="inputText" maxlength="1" placeholder="请输入汉字，如：春" @input="searchWord" />
                     </div>
                 </div>
 

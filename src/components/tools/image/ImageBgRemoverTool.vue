@@ -35,21 +35,22 @@
                         </div>
                         <h3>选择图片开始去背景</h3>
                         <p>支持人物、物品、动物等主体的智能识别</p>
-                        <input type="file" ref="fileRef" hidden accept="image/*" @change="handleUpload" />
+                        <input ref="fileRef" type="file" hidden accept="image/*" @change="handleUpload" />
                     </div>
 
                     <div v-show="image" class="remover-stage">
-                        <div v-if="editMode === 'view'" class="compare-container"
-                            :class="{ 'has-result': resultUrl, 'is-dragging': isSliding }" ref="compareBox"
+                        <div
+v-if="editMode === 'view'" ref="compareBox"
+                            class="compare-container" :class="{ 'has-result': resultUrl, 'is-dragging': isSliding }"
                             @mousedown="startSliding" @touchstart="startSliding">
                             
-                            <div class="original-box" v-if="!resultUrl">
+                            <div v-if="!resultUrl" class="original-box">
                                 <img :src="imageUrl" class="preview-img" alt="Original" />
                                 <div class="tag">原始图片</div>
                             </div>
 
                             
-                            <div class="slider-compare-box" v-else>
+                            <div v-else class="slider-compare-box">
                                 
                                 <div class="result-layer transparency-grid">
                                     
@@ -85,10 +86,11 @@
                             </div>
                         </div>
 
-                        <div class="stage-actions" v-if="image && !resultUrl && !processing && editMode === 'view'">
+                        <div v-if="image && !resultUrl && !processing && editMode === 'view'" class="stage-actions">
                             <div class="flex gap-4">
-                                <el-button type="primary" size="large" @click="processBgRemoval"
-                                    :disabled="!isConfigValid">
+                                <el-button
+type="primary" size="large" :disabled="!isConfigValid"
+                                    @click="processBgRemoval">
                                     <el-icon>
                                         <MagicStick />
                                     </el-icon> 开始 AI 抠图
@@ -111,30 +113,33 @@
                                 </div>
                                 <div class="tool-group">
                                     <el-button-group>
-                                        <el-button :type="brushType === 'erase' ? 'primary' : ''"
+                                        <el-button
+:type="brushType === 'erase' ? 'primary' : ''"
                                             @click="brushType = 'erase'">
                                             擦除 (前景)
                                         </el-button>
-                                        <el-button :type="brushType === 'restore' ? 'primary' : ''"
+                                        <el-button
+:type="brushType === 'restore' ? 'primary' : ''"
                                             @click="brushType = 'restore'">
                                             恢复 (背景)
                                         </el-button>
                                     </el-button-group>
                                 </div>
                                 <div class="tool-group">
-                                    <el-button @click="undoEdit" :disabled="historyStack.length <= 1">撤销</el-button>
+                                    <el-button :disabled="historyStack.length <= 1" @click="undoEdit">撤销</el-button>
                                     <el-button type="success" @click="saveManualEdit">保存编辑</el-button>
                                     <el-button @click="exitManualEdit">取消</el-button>
                                 </div>
                             </div>
-                            <div class="canvas-wrapper transparency-grid" ref="canvasWrapper">
-                                <canvas ref="editCanvas" @mousedown.prevent="startDrawing" @mousemove.prevent="draw"
+                            <div ref="canvasWrapper" class="canvas-wrapper transparency-grid">
+                                <canvas
+ref="editCanvas" @mousedown.prevent="startDrawing" @mousemove.prevent="draw"
                                     @mouseup="stopDrawing" @mouseleave="stopDrawing" @touchstart.prevent="startDrawing"
                                     @touchmove.prevent="draw" @touchend.prevent="stopDrawing"></canvas>
                             </div>
                         </div>
 
-                        <div class="stage-actions" v-if="resultUrl && editMode === 'view'">
+                        <div v-if="resultUrl && editMode === 'view'" class="stage-actions">
                             <el-button type="primary" plain @click="enterManualEdit">
                                 <el-icon>
                                     <Edit />
@@ -185,19 +190,23 @@
                             <p>2. 每月提供 50 次免费 API 调用额度</p>
                         </div>
 
-                        <div v-if="apiConfig.provider !== 'adobe' && apiConfig.provider !== 'builtin'"
+                        <div
+v-if="apiConfig.provider !== 'adobe' && apiConfig.provider !== 'builtin'"
                             class="settings-group">
                             <div v-if="apiConfig.provider === 'baidu'">
                                 <div class="label">Baidu API Key</div>
-                                <el-input v-model="apiConfig.apiKey" placeholder="输入 Baidu API Key..." show-password
+                                <el-input
+v-model="apiConfig.apiKey" placeholder="输入 Baidu API Key..." show-password
                                     clearable class="mb-2" />
                                 <div class="label">Baidu Secret Key</div>
-                                <el-input v-model="apiConfig.baiduSecret" placeholder="输入 Baidu Secret Key..."
+                                <el-input
+v-model="apiConfig.baiduSecret" placeholder="输入 Baidu Secret Key..."
                                     show-password clearable />
                             </div>
                             <div v-else>
                                 <div class="label">{{ apiConfig.provider === 'custom' ? '接口地址' : 'API Key' }}</div>
-                                <el-input v-model="apiConfig.apiKey"
+                                <el-input
+v-model="apiConfig.apiKey"
                                     :type="apiConfig.provider === 'custom' ? 'text' : 'password'"
                                     :placeholder="apiConfig.provider === 'custom' ? 'https://api.example.com/removebg' : '输入您的 API Key...'"
                                     show-password clearable />
@@ -206,7 +215,8 @@
 
                         <div v-if="apiConfig.provider === 'custom'" class="settings-group">
                             <div class="label">自定义 Header (JSON字符串)</div>
-                            <el-input v-model="apiConfig.customHeaders" type="textarea" :rows="3"
+                            <el-input
+v-model="apiConfig.customHeaders" type="textarea" :rows="3"
                                 placeholder='{"Authorization": "Bearer xxx"}' />
                         </div>
                     </div>
@@ -242,7 +252,8 @@
                                 </div>
                                 <div class="setting-item">
                                     <span class="sub-label">粗细 ({{ strokeConfig.width }}px)</span>
-                                    <el-slider v-model="strokeConfig.width" :min="1" :max="50" size="small"
+                                    <el-slider
+v-model="strokeConfig.width" :min="1" :max="50" size="small"
                                         style="flex: 1; margin-left: 10px;" />
                                 </div>
                             </div>

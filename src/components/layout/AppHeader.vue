@@ -9,9 +9,11 @@
 
       
       <el-tooltip content="按住鼠标左键可左右拖动" placement="bottom" :effect="themeStore.theme === 'dark' ? 'dark' : 'light'">
-        <nav class="nav-menu" ref="navMenuRef" @mousedown="handleMouseDown" @mouseleave="handleMouseLeave"
+        <nav
+ref="navMenuRef" class="nav-menu" @mousedown="handleMouseDown" @mouseleave="handleMouseLeave"
           @mouseup="handleMouseUp" @mousemove="handleMouseMove">
-          <button v-for="cat in categories" :key="cat.id" :class="['nav-item', { active: activeCategory === cat.id }]"
+          <button
+v-for="cat in categories" :key="cat.id" :class="['nav-item', { active: activeCategory === cat.id }]"
             @click="handleCategoryClick($event, cat.id)">
             <el-icon :size="18">
               <component :is="cat.icon" />
@@ -25,15 +27,15 @@
       
       <div class="header-actions">
         
-        <div class="search-box" v-if="showSearch">
+        <div v-if="showSearch" class="search-box">
           <el-icon :size="18">
             <Search />
           </el-icon>
-          <input type="text" placeholder="搜索工具..." v-model="searchKeyword" @input="$emit('search', searchKeyword)" />
+          <input v-model="searchKeyword" type="text" placeholder="搜索工具..." @input="$emit('search', searchKeyword)" />
         </div>
 
         
-        <button class="icon-btn" @click="$router.push('/favorites')" title="我的收藏">
+        <button class="icon-btn" title="我的收藏" @click="$router.push('/favorites')">
           <el-badge :value="userStore.favoritesCount" :hidden="userStore.favoritesCount === 0" type="warning" is-dot>
             <el-icon :size="20">
               <Star />
@@ -42,7 +44,7 @@
         </button>
 
         
-        <button class="icon-btn" @click="$router.push('/history')" title="历史记录">
+        <button class="icon-btn" title="历史记录" @click="$router.push('/history')">
           <el-badge :value="userStore.historyCount" :hidden="userStore.historyCount === 0" type="info" is-dot>
             <el-icon :size="20">
               <Clock />
@@ -94,7 +96,8 @@
     
     <Transition name="slide">
       <div v-if="mobileMenuOpen" class="mobile-menu">
-        <button v-for="cat in categories" :key="cat.id"
+        <button
+v-for="cat in categories" :key="cat.id"
           :class="['mobile-nav-item', { active: activeCategory === cat.id }]" @click="handleMobileNavClick(cat.id)">
           <el-icon :size="20">
             <component :is="cat.icon" />

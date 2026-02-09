@@ -1,7 +1,7 @@
 <template>
     <div class="vision-test-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -32,13 +32,15 @@
                                 <div class="plate-container">
                                     <img :src="colorPlates[currentPlate].url" class="test-img" />
                                     <div class="plate-nav">
-                                        <el-button @click="prevPlate" :disabled="currentPlate === 0" circle
-                                            icon="ArrowLeft"></el-button>
+                                        <el-button
+:disabled="currentPlate === 0" circle icon="ArrowLeft"
+                                            @click="prevPlate"></el-button>
                                         <span class="plate-indicator">{{ currentPlate + 1 }} / {{ colorPlates.length
                                         }}</span>
-                                        <el-button @click="nextPlate"
-                                            :disabled="currentPlate === colorPlates.length - 1" circle
-                                            icon="ArrowRight"></el-button>
+                                        <el-button
+:disabled="currentPlate === colorPlates.length - 1"
+                                            circle icon="ArrowRight"
+                                            @click="nextPlate"></el-button>
                                     </div>
                                 </div>
                                 <div class="test-info">
@@ -56,7 +58,8 @@
                             
                             <div v-if="currentTest === 'astigmatism'" class="test-card">
                                 <div class="astigmatism-chart">
-                                    <div v-for="n in 12" :key="n" class="line"
+                                    <div
+v-for="n in 12" :key="n" class="line"
                                         :style="{ transform: `rotate(${(n - 1) * 30}deg)` }"></div>
                                 </div>
                                 <div class="test-info">
@@ -80,7 +83,8 @@
                 <el-tab-pane label="护眼计时器" name="timer">
                     <div class="timer-area glass-card">
                         <div class="timer-visual">
-                            <el-progress type="circle" :percentage="timerPercent" :stroke-width="12" :color="timerColor"
+                            <el-progress
+type="circle" :percentage="timerPercent" :stroke-width="12" :color="timerColor"
                                 :width="200">
                                 <template #default>
                                     <div class="timer-display">
@@ -110,7 +114,8 @@
         </main>
 
         <div class="disclaimer-wrap" style="padding: 0 1.5rem 2rem; text-align: center;">
-            <div class="disclaimer-card"
+            <div
+class="disclaimer-card"
                 style="display: inline-flex; gap: 0.8rem; padding: 1rem; background: #fff7ed; color: #9a3412; border-radius: 12px; font-size: 0.8rem; align-items: start; text-align: left; border: 1px solid #ffedd5;">
                 <el-icon style="margin-top: 2px;">
                     <InfoFilled />

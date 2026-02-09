@@ -48,26 +48,29 @@
                         <span class="label">第</span>
                         <span class="week-num">{{ currentViewWeek }}</span>
                         <span class="label">周</span>
-                        <el-tag v-if="currentViewWeek === realCurrentWeek" size="small" type="success" effect="dark"
+                        <el-tag
+v-if="currentViewWeek === realCurrentWeek" size="small" type="success" effect="dark"
                             class="today-tag">本周</el-tag>
                     </div>
                     <div class="week-nav">
                         <el-button-group>
-                            <el-button @click="changeWeek(1)" :disabled="currentViewWeek <= 1">第一周</el-button>
-                            <el-button @click="changeWeek(currentViewWeek - 1)" :disabled="currentViewWeek <= 1">
+                            <el-button :disabled="currentViewWeek <= 1" @click="changeWeek(1)">第一周</el-button>
+                            <el-button :disabled="currentViewWeek <= 1" @click="changeWeek(currentViewWeek - 1)">
                                 <el-icon>
                                     <ArrowLeft />
                                 </el-icon>
                             </el-button>
                             <el-button @click="currentViewWeek = realCurrentWeek">本周</el-button>
-                            <el-button @click="changeWeek(currentViewWeek + 1)"
-                                :disabled="currentViewWeek >= totalWeeks">
+                            <el-button
+:disabled="currentViewWeek >= totalWeeks"
+                                @click="changeWeek(currentViewWeek + 1)">
                                 <el-icon>
                                     <ArrowRight />
                                 </el-icon>
                             </el-button>
-                            <el-button @click="changeWeek(totalWeeks)"
-                                :disabled="currentViewWeek >= totalWeeks">最后周</el-button>
+                            <el-button
+:disabled="currentViewWeek >= totalWeeks"
+                                @click="changeWeek(totalWeeks)">最后周</el-button>
                         </el-button-group>
 
                         <el-select v-model="currentViewWeek" style="width: 100px; margin-left: 1rem">
@@ -78,13 +81,14 @@
             </section>
 
             
-            <section class="schedule-container glass-card" v-loading="loading">
+            <section v-loading="loading" class="schedule-container glass-card">
                 <div class="table-wrapper">
                     <table class="schedule-table">
                         <thead>
                             <tr>
                                 <th class="time-col">时间段</th>
-                                <th v-for="(day, index) in weekDays" :key="index"
+                                <th
+v-for="(day, index) in weekDays" :key="index"
                                     :class="{ 'is-today': isToday(index) }">
                                     <div class="day-name">{{ day }}</div>
                                     <div class="day-date">{{ getDayDate(index) }}</div>
@@ -97,9 +101,11 @@
                                     <div class="slot-idx">{{ slotIdx + 1 }}</div>
                                     <div class="slot-time">{{ slot }}</div>
                                 </td>
-                                <td v-for="(day, dayIdx) in weekDays" :key="dayIdx" class="course-cell"
+                                <td
+v-for="(day, dayIdx) in weekDays" :key="dayIdx" class="course-cell"
                                     :class="{ 'is-today': isToday(dayIdx) }">
-                                    <div v-for="course in getCoursesAt(dayIdx, slotIdx)" :key="course.id"
+                                    <div
+v-for="course in getCoursesAt(dayIdx, slotIdx)" :key="course.id"
                                         class="course-card"
                                         :style="{ backgroundColor: getCourseColor(course.course_name) }"
                                         @click="editCourse(course)">
@@ -117,7 +123,8 @@
                                         <div class="course-week">{{ course.week_range }}</div>
 
                                         <div class="course-actions">
-                                            <el-button link type="primary" size="small"
+                                            <el-button
+link type="primary" size="small"
                                                 @click.stop="confirmDelete(course.id)">
                                                 <el-icon>
                                                     <Delete />
@@ -135,11 +142,12 @@
 
         
         <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑课程' : '添加课程'" width="500px">
-            <div class="paste-parser" v-if="!isEdit">
-                <el-input v-model="pasteData" type="textarea" :rows="3" placeholder="粘贴课程信息识别，格式如：
+            <div v-if="!isEdit" class="paste-parser">
+                <el-input
+v-model="pasteData" type="textarea" :rows="3" placeholder="粘贴课程信息识别，格式如：
 计算机网络
 (3-4节)3-12周/6号楼301/张老师" />
-                <el-button type="primary" link @click="parsePaste" class="parse-btn">识别并填充</el-button>
+                <el-button type="primary" link class="parse-btn" @click="parsePaste">识别并填充</el-button>
             </div>
 
             <el-form :model="courseForm" label-width="80px" class="mt-4">
@@ -182,7 +190,8 @@
         <el-dialog v-model="settingsVisible" title="学期设置" width="500px">
             <el-form :model="settingsForm" label-width="100px">
                 <el-form-item label="开学日期">
-                    <el-date-picker v-model="settingsForm.start_date" type="date" placeholder="选择第一周周一的日期"
+                    <el-date-picker
+v-model="settingsForm.start_date" type="date" placeholder="选择第一周周一的日期"
                         format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 100%" />
                 </el-form-item>
                 <el-form-item label="总周数">
@@ -190,10 +199,11 @@
                 </el-form-item>
                 <el-divider>时间段设置</el-divider>
                 <div v-for="(slot, index) in settingsForm.time_slots" :key="index" class="setting-slot-item">
-                    <el-input v-model="settingsForm.time_slots[index]" placeholder="HH:mm-HH:mm"
+                    <el-input
+v-model="settingsForm.time_slots[index]" placeholder="HH:mm-HH:mm"
                         style="margin-bottom: 0.5rem">
                         <template #append>
-                            <el-button @click="removeSlot(index)" :disabled="settingsForm.time_slots.length <= 1">
+                            <el-button :disabled="settingsForm.time_slots.length <= 1" @click="removeSlot(index)">
                                 <el-icon>
                                     <Delete />
                                 </el-icon>
@@ -201,7 +211,7 @@
                         </template>
                     </el-input>
                 </div>
-                <el-button type="dashed" block @click="addSlot" class="w-full">+ 添加时间段</el-button>
+                <el-button type="dashed" block class="w-full" @click="addSlot">+ 添加时间段</el-button>
             </el-form>
             <template #footer>
                 <el-button @click="settingsVisible = false">取消</el-button>
@@ -210,7 +220,7 @@
         </el-dialog>
 
         
-        <input type="file" ref="fileInput" style="display: none" accept=".json" @change="handleFileImport" />
+        <input ref="fileInput" type="file" style="display: none" accept=".json" @change="handleFileImport" />
 
         
         <footer class="footer">

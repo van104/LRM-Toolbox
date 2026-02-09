@@ -31,11 +31,12 @@
                         </el-popover>
                     </div>
                     <div class="editor-wrapper">
-                        <textarea v-model="templateText" class="code-editor" placeholder="你好 {{name}}，你的验证码是 {{code}}。"
+                        <textarea
+v-model="templateText" class="code-editor" placeholder="你好 {{name}}，你的验证码是 {{code}}。"
                             spellcheck="false"></textarea>
                     </div>
-                    <div class="variable-list" v-if="variables.length">
-                        <span class="var-tag" v-for="v in variables" :key="v" @click="insertVar(v)">{{ v }}</span>
+                    <div v-if="variables.length" class="variable-list">
+                        <span v-for="v in variables" :key="v" class="var-tag" @click="insertVar(v)">{{ v }}</span>
                     </div>
                 </section>
 
@@ -44,13 +45,15 @@
                     <div class="panel-header">
                         <span class="panel-title">2. 数据源</span>
                         <div class="mode-switch">
-                            <button :class="{ active: curDataMode === 'json' }"
+                            <button
+:class="{ active: curDataMode === 'json' }"
                                 @click="curDataMode = 'json'">JSON</button>
                             <button :class="{ active: curDataMode === 'csv' }" @click="curDataMode = 'csv'">CSV</button>
                         </div>
                     </div>
                     <div class="editor-wrapper">
-                        <textarea v-model="dataInput" class="code-editor" :placeholder="dataPlaceholder"
+                        <textarea
+v-model="dataInput" class="code-editor" :placeholder="dataPlaceholder"
                             spellcheck="false"></textarea>
                     </div>
                     <div class="panel-footer">
@@ -73,18 +76,20 @@
                                 <el-option label="分号" value=";" />
                                 <el-option label="自定义" value="custom" />
                             </el-select>
-                            <el-input v-if="separator === 'custom'" v-model="customSeparator" size="small"
+                            <el-input
+v-if="separator === 'custom'" v-model="customSeparator" size="small"
                                 style="width: 60px" placeholder="符号" />
                             <el-button type="primary" size="small" @click="generate">生成</el-button>
                         </div>
                     </div>
                     <div class="editor-wrapper">
-                        <textarea v-model="resultText" class="code-editor result-editor" readonly
+                        <textarea
+v-model="resultText" class="code-editor result-editor" readonly
                             placeholder="生成结果显示在此..."></textarea>
                     </div>
                     <div class="panel-footer">
-                        <span class="count-info" v-if="resultText">{{ resultText.length }} chars</span>
-                        <el-button size="small" @click="copyResult" :disabled="!resultText">复制结果</el-button>
+                        <span v-if="resultText" class="count-info">{{ resultText.length }} chars</span>
+                        <el-button size="small" :disabled="!resultText" @click="copyResult">复制结果</el-button>
                     </div>
                 </section>
 

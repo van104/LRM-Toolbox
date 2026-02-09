@@ -1,7 +1,16 @@
 
 
 
-export const holidayData = [
+export interface Holiday {
+  year: string;
+  name: string;
+  range: string;
+  length: number;
+  adjustments: string[];
+  tip: string;
+}
+
+export const holidayData: Holiday[] = [
     
     {
         year: '2024',
@@ -178,56 +187,59 @@ export const holidayData = [
 ]
 
 
-export const availableYears = ['2024', '2025', '2026']
+export const availableYears: string[] = ['2024', '2025', '2026'];
 
 
-export function getHolidaysByYear(year) {
-    return holidayData.filter(h => h.year === year)
+export function getHolidaysByYear(year: string): Holiday[] {
+  return holidayData.filter(h => h.year === year);
 }
 
 
-export function getNextHoliday() {
-    const now = new Date()
-    const currentYear = now.getFullYear()
-    const currentMonth = now.getMonth() + 1
-    const currentDay = now.getDate()
+export interface NextHoliday {
+  name: string;
+  daysLeft: number | string;
+  range: string;
+  length: number;
+}
 
-    
-    const parseStartDate = (range, year) => {
-        const match = range.match(/(\d+)月(\d+)日/)
-        if (match) {
-            return new Date(parseInt(year), parseInt(match[1]) - 1, parseInt(match[2]))
-        }
-        return null
+export function getNextHoliday(): NextHoliday {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+
+  const parseStartDate = (range: string, year: string) => {
+    const match = range.match(/(\d+)月(\d+)日/);
+    if (match) {
+      return new Date(parseInt(year), parseInt(match[1]) - 1, parseInt(match[2]));
     }
+    return null;
+  };
 
-    
-    let nextHoliday = null
-    let minDiff = Infinity
+  let nextHoliday: NextHoliday | null = null;
+  let minDiff = Infinity;
 
-    for (const holiday of holidayData) {
-        const holidayYear = parseInt(holiday.year)
-        if (holidayYear < currentYear) continue
+  for (const holiday of holidayData) {
+    const holidayYear = parseInt(holiday.year);
+    if (holidayYear < currentYear) continue;
 
-        const startDate = parseStartDate(holiday.range, holiday.year)
-        if (!startDate) continue
+    const startDate = parseStartDate(holiday.range, holiday.year);
+    if (!startDate) continue;
 
-        const diff = Math.ceil((startDate - now) / (1000 * 60 * 60 * 24))
-        if (diff > 0 && diff < minDiff) {
-            minDiff = diff
-            nextHoliday = {
-                name: holiday.name,
-                daysLeft: diff,
-                range: `${holiday.year}年${holiday.range}`,
-                length: holiday.length
-            }
-        }
+    const diff = Math.ceil((startDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    if (diff > 0 && diff < minDiff) {
+      minDiff = diff;
+      nextHoliday = {
+        name: holiday.name,
+        daysLeft: diff,
+        range: `${holiday.year}年${holiday.range}`,
+        length: holiday.length
+      };
     }
+  }
 
-    return nextHoliday || {
-        name: '暂无',
-        daysLeft: '-',
-        range: '-',
-        length: 0
-    }
+  return nextHoliday || {
+    name: '暂无',
+    daysLeft: '-',
+    range: '-',
+    length: 0
+  };
 }

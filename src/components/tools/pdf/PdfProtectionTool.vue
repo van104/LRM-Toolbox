@@ -38,14 +38,17 @@
 
                                     <div class="form-section">
                                         <div class="form-item">
-                                            <span class="label">打开密码 (User Password) <el-tag size="small"
+                                            <span class="label">打开密码 (User Password) <el-tag
+size="small"
                                                     type="danger">必填</el-tag></span>
-                                            <el-input v-model="encryptConfig.userPassword" type="password" show-password
+                                            <el-input
+v-model="encryptConfig.userPassword" type="password" show-password
                                                 placeholder="设置文件打开密码" />
                                         </div>
                                         <div class="form-item">
                                             <span class="label">权限密码 (Owner Password)</span>
-                                            <el-input v-model="encryptConfig.ownerPassword" type="password"
+                                            <el-input
+v-model="encryptConfig.ownerPassword" type="password"
                                                 show-password placeholder="可选，用于限制编辑/打印权限" />
                                         </div>
                                     </div>
@@ -64,8 +67,9 @@
                                         </el-alert>
                                     </div>
 
-                                    <el-button type="primary" size="large" class="action-btn" :loading="processing"
-                                        @click="handleEncrypt" :disabled="!encryptConfig.userPassword">
+                                    <el-button
+type="primary" size="large" class="action-btn" :loading="processing"
+                                        :disabled="!encryptConfig.userPassword" @click="handleEncrypt">
                                         加密并下载
                                     </el-button>
                                 </div>
@@ -93,7 +97,8 @@
                                     <div class="form-section">
                                         <div class="form-item">
                                             <span class="label">当前密码</span>
-                                            <el-input v-model="decryptPassword" type="password" show-password
+                                            <el-input
+v-model="decryptPassword" type="password" show-password
                                                 placeholder="输入当前打开密码以解锁" />
                                         </div>
                                     </div>
@@ -112,7 +117,8 @@
                                         </el-alert>
                                     </div>
 
-                                    <el-button type="success" size="large" class="action-btn" :loading="processing"
+                                    <el-button
+type="success" size="large" class="action-btn" :loading="processing"
                                         @click="handleDecrypt">
                                         移除密码并下载
                                     </el-button>
@@ -120,7 +126,7 @@
                             </div>
                         </el-tab-pane>
                     </el-tabs>
-                    <input type="file" ref="fileRef" hidden accept=".pdf" @change="handleUpload" />
+                    <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
                 </div>
             </div>
         </main>

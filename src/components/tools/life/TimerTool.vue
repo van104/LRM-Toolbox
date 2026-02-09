@@ -26,12 +26,15 @@
             
             <div class="mode-switcher">
                 <div class="switcher-bg">
-                    <div class="switcher-active"
+                    <div
+class="switcher-active"
                         :style="{ transform: currentMode === 'countdown' ? 'translateX(0)' : 'translateX(100%)' }">
                     </div>
-                    <button class="switcher-btn" :class="{ active: currentMode === 'countdown' }"
+                    <button
+class="switcher-btn" :class="{ active: currentMode === 'countdown' }"
                         @click="switchMode('countdown')">倒计时</button>
-                    <button class="switcher-btn" :class="{ active: currentMode === 'stopwatch' }"
+                    <button
+class="switcher-btn" :class="{ active: currentMode === 'stopwatch' }"
                         @click="switchMode('stopwatch')">正计时</button>
                 </div>
             </div>
@@ -48,14 +51,16 @@
                 </div>
 
                 <div class="controls-area">
-                    <el-button type="primary" size="large" circle class="control-btn play-btn"
+                    <el-button
+type="primary" size="large" circle class="control-btn play-btn"
                         :class="{ 'is-running': isCountdownRunning }" @click="toggleCountdown">
                         <el-icon size="24">
                             <component :is="isCountdownRunning ? 'VideoPause' : 'VideoPlay'" />
                         </el-icon>
                     </el-button>
-                    <el-button type="danger" size="large" circle class="control-btn" @click="resetCountdown"
-                        :disabled="!canResetCountdown">
+                    <el-button
+type="danger" size="large" circle class="control-btn" :disabled="!canResetCountdown"
+                        @click="resetCountdown">
                         <el-icon size="24">
                             <Refresh />
                         </el-icon>
@@ -68,7 +73,8 @@
                             <Clock />
                         </el-icon> 快速开始</div>
                     <div class="preset-grid">
-                        <button v-for="(preset, index) in quickPresets" :key="index" class="preset-btn"
+                        <button
+v-for="(preset, index) in quickPresets" :key="index" class="preset-btn"
                             @click="startPreset(preset)">
                             <span class="preset-time">{{ formatDuration(preset.time) }}</span>
                             <span class="preset-label">{{ preset.label }}</span>
@@ -91,17 +97,20 @@
                         </template>
                         <div class="custom-input-group">
                             <div class="input-item">
-                                <el-input-number v-model="customHours" :min="0" :max="99" controls-position="right"
+                                <el-input-number
+v-model="customHours" :min="0" :max="99" controls-position="right"
                                     placeholder="00" />
                                 <span class="unit">时</span>
                             </div>
                             <div class="input-item">
-                                <el-input-number v-model="customMinutes" :min="0" :max="59" controls-position="right"
+                                <el-input-number
+v-model="customMinutes" :min="0" :max="59" controls-position="right"
                                     placeholder="00" />
                                 <span class="unit">分</span>
                             </div>
                             <div class="input-item">
-                                <el-input-number v-model="customSeconds" :min="0" :max="59" controls-position="right"
+                                <el-input-number
+v-model="customSeconds" :min="0" :max="59" controls-position="right"
                                     placeholder="00" />
                                 <span class="unit">秒</span>
                             </div>
@@ -116,7 +125,8 @@
                                     <Calendar />
                                 </el-icon> 目标时间倒计时</div>
                         </template>
-                        <el-date-picker v-model="targetDateTime" type="datetime" placeholder="选择目标时间"
+                        <el-date-picker
+v-model="targetDateTime" type="datetime" placeholder="选择目标时间"
                             style="width: 100%" :disabled-date="disabledDate" />
                         <el-button type="primary" class="w-full mt-3" @click="startTargetTimer">开始倒计时</el-button>
                     </el-collapse-item>
@@ -134,28 +144,32 @@
                 </div>
 
                 <div class="controls-area">
-                    <el-button type="success" size="large" circle class="control-btn play-btn"
-                        v-if="!isStopwatchRunning" @click="startStopwatch">
+                    <el-button
+v-if="!isStopwatchRunning" type="success" size="large" circle
+                        class="control-btn play-btn" @click="startStopwatch">
                         <el-icon size="24">
                             <VideoPlay />
                         </el-icon>
                     </el-button>
-                    <el-button type="warning" size="large" circle class="control-btn play-btn" v-else
+                    <el-button
+v-else type="warning" size="large" circle class="control-btn play-btn"
                         @click="pauseStopwatch">
                         <el-icon size="24">
                             <VideoPause />
                         </el-icon>
                     </el-button>
 
-                    <el-button type="primary" size="large" circle class="control-btn" @click="lapStopwatch"
-                        :disabled="!isStopwatchRunning && stopwatchElapsed === 0">
+                    <el-button
+type="primary" size="large" circle class="control-btn" :disabled="!isStopwatchRunning && stopwatchElapsed === 0"
+                        @click="lapStopwatch">
                         <el-icon size="24">
                             <Flag />
                         </el-icon>
                     </el-button>
 
-                    <el-button type="danger" size="large" circle class="control-btn" @click="resetStopwatch"
-                        :disabled="stopwatchElapsed === 0">
+                    <el-button
+type="danger" size="large" circle class="control-btn" :disabled="stopwatchElapsed === 0"
+                        @click="resetStopwatch">
                         <el-icon size="24">
                             <Refresh />
                         </el-icon>
@@ -163,7 +177,7 @@
                 </div>
 
                 
-                <div class="laps-container" v-if="laps.length > 0">
+                <div v-if="laps.length > 0" class="laps-container">
                     <div class="section-title"><el-icon>
                             <DataAnalysis />
                         </el-icon> 计次记录</div>
@@ -188,7 +202,8 @@
                 <div class="settings-section">
                     <h3 class="settings-section-title">提示音设置</h3>
                     <div class="sound-grid">
-                        <div v-for="sound in soundOptions" :key="sound.key" class="sound-item"
+                        <div
+v-for="sound in soundOptions" :key="sound.key" class="sound-item"
                             :class="{ active: currentSound === sound.key }" @click="setSound(sound.key)">
                             <div class="sound-icon"><el-icon>
                                     <component :is="sound.icon" />
@@ -233,17 +248,20 @@
         <el-dialog v-model="addPresetVisible" title="添加快速预设" width="90%">
             <div class="custom-input-group">
                 <div class="input-item">
-                    <el-input-number v-model="newPresetHours" :min="0" :max="99" controls-position="right"
+                    <el-input-number
+v-model="newPresetHours" :min="0" :max="99" controls-position="right"
                         placeholder="00" />
                     <span class="unit">时</span>
                 </div>
                 <div class="input-item">
-                    <el-input-number v-model="newPresetMinutes" :min="0" :max="59" controls-position="right"
+                    <el-input-number
+v-model="newPresetMinutes" :min="0" :max="59" controls-position="right"
                         placeholder="00" />
                     <span class="unit">分</span>
                 </div>
                 <div class="input-item">
-                    <el-input-number v-model="newPresetSeconds" :min="0" :max="59" controls-position="right"
+                    <el-input-number
+v-model="newPresetSeconds" :min="0" :max="59" controls-position="right"
                         placeholder="00" />
                     <span class="unit">秒</span>
                 </div>

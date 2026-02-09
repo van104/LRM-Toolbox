@@ -2,7 +2,7 @@
   <div class="diff-comparer">
     
     <nav class="nav-bar">
-      <button @click="goHome" class="nav-back">
+      <button class="nav-back" @click="goHome">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
@@ -20,20 +20,20 @@
       <div class="toolbar-card">
         <div class="top-controls">
           <div class="primary-actions">
-            <button @click="handleCompare" class="btn primary">
+            <button class="btn primary" @click="handleCompare">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
               比较差异
             </button>
-            <button @click="handleClear" class="btn secondary">
+            <button class="btn secondary" @click="handleClear">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
               </svg>
               清空
             </button>
-            <button @click="handleSwap" class="btn secondary">
+            <button class="btn secondary" @click="handleSwap">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
               </svg>
@@ -52,13 +52,13 @@
             </div>
 
             <label class="setting-item checkbox">
-              <input type="checkbox" v-model="ignoreWhitespace">
+              <input v-model="ignoreWhitespace" type="checkbox">
               <span class="check-box"></span>
               忽略空白
             </label>
 
             <label class="setting-item checkbox">
-              <input type="checkbox" v-model="ignoreCase">
+              <input v-model="ignoreCase" type="checkbox">
               <span class="check-box"></span>
               忽略大小写
             </label>
@@ -77,13 +77,14 @@
             </div>
             <div class="header-actions">
               <label class="icon-btn" title="上传文件">
-                <input type="file" @change="(e) => handleFileUpload(e, 'original')" hidden
-                  accept=".txt,.js,.css,.html,.json,.md" />
+                <input
+type="file" hidden accept=".txt,.js,.css,.html,.json,.md"
+                  @change="(e) => handleFileUpload(e, 'original')" />
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
                 </svg>
               </label>
-              <button @click="loadSample('original')" class="icon-btn" title="加载示例">
+              <button class="icon-btn" title="加载示例" @click="loadSample('original')">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                   <polyline points="14 2 14 8 20 8" />
@@ -106,13 +107,14 @@
             </div>
             <div class="header-actions">
               <label class="icon-btn" title="上传文件">
-                <input type="file" @change="(e) => handleFileUpload(e, 'modified')" hidden
-                  accept=".txt,.js,.css,.html,.json,.md" />
+                <input
+type="file" hidden accept=".txt,.js,.css,.html,.json,.md"
+                  @change="(e) => handleFileUpload(e, 'modified')" />
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
                 </svg>
               </label>
-              <button @click="loadSample('modified')" class="icon-btn" title="加载示例">
+              <button class="icon-btn" title="加载示例" @click="loadSample('modified')">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                   <polyline points="14 2 14 8 20 8" />
@@ -128,21 +130,21 @@
       </div>
 
       
-      <div class="results-section" v-if="diffResult">
+      <div v-if="diffResult" class="results-section">
         <div class="stats-bar">
           <div class="stat-item added"><span class="dot"></span>新增: {{ stats.added }}</div>
           <div class="stat-item removed"><span class="dot"></span>删除: {{ stats.removed }}</div>
           <div class="stat-item modified"><span class="dot"></span>修改: {{ stats.modified }}</div>
           <div class="stat-item unchanged"><span class="dot"></span>未变: {{ stats.unchanged }}</div>
           <div class="spacer"></div>
-          <button @click="toggleSideBySide" class="view-toggle">
+          <button class="view-toggle" @click="toggleSideBySide">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path v-if="isSideBySide" d="M3 3h18v18H3zM12 3v18" />
               <path v-else d="M9 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
             </svg>
             {{ isSideBySide ? '合并视图' : '并排视图' }}
           </button>
-          <button @click="copyResult" class="icon-btn" title="复制结果">
+          <button class="icon-btn" title="复制结果" @click="copyResult">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -155,7 +157,8 @@
           <div class="side-panel">
             <div class="panel-label">原始</div>
             <div class="diff-content">
-              <div v-for="(line, idx) in sideBySideData.original" :key="'orig-' + idx" class="diff-line"
+              <div
+v-for="(line, idx) in sideBySideData.original" :key="'orig-' + idx" class="diff-line"
                 :class="line.type">
                 <span class="line-num">{{ idx + 1 }}</span>
                 <span class="line-text">{{ line.content }}</span>
@@ -165,7 +168,8 @@
           <div class="side-panel">
             <div class="panel-label">修改后</div>
             <div class="diff-content">
-              <div v-for="(line, idx) in sideBySideData.modified" :key="'mod-' + idx" class="diff-line"
+              <div
+v-for="(line, idx) in sideBySideData.modified" :key="'mod-' + idx" class="diff-line"
                 :class="line.type">
                 <span class="line-num">{{ idx + 1 }}</span>
                 <span class="line-text">{{ line.content }}</span>

@@ -1,4 +1,9 @@
-export const quoteCategories = [
+export interface QuoteCategory {
+  id: string;
+  name: string;
+}
+
+export const quoteCategories: QuoteCategory[] = [
     { id: 'poetry', name: '诗词名言' },
     { id: 'movie', name: '电影对白' },
     { id: 'rainbow', name: '彩虹屁' },
@@ -6,7 +11,13 @@ export const quoteCategories = [
     { id: 'sad', name: '伤感语录' }
 ]
 
-export const quotes = [
+export interface Quote {
+  category: string;
+  content: string;
+  author: string;
+}
+
+export const quotes: Quote[] = [
     
     { category: 'poetry', content: '人生若只如初见，何事秋风悲画扇。', author: '纳兰性德' },
     { category: 'poetry', content: '大漠孤烟直，长河落日圆。', author: '王维' },

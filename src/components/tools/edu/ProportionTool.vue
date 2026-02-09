@@ -1,7 +1,7 @@
 <template>
     <div class="proportion-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -42,8 +42,8 @@
                 </div>
 
                 <div class="actions">
-                    <button @click="solve" class="solve-btn">求解未知项</button>
-                    <button @click="reset" class="reset-btn">重置</button>
+                    <button class="solve-btn" @click="solve">求解未知项</button>
+                    <button class="reset-btn" @click="reset">重置</button>
                 </div>
 
                 <div v-if="result" class="result-area animate-fade-in">

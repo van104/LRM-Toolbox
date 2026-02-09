@@ -39,7 +39,7 @@
         </div>
       </section>
 
-      <section class="content-section" id="contact">
+      <section id="contact" class="content-section">
         <h2>联系我们</h2>
         <p>如有任何问题或建议，欢迎通过以下方式联系我们：</p>
         <ul>

@@ -70,14 +70,16 @@
                     <div class="pane-header">
                         <h3>CSV 转 INSERT</h3>
                         <div class="opts">
-                            <el-input v-model="insertOpts.table" size="small" placeholder="Table Name"
+                            <el-input
+v-model="insertOpts.table" size="small" placeholder="Table Name"
                                 style="width:150px" />
                             <el-checkbox v-model="insertOpts.batch">批量插入 (Single Statement)</el-checkbox>
                         </div>
                     </div>
                     <div class="helper-text">第一行必须是CSV表头 (Column Names)</div>
                     <div class="split-view">
-                        <textarea v-model="insertInput" class="code-editor"
+                        <textarea
+v-model="insertInput" class="code-editor"
                             placeholder="id,name,age&#10;1,Alice,20&#10;2,Bob,22"></textarea>
                         <div class="arrow-divider"><el-icon>
                                 <Right />
@@ -96,11 +98,13 @@
                 <div v-if="currentTab === 'create'" class="tool-pane">
                     <div class="pane-header">
                         <h3>JSON 转 CREATE TABLE</h3>
-                        <el-input v-model="createOpts.table" size="small" placeholder="Table Name"
+                        <el-input
+v-model="createOpts.table" size="small" placeholder="Table Name"
                             style="width:150px" />
                     </div>
                     <div class="split-view">
-                        <textarea v-model="createInput" class="code-editor"
+                        <textarea
+v-model="createInput" class="code-editor"
                             placeholder='[{"id": 1, "name": "Test", "active": true}]'></textarea>
                         <div class="arrow-divider"><el-icon>
                                 <Right />
@@ -129,11 +133,12 @@
                                     <UploadFilled />
                                 </el-icon>
                                 <span>点击上传 SQL 文件</span>
-                                <input type="file" ref="sqlFile" accept=".sql,.txt" style="display:none"
+                                <input
+ref="sqlFile" type="file" accept=".sql,.txt" style="display:none"
                                     @change="handleSqlUpload" />
                             </div>
 
-                            <div class="table-list-area" v-if="parsedTables.length">
+                            <div v-if="parsedTables.length" class="table-list-area">
                                 <div class="list-header">
                                     <span>识别到 {{ parsedTables.length }} 张表</span>
                                     <el-button size="small" link @click="checkAll">全选</el-button>
@@ -152,8 +157,9 @@
                                     <span class="label">生成数量:</span>
                                     <el-input-number v-model="smartCount" :min="1" :max="1000" size="small" />
                                 </div>
-                                <el-button type="primary" class="full-btn" @click="genSmartData"
-                                    :disabled="!selectedTables.length">
+                                <el-button
+type="primary" class="full-btn" :disabled="!selectedTables.length"
+                                    @click="genSmartData">
                                     开始生成
                                 </el-button>
                             </div>
@@ -166,10 +172,12 @@
                         <div class="smart-result">
                             <div class="result-header">
                                 <span>生成结果</span>
-                                <el-button size="small" @click="copy(smartOutput)"
-                                    :disabled="!smartOutput">复制</el-button>
+                                <el-button
+size="small" :disabled="!smartOutput"
+                                    @click="copy(smartOutput)">复制</el-button>
                             </div>
-                            <textarea v-model="smartOutput" class="code-editor result-editor" readonly
+                            <textarea
+v-model="smartOutput" class="code-editor result-editor" readonly
                                 placeholder="INSERT 语句将显示在这里..."></textarea>
                         </div>
                     </div>

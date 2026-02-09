@@ -27,13 +27,14 @@
                         <h3>拖拽图片到这里</h3>
                         <p>或 <span class="browse-btn" @click="triggerFileInput">点击选择文件</span></p>
                     </div>
-                    <input type="file" ref="fileInput" multiple accept="image/*" class="hidden-input"
+                    <input
+ref="fileInput" type="file" multiple accept="image/*" class="hidden-input"
                         @change="handleFileSelect">
                 </div>
             </div>
 
             
-            <div class="controls-section glass-card" v-if="fileList.length > 0">
+            <div v-if="fileList.length > 0" class="controls-section glass-card">
                 <div class="settings-group">
                     <div class="setting-item">
                         <label>目标格式</label>
@@ -44,14 +45,14 @@
                         </select>
                     </div>
 
-                    <div class="setting-item" v-if="targetFormat !== 'image/png'">
+                    <div v-if="targetFormat !== 'image/png'" class="setting-item">
                         <label>质量 <span class="quality-val">({{ Math.round(quality * 100) }}%)</span></label>
-                        <input type="range" v-model.number="quality" min="0.1" max="1" step="0.1" class="range-input">
+                        <input v-model.number="quality" type="range" min="0.1" max="1" step="0.1" class="range-input">
                     </div>
                 </div>
 
                 <div class="action-buttons">
-                    <button class="btn-primary" @click="startConversion" :disabled="isConverting">
+                    <button class="btn-primary" :disabled="isConverting" @click="startConversion">
                         <el-icon v-if="isConverting">
                             <Loading />
                         </el-icon>
@@ -60,12 +61,12 @@
                         </el-icon>
                         {{ isConverting ? '转换中...' : '开始转换' }}
                     </button>
-                    <button class="btn-secondary" @click="clearAll" :disabled="isConverting">清空列表</button>
+                    <button class="btn-secondary" :disabled="isConverting" @click="clearAll">清空列表</button>
                 </div>
             </div>
 
             
-            <div class="file-list" v-if="fileList.length > 0">
+            <div v-if="fileList.length > 0" class="file-list">
                 <div v-for="(file, index) in fileList" :key="index" class="file-item glass-card">
                     <div class="file-info">
                         <div class="file-icon">

@@ -16,14 +16,15 @@
         <main class="tool-content">
             <div class="layout-container center-layout">
                 <div class="workbench glass-card">
-                    <div v-if="!pdfFile" class="upload-placeholder" @click="triggerUpload" @dragover.prevent
+                    <div
+v-if="!pdfFile" class="upload-placeholder" @click="triggerUpload" @dragover.prevent
                         @drop.prevent="handleDrop">
                         <el-icon class="upload-icon">
                             <Files />
                         </el-icon>
                         <h3>上传 PDF 文件</h3>
                         <p>支持无损优化和强力压缩</p>
-                        <input type="file" ref="fileRef" hidden accept=".pdf" @change="handleUpload" />
+                        <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
                     </div>
 
                     <div v-else class="workspace">
@@ -42,7 +43,8 @@
 
                         <div class="settings-section">
                             <div class="mode-selection">
-                                <div class="mode-card" :class="{ active: mode === 'lossless' }"
+                                <div
+class="mode-card" :class="{ active: mode === 'lossless' }"
                                     @click="mode = 'lossless'">
                                     <div class="mode-icon">
                                         <check />
@@ -76,9 +78,11 @@
                         </div>
 
                         <div class="action-area">
-                            <el-progress v-if="processing" :percentage="progress"
+                            <el-progress
+v-if="processing" :percentage="progress"
                                 :status="progress === 100 ? 'success' : ''" />
-                            <el-button v-else type="primary" size="large" class="compress-btn"
+                            <el-button
+v-else type="primary" size="large" class="compress-btn"
                                 @click="startCompression">
                                 开始压缩
                             </el-button>

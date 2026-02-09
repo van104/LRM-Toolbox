@@ -1,7 +1,7 @@
 <template>
     <div class="match3-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -27,7 +27,7 @@
                             <span class="value combo" :class="{ 'active': combo > 1 }">x{{ combo }}</span>
                         </div>
                     </div>
-                    <button class="restart-btn" @click="confirmRestart" title="重新开始">
+                    <button class="restart-btn" title="重新开始" @click="confirmRestart">
                         <el-icon>
                             <RefreshRight />
                         </el-icon>
@@ -37,7 +37,8 @@
                 
                 <div class="board-wrapper glass-card">
                     <div class="board" :style="boardStyle">
-                        <div v-for="tile in tiles" :key="tile.id" class="tile" :class="{
+                        <div
+v-for="tile in tiles" :key="tile.id" class="tile" :class="{
                             'selected': isSelected(tile),
                             'matched': tile.isMatched
                         }" :style="getTileStyle(tile)" @click="handleTileClick(tile)">

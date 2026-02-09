@@ -29,7 +29,7 @@
                 <p class="lib-desc">{{ tool.description }}</p>
 
                 <div class="lib-stats">
-                    <span class="tag" v-for="tag in tool.tags" :key="tag">{{ tag }}</span>
+                    <span v-for="tag in tool.tags" :key="tag" class="tag">{{ tag }}</span>
                 </div>
 
                 <div class="lib-actions">

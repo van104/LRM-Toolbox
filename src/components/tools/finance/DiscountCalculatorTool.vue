@@ -1,7 +1,7 @@
 <template>
     <div class="discount-calculator-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -33,17 +33,19 @@
                 <div class="input-form">
                     <div class="form-group">
                         <label>原价 (¥)</label>
-                        <input type="number" v-model.number="originalPrice" placeholder="0.00" class="main-input" />
+                        <input v-model.number="originalPrice" type="number" placeholder="0.00" class="main-input" />
                     </div>
 
                     <div class="form-group">
                         <label>折扣力度</label>
                         <div class="discount-input-group">
-                            <input type="number" v-model.number="discountValue" placeholder="例如 8.5"
+                            <input
+v-model.number="discountValue" type="number" placeholder="例如 8.5"
                                 class="sub-input" />
                             <div class="toggle-type">
                                 <span :class="{ active: discountType === 'zhe' }" @click="discountType = 'zhe'">折</span>
-                                <span :class="{ active: discountType === 'percent' }"
+                                <span
+:class="{ active: discountType === 'percent' }"
                                     @click="discountType = 'percent'">% off</span>
                             </div>
                         </div>
@@ -57,7 +59,7 @@
                     </div>
                 </div>
 
-                <div class="result-display" v-if="originalPrice > 0">
+                <div v-if="originalPrice > 0" class="result-display">
                     <div class="final-price-box">
                         <span class="label">折后价</span>
                         <div class="price">
@@ -84,14 +86,14 @@
                         <label>活动规则</label>
                         <div class="rule-inputs">
                             <span class="prefix">满</span>
-                            <input type="number" v-model.number="poolRule.threshold" placeholder="300" />
+                            <input v-model.number="poolRule.threshold" type="number" placeholder="300" />
                             <span class="middle">减</span>
-                            <input type="number" v-model.number="poolRule.reduce" placeholder="50" />
+                            <input v-model.number="poolRule.reduce" type="number" placeholder="50" />
                         </div>
                         
                         <div class="rule-option">
                             <label class="checkbox-label">
-                                <input type="checkbox" v-model="poolRule.isLoop"> 每满{{ poolRule.threshold || 300 }}减{{
+                                <input v-model="poolRule.isLoop" type="checkbox"> 每满{{ poolRule.threshold || 300 }}减{{
                                 poolRule.reduce || 50 }}
                             </label>
                         </div>
@@ -101,13 +103,14 @@
                 <div class="items-list">
                     <div class="list-label">商品列表</div>
                     <div v-for="(item, idx) in poolItems" :key="idx" class="item-row">
-                        <input type="text" v-model="item.name" :placeholder="`商品 ${idx + 1}`" class="item-name" />
+                        <input v-model="item.name" type="text" :placeholder="`商品 ${idx + 1}`" class="item-name" />
                         <div class="item-price-wrapper">
                             <span>¥</span>
-                            <input type="number" v-model.number="item.price" placeholder="0"
+                            <input
+v-model.number="item.price" type="number" placeholder="0"
                                 @input="checkNewItem(idx)" />
                         </div>
-                        <button class="del-btn" @click="delItem(idx)" v-if="poolItems.length > 1">
+                        <button v-if="poolItems.length > 1" class="del-btn" @click="delItem(idx)">
                             <el-icon>
                                 <Delete />
                             </el-icon>
@@ -136,7 +139,7 @@
                         </div>
                     </div>
 
-                    <div class="pool-tips" v-if="poolResult.nextThreshold > 0">
+                    <div v-if="poolResult.nextThreshold > 0" class="pool-tips">
                         <el-icon>
                             <Warning />
                         </el-icon>
@@ -145,7 +148,7 @@
                             可减 <b>¥{{ formatMoney(poolResult.nextReduce) }}</b>
                         </span>
                     </div>
-                    <div class="pool-tips success" v-else-if="poolResult.total > 0">
+                    <div v-else-if="poolResult.total > 0" class="pool-tips success">
                         <el-icon>
                             <CircleCheck />
                         </el-icon>

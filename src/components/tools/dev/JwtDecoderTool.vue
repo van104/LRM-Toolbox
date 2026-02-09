@@ -1,7 +1,7 @@
 <template>
   <div class="jwt-decoder-tool">
     <nav class="nav-bar">
-      <button @click="$router.back()" class="nav-back">
+      <button class="nav-back" @click="$router.back()">
         <el-icon>
           <Back />
         </el-icon> 返回
@@ -21,9 +21,10 @@
             <h3>JSON Web Token</h3>
             <el-button type="primary" link @click="encodedJwt = ''">清空</el-button>
           </div>
-          <el-input v-model="encodedJwt" type="textarea" :rows="12" placeholder="在此粘贴您的 JWT (xxxxx.yyyyy.zzzzz)"
+          <el-input
+v-model="encodedJwt" type="textarea" :rows="12" placeholder="在此粘贴您的 JWT (xxxxx.yyyyy.zzzzz)"
             class="jwt-textarea" />
-          <div class="status-indicator" v-if="encodedJwt">
+          <div v-if="encodedJwt" class="status-indicator">
             <el-tag :type="isValid ? 'success' : 'danger'" size="small">
               {{ isValid ? '格式正确' : '格式无效' }}
             </el-tag>
@@ -48,8 +49,9 @@
               <span class="sub-label">DATA</span>
             </div>
             <pre class="json-content"><code>{{ formattedPayload }}</code></pre>
-            <div class="payload-info" v-if="payloadDetails.exp">
-              <el-alert :title="'过期时间: ' + payloadDetails.expStr" :type="isExpired ? 'error' : 'success'"
+            <div v-if="payloadDetails.exp" class="payload-info">
+              <el-alert
+:title="'过期时间: ' + payloadDetails.expStr" :type="isExpired ? 'error' : 'success'"
                 :closable="false" show-icon class="mt-2" />
             </div>
           </div>

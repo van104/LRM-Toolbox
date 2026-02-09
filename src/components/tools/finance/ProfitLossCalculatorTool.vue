@@ -1,7 +1,7 @@
 <template>
     <div class="pl-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -55,7 +55,8 @@
                         <div class="form-row">
                             <div class="form-item">
                                 <label>综合税费率 (%)</label>
-                                <el-input-number v-model="feeRate" :min="0" :max="1" :step="0.01" :precision="3"
+                                <el-input-number
+v-model="feeRate" :min="0" :max="1" :step="0.01" :precision="3"
                                     class="w-full" />
                                 <span class="tip">如：股票印花税+佣金约 0.1%</span>
                             </div>
@@ -84,7 +85,8 @@
                 <section class="result-panel">
                     <div v-if="result" class="glass-card result-hero">
                         <div class="hero-label">调整后平均成本</div>
-                        <div class="cost-value"
+                        <div
+class="cost-value"
                             :class="{ 'text-red': result.avgCost > currentPrice && actionType === 'buy' }">
                             ¥ {{ formatValue(result.avgCost) }}
                         </div>

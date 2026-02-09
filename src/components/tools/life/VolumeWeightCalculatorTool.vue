@@ -1,7 +1,7 @@
 <template>
     <div class="volume-weight-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -21,24 +21,24 @@
                     <div class="dimension-inputs">
                         <div class="input-group">
                             <label>长</label>
-                            <input type="number" v-model.number="length" placeholder="0" />
+                            <input v-model.number="length" type="number" placeholder="0" />
                         </div>
                         <div class="x-sign">×</div>
                         <div class="input-group">
                             <label>宽</label>
-                            <input type="number" v-model.number="width" placeholder="0" />
+                            <input v-model.number="width" type="number" placeholder="0" />
                         </div>
                         <div class="x-sign">×</div>
                         <div class="input-group">
                             <label>高</label>
-                            <input type="number" v-model.number="height" placeholder="0" />
+                            <input v-model.number="height" type="number" placeholder="0" />
                         </div>
                     </div>
 
                     <div class="weight-row">
                         <div class="input-group">
                             <label>实际重量 (kg)</label>
-                            <input type="number" v-model.number="actualWeight" placeholder="0" />
+                            <input v-model.number="actualWeight" type="number" placeholder="0" />
                         </div>
                         <div class="input-group">
                             <label>抛比系数</label>
@@ -62,19 +62,19 @@
                     <div class="result-card chargeable" :class="{ highlight: chargeableWeight > 0 }">
                         <div class="card-label">计费重量</div>
                         <div class="card-value">{{ formatWeight(chargeableWeight) }} <small>kg</small></div>
-                        <div class="card-tag" v-if="chargeableWeight > 0">
+                        <div v-if="chargeableWeight > 0" class="card-tag">
                             {{ isVolumetric ? '按体积重计费 (抛货)' : '按实重计费' }}
                         </div>
                     </div>
                 </div>
 
                 
-                <div class="comparison-info" v-if="chargeableWeight > 0">
+                <div v-if="chargeableWeight > 0" class="comparison-info">
                     <div class="info-row">
                         <span>体积:</span>
                         <span>{{ (length * width * height / 1000000).toFixed(4) }} m³</span>
                     </div>
-                    <div class="info-row" v-if="isVolumetric">
+                    <div v-if="isVolumetric" class="info-row">
                         <span>额外付费重量:</span>
                         <span class="danger">+{{ formatWeight(volumeWeight - actualWeight) }} kg</span>
                     </div>

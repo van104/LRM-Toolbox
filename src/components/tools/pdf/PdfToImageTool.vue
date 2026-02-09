@@ -34,7 +34,8 @@
             <div class="layout-container">
                 
                 <div class="workbench glass-card">
-                    <div v-if="!pdfFile" class="upload-placeholder" @click="triggerUpload" @dragover.prevent
+                    <div
+v-if="!pdfFile" class="upload-placeholder" @click="triggerUpload" @dragover.prevent
                         @drop.prevent="handleDrop">
                         <div class="upload-icon">
                             <el-icon>
@@ -43,7 +44,7 @@
                         </div>
                         <h3>点击或拖拽上传 PDF 文件</h3>
                         <p>文件将在本地处理，不会上传到服务器</p>
-                        <input type="file" ref="fileRef" hidden accept=".pdf,application/pdf" @change="handleUpload" />
+                        <input ref="fileRef" type="file" hidden accept=".pdf,application/pdf" @change="handleUpload" />
                     </div>
 
                     <div v-else class="preview-stage">
@@ -61,7 +62,8 @@
                                 </el-icon>
                                 重新选择
                             </el-button>
-                            <input type="file" ref="fileRef" hidden accept=".pdf,application/pdf"
+                            <input
+ref="fileRef" type="file" hidden accept=".pdf,application/pdf"
                                 @change="handleUpload" />
                         </div>
 
@@ -71,13 +73,15 @@
                         </div>
 
                         <div v-else class="pages-grid">
-                            <div v-for="(page, index) in pages" :key="index" class="page-item"
+                            <div
+v-for="(page, index) in pages" :key="index" class="page-item"
                                 :class="{ selected: selectedPages.includes(index) }" @click="toggleSelect(index)">
                                 <div class="page-preview">
                                     <img :src="page.dataUrl" :alt="`第 ${index + 1} 页`" />
                                 </div>
                                 <div class="page-info">
-                                    <el-checkbox :model-value="selectedPages.includes(index)" @click.stop
+                                    <el-checkbox
+:model-value="selectedPages.includes(index)" @click.stop
                                         @change="toggleSelect(index)" />
                                     <span class="page-number">第 {{ index + 1 }} 页</span>
                                 </div>
@@ -99,7 +103,7 @@
                         </el-radio-group>
                     </div>
 
-                    <div class="settings-group" v-if="config.format !== 'png'">
+                    <div v-if="config.format !== 'png'" class="settings-group">
                         <div class="label">输出质量 ({{ config.quality }}%)</div>
                         <el-slider v-model="config.quality" :min="10" :max="100" :step="5" />
                     </div>
@@ -117,7 +121,7 @@
                             <el-button size="small" @click="selectAll">全选</el-button>
                             <el-button size="small" @click="selectNone">取消全选</el-button>
                         </div>
-                        <div class="selected-count" v-if="pages.length">
+                        <div v-if="pages.length" class="selected-count">
                             已选择 {{ selectedPages.length }} / {{ pages.length }} 页
                         </div>
                     </div>
@@ -125,8 +129,9 @@
                     <el-divider />
 
                     <div class="action-buttons">
-                        <el-button type="primary" size="large" :disabled="!selectedPages.length"
-                            @click="downloadSelected" style="width: 100%;">
+                        <el-button
+type="primary" size="large" :disabled="!selectedPages.length"
+                            style="width: 100%;" @click="downloadSelected">
                             <el-icon>
                                 <Download />
                             </el-icon>

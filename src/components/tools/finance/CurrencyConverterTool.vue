@@ -24,9 +24,10 @@
                     <div class="currency-input-group">
                         <label>源货币</label>
                         <div class="input-with-select">
-                            <input type="number" v-model.number="fromAmount" @input="handleFromAmountChange"
-                                placeholder="输入金额" class="amount-input">
-                            <select v-model="fromCurrency" @change="handleCurrencyChange" class="currency-select">
+                            <input
+v-model.number="fromAmount" type="number" placeholder="输入金额"
+                                class="amount-input" @input="handleFromAmountChange">
+                            <select v-model="fromCurrency" class="currency-select" @change="handleCurrencyChange">
                                 <optgroup label="常用货币">
                                     <option v-for="code in popularCurrencies" :key="code" :value="code">
                                         {{ code }} - {{ getCurrencyName(code) }}
@@ -44,16 +45,16 @@
 
                 
                 <div class="swap-row">
-                    <button class="swap-btn" @click="swapCurrencies" title="互换货币">
+                    <button class="swap-btn" title="互换货币" @click="swapCurrencies">
                         <el-icon>
                             <Sort />
                         </el-icon>
                     </button>
-                    <div class="rate-display" v-if="currentRate && !loading">
+                    <div v-if="currentRate && !loading" class="rate-display">
                         <span>1 {{ fromCurrency }} = {{ currentRate.toFixed(4) }} {{ toCurrency }}</span>
-                        <span class="rate-date" v-if="rateDate">更新于 {{ rateDate }}</span>
+                        <span v-if="rateDate" class="rate-date">更新于 {{ rateDate }}</span>
                     </div>
-                    <div class="rate-display loading" v-else-if="loading">
+                    <div v-else-if="loading" class="rate-display loading">
                         <el-icon class="is-loading">
                             <Loading />
                         </el-icon>
@@ -66,9 +67,10 @@
                     <div class="currency-input-group">
                         <label>目标货币</label>
                         <div class="input-with-select">
-                            <input type="number" v-model.number="toAmount" @input="handleToAmountChange"
-                                placeholder="换算结果" class="amount-input result">
-                            <select v-model="toCurrency" @change="handleCurrencyChange" class="currency-select">
+                            <input
+v-model.number="toAmount" type="number" placeholder="换算结果"
+                                class="amount-input result" @input="handleToAmountChange">
+                            <select v-model="toCurrency" class="currency-select" @change="handleCurrencyChange">
                                 <optgroup label="常用货币">
                                     <option v-for="code in popularCurrencies" :key="code" :value="code">
                                         {{ code }} - {{ getCurrencyName(code) }}
@@ -89,7 +91,8 @@
             <div class="quick-pairs glass-card">
                 <h3>快捷换算</h3>
                 <div class="pairs-grid">
-                    <button v-for="pair in quickPairs" :key="pair.from + pair.to" class="pair-btn"
+                    <button
+v-for="pair in quickPairs" :key="pair.from + pair.to" class="pair-btn"
                         :class="{ active: fromCurrency === pair.from && toCurrency === pair.to }"
                         @click="selectPair(pair)">
                         {{ pair.from }}/{{ pair.to }}
@@ -101,7 +104,7 @@
             <div class="chart-section glass-card">
                 <div class="chart-header">
                     <h3>{{ fromCurrency }}/{{ toCurrency }} 汇率趋势 (近30天)</h3>
-                    <button class="refresh-btn" @click="fetchHistory" :disabled="historyLoading">
+                    <button class="refresh-btn" :disabled="historyLoading" @click="fetchHistory">
                         <el-icon :class="{ 'is-loading': historyLoading }">
                             <Refresh />
                         </el-icon>

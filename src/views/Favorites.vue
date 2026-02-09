@@ -29,9 +29,10 @@
     <main class="page-main">
       
       <section v-if="favoriteTools.length > 0">
-        <draggable v-model="draggableFavorites" item-key="id" class="tools-grid animate-stagger"
-          ghost-class="ghost-card" drag-class="drag-card" handle=".drag-handle" @start="isDragging = true"
-          @end="isDragging = false" :animation="200">
+        <draggable
+v-model="draggableFavorites" item-key="id" class="tools-grid animate-stagger"
+          ghost-class="ghost-card" drag-class="drag-card" handle=".drag-handle" :animation="200"
+          @start="isDragging = true" @end="isDragging = false">
           <template #item="{ element }">
             <div class="tool-wrapper">
               <div class="drag-handle" title="按住拖动排序">
@@ -39,7 +40,8 @@
                   <Rank />
                 </el-icon>
               </div>
-              <ToolCard :tool="element" :is-favorite="true" class="favorite-tool-card" @click="handleToolClick(element)"
+              <ToolCard
+:tool="element" :is-favorite="true" class="favorite-tool-card" @click="handleToolClick(element)"
                 @view-detail="openToolModal" @toggle-favorite="handleToggleFavorite" />
             </div>
           </template>

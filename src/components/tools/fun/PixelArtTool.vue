@@ -1,7 +1,7 @@
 <template>
     <div class="pixel-art-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -30,13 +30,14 @@
                     <div class="tool-group">
                         <label>当前颜色</label>
                         <div class="color-preview" :style="{ backgroundColor: activeColor }"></div>
-                        <input type="color" v-model="activeColor" class="color-picker-input" />
+                        <input v-model="activeColor" type="color" class="color-picker-input" />
                     </div>
 
                     <div class="tool-group">
                         <label>调色盘</label>
                         <div class="palette-grid">
-                            <div v-for="c in palette" :key="c" class="palette-color"
+                            <div
+v-for="c in palette" :key="c" class="palette-color"
                                 :class="{ active: activeColor === c }" :style="{ backgroundColor: c }"
                                 @click="activeColor = c">
                             </div>
@@ -46,7 +47,7 @@
                     <div class="tool-group">
                         <label>辅助功能</label>
                         <div class="checkbox-row">
-                            <input type="checkbox" v-model="showGrid" id="show-grid" />
+                            <input id="show-grid" v-model="showGrid" type="checkbox" />
                             <label for="show-grid">显示网格</label>
                         </div>
                     </div>
@@ -59,9 +60,11 @@
 
                 
                 <div class="canvas-section glass-card" @contextmenu.prevent>
-                    <div class="grid-container" :style="gridStyle" @mousedown="handleMouseDown"
+                    <div
+class="grid-container" :style="gridStyle" @mousedown="handleMouseDown"
                         @mousemove="handleMouseMove" @mouseup="handleMouseUp" @mouseleave="handleMouseUp">
-                        <div v-for="(cell, idx) in grid" :key="idx" class="grid-cell"
+                        <div
+v-for="(cell, idx) in grid" :key="idx" class="grid-cell"
                             :style="{ backgroundColor: cell || 'transparent', border: showGrid ? '1px solid #eee' : 'none' }"
                             @mousedown="paintCell(idx)" @mouseover="handleCellHover(idx)">
                         </div>

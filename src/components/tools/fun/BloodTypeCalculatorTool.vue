@@ -1,7 +1,7 @@
 <template>
     <div class="blood-type-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -20,7 +20,8 @@
                     <div class="parent-select">
                         <div class="role-label">父亲血型</div>
                         <div class="blood-options">
-                            <button v-for="type in bloodTypes" :key="'f-' + type" :class="{ active: fatherType === type }"
+                            <button
+v-for="type in bloodTypes" :key="'f-' + type" :class="{ active: fatherType === type }"
                                 @click="fatherType = type">{{ type }}</button>
                         </div>
                     </div>
@@ -34,14 +35,15 @@
                     <div class="parent-select">
                         <div class="role-label">母亲血型</div>
                         <div class="blood-options">
-                            <button v-for="type in bloodTypes" :key="'m-' + type" :class="{ active: motherType === type }"
+                            <button
+v-for="type in bloodTypes" :key="'m-' + type" :class="{ active: motherType === type }"
                                 @click="motherType = type">{{ type }}</button>
                         </div>
                     </div>
                 </div>
 
                 
-                <div class="result-section" v-if="result">
+                <div v-if="result" class="result-section">
                     <div class="result-box possible">
                         <div class="box-header">
                             <el-icon>

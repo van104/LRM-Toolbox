@@ -1,7 +1,7 @@
 <template>
     <div class="quote-generator-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -16,24 +16,25 @@
         <main class="main-content">
             <div class="quote-container glass-card" :style="{ backgroundColor: currentBg }">
                 <div class="category-tabs">
-                    <button v-for="cat in quoteCategories" :key="cat.id" :class="{ active: activeCategory === cat.id }"
+                    <button
+v-for="cat in quoteCategories" :key="cat.id" :class="{ active: activeCategory === cat.id }"
                         @click="switchCategory(cat.id)">
                         {{ cat.name }}
                     </button>
                 </div>
 
-                <div class="quote-display" v-if="currentQuote">
+                <div v-if="currentQuote" class="quote-display">
                     <div class="quote-mark open">“</div>
                     <p class="quote-text" :style="{ fontSize: fontSize + 'px' }">{{ currentQuote.content }}</p>
                     <div class="quote-mark close">”</div>
-                    <p class="quote-author" v-if="currentQuote.author">— {{ currentQuote.author }}</p>
+                    <p v-if="currentQuote.author" class="quote-author">— {{ currentQuote.author }}</p>
                 </div>
 
                 <div class="actions">
                     <div class="style-tools">
-                        <button @click="fontSize = Math.max(16, fontSize - 2)" title="减小字号">A-</button>
-                        <button @click="fontSize = Math.min(48, fontSize + 2)" title="增大字号">A+</button>
-                        <button @click="changeBg" title="换个背景">🎨</button>
+                        <button title="减小字号" @click="fontSize = Math.max(16, fontSize - 2)">A-</button>
+                        <button title="增大字号" @click="fontSize = Math.min(48, fontSize + 2)">A+</button>
+                        <button title="换个背景" @click="changeBg">🎨</button>
                     </div>
                     <button class="next-btn" @click="generateQuote">換一句</button>
                     <button class="copy-btn" @click="copyQuote">复制文字</button>

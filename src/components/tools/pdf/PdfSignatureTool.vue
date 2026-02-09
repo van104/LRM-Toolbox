@@ -39,15 +39,18 @@
                                 <div class="page-nav">
                                     <el-button :disabled="currentPage <= 1" @click="currentPage--">上一页</el-button>
                                     <span>{{ currentPage }} / {{ totalPages }}</span>
-                                    <el-button :disabled="currentPage >= totalPages"
+                                    <el-button
+:disabled="currentPage >= totalPages"
                                         @click="currentPage++">下一页</el-button>
                                 </div>
-                                <div class="pdf-preview" ref="previewContainer" @click="handlePreviewClick">
+                                <div ref="previewContainer" class="pdf-preview" @click="handlePreviewClick">
                                     <canvas ref="pdfCanvas"></canvas>
-                                    <div v-if="signaturePosition" class="signature-overlay"
+                                    <div
+v-if="signaturePosition" class="signature-overlay"
                                         :style="{ left: signaturePosition.x + 'px', top: signaturePosition.y + 'px' }">
                                         <img :src="signatureDataUrl" alt="签名" />
-                                        <el-button class="remove-btn" type="danger" size="small" circle
+                                        <el-button
+class="remove-btn" type="danger" size="small" circle
                                             @click.stop="removeSignature">
                                             <el-icon>
                                                 <Close />
@@ -63,12 +66,14 @@
                                 <el-tabs v-model="signatureTab">
                                     <el-tab-pane label="手写绘制" name="draw">
                                         <div class="draw-area">
-                                            <canvas ref="drawCanvas" @mousedown="startDraw" @mousemove="draw"
+                                            <canvas
+ref="drawCanvas" @mousedown="startDraw" @mousemove="draw"
                                                 @mouseup="endDraw" @mouseleave="endDraw" @touchstart="startDrawTouch"
                                                 @touchmove="drawTouch" @touchend="endDraw"></canvas>
                                             <div class="draw-actions">
                                                 <el-button size="small" @click="clearDraw">清除</el-button>
-                                                <el-button size="small" type="primary"
+                                                <el-button
+size="small" type="primary"
                                                     @click="confirmDraw">确认签名</el-button>
                                             </div>
                                         </div>
@@ -79,7 +84,8 @@
                                                 <Upload />
                                             </el-icon>
                                             <span>点击上传签名图片</span>
-                                            <input type="file" ref="signatureFileRef" hidden accept="image/*"
+                                            <input
+ref="signatureFileRef" type="file" hidden accept="image/*"
                                                 @change="handleSignatureUpload" />
                                         </div>
                                     </el-tab-pane>
@@ -93,13 +99,14 @@
                             </div>
                         </div>
 
-                        <el-button type="primary" size="large" class="action-btn" :loading="processing"
+                        <el-button
+type="primary" size="large" class="action-btn" :loading="processing"
                             :disabled="!signaturePosition || !signatureDataUrl" @click="applySignature">
                             应用签名并下载
                         </el-button>
                     </div>
 
-                    <input type="file" ref="fileRef" hidden accept=".pdf" @change="handleUpload" />
+                    <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
                 </div>
             </div>
         </main>

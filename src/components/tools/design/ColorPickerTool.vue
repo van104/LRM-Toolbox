@@ -23,10 +23,11 @@
 
                     
                     <div class="main-preview" :style="{ backgroundColor: currentColor.hex }">
-                        <div class="hex-trigger" :style="{
+                        <div
+class="hex-trigger" :style="{
                             color: isDark ? 'white' : 'black',
                             backgroundColor: isDark ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.4)'
-                        }" @click="copyColor" title="点击复制">
+                        }" title="点击复制" @click="copyColor">
                             {{ currentColor.hex }}
                         </div>
 
@@ -39,20 +40,23 @@
                     <div class="comp-section">
                         <h3 class="section-label">互补色方案</h3>
                         <div class="comp-grid">
-                            <div v-for="(color, idx) in complementaryColors" :key="idx" class="comp-item"
-                                :style="{ backgroundColor: color }" @click="setColorFromHex(color)"
-                                :title="'点击应用: ' + color"></div>
+                            <div
+v-for="(color, idx) in complementaryColors" :key="idx" class="comp-item"
+                                :style="{ backgroundColor: color }" :title="'点击应用: ' + color"
+                                @click="setColorFromHex(color)"></div>
                         </div>
                     </div>
 
                     
                     <div class="actions-group">
-                        <input type="color" ref="colorInput" class="hidden-color-input" @input="handleNativeColorPicker"
-                            :value="currentColor.hex" />
+                        <input
+ref="colorInput" type="color" class="hidden-color-input" :value="currentColor.hex"
+                            @input="handleNativeColorPicker" />
 
                         <div class="btn-row">
-                            <button @click="triggerColorPicker" class="btn-primary" style="flex: 1;">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            <button class="btn-primary" style="flex: 1;" @click="triggerColorPicker">
+                                <svg
+width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path
                                         d="M12 21.7C17.3 21.7 21.6 17.4 21.6 12.1 21.6 8.2 19 4.9 15.4 3.7 14.8 3.5 14.5 4.1 14.8 4.6 15.3 5.4 15.6 6.4 15.6 7.4 15.6 10.7 12.9 13.4 9.6 13.4 9.3 13.4 9 13.4 8.7 13.3 8.3 13.2 8.3 12.7 8.7 12.5 9.4 12.2 10.2 12 11 12 11.2 12 11.4 12 11.7 12.1 12.4 12.3 13 12.8 13.3 13.4 13.5 13.9 13.5 14 13.5 14 13.6 14 13.6 14 15.9 12 19.3 8.9 20.8 9.9 21.4 10.9 21.7 12 21.7ZM12 21.7C12 21.7 12 21.7 12 21.7ZM7.5 7.5C7.5 7.5 7.5 7.5 7.5 7.5 7.5 7.5 7.5 7.5 7.5 7.5ZM7.5 7.5C6.1 7.5 5 8.6 5 10 5 11.4 6.1 12.5 7.5 12.5 8.9 12.5 10 11.4 10 10 10 8.6 8.9 7.5 7.5 7.5Z">
@@ -61,9 +65,11 @@
                                 <span>调色板</span>
                             </button>
                             
-                            <button v-if="isEyeDropperSupported" @click="pickScreenColor" class="btn-primary"
-                                style="flex: 1; background: #8b5cf6;">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            <button
+v-if="isEyeDropperSupported" class="btn-primary" style="flex: 1; background: #8b5cf6;"
+                                @click="pickScreenColor">
+                                <svg
+width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                                     <polyline points="7 10 12 15 17 10" />
@@ -71,8 +77,9 @@
                                 </svg>
                                 <span>屏幕吸管</span>
                             </button>
-                            <button @click="copyColor" class="btn-secondary" title="复制HEX代码">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            <button class="btn-secondary" title="复制HEX代码" @click="copyColor">
+                                <svg
+width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -81,8 +88,9 @@
                         </div>
 
                         <div class="btn-row">
-                            <button @click="saveCurrentColor" class="btn-secondary">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            <button class="btn-secondary" @click="saveCurrentColor">
+                                <svg
+width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2">
                                     <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
                                     <polyline points="17 21 17 13 7 13 7 21"></polyline>
@@ -90,8 +98,9 @@
                                 </svg>
                                 <span>保存</span>
                             </button>
-                            <button @click="generateRandomColor" class="btn-secondary">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            <button class="btn-secondary" @click="generateRandomColor">
+                                <svg
+width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2">
                                     <polyline points="23 4 23 10 17 10"></polyline>
                                     <polyline points="1 20 1 14 7 14"></polyline>
@@ -114,8 +123,9 @@
 
                         
                         <div class="format-tabs">
-                            <button v-for="format in ['hex', 'rgb', 'hsl']" :key="format" @click="activeFormat = format"
-                                class="tab-btn" :class="{ active: activeFormat === format }">
+                            <button
+v-for="format in ['hex', 'rgb', 'hsl']" :key="format" class="tab-btn"
+                                :class="{ active: activeFormat === format }" @click="activeFormat = format">
                                 {{ format.toUpperCase() }}
                             </button>
                         </div>
@@ -127,20 +137,23 @@
                             <label class="input-label">HEX</label>
                             <div class="input-wrapper">
                                 <div class="input-prefix">#</div>
-                                <input type="text" v-model="hexInputValue" @input="handleHexInput" maxlength="6"
-                                    class="text-input">
+                                <input
+v-model="hexInputValue" type="text" maxlength="6" class="text-input"
+                                    @input="handleHexInput">
                             </div>
                         </div>
                     </div>
 
                     
                     <div v-if="activeFormat === 'rgb'" class="control-content slider-group">
-                        <div class="slider-row" v-for="channel in ['r', 'g', 'b']" :key="channel">
+                        <div v-for="channel in ['r', 'g', 'b']" :key="channel" class="slider-row">
                             <label class="input-label uppercase">{{ channel }}</label>
-                            <input type="range" min="0" max="255" v-model.number="currentColor.rgb[channel]"
-                                @input="updateFromRgb" class="range-input">
-                            <input type="number" min="0" max="255" v-model.number="currentColor.rgb[channel]"
-                                @input="updateFromRgb" class="number-input">
+                            <input
+v-model.number="currentColor.rgb[channel]" type="range" min="0" max="255"
+                                class="range-input" @input="updateFromRgb">
+                            <input
+v-model.number="currentColor.rgb[channel]" type="number" min="0" max="255"
+                                class="number-input" @input="updateFromRgb">
                         </div>
                     </div>
 
@@ -151,23 +164,26 @@
                             <div class="range-wrapper">
                                 
                                 <div class="hue-bg"></div>
-                                <input type="range" min="0" max="360" v-model.number="currentColor.hsl.h"
-                                    @input="updateFromHsl" class="range-input hue-range">
+                                <input
+v-model.number="currentColor.hsl.h" type="range" min="0" max="360"
+                                    class="range-input hue-range" @input="updateFromHsl">
                             </div>
                             <span class="value-display">{{ currentColor.hsl.h }}°</span>
                         </div>
 
                         <div class="slider-row">
                             <label class="input-label">S</label>
-                            <input type="range" min="0" max="100" v-model.number="currentColor.hsl.s"
-                                @input="updateFromHsl" class="range-input">
+                            <input
+v-model.number="currentColor.hsl.s" type="range" min="0" max="100"
+                                class="range-input" @input="updateFromHsl">
                             <span class="value-display">{{ currentColor.hsl.s }}%</span>
                         </div>
 
                         <div class="slider-row">
                             <label class="input-label">L</label>
-                            <input type="range" min="0" max="100" v-model.number="currentColor.hsl.l"
-                                @input="updateFromHsl" class="range-input">
+                            <input
+v-model.number="currentColor.hsl.l" type="range" min="0" max="100"
+                                class="range-input" @input="updateFromHsl">
                             <span class="value-display">{{ currentColor.hsl.l }}%</span>
                         </div>
                     </div>
@@ -178,25 +194,27 @@
                     <div class="section">
                         <h3 class="section-label">常用色板</h3>
                         <div class="preset-grid">
-                            <button v-for="color in presetColors" :key="color" class="color-dot"
-                                :style="{ backgroundColor: color }" @click="setColorFromHex(color)"
-                                :title="color"></button>
+                            <button
+v-for="color in presetColors" :key="color" class="color-dot"
+                                :style="{ backgroundColor: color }" :title="color"
+                                @click="setColorFromHex(color)"></button>
                         </div>
                     </div>
 
                     <div v-if="savedColors.length > 0">
                         <div class="section-header">
                             <h3 class="section-label">已保存颜⾊</h3>
-                            <button @click="clearSavedColors" class="link-btn-danger">
+                            <button class="link-btn-danger" @click="clearSavedColors">
                                 清除全部
                             </button>
                         </div>
                         <div class="saved-grid">
                             <div v-for="(item, idx) in savedColors" :key="idx" class="saved-item group">
-                                <div class="saved-color" :style="{ backgroundColor: item.hex }"
+                                <div
+class="saved-color" :style="{ backgroundColor: item.hex }"
                                     @click="setColorFromHex(item.hex)">
                                 </div>
-                                <button @click.stop="removeSavedColor(idx)" class="delete-btn">
+                                <button class="delete-btn" @click.stop="removeSavedColor(idx)">
                                     &times;
                                 </button>
                             </div>

@@ -27,23 +27,26 @@
                         <h3>拖拽图片到这里</h3>
                         <p>或 <span class="browse-btn" @click="triggerFileInput">点击选择文件</span></p>
                     </div>
-                    <input type="file" ref="fileInput" multiple accept="image/*" class="hidden-input"
+                    <input
+ref="fileInput" type="file" multiple accept="image/*" class="hidden-input"
                         @change="handleFileSelect">
                 </div>
             </div>
 
             
-            <div class="controls-section glass-card" v-if="fileList.length > 0">
+            <div v-if="fileList.length > 0" class="controls-section glass-card">
                 <div class="settings-grid">
                     
                     <div class="setting-item full-width">
                         <label>缩放模式</label>
                         <div class="mode-tabs">
-                            <button :class="['mode-tab', resizeMode === 'percentage' ? 'active' : '']"
+                            <button
+:class="['mode-tab', resizeMode === 'percentage' ? 'active' : '']"
                                 @click="resizeMode = 'percentage'">
                                 按百分比
                             </button>
-                            <button :class="['mode-tab', resizeMode === 'fixed' ? 'active' : '']"
+                            <button
+:class="['mode-tab', resizeMode === 'fixed' ? 'active' : '']"
                                 @click="resizeMode = 'fixed'">
                                 固定尺寸
                             </button>
@@ -51,26 +54,27 @@
                     </div>
 
                     
-                    <div class="setting-item full-width" v-if="resizeMode === 'percentage'">
+                    <div v-if="resizeMode === 'percentage'" class="setting-item full-width">
                         <label>缩放比例 <span class="percentage-val">({{ percentage }}%)</span></label>
                         <div class="slider-container">
-                            <input type="range" v-model.number="percentage" min="1" max="200" step="1"
+                            <input
+v-model.number="percentage" type="range" min="1" max="200" step="1"
                                 class="range-input">
                         </div>
                     </div>
 
                     
-                    <div class="setting-item" v-if="resizeMode === 'fixed'">
+                    <div v-if="resizeMode === 'fixed'" class="setting-item">
                         <label>宽度 (px)</label>
-                        <input type="number" v-model.number="fixedWidth" class="number-input" @input="handleWidthChange" min="1">
+                        <input v-model.number="fixedWidth" type="number" class="number-input" min="1" @input="handleWidthChange">
                     </div>
-                    <div class="setting-item" v-if="resizeMode === 'fixed'">
+                    <div v-if="resizeMode === 'fixed'" class="setting-item">
                         <label>高度 (px)</label>
-                        <input type="number" v-model.number="fixedHeight" class="number-input" @input="handleHeightChange" min="1">
+                        <input v-model.number="fixedHeight" type="number" class="number-input" min="1" @input="handleHeightChange">
                     </div>
-                    <div class="setting-item checkbox-item" v-if="resizeMode === 'fixed'">
+                    <div v-if="resizeMode === 'fixed'" class="setting-item checkbox-item">
                         <label class="checkbox-label">
-                            <input type="checkbox" v-model="lockAspectRatio">
+                            <input v-model="lockAspectRatio" type="checkbox">
                             锁定纵横比
                         </label>
                     </div>
@@ -78,25 +82,25 @@
                     
                     <div class="setting-item full-width">
                         <label>输出质量 ({{ Math.round(quality * 100) }}%)</label>
-                        <input type="range" v-model.number="quality" min="0.1" max="1" step="0.05" class="range-input">
+                        <input v-model.number="quality" type="range" min="0.1" max="1" step="0.05" class="range-input">
                     </div>
                 </div>
 
                 <div class="action-buttons">
-                    <button class="btn-primary" @click="startProcessing" :disabled="isProcessing">
+                    <button class="btn-primary" :disabled="isProcessing" @click="startProcessing">
                         <el-icon v-if="isProcessing"><Loading /></el-icon>
                         <el-icon v-else><Check /></el-icon>
                         {{ isProcessing ? '处理中...' : '开始处理' }}
                     </button>
-                    <button class="btn-secondary" @click="clearAll" :disabled="isProcessing">清空列表</button>
+                    <button class="btn-secondary" :disabled="isProcessing" @click="clearAll">清空列表</button>
                 </div>
             </div>
 
             
-            <div class="file-list" v-if="fileList.length > 0">
+            <div v-if="fileList.length > 0" class="file-list">
                 <div v-for="(file, index) in fileList" :key="index" class="file-item glass-card">
                     <div class="file-left">
-                        <div class="file-thumb" v-if="file.thumbUrl" :style="{ backgroundImage: `url(${file.thumbUrl})` }">
+                        <div v-if="file.thumbUrl" class="file-thumb" :style="{ backgroundImage: `url(${file.thumbUrl})` }">
                         </div>
                         <div class="file-info-text">
                             <span class="file-name" :title="file.file.name">{{ file.file.name }}</span>
@@ -111,10 +115,10 @@
                     <div class="file-actions">
                          <div v-if="file.status === 'done'" class="result-info">
                             <span class="size-diff">{{ formatSize(file.resultBlob.size) }}</span>
-                            <button class="btn-icon" @click="previewFile(file)" title="对比预览">
+                            <button class="btn-icon" title="对比预览" @click="previewFile(file)">
                                 <el-icon><View /></el-icon>
                             </button>
-                            <button class="btn-icon primary" @click="downloadFile(file)" title="下载">
+                            <button class="btn-icon primary" title="下载" @click="downloadFile(file)">
                                 <el-icon><Download /></el-icon>
                             </button>
                         </div>
@@ -132,7 +136,7 @@
                     <h3>效果预览</h3>
                     <button class="close-btn" @click="showPreview = false"><el-icon><Close /></el-icon></button>
                 </div>
-                <div class="preview-body" v-if="previewItem">
+                <div v-if="previewItem" class="preview-body">
                     <div class="preview-box">
                         <h4>原图 ({{ formatSize(previewItem.file.size) }})</h4>
                         <img :src="previewItem.thumbUrl" class="preview-img">

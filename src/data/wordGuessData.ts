@@ -12,7 +12,7 @@ export const englishWords = [
     "WOMAN", "WORLD", "WRITE", "YOUTH", "ZEBRA"
 ];
 
-export const chineseIdioms = [
+export const chineseIdioms: string[] = [
     "一心一意", "三心二意", "四面楚歌", "五光十色", "六神无主", "七上八下", "八仙过海", "九牛一毛", "十全十美",
     "画蛇添足", "守株待兔", "掩耳盗铃", "亡羊补牢", "盲人摸象", "对牛弹琴", "刻舟求剑", "井底之蛙", "拔苗助长",
     "狐假虎威", "滥竽充数", "自相矛盾", "杯弓蛇影", "叶公好龙", "画龙点睛", "望梅止渴", "朝三暮四", "闻鸡起舞",

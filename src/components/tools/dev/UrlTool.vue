@@ -34,7 +34,7 @@
         </div>
       </div>
 
-      <div class="params-section" v-if="parsedParams.length > 0">
+      <div v-if="parsedParams.length > 0" class="params-section">
         <div class="section-title">参数解析 (Query Params)</div>
         <div class="params-table-container">
           <table class="params-table">

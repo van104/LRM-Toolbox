@@ -16,7 +16,7 @@
             </div>
             <div class="header-right">
                 <el-button-group>
-                    <el-button type="primary" @click="exportBook" :loading="exporting">
+                    <el-button type="primary" :loading="exporting" @click="exportBook">
                         <el-icon>
                             <Download />
                         </el-icon> 导出画册页
@@ -37,11 +37,13 @@
                                         <Plus />
                                     </el-icon>
                                     <span>添加照片</span>
-                                    <input type="file" ref="fileRef" hidden multiple accept="image/*"
+                                    <input
+ref="fileRef" type="file" hidden multiple accept="image/*"
                                         @change="handleUpload" />
                                 </div>
                                 <div class="asset-grid">
-                                    <div v-for="(img, idx) in userPhotos" :key="idx" class="asset-item photo"
+                                    <div
+v-for="(img, idx) in userPhotos" :key="idx" class="asset-item photo"
                                         draggable="true" @dragstart="startDrag($event, 'image', img)"
                                         @click="addItem('image', img)">
                                         <img :src="img" />
@@ -55,7 +57,8 @@
                         <el-tab-pane label="模板" name="templates">
                             <div class="scroll-container">
                                 <div class="template-grid">
-                                    <div v-for="temp in templates" :key="temp.id" class="template-item"
+                                    <div
+v-for="temp in templates" :key="temp.id" class="template-item"
                                         @click="applyTemplate(temp)">
                                         <div class="temp-preview" :class="temp.id">
                                             <div v-for="i in temp.slots" :key="i" class="temp-slot"></div>
@@ -68,7 +71,8 @@
                         <el-tab-pane label="贴纸" name="stickers">
                             <div class="scroll-container">
                                 <div class="asset-grid">
-                                    <div v-for="stk in stickers" :key="stk.id" class="asset-item sticker"
+                                    <div
+v-for="stk in stickers" :key="stk.id" class="asset-item sticker"
                                         draggable="true" @dragstart="startDrag($event, 'sticker', stk)"
                                         @click="addSticker(stk)">
                                         <div class="sticker-icon" :style="{ backgroundColor: stk.color }">
@@ -85,17 +89,20 @@
 
                 <section class="workspace" @dragover.prevent @dragenter.prevent @drop="onDrop">
                     <div class="canvas-container" :style="canvasContainerStyle" @dragover.prevent @drop.stop="onDrop">
-                        <div class="book-canvas shadow-xl" ref="bookCanvas" :style="canvasStyle"
+                        <div
+ref="bookCanvas" class="book-canvas shadow-xl" :style="canvasStyle"
                             @mousedown="deselectAll" @dragover.prevent @drop.stop="onDrop">
                             
-                            <div v-for="item in canvasItems" :key="item.id" class="canvas-element"
+                            <div
+v-for="item in canvasItems" :key="item.id" class="canvas-element"
                                 :class="{ active: selectedId === item.id }" :style="getElementStyle(item)"
                                 @mousedown.stop="selectItem(item, $event)">
                                 
                                 <img v-if="item.type === 'image'" :src="item.src" draggable="false" />
 
                                 
-                                <div v-if="item.type === 'sticker'" class="sticker-wrapper"
+                                <div
+v-if="item.type === 'sticker'" class="sticker-wrapper"
                                     :style="{ backgroundColor: item.color }">
                                     <el-icon :size="item.width * 2"> 
                                         <component :is="IconMap[item.icon]" />
@@ -103,13 +110,15 @@
                                 </div>
 
                                 
-                                <div v-if="selectedId === item.id" class="resize-handle se"
+                                <div
+v-if="selectedId === item.id" class="resize-handle se"
                                     @mousedown.stop="startResize(item, $event)"></div>
                             </div>
 
                             
                             <div v-if="currentTemplate" class="template-overlay">
-                                <div v-for="(slot, idx) in currentTemplate.slots_data" :key="idx" class="template-slot"
+                                <div
+v-for="(slot, idx) in currentTemplate.slots_data" :key="idx" class="template-slot"
                                     :style="getSlotStyle(slot)" @dragover.prevent @drop.stop="onDropToTemplate(idx)">
                                     <div v-if="!slot.occupied" class="slot-hint">
                                         <el-icon>
@@ -123,7 +132,7 @@
                     </div>
 
                     
-                    <div class="context-toolbar glass-card" v-if="selectedItem">
+                    <div v-if="selectedItem" class="context-toolbar glass-card">
                         <el-button-group size="small">
                             <el-button @click="moveLayer(1)"><el-icon>
                                     <Top />
@@ -143,7 +152,8 @@
                         <el-divider direction="vertical" />
                         <div class="slider-group">
                             <span>不透明度</span>
-                            <el-slider v-model="selectedItem.opacity" :min="0" :max="1" :step="0.01"
+                            <el-slider
+v-model="selectedItem.opacity" :min="0" :max="1" :step="0.01"
                                 style="width: 80px" />
                         </div>
                     </div>
@@ -181,7 +191,8 @@
                         <div class="settings-group">
                             <div class="label">背景纹理</div>
                             <div class="pattern-grid">
-                                <div v-for="p in patterns" :key="p.id" class="pattern-item"
+                                <div
+v-for="p in patterns" :key="p.id" class="pattern-item"
                                     :class="{ active: config.pattern === p.url }"
                                     :style="{ backgroundImage: `url(${p.url})` }" @click="config.pattern = p.url"></div>
                                 <div class="pattern-item none" @click="config.pattern = ''">无</div>
@@ -189,7 +200,7 @@
                         </div>
                     </div>
 
-                    <div class="panel-section" v-if="selectedItem && selectedItem.type === 'sticker'">
+                    <div v-if="selectedItem && selectedItem.type === 'sticker'" class="panel-section">
                         <h3 class="section-title">贴纸样式</h3>
                         <div class="settings-group">
                             <div class="label">主题色</div>

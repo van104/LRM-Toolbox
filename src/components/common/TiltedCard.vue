@@ -1,5 +1,6 @@
 <template>
-    <figure ref="figureRef" class="tilted-card-figure" :style="{ height: containerHeight, width: containerWidth }"
+    <figure
+ref="figureRef" class="tilted-card-figure" :style="{ height: containerHeight, width: containerWidth }"
         @mousemove="handleMouse" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
         <div v-if="showMobileWarning" class="tilted-card-mobile-alert">
             This effect is not optimized for mobile. Check on desktop.

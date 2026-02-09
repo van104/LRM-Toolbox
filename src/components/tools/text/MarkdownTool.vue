@@ -32,8 +32,9 @@
             <span>Markdown 编辑</span>
             <el-button link type="primary" size="small" @click="pasteContent">粘贴</el-button>
           </div>
-          <textarea v-model="markdownInput" class="markdown-editor" placeholder="在此输入 Markdown 内容..." spellcheck="false"
-            @scroll="syncScroll" ref="editorRef"></textarea>
+          <textarea
+ref="editorRef" v-model="markdownInput" class="markdown-editor" placeholder="在此输入 Markdown 内容..."
+            spellcheck="false" @scroll="syncScroll"></textarea>
         </div>
 
         
@@ -41,7 +42,7 @@
           <div class="pane-header">
             <span>实时预览</span>
           </div>
-          <div class="markdown-body" v-html="renderedHtml" ref="previewRef"></div>
+          <div ref="previewRef" class="markdown-body" v-html="renderedHtml"></div>
         </div>
       </div>
     </div>

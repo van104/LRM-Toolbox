@@ -1,7 +1,7 @@
 <template>
     <div class="rhyme-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -18,8 +18,8 @@
                 <div class="input-section">
                     <label>输入汉字 (取最后一个字的韵脚)</label>
                     <div class="search-box">
-                        <input v-model="inputText" @keyup.enter="searchRhyme" placeholder="例如：春、花、或是词语" />
-                        <button @click="searchRhyme" class="primary-btn">查询韵脚</button>
+                        <input v-model="inputText" placeholder="例如：春、花、或是词语" @keyup.enter="searchRhyme" />
+                        <button class="primary-btn" @click="searchRhyme">查询韵脚</button>
                     </div>
                 </div>
 
@@ -33,8 +33,9 @@
                         <div v-for="(words, tone) in rhymeResult.groups" :key="tone" class="tone-group">
                             <h3>{{ toneNames[tone] }}</h3>
                             <div class="word-tags">
-                                <span v-for="word in words" :key="word" @click="inputText = word; searchRhyme()"
-                                    class="word-tag">
+                                <span
+v-for="word in words" :key="word" class="word-tag"
+                                    @click="inputText = word; searchRhyme()">
                                     {{ word }}
                                 </span>
                             </div>

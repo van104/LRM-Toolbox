@@ -66,13 +66,14 @@
                             <span class="progress-text">处理中... {{ currentPage }}/{{ totalPages }}</span>
                         </div>
 
-                        <el-button type="primary" size="large" class="action-btn" :loading="processing"
+                        <el-button
+type="primary" size="large" class="action-btn" :loading="processing"
                             @click="convertToGrayscale">
                             转换并下载
                         </el-button>
                     </div>
 
-                    <input type="file" ref="fileRef" hidden accept=".pdf" @change="handleUpload" />
+                    <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
                 </div>
             </div>
         </main>

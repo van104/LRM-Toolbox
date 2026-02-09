@@ -1,7 +1,7 @@
 <template>
     <div class="chinese-dictionary-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -24,7 +24,8 @@
                         </div>
 
                         <div class="chain-display">
-                            <div v-for="(word, idx) in chain" :key="idx"
+                            <div
+v-for="(word, idx) in chain" :key="idx"
                                 class="chain-node animate__animated animate__fadeInUp">
                                 <span class="idiom-text">{{ word }}</span>
                                 <el-icon v-if="idx < chain.length - 1" class="arrow">
@@ -35,8 +36,9 @@
                         </div>
 
                         <div class="input-area">
-                            <el-input v-model="userInput" placeholder="输入成语进行接龙..." size="large"
-                                @keyup.enter="handleIdiomSubmit" clearable>
+                            <el-input
+v-model="userInput" placeholder="输入成语进行接龙..." size="large"
+                                clearable @keyup.enter="handleIdiomSubmit">
                                 <template #append>
                                     <el-button type="primary" @click="handleIdiomSubmit">提交</el-button>
                                 </template>
@@ -50,8 +52,9 @@
                 <el-tab-pane label="词义查询" name="lookup">
                     <div class="lookup-area glass-card">
                         <div class="search-box">
-                            <el-input v-model="query" placeholder="输入成语..." @keyup.enter="lookupWord"
-                                @clear="result = null" clearable>
+                            <el-input
+v-model="query" placeholder="输入成语..." clearable
+                                @keyup.enter="lookupWord" @clear="result = null">
                                 <template #append>
                                     <el-button :icon="Search" @click="lookupWord" />
                                 </template>
@@ -70,14 +73,14 @@
                                 <p>{{ result.meaning }}</p>
                             </div>
 
-                            <div class="result-grid" v-if="result.synonyms || result.antonyms">
-                                <div class="grid-item" v-if="result.synonyms">
+                            <div v-if="result.synonyms || result.antonyms" class="result-grid">
+                                <div v-if="result.synonyms" class="grid-item">
                                     <h4>近义词</h4>
                                     <div class="tag-list">
                                         <el-tag v-for="w in result.synonyms" :key="w" class="mr-2">{{ w }}</el-tag>
                                     </div>
                                 </div>
-                                <div class="grid-item" v-if="result.antonyms">
+                                <div v-if="result.antonyms" class="grid-item">
                                     <h4>反义词</h4>
                                     <div class="tag-list">
                                         <el-tag v-for="w in result.antonyms" :key="w" type="danger" class="mr-2">{{ w
@@ -86,7 +89,7 @@
                                 </div>
                             </div>
 
-                            <div class="result-section" v-if="result.example">
+                            <div v-if="result.example" class="result-section">
                                 <h4>例句</h4>
                                 <blockquote class="example-quote">{{ result.example }}</blockquote>
                             </div>
@@ -103,7 +106,8 @@
                                 </el-button>
                             </div>
                             <div class="rec-grid">
-                                <div v-for="item in randomIdioms" :key="item.name" class="rec-card"
+                                <div
+v-for="item in randomIdioms" :key="item.name" class="rec-card"
                                     @click="selectIdiom(item)">
                                     <span class="rec-name">{{ item.name }}</span>
                                     <span class="rec-pinyin">{{ item.pinyin }}</span>
@@ -112,6 +116,23 @@
                         </div>
 
                         <el-empty v-else description="词库中暂未收录该词条" />
+                    </div>
+                </el-tab-pane>
+                <el-tab-pane label="全库浏览" name="browse">
+                    <div class="browse-area glass-card">
+                        <RecycleScroller
+                            class="dictionary-scroller"
+                            :items="dictionary"
+                            :item-size="60"
+                            key-field="name"
+                        >
+                            <template #default="{ item }">
+                                <div class="dict-item" @click="selectIdiomAndSwitch(item)">
+                                    <span class="dict-name">{{ item.name }}</span>
+                                    <span class="dict-pinyin">{{ item.pinyin }}</span>
+                                </div>
+                            </template>
+                        </RecycleScroller>
                     </div>
                 </el-tab-pane>
             </el-tabs>
@@ -124,7 +145,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Back, Search, Right, Refresh } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { dictionary } from '@/data/dictionaryData'
@@ -143,9 +164,6 @@ const handleIdiomSubmit = () => {
         ElMessage.warning('请输入标准的四字成语')
         return
     }
-
-    
-    const isInDict = dictionary.some(d => d.name === val)
 
     if (chain.value.length > 0) {
         const last = chain.value[chain.value.length - 1]
@@ -207,6 +225,11 @@ const selectIdiom = (item) => {
     result.value = item
 }
 
+const selectIdiomAndSwitch = (item) => {
+    selectIdiom(item)
+    activeTab.value = 'lookup'
+}
+
 onMounted(() => {
     refreshRandomIdioms()
 })
@@ -244,6 +267,34 @@ onMounted(() => {
 .nav-back,
 .nav-spacer {
     width: 80px;
+}
+
+.dictionary-scroller {
+    height: 600px;
+}
+
+.dict-item {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.dict-item:hover {
+    background: #f0f9eb;
+}
+
+.dict-name {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-right: 1rem;
+}
+
+.dict-pinyin {
+    color: var(--text-2);
 }
 
 .nav-back {

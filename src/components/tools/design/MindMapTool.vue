@@ -1,7 +1,7 @@
 <template>
     <div class="mindmap-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -22,11 +22,12 @@
                                 <Edit />
                             </el-icon> 编辑大纲 (Markdown)</h3>
                         <div class="actions">
-                            <button @click="loadExample" class="action-btn">载入示例</button>
-                            <button @click="clearText" class="action-btn danger">清空</button>
+                            <button class="action-btn" @click="loadExample">载入示例</button>
+                            <button class="action-btn danger" @click="clearText">清空</button>
                         </div>
                     </div>
-                    <textarea v-model="markdownInput" class="md-editor" placeholder="# 中心主题
+                    <textarea
+v-model="markdownInput" class="md-editor" placeholder="# 中心主题
 ## 分支1
 - 子节点A
 - 子节点B
@@ -41,19 +42,19 @@
                                 <View />
                             </el-icon> 导图预览</h3>
                         <div class="actions">
-                            <button @click="fitView" class="action-btn">
+                            <button class="action-btn" @click="fitView">
                                 <el-icon>
                                     <FullScreen />
                                 </el-icon> 适应视图
                             </button>
-                            <button @click="downloadSVG" class="action-btn primary">
+                            <button class="action-btn primary" @click="downloadSVG">
                                 <el-icon>
                                     <Download />
                                 </el-icon> 导出 SVG
                             </button>
                         </div>
                     </div>
-                    <div class="svg-container" ref="svgContainerRef">
+                    <div ref="svgContainerRef" class="svg-container">
                         <svg ref="svgRef" style="width: 100%; height: 100%;"></svg>
                     </div>
                     <div class="tips">

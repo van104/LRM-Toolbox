@@ -1,7 +1,7 @@
 <template>
     <div class="chemistry-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -19,8 +19,9 @@
                 <div class="shelf glass-card">
                     <h3>元素架</h3>
                     <div class="elements-grid">
-                        <div v-for="elem in availableElements" :key="elem.id" class="element-item"
-                            :style="{ borderColor: elem.color }" @click="addToBeaker(elem)" draggable="true"
+                        <div
+v-for="elem in availableElements" :key="elem.id" class="element-item"
+                            :style="{ borderColor: elem.color }" draggable="true" @click="addToBeaker(elem)"
                             @dragstart="handleDragStart($event, elem)">
                             <div class="elem-preview" :style="{ background: elem.color }"></div>
                             <span class="elem-name">{{ elem.name }}</span>
@@ -36,14 +37,16 @@
                             
                             <div class="beaker-contents">
                                 <transition-group name="liquid-layer">
-                                    <div v-for="(item, index) in beakerItems" :key="index" class="liquid-layer" :style="{
+                                    <div
+v-for="(item, index) in beakerItems" :key="index" class="liquid-layer" :style="{
                                         backgroundColor: item.color,
                                         height: `${100 / Math.max(beakerItems.length, 1)}%`
                                     }"></div>
                                 </transition-group>
 
                                 
-                                <div v-if="isMixed && beakerItems.length > 0" class="mixed-liquid"
+                                <div
+v-if="isMixed && beakerItems.length > 0" class="mixed-liquid"
                                     :style="{ backgroundColor: mixedColor, opacity: 0.9 }"></div>
 
                                 
@@ -60,12 +63,12 @@
                     </div>
 
                     <div class="controls">
-                        <button class="action-btn" @click="mixContents" :disabled="beakerItems.length < 2">
+                        <button class="action-btn" :disabled="beakerItems.length < 2" @click="mixContents">
                             <el-icon>
                                 <Refresh />
                             </el-icon> 搅拌混合
                         </button>
-                        <button class="action-btn danger" @click="emptyBeaker" :disabled="beakerItems.length === 0">
+                        <button class="action-btn danger" :disabled="beakerItems.length === 0" @click="emptyBeaker">
                             <el-icon>
                                 <Delete />
                             </el-icon> 清空烧杯
@@ -76,7 +79,7 @@
                 
                 <div class="journal glass-card">
                     <h3>实验记录</h3>
-                    <div class="log-list" ref="logContainer">
+                    <div ref="logContainer" class="log-list">
                         <div v-if="logs.length === 0" class="empty-log">暂无实验记录</div>
                         <div v-for="(log, index) in logs" :key="index" class="log-entry" :class="log.type">
                             <span class="time">[{{ log.time }}]</span>

@@ -64,13 +64,14 @@
                             </div>
                         </div>
 
-                        <el-button type="primary" size="large" class="action-btn" :loading="processing"
+                        <el-button
+type="primary" size="large" class="action-btn" :loading="processing"
                             @click="processPdf">
                             开始调整并下载
                         </el-button>
                     </div>
 
-                    <input type="file" ref="fileRef" hidden accept=".pdf" @change="handleUpload" />
+                    <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
                 </div>
             </div>
         </main>

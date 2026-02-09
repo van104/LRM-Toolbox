@@ -1,7 +1,7 @@
 <template>
     <div class="screen-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -17,7 +17,8 @@
             <div class="tool-card glass-card">
                 
                 <div class="filter-bar">
-                    <button v-for="cat in categories" :key="cat.id" :class="{ active: currentFilter === cat.id }"
+                    <button
+v-for="cat in categories" :key="cat.id" :class="{ active: currentFilter === cat.id }"
                         @click="currentFilter = cat.id">
                         {{ cat.name }}
                     </button>
@@ -44,7 +45,7 @@
                     <div v-for="dev in filteredDevices" :key="dev.name" class="list-item">
                         <div class="col name">
                             <span class="dev-name">{{ dev.name }}</span>
-                            <span class="dev-year" v-if="dev.year">{{ dev.year }}</span>
+                            <span v-if="dev.year" class="dev-year">{{ dev.year }}</span>
                         </div>
                         <div class="col logic">
                             <span class="val">{{ dev.lw }} x {{ dev.lh }}</span>

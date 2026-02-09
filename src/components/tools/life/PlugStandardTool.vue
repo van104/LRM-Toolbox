@@ -1,7 +1,7 @@
 <template>
     <div class="plug-standard-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -21,7 +21,8 @@
                         <el-icon class="search-icon">
                             <Search />
                         </el-icon>
-                        <input type="text" v-model="searchQuery" placeholder="搜索国家或地区 (如：日本、英国、USA)"
+                        <input
+v-model="searchQuery" type="text" placeholder="搜索国家或地区 (如：日本、英国、USA)"
                             class="search-input" />
                     </div>
                 </div>
@@ -49,7 +50,8 @@
                             <div class="plug-types">
                                 <span class="label">插座类型:</span>
                                 <div class="types-list">
-                                    <div v-for="type in country.plugs" :key="type" class="plug-badge"
+                                    <div
+v-for="type in country.plugs" :key="type" class="plug-badge"
                                         @mouseenter="hoverType = type" @mouseleave="hoverType = null">
                                         {{ type }}型
                                     </div>
@@ -77,7 +79,7 @@
             <div class="reference-card glass-card">
                 <h3>常见插座类型图鉴</h3>
                 <div class="type-gallery">
-                    <div class="gallery-item" v-for="(desc, type) in plugDescriptions" :key="type">
+                    <div v-for="(desc, type) in plugDescriptions" :key="type" class="gallery-item">
                         <div class="visual-socket small" :class="'type-' + type.toLowerCase()">
                             <div class="socket-face"></div>
                         </div>

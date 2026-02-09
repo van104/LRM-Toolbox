@@ -1,7 +1,7 @@
 <template>
     <div class="pregnancy-due-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -20,11 +20,13 @@
                     <h3 class="panel-title">日期输入</h3>
                     <el-form label-position="top">
                         <el-form-item label="末次月经第一天">
-                            <el-date-picker v-model="lastPeriod" type="date" placeholder="选择日期" style="width: 100%"
+                            <el-date-picker
+v-model="lastPeriod" type="date" placeholder="选择日期" style="width: 100%"
                                 :disabled-date="disableFutureDates" @change="calculate" />
                         </el-form-item>
                         <el-form-item label="平均月经周期 (天)">
-                            <el-input-number v-model="cycleDays" :min="21" :max="45" style="width: 100%"
+                            <el-input-number
+v-model="cycleDays" :min="21" :max="45" style="width: 100%"
                                 @change="calculate" />
                         </el-form-item>
                     </el-form>
@@ -47,7 +49,7 @@
                 </aside>
 
                 
-                <section class="main-info glass-card" v-if="dueDate">
+                <section v-if="dueDate" class="main-info glass-card">
                     <div class="week-header">
                         <h2 class="section-title">第 {{ currentWeeks }} 周：胎儿与妈妈的变化</h2>
                         <div class="trimester-badge" :class="'tri-' + trimester">第 {{ trimester }} 阶段 (Trimester)</div>
@@ -58,7 +60,7 @@
                             <div class="card-icon">👶</div>
                             <h4>宝宝的变化</h4>
                             <p>{{ currentWeekData.baby }}</p>
-                            <div class="size-box" v-if="currentWeekData.size">
+                            <div v-if="currentWeekData.size" class="size-box">
                                 <span>现在大约像：<strong>{{ currentWeekData.size }}</strong></span>
                             </div>
                         </div>
@@ -91,7 +93,8 @@
         </main>
 
         <div class="disclaimer-wrap" style="padding: 0 1.5rem 2rem; text-align: center;">
-            <div class="disclaimer-card"
+            <div
+class="disclaimer-card"
                 style="display: inline-flex; gap: 0.8rem; padding: 1rem; background: #fff5f7; color: #9d174d; border-radius: 12px; font-size: 0.8rem; align-items: start; text-align: left; border: 1px solid #fce7f3;">
                 <el-icon style="margin-top: 2px;">
                     <InfoFilled />

@@ -2,7 +2,7 @@
     <div class="base-converter-tool">
         
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -23,9 +23,10 @@
                         <span class="base-tag">DEC</span>
                     </label>
                     <div class="input-wrapper">
-                        <input type="text" v-model="values.dec" @input="handleInput('dec')" placeholder="例如: 255"
-                            class="base-input" />
-                        <button class="copy-btn" @click="copy(values.dec)" title="复制">
+                        <input
+v-model="values.dec" type="text" placeholder="例如: 255" class="base-input"
+                            @input="handleInput('dec')" />
+                        <button class="copy-btn" title="复制" @click="copy(values.dec)">
                             <el-icon>
                                 <CopyDocument />
                             </el-icon>
@@ -40,9 +41,10 @@
                     </label>
                     <div class="input-wrapper">
                         <span class="prefix">0x</span>
-                        <input type="text" v-model="values.hex" @input="handleInput('hex')" placeholder="例如: FF"
-                            class="base-input" />
-                        <button class="copy-btn" @click="copy(values.hex)" title="复制">
+                        <input
+v-model="values.hex" type="text" placeholder="例如: FF" class="base-input"
+                            @input="handleInput('hex')" />
+                        <button class="copy-btn" title="复制" @click="copy(values.hex)">
                             <el-icon>
                                 <CopyDocument />
                             </el-icon>
@@ -56,9 +58,10 @@
                         <span class="base-tag">BIN</span>
                     </label>
                     <div class="input-wrapper">
-                        <input type="text" v-model="values.bin" @input="handleInput('bin')" placeholder="例如: 11111111"
-                            class="base-input font-mono" />
-                        <button class="copy-btn" @click="copy(values.bin)" title="复制">
+                        <input
+v-model="values.bin" type="text" placeholder="例如: 11111111" class="base-input font-mono"
+                            @input="handleInput('bin')" />
+                        <button class="copy-btn" title="复制" @click="copy(values.bin)">
                             <el-icon>
                                 <CopyDocument />
                             </el-icon>
@@ -73,9 +76,10 @@
                     </label>
                     <div class="input-wrapper">
                         <span class="prefix">0</span>
-                        <input type="text" v-model="values.oct" @input="handleInput('oct')" placeholder="例如: 377"
-                            class="base-input" />
-                        <button class="copy-btn" @click="copy(values.oct)" title="复制">
+                        <input
+v-model="values.oct" type="text" placeholder="例如: 377" class="base-input"
+                            @input="handleInput('oct')" />
+                        <button class="copy-btn" title="复制" @click="copy(values.oct)">
                             <el-icon>
                                 <CopyDocument />
                             </el-icon>
@@ -100,7 +104,7 @@
                         <el-icon>
                             <Search />
                         </el-icon>
-                        <input type="text" v-model="asciiSearch" placeholder="搜索字符或编码..." />
+                        <input v-model="asciiSearch" type="text" placeholder="搜索字符或编码..." />
                     </div>
                 </div>
 

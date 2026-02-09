@@ -1,7 +1,7 @@
 <template>
     <div class="url-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -21,11 +21,12 @@
                         <div class="pane-header">
                             <label>Decoded (原始字符)</label>
                             <div class="actions">
-                                <span class="clear-btn" @click="urlDecoded = ''" v-if="urlDecoded">清空</span>
+                                <span v-if="urlDecoded" class="clear-btn" @click="urlDecoded = ''">清空</span>
                                 <button class="action-btn encode" @click="doUrlEncode">编码 Encode &gt;&gt;</button>
                             </div>
                         </div>
-                        <textarea v-model="urlDecoded" placeholder="输入原始文本，如：你好 World!..."
+                        <textarea
+v-model="urlDecoded" placeholder="输入原始文本，如：你好 World!..."
                             class="pane-input"></textarea>
                     </div>
 
@@ -35,10 +36,11 @@
                             <label>Encoded (URL 编码)</label>
                             <div class="actions">
                                 <button class="action-btn decode" @click="doUrlDecode">&lt;&lt; 解码 Decode</button>
-                                <span class="clear-btn" @click="urlEncoded = ''" v-if="urlEncoded">清空</span>
+                                <span v-if="urlEncoded" class="clear-btn" @click="urlEncoded = ''">清空</span>
                             </div>
                         </div>
-                        <textarea v-model="urlEncoded" placeholder="输出编码结果，如：%E4%BD%A0%E5%A5%BD..."
+                        <textarea
+v-model="urlEncoded" placeholder="输出编码结果，如：%E4%BD%A0%E5%A5%BD..."
                             class="pane-input code-font"></textarea>
                     </div>
                 </div>

@@ -58,13 +58,14 @@
             <span>修改后文本 (Modified)</span>
             <el-button link type="primary" size="small" @click="pasteToModified">粘贴</el-button>
           </div>
-          <textarea v-model="modifiedText" class="code-editor" placeholder="在此输入修改后的文本..."
+          <textarea
+v-model="modifiedText" class="code-editor" placeholder="在此输入修改后的文本..."
             spellcheck="false"></textarea>
         </div>
       </div>
 
       
-      <div class="result-area" v-if="originalText || modifiedText">
+      <div v-if="originalText || modifiedText" class="result-area">
         <div class="result-header">
           <span>对比结果</span>
           <div class="legend">
@@ -103,7 +104,8 @@
         <div v-else class="diff-viewer-simple">
           <div v-if="simpleDiffResult.length === 0" class="no-diff">无差异</div>
           <template v-else>
-            <span v-for="(part, index) in simpleDiffResult" :key="index" class="diff-part" :class="{
+            <span
+v-for="(part, index) in simpleDiffResult" :key="index" class="diff-part" :class="{
               'added': part.added,
               'removed': part.removed,
               'unchanged': !part.added && !part.removed

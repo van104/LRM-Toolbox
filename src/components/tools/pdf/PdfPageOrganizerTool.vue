@@ -11,8 +11,9 @@
                 <span class="tool-subtitle">PDF Page Organizer</span>
             </div>
             <div class="header-right">
-                <el-button type="primary" :disabled="!pdfFile || pages.length === 0" @click="savePdf"
-                    :loading="processing">
+                <el-button
+type="primary" :disabled="!pdfFile || pages.length === 0" :loading="processing"
+                    @click="savePdf">
                     <el-icon>
                         <Download />
                     </el-icon> 保存
@@ -21,14 +22,15 @@
         </header>
 
         <main class="tool-content">
-            <div v-if="!pdfFile" class="upload-container glass-card" @click="triggerUpload" @dragover.prevent
+            <div
+v-if="!pdfFile" class="upload-container glass-card" @click="triggerUpload" @dragover.prevent
                 @drop.prevent="handleDrop">
                 <el-icon class="upload-icon">
                     <Grid />
                 </el-icon>
                 <h3>上传 PDF 文件</h3>
                 <p class="hint">拖拽页面重新排序，右键删除页面</p>
-                <input type="file" ref="fileRef" hidden accept=".pdf" @change="handleUpload" />
+                <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
             </div>
 
             <div v-else class="workspace">
@@ -49,8 +51,9 @@
                     </div>
                 </div>
 
-                <div class="pages-grid" ref="gridRef">
-                    <div v-for="(page, index) in pages" :key="page.id" class="page-card glass-card"
+                <div ref="gridRef" class="pages-grid">
+                    <div
+v-for="(page, index) in pages" :key="page.id" class="page-card glass-card"
                         :class="{ selected: selectedPages.includes(page.id), blank: page.isBlank }" draggable="true"
                         @dragstart="onDragStart($event, index)" @dragover.prevent="onDragOver($event, index)"
                         @drop="onDrop($event, index)" @dragend="onDragEnd" @click="toggleSelect(page.id, $event)">
@@ -70,7 +73,8 @@
                         </div>
                         <div class="page-footer">
                             <span class="page-num">{{ index + 1 }}</span>
-                            <el-checkbox :model-value="selectedPages.includes(page.id)" @click.stop
+                            <el-checkbox
+:model-value="selectedPages.includes(page.id)" @click.stop
                                 @change="toggleSelect(page.id)" />
                         </div>
                     </div>

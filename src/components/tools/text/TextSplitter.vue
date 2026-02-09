@@ -2,7 +2,7 @@
     <div class="text-splitter">
         
         <nav class="nav-bar">
-            <button @click="goHome" class="nav-back">
+            <button class="nav-back" @click="goHome">
                 <el-icon>
                     <ArrowLeft />
                 </el-icon>
@@ -13,7 +13,7 @@
                 <span class="nav-subtitle">Text Splitter & Joiner</span>
             </div>
             <div class="nav-spacer">
-                <button class="nav-back help-btn" @click="showHelp = true" title="使用说明">
+                <button class="nav-back help-btn" title="使用说明" @click="showHelp = true">
                     <el-icon>
                         <QuestionFilled />
                     </el-icon>
@@ -29,17 +29,17 @@
                     <div class="panel-header">
                         <span class="panel-title">源文本</span>
                         <div class="panel-actions">
-                            <span class="stats-info" v-if="inputText">{{ inputText.length }} 字符 | {{ inputLines }}
+                            <span v-if="inputText" class="stats-info">{{ inputText.length }} 字符 | {{ inputLines }}
                                 行</span>
-                            <button class="icon-btn" @click="fillDemoData" title="示例数据">
+                            <button class="icon-btn" title="示例数据" @click="fillDemoData">
                                 <span style="font-size: 13px; font-weight: bold;">Demo</span>
                             </button>
-                            <button class="icon-btn" @click="pasteText" title="粘贴">
+                            <button class="icon-btn" title="粘贴" @click="pasteText">
                                 <el-icon>
                                     <CopyDocument />
                                 </el-icon>
                             </button>
-                            <button class="icon-btn" @click="clearInput" title="清空">
+                            <button class="icon-btn" title="清空" @click="clearInput">
                                 <el-icon>
                                     <Delete />
                                 </el-icon>
@@ -47,7 +47,8 @@
                         </div>
                     </div>
                     <div class="editor-wrapper">
-                        <textarea v-model="inputText" class="text-editor" placeholder="在此输入需要处理的文本..."
+                        <textarea
+v-model="inputText" class="text-editor" placeholder="在此输入需要处理的文本..."
                             spellcheck="false"></textarea>
                     </div>
                 </section>
@@ -55,7 +56,8 @@
                 
                 <section class="tools-panel">
                     <div class="tabs-header">
-                        <button :class="['tab-btn', { active: currentTab === 'split' }]"
+                        <button
+:class="['tab-btn', { active: currentTab === 'split' }]"
                             @click="currentTab = 'split'">🔪 拆分</button>
                         <button :class="['tab-btn', { active: currentTab === 'join' }]" @click="currentTab = 'join'">🔗
                             拼接</button>
@@ -76,7 +78,7 @@
                                     <option value="custom">自定义</option>
                                 </select>
                             </div>
-                            <div class="control-row" v-if="splitOptions.separatorType === 'custom'">
+                            <div v-if="splitOptions.separatorType === 'custom'" class="control-row">
                                 <input v-model="splitOptions.customSeparator" placeholder="输入分隔符" class="text-input" />
                             </div>
 
@@ -84,7 +86,8 @@
 
                             <div class="control-row">
                                 <label>固定长度拆分:</label>
-                                <input v-model.number="splitOptions.length" type="number" min="1" class="text-input"
+                                <input
+v-model.number="splitOptions.length" type="number" min="1" class="text-input"
                                     placeholder="字符数" />
                             </div>
 
@@ -112,10 +115,10 @@
 
                             <div class="control-row checkbox-row">
                                 <label>
-                                    <input type="checkbox" v-model="joinOptions.removeEmpty" /> 去除空行
+                                    <input v-model="joinOptions.removeEmpty" type="checkbox" /> 去除空行
                                 </label>
                                 <label>
-                                    <input type="checkbox" v-model="joinOptions.unique" /> 去重
+                                    <input v-model="joinOptions.unique" type="checkbox" /> 去重
                                 </label>
                             </div>
 
@@ -138,7 +141,8 @@
                             </div>
                             <div class="control-row">
                                 <label>提取列 (索引):</label>
-                                <input v-model.number="csvOptions.colIndex" type="number" min="1" class="text-input"
+                                <input
+v-model.number="csvOptions.colIndex" type="number" min="1" class="text-input"
                                     placeholder="1 代表第一列" />
                             </div>
 
@@ -156,14 +160,14 @@
                     <div class="panel-header">
                         <span class="panel-title">处理结果</span>
                         <div class="panel-actions">
-                            <span class="stats-info" v-if="outputText">{{ outputText.length }} 字符 | {{ outputLines }}
+                            <span v-if="outputText" class="stats-info">{{ outputText.length }} 字符 | {{ outputLines }}
                                 行</span>
-                            <button class="icon-btn" @click="copyResult" title="复制结果">
+                            <button class="icon-btn" title="复制结果" @click="copyResult">
                                 <el-icon>
                                     <CopyDocument />
                                 </el-icon>
                             </button>
-                            <button class="icon-btn" @click="clearOutput" title="清空">
+                            <button class="icon-btn" title="清空" @click="clearOutput">
                                 <el-icon>
                                     <Delete />
                                 </el-icon>
@@ -171,7 +175,8 @@
                         </div>
                     </div>
                     <div class="editor-wrapper">
-                        <textarea v-model="outputText" class="text-editor result-editor" readonly
+                        <textarea
+v-model="outputText" class="text-editor result-editor" readonly
                             placeholder="结果将显示在这里..."></textarea>
                     </div>
                 </section>

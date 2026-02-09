@@ -2,7 +2,7 @@
     <div class="text-security">
 
         <nav class="nav-bar">
-            <button @click="goHome" class="nav-back">
+            <button class="nav-back" @click="goHome">
                 <el-icon>
                     <ArrowLeft />
                 </el-icon>
@@ -13,7 +13,7 @@
                 <span class="nav-subtitle">Text Security & Obfuscation</span>
             </div>
             <div class="nav-spacer">
-                <button class="nav-back help-btn" @click="showHelp = true" title="使用说明">
+                <button class="nav-back help-btn" title="使用说明" @click="showHelp = true">
                     <el-icon>
                         <QuestionFilled />
                     </el-icon>
@@ -29,16 +29,16 @@
                     <div class="panel-header">
                         <span class="panel-title">源文本</span>
                         <div class="panel-actions">
-                            <span class="stats-info" v-if="inputText">{{ inputText.length }} 字符</span>
-                            <button class="icon-btn" @click="fillDemoData" title="示例数据">
+                            <span v-if="inputText" class="stats-info">{{ inputText.length }} 字符</span>
+                            <button class="icon-btn" title="示例数据" @click="fillDemoData">
                                 <span style="font-size: 13px; font-weight: bold;">Demo</span>
                             </button>
-                            <button class="icon-btn" @click="pasteText" title="粘贴">
+                            <button class="icon-btn" title="粘贴" @click="pasteText">
                                 <el-icon>
                                     <CopyDocument />
                                 </el-icon>
                             </button>
-                            <button class="icon-btn" @click="clearInput" title="清空">
+                            <button class="icon-btn" title="清空" @click="clearInput">
                                 <el-icon>
                                     <Delete />
                                 </el-icon>
@@ -46,7 +46,8 @@
                         </div>
                     </div>
                     <div class="editor-wrapper">
-                        <textarea v-model="inputText" class="text-editor" placeholder="在此输入需要处理的文本..."
+                        <textarea
+v-model="inputText" class="text-editor" placeholder="在此输入需要处理的文本..."
                             spellcheck="false"></textarea>
                     </div>
                 </section>
@@ -56,9 +57,11 @@
                     <div class="tabs-header">
                         <button :class="['tab-btn', { active: currentTab === 'mask' }]" @click="currentTab = 'mask'">🛡️
                             脱敏</button>
-                        <button :class="['tab-btn', { active: currentTab === 'encrypt' }]"
+                        <button
+:class="['tab-btn', { active: currentTab === 'encrypt' }]"
                             @click="currentTab = 'encrypt'">🔒 加密</button>
-                        <button :class="['tab-btn', { active: currentTab === 'obfuscate' }]"
+                        <button
+:class="['tab-btn', { active: currentTab === 'obfuscate' }]"
                             @click="currentTab = 'obfuscate'">👁️ 混淆</button>
                     </div>
 
@@ -93,7 +96,8 @@
                                 <div class="sub-group">
                                     <label>凯撒密码 (Caesar):</label>
                                     <div class="flex-row">
-                                        <input type="number" v-model.number="encryptOptions.caesarShift"
+                                        <input
+v-model.number="encryptOptions.caesarShift" type="number"
                                             class="text-input small" placeholder="偏移" />
                                         <button class="action-btn small" @click="doCaesar('enc')">加密</button>
                                         <button class="action-btn small" @click="doCaesar('dec')">解密</button>
@@ -103,7 +107,8 @@
                                 <div class="sub-group">
                                     <label>异或加密 (XOR):</label>
                                     <div class="flex-row">
-                                        <input v-model="encryptOptions.xorKey" class="text-input small"
+                                        <input
+v-model="encryptOptions.xorKey" class="text-input small"
                                             placeholder="密钥" />
                                         <button class="action-btn small" @click="doXor">运算 (Hex)</button>
                                     </div>
@@ -135,13 +140,13 @@
                     <div class="panel-header">
                         <span class="panel-title">处理结果</span>
                         <div class="panel-actions">
-                            <span class="stats-info" v-if="outputText">{{ outputText.length }} 字符</span>
-                            <button class="icon-btn" @click="copyResult" title="复制结果">
+                            <span v-if="outputText" class="stats-info">{{ outputText.length }} 字符</span>
+                            <button class="icon-btn" title="复制结果" @click="copyResult">
                                 <el-icon>
                                     <CopyDocument />
                                 </el-icon>
                             </button>
-                            <button class="icon-btn" @click="clearOutput" title="清空">
+                            <button class="icon-btn" title="清空" @click="clearOutput">
                                 <el-icon>
                                     <Delete />
                                 </el-icon>
@@ -149,7 +154,8 @@
                         </div>
                     </div>
                     <div class="editor-wrapper">
-                        <textarea v-model="outputText" class="text-editor result-editor" readonly
+                        <textarea
+v-model="outputText" class="text-editor result-editor" readonly
                             placeholder="结果将显示在这里..."></textarea>
                     </div>
                 </section>

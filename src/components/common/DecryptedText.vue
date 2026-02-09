@@ -2,7 +2,8 @@
     <span ref="containerRef" :class="parentClassName" class="decrypted-text-wrapper" v-bind="hoverProps">
         <span class="sr-only">{{ text }}</span>
         <span aria-hidden="true">
-            <span v-for="(char, index) in displayTextArray" :key="index"
+            <span
+v-for="(char, index) in displayTextArray" :key="index"
                 :class="isRevealedOrDone(index) ? className : encryptedClassName">
                 {{ char }}
             </span>

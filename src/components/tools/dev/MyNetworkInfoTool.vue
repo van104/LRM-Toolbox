@@ -11,7 +11,7 @@
                 <span class="tool-subtitle">My Network Info</span>
             </div>
             <div class="header-right">
-                <el-button type="primary" @click="refreshAll" :loading="loading">
+                <el-button type="primary" :loading="loading" @click="refreshAll">
                     <el-icon>
                         <Refresh />
                     </el-icon> 刷新
@@ -30,16 +30,16 @@
                         <span>公网 IP</span>
                     </div>
                     <div class="card-body">
-                        <div class="ip-display" v-if="publicIp">{{ publicIp }}</div>
-                        <div class="ip-display loading" v-else-if="loadingPublicIp">获取中...</div>
-                        <div class="ip-display error" v-else>获取失败</div>
-                        <div class="ip-location" v-if="ipInfo">
+                        <div v-if="publicIp" class="ip-display">{{ publicIp }}</div>
+                        <div v-else-if="loadingPublicIp" class="ip-display loading">获取中...</div>
+                        <div v-else class="ip-display error">获取失败</div>
+                        <div v-if="ipInfo" class="ip-location">
                             <el-icon>
                                 <Location />
                             </el-icon>
                             {{ ipInfo.city || '' }} {{ ipInfo.region || '' }}, {{ ipInfo.country || '' }}
                         </div>
-                        <div class="ip-detail" v-if="ipInfo">
+                        <div v-if="ipInfo" class="ip-detail">
                             <span>ISP: {{ ipInfo.org || '-' }}</span>
                         </div>
                     </div>
@@ -164,7 +164,7 @@
                 </div>
 
                 
-                <div class="info-card glass-card" v-if="batteryInfo.supported">
+                <div v-if="batteryInfo.supported" class="info-card glass-card">
                     <div class="card-header">
                         <el-icon class="card-icon">
                             <Opportunity />
@@ -173,7 +173,8 @@
                     </div>
                     <div class="card-body">
                         <div class="battery-display">
-                            <div class="battery-level" :style="{ width: batteryInfo.level + '%' }"
+                            <div
+class="battery-level" :style="{ width: batteryInfo.level + '%' }"
                                 :class="{ charging: batteryInfo.charging, low: batteryInfo.level < 20 }"></div>
                             <span class="battery-text">{{ batteryInfo.level }}%</span>
                         </div>

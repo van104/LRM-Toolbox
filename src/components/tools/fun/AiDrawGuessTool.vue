@@ -1,7 +1,7 @@
 <template>
     <div class="ai-draw-guess">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -11,7 +11,7 @@
                 <span class="nav-subtitle">AI Drawing Recognition</span>
             </div>
             <div class="nav-actions">
-                <button class="settings-btn" @click="showSettings = !showSettings" :class="{ active: showSettings }">
+                <button class="settings-btn" :class="{ active: showSettings }" @click="showSettings = !showSettings">
                     <el-icon>
                         <Setting />
                     </el-icon> 设置
@@ -28,7 +28,8 @@
                         <div class="form-item full-width">
                             <label>API 服务商预设</label>
                             <div class="provider-select">
-                                <button v-for="p in providers" :key="p.id" class="provider-badge"
+                                <button
+v-for="p in providers" :key="p.id" class="provider-badge"
                                     :class="{ active: currentProviderId === p.id }" @click="selectProvider(p)">
                                     {{ p.name }}
                                 </button>
@@ -36,16 +37,17 @@
                         </div>
                         <div class="form-item">
                             <label>API Key</label>
-                            <input type="password" v-model="config.apiKey"
+                            <input
+v-model="config.apiKey" type="password"
                                 :placeholder="hasBuiltInKey ? '已启用内置密钥 (可在此输入自定义 Key 覆盖)' : '输入 ' + (currentProvider?.name || '') + ' 的 API Key'">
                         </div>
                         <div class="form-item">
                             <label>API URL</label>
-                            <input type="text" v-model="config.apiUrl" placeholder="接口请求地址">
+                            <input v-model="config.apiUrl" type="text" placeholder="接口请求地址">
                         </div>
                         <div class="form-item">
                             <label>模型名称</label>
-                            <input type="text" v-model="config.modelId" placeholder="例如: Qwen/Qwen2-VL-72B-Instruct">
+                            <input v-model="config.modelId" type="text" placeholder="例如: Qwen/Qwen2-VL-72B-Instruct">
                         </div>
                     </div>
                     <div class="settings-footer">
@@ -59,7 +61,8 @@
                 <div class="canvas-section">
                     <div class="canvas-card glass-card">
                         <div class="canvas-wrapper">
-                            <canvas ref="canvasRef" @mousedown="startDrawing" @mousemove="draw" @mouseup="stopDrawing"
+                            <canvas
+ref="canvasRef" @mousedown="startDrawing" @mousemove="draw" @mouseup="stopDrawing"
                                 @mouseleave="stopDrawing" @touchstart="handleTouchStart" @touchmove="handleTouchMove"
                                 @touchend="stopDrawing"></canvas>
                         </div>
@@ -67,21 +70,24 @@
 
                         <div class="toolbar glass-card">
                             <div class="tool-group">
-                                <button class="tool-btn" :class="{ active: !isEraser }" @click="setMode('brush')"
-                                    title="画笔">
+                                <button
+class="tool-btn" :class="{ active: !isEraser }" title="画笔"
+                                    @click="setMode('brush')">
                                     <div class="color-indicator" :style="{ backgroundColor: currentColor }"></div>
                                     <span>画笔</span>
                                 </button>
-                                <button class="tool-btn" :class="{ active: isEraser }" @click="setMode('eraser')"
-                                    title="橡皮擦">
+                                <button
+class="tool-btn" :class="{ active: isEraser }" title="橡皮擦"
+                                    @click="setMode('eraser')">
                                     <el-icon>
                                         <Scissor />
                                     </el-icon>
                                     <span>橡皮</span>
                                 </button>
                                 <div class="divider-v"></div>
-                                <div class="color-picker" v-show="!isEraser">
-                                    <button v-for="color in colors" :key="color" class="color-dot"
+                                <div v-show="!isEraser" class="color-picker">
+                                    <button
+v-for="color in colors" :key="color" class="color-dot"
                                         :style="{ backgroundColor: color }" :class="{ active: currentColor === color }"
                                         @click="currentColor = color"></button>
                                     <div class="custom-color-picker">
@@ -93,7 +99,7 @@
                             <div class="tool-group">
                                 <div class="setting-item">
                                     <span class="label-text">粗细</span>
-                                    <input type="range" v-model.number="brushSize" min="1" max="50" class="size-slider">
+                                    <input v-model.number="brushSize" type="range" min="1" max="50" class="size-slider">
                                     <span class="size-text">{{ brushSize }}</span>
                                 </div>
                                 <div class="divider-v"></div>
@@ -102,12 +108,14 @@
                                         <PictureFilled />
                                     </el-icon>
                                     <div class="bg-options">
-                                        <button v-for="bg in bgOptions" :key="bg.color" class="bg-dot"
+                                        <button
+v-for="bg in bgOptions" :key="bg.color" class="bg-dot"
                                             :style="{ backgroundColor: bg.color }"
                                             :class="{ active: currentBgColor === bg.color }"
-                                            @click="changeBgColor(bg.color)" :title="bg.name"></button>
+                                            :title="bg.name" @click="changeBgColor(bg.color)"></button>
                                         <div class="custom-bg-picker">
-                                            <el-color-picker v-model="currentBgColor" size="small"
+                                            <el-color-picker
+v-model="currentBgColor" size="small"
                                                 @change="changeBgColor" />
                                         </div>
                                     </div>
@@ -115,17 +123,17 @@
                             </div>
 
                             <div class="actions">
-                                <button class="action-btn" @click="undo" :disabled="historyStep <= 0" title="撤销">
+                                <button class="action-btn" :disabled="historyStep <= 0" title="撤销" @click="undo">
                                     <el-icon>
                                         <RefreshLeft />
                                     </el-icon>
                                 </button>
-                                <button class="action-btn clear" @click="clearCanvas" title="清空画布">
+                                <button class="action-btn clear" title="清空画布" @click="clearCanvas">
                                     <el-icon>
                                         <Delete />
                                     </el-icon>
                                 </button>
-                                <button class="action-btn guess" @click="guessDraw" :disabled="loading">
+                                <button class="action-btn guess" :disabled="loading" @click="guessDraw">
                                     <el-icon v-if="!loading">
                                         <Cpu />
                                     </el-icon>

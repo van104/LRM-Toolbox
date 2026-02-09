@@ -1,7 +1,7 @@
 <template>
     <div class="list-to-table-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -26,10 +26,11 @@
                             <option value="|">竖线 (|)</option>
                         </select>
                         <label class="checkbox">
-                            <input type="checkbox" v-model="firstRowHeader"> 第一行为表头
+                            <input v-model="firstRowHeader" type="checkbox"> 第一行为表头
                         </label>
                     </div>
-                    <textarea v-model="inputText"
+                    <textarea
+v-model="inputText"
                         placeholder="粘贴文本在这里...&#10;姓名, 年龄, 职业&#10;张三, 25, 程序员&#10;李四, 30, 设计师" rows="6"></textarea>
                 </div>
 
@@ -40,12 +41,12 @@
                     </div>
 
                     <div class="result-box">
-                        <textarea readonly :value="resultText" ref="resultRef"></textarea>
+                        <textarea ref="resultRef" readonly :value="resultText"></textarea>
                         <button class="copy-btn" @click="copyResult">复制</button>
                     </div>
 
-                    <div class="preview-box markdown-body" v-if="activeTab === 'html'" v-html="resultText"></div>
-                    <div class="preview-box" v-else>
+                    <div v-if="activeTab === 'html'" class="preview-box markdown-body" v-html="resultText"></div>
+                    <div v-else class="preview-box">
                         <pre>{{ resultText }}</pre>
                     </div>
                 </div>

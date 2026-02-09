@@ -1,7 +1,7 @@
 <template>
     <div class="memory-game-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -33,7 +33,7 @@
                         <button :class="{ active: gridSize === 6 }" @click="setDifficulty(6)">困难 (6x6)</button>
                     </div>
 
-                    <button class="restart-btn icon-btn" @click="initGame" title="重置">
+                    <button class="restart-btn icon-btn" title="重置" @click="initGame">
                         <el-icon>
                             <RefreshRight />
                         </el-icon>
@@ -41,11 +41,13 @@
                 </div>
 
                 
-                <div class="card-grid" :style="{
+                <div
+class="card-grid" :style="{
                     'grid-template-columns': `repeat(${gridSize}, 1fr)`,
                     'max-width': gridSize === 6 ? '500px' : '360px'
                 }">
-                    <div v-for="card in cards" :key="card.id" class="card-container"
+                    <div
+v-for="card in cards" :key="card.id" class="card-container"
                         :class="{ 'flipped': card.isFlipped || card.isMatched }" @click="handleCardClick(card)">
                         <div class="card-inner">
                             <div class="card-front">

@@ -1,7 +1,7 @@
 <template>
     <div class="flappy-bird-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -15,7 +15,7 @@
 
         <main class="main-content">
             <div class="game-wrapper" @click="triggerJump" @touchstart.prevent="triggerJump">
-                <div class="game-container" ref="gameContainer">
+                <div ref="gameContainer" class="game-container">
                     
                     <div class="background" :class="{ 'moving': isPlaying }"></div>
 
@@ -45,7 +45,7 @@
                     <div class="ui-layer">
                         <div class="score-board">
                             <div class="current-score">{{ score }}</div>
-                            <div class="high-score" v-if="highScore > 0">BEST: {{ highScore }}</div>
+                            <div v-if="highScore > 0" class="high-score">BEST: {{ highScore }}</div>
                         </div>
 
                         <div v-if="gameState === 'start'" class="overlay start-screen">

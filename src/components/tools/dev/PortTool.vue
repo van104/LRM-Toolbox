@@ -1,7 +1,7 @@
 <template>
     <div class="port-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -20,7 +20,8 @@
                         <el-icon class="search-icon">
                             <Search />
                         </el-icon>
-                        <input type="number" v-model="portSearch" placeholder="输入端口号 (如: 80, 22, 3306...)"
+                        <input
+v-model="portSearch" type="number" placeholder="输入端口号 (如: 80, 22, 3306...)"
                             class="search-input" />
                     </div>
                 </div>
@@ -53,8 +54,9 @@
                         <div v-for="cat in categorizedPorts" :key="cat.name" class="port-category">
                             <span class="cat-label">{{ cat.name }}</span>
                             <div class="cat-tags">
-                                <span v-for="p in cat.ports" :key="p.port" @click="portSearch = p.port"
-                                    class="port-chip" :class="{ active: portSearch == p.port }">
+                                <span
+v-for="p in cat.ports" :key="p.port" class="port-chip"
+                                    :class="{ active: portSearch == p.port }" @click="portSearch = p.port">
                                     <b>{{ p.port }}</b> {{ p.service }}
                                 </span>
                             </div>

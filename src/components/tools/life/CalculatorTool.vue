@@ -1,7 +1,7 @@
 <template>
     <div class="calculator-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -30,11 +30,11 @@
                         <button class="btn fn" @click="handleMem('MR')">MR</button>
                         <button class="btn fn" @click="handleMem('M+')">M+</button>
                         <button class="btn fn" @click="handleMem('M-')">M-</button>
-                        <button class="btn fn" @click="toggleMode" :class="{ active: isScientific }">Sci</button>
+                        <button class="btn fn" :class="{ active: isScientific }" @click="toggleMode">Sci</button>
                     </div>
 
                     
-                    <div class="scientific-keys" v-if="isScientific">
+                    <div v-if="isScientific" class="scientific-keys">
                         <button class="btn science" @click="op('sin')">sin</button>
                         <button class="btn science" @click="op('cos')">cos</button>
                         <button class="btn science" @click="op('tan')">tan</button>

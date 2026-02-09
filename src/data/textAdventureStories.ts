@@ -1,4 +1,48 @@
-export const textAdventureStories = [
+export interface GameState {
+  hp: number;
+  maxHp: number;
+  gold: number;
+  strength: number;
+  inventory: string[];
+  mp?: number;
+}
+
+export interface Choice {
+  text: string;
+  next: string;
+  effect?: {
+    addItems?: string[];
+    karma?: number;
+    gold?: number;
+    hp?: number;
+    strength?: number;
+  };
+  req?: {
+    minStrength?: number;
+    minDex?: number;
+  };
+  history?: string;
+  cost?: { gold?: number };
+}
+
+export interface StoryNode {
+  text: string;
+  choices: Choice[];
+  isEnding?: boolean;
+}
+
+export interface Story {
+  id: string;
+  title: string;
+  category: string;
+  difficulty: string;
+  summary: string;
+  initialState: GameState;
+  startNode: string;
+  nodes: Record<string, StoryNode>;
+}
+
+export const textAdventureStories: Story[] = [
     {
         id: 'wuxia_origin',
         title: '苍穹之剑：初涉江湖',

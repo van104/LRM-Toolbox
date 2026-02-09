@@ -19,14 +19,16 @@
                 <el-tab-pane label="拆分 PDF" name="split">
                     <div class="tab-content">
                         <div class="workbench glass-card">
-                            <div v-if="!splitFile" class="upload-placeholder" @click="triggerSplitUpload"
+                            <div
+v-if="!splitFile" class="upload-placeholder" @click="triggerSplitUpload"
                                 @dragover.prevent @drop.prevent="handleSplitDrop">
                                 <div class="upload-icon"><el-icon>
                                         <Document />
                                     </el-icon></div>
                                 <h3>上传需要拆分的 PDF</h3>
                                 <p>选择要提取的页面范围</p>
-                                <input type="file" ref="splitFileRef" hidden accept=".pdf"
+                                <input
+ref="splitFileRef" type="file" hidden accept=".pdf"
                                     @change="handleSplitUpload" />
                             </div>
                             <div v-else class="file-loaded">
@@ -39,7 +41,8 @@
                                         <span class="file-meta">{{ splitPageCount }} 页</span>
                                     </div>
                                     <el-button text type="primary" @click="triggerSplitUpload">重新选择</el-button>
-                                    <input type="file" ref="splitFileRef" hidden accept=".pdf"
+                                    <input
+ref="splitFileRef" type="file" hidden accept=".pdf"
                                         @change="handleSplitUpload" />
                                 </div>
                                 <div class="split-options">
@@ -54,8 +57,9 @@
                                         <div class="label">页面范围 (如: 1-3,5,7-9)</div>
                                         <el-input v-model="splitRange" placeholder="1-3,5,7-9" />
                                     </div>
-                                    <el-button type="primary" size="large" @click="executeSplit" :loading="splitLoading"
-                                        style="width:100%; margin-top: 1rem;">
+                                    <el-button
+type="primary" size="large" :loading="splitLoading" style="width:100%; margin-top: 1rem;"
+                                        @click="executeSplit">
                                         <el-icon>
                                             <Scissor />
                                         </el-icon> {{ splitMode === 'single' ? '逐页拆分' : '提取选定页面' }}
@@ -70,14 +74,16 @@
                 <el-tab-pane label="合并 PDF" name="merge">
                     <div class="tab-content">
                         <div class="workbench glass-card">
-                            <div v-if="!mergeFiles.length" class="upload-placeholder" @click="triggerMergeUpload"
+                            <div
+v-if="!mergeFiles.length" class="upload-placeholder" @click="triggerMergeUpload"
                                 @dragover.prevent @drop.prevent="handleMergeDrop">
                                 <div class="upload-icon"><el-icon>
                                         <FolderOpened />
                                     </el-icon></div>
                                 <h3>上传多个 PDF 文件</h3>
                                 <p>文件将按顺序合并为一个 PDF</p>
-                                <input type="file" ref="mergeFileRef" multiple hidden accept=".pdf"
+                                <input
+ref="mergeFileRef" type="file" multiple hidden accept=".pdf"
                                     @change="handleMergeUpload" />
                             </div>
                             <div v-else class="files-loaded">
@@ -85,7 +91,8 @@
                                     <el-button type="primary" text @click="triggerMergeUpload"><el-icon>
                                             <Plus />
                                         </el-icon> 添加更多</el-button>
-                                    <input type="file" ref="mergeFileRef" multiple hidden accept=".pdf"
+                                    <input
+ref="mergeFileRef" type="file" multiple hidden accept=".pdf"
                                         @change="handleMergeUpload" />
                                     <el-button type="danger" text @click="clearMergeFiles"><el-icon>
                                             <Delete />
@@ -101,14 +108,16 @@
                                         </el-icon>
                                         <span class="file-index">{{ i + 1 }}</span>
                                         <span class="file-name">{{ f.name }}</span>
-                                        <el-button type="danger" text circle size="small"
+                                        <el-button
+type="danger" text circle size="small"
                                             @click="removeMergeFile(i)"><el-icon>
                                                 <Delete />
                                             </el-icon></el-button>
                                     </div>
                                 </div>
-                                <el-button type="primary" size="large" @click="executeMerge" :loading="mergeLoading"
-                                    style="width:100%; margin-top: 1rem;">
+                                <el-button
+type="primary" size="large" :loading="mergeLoading" style="width:100%; margin-top: 1rem;"
+                                    @click="executeMerge">
                                     <el-icon>
                                         <Connection />
                                     </el-icon> 合并 {{ mergeFiles.length }} 个 PDF

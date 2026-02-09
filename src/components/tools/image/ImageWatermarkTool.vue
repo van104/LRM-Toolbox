@@ -42,11 +42,11 @@
                         </div>
                         <h3>点击或拖拽上传图片</h3>
                         <p>支持多选，所有处理均在本地进行，不上传服务器</p>
-                        <input type="file" ref="fileRef" multiple hidden accept="image/*" @change="handleUpload" />
+                        <input ref="fileRef" type="file" multiple hidden accept="image/*" @change="handleUpload" />
                     </div>
 
                     <div v-else class="preview-stage">
-                        <div class="canvas-container" ref="stageContainer">
+                        <div ref="stageContainer" class="canvas-container">
                             <canvas ref="previewCanvas"></canvas>
                         </div>
                         <div class="stage-footer">
@@ -57,7 +57,8 @@
                                     </el-icon>
                                 </el-button>
                                 <span class="page-info">{{ currentIndex + 1 }} / {{ images.length }}</span>
-                                <el-button circle :disabled="currentIndex === images.length - 1"
+                                <el-button
+circle :disabled="currentIndex === images.length - 1"
                                     @click="currentIndex++">
                                     <el-icon>
                                         <ArrowRight />
@@ -81,7 +82,8 @@
                             <div class="settings-row">
                                 <div class="settings-item half">
                                     <div class="label">字体大小</div>
-                                    <el-input-number v-model="config.fontSize" :min="10" :max="500"
+                                    <el-input-number
+v-model="config.fontSize" :min="10" :max="500"
                                         @change="debouncedRender" />
                                 </div>
                                 <div class="settings-item half">
@@ -94,7 +96,8 @@
                                 <div class="label">描边设置</div>
                                 <div class="flex items-center gap-2">
                                     <el-switch v-model="config.stroke" @change="debouncedRender" />
-                                    <el-color-picker v-if="config.stroke" v-model="config.strokeColor" size="small"
+                                    <el-color-picker
+v-if="config.stroke" v-model="config.strokeColor" size="small"
                                         @change="debouncedRender" />
                                 </div>
                             </div>
@@ -111,7 +114,8 @@
                                         </el-icon>
                                         <span>选择图片</span>
                                     </div>
-                                    <input type="file" ref="logoRef" hidden accept="image/*"
+                                    <input
+ref="logoRef" type="file" hidden accept="image/*"
                                         @change="handleLogoUpload" />
                                 </div>
                             </div>
@@ -128,7 +132,7 @@
                     <div class="shared-settings">
                         <div class="settings-group">
                             <div class="label">水印密度</div>
-                            <el-radio-group v-model="config.mode" @change="debouncedRender" class="mode-group">
+                            <el-radio-group v-model="config.mode" class="mode-group" @change="debouncedRender">
                                 <el-radio-button value="single">单位置</el-radio-button>
                                 <el-radio-button value="tile">全屏平铺</el-radio-button>
                             </el-radio-group>
@@ -137,21 +141,24 @@
                         <div v-if="config.mode === 'single'" class="settings-group">
                             <div class="label">位置设定</div>
                             <div class="position-grid">
-                                <div v-for="p in positions" :key="p.key" class="pos-dot"
+                                <div
+v-for="p in positions" :key="p.key" class="pos-dot"
                                     :class="{ active: config.position === p.key }"
-                                    @click="config.position = p.key; debouncedRender()" :title="p.label"></div>
+                                    :title="p.label" @click="config.position = p.key; debouncedRender()"></div>
                             </div>
                         </div>
 
                         <div v-if="config.mode === 'tile'" class="settings-row">
                             <div class="settings-item half">
                                 <div class="label">水平间距</div>
-                                <el-input-number v-model="config.spacingX" :min="0" :max="1000"
+                                <el-input-number
+v-model="config.spacingX" :min="0" :max="1000"
                                     @change="debouncedRender" />
                             </div>
                             <div class="settings-item half">
                                 <div class="label">垂直间距</div>
-                                <el-input-number v-model="config.spacingY" :min="0" :max="1000"
+                                <el-input-number
+v-model="config.spacingY" :min="0" :max="1000"
                                     @change="debouncedRender" />
                             </div>
                         </div>
@@ -159,7 +166,8 @@
                         <div class="settings-row">
                             <div class="settings-item half">
                                 <div class="label">透明度 ({{ config.opacity }})</div>
-                                <el-slider v-model="config.opacity" :min="0" :max="1" :step="0.1"
+                                <el-slider
+v-model="config.opacity" :min="0" :max="1" :step="0.1"
                                     @input="debouncedRender" />
                             </div>
                             <div class="settings-item half">

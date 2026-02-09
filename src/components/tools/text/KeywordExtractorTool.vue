@@ -1,7 +1,7 @@
 <template>
     <div class="keyword-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -23,7 +23,7 @@
                 <div class="output-section">
                     <button class="extract-btn" @click="extract">开始提取</button>
 
-                    <div class="result-area" v-if="keywords.length">
+                    <div v-if="keywords.length" class="result-area">
                         <label>提取结果 (Top {{ keywords.length }})</label>
                         <div class="tags-cloud">
                             <span v-for="(kw, i) in keywords" :key="i" class="tag">

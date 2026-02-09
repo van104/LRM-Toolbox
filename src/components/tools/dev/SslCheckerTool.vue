@@ -1,7 +1,7 @@
 <template>
   <div class="ssl-checker">
     <nav class="nav-bar">
-      <button @click="$router.back()" class="nav-back">
+      <button class="nav-back" @click="$router.back()">
         <el-icon>
           <Back />
         </el-icon> 返回
@@ -24,7 +24,8 @@
               <el-button type="primary" link @click="loadSample">加载示例</el-button>
             </div>
           </div>
-          <el-input v-model="certText" type="textarea" :rows="15"
+          <el-input
+v-model="certText" type="textarea" :rows="15"
             placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----" class="cert-input" />
           <el-alert title="提示：此工具仅进行浏览器端本地解析，不会上传原始证书数据到任何服务器。" type="info" :closable="false" show-icon class="mt-4" />
         </section>

@@ -1,7 +1,7 @@
 <template>
   <div class="adventure-tool">
     <nav class="nav-bar">
-      <button @click="goBack" class="nav-back">
+      <button class="nav-back" @click="goBack">
         <el-icon><Back /></el-icon> 返回
       </button>
       <div class="nav-center">
@@ -39,13 +39,13 @@
                <h3>{{ currentStory.title }}</h3>
                <el-button link @click="quitGame">退出</el-button>
             </div>
-            <div class="log-scroll" ref="logRef">
+            <div ref="logRef" class="log-scroll">
               <div v-for="(log, idx) in gameLogs" :key="idx" class="log-item fade-in-up">
                  <div v-if="log.type === 'text'" class="narrative">{{ log.content }}</div>
                  <div v-if="log.type === 'choice'" class="choice-record">> {{ log.content }}</div>
                  <div v-if="log.type === 'sys'" class="sys-msg">{{ log.content }}</div>
               </div>
-              <div class="typing-indicator" v-if="isTyping">
+              <div v-if="isTyping" class="typing-indicator">
                 <span>.</span><span>.</span><span>.</span>
               </div>
             </div>
@@ -105,7 +105,7 @@ import { useRouter } from 'vue-router';
 import { 
     Back, Coin, Goods, Lock
 } from '@element-plus/icons-vue';
-import { textAdventureStories } from '@/data/textAdventureStories.js';
+import { textAdventureStories } from '@/data/textAdventureStories';
 
 const router = useRouter();
 const stories = ref(textAdventureStories);

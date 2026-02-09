@@ -32,7 +32,7 @@
         </div>
 
         
-        <el-dropdown @command="handleTemplateSelect" trigger="click">
+        <el-dropdown trigger="click" @command="handleTemplateSelect">
           <el-button>
             {{ currentTemplateName }} <el-icon class="el-icon--right">
               <ArrowDown />
@@ -49,7 +49,7 @@
       </div>
 
       
-      <div class="error-message" v-if="regexError">
+      <div v-if="regexError" class="error-message">
         <el-icon>
           <Warning />
         </el-icon> {{ regexError }}
@@ -59,7 +59,7 @@
       <div class="test-area">
         <div class="area-header">
           <span class="label">测试文本</span>
-          <div class="stats" v-if="matchCount > 0">
+          <div v-if="matchCount > 0" class="stats">
             找到 {{ matchCount }} 个匹配
           </div>
         </div>
@@ -69,18 +69,20 @@
           <div class="highlight-layer" aria-hidden="true" v-html="highlightedContent"></div>
 
           
-          <textarea v-model="testText" class="input-layer" placeholder="在此输入待测试文本..." spellcheck="false"
-            @scroll="syncScroll" ref="textareaRef"></textarea>
+          <textarea
+ref="textareaRef" v-model="testText" class="input-layer" placeholder="在此输入待测试文本..."
+            spellcheck="false" @scroll="syncScroll"></textarea>
         </div>
       </div>
 
       
-      <div class="matches-list" v-if="matchGroups.length > 0">
+      <div v-if="matchGroups.length > 0" class="matches-list">
         <div class="list-header">匹配详情</div>
         <el-collapse>
-          <el-collapse-item v-for="(match, index) in matchGroups.slice(0, 50)" :key="index"
+          <el-collapse-item
+v-for="(match, index) in matchGroups.slice(0, 50)" :key="index"
             :title="`Match ${index + 1}: ${match[0]}`">
-            <div class="group-detail" v-if="match.length > 1">
+            <div v-if="match.length > 1" class="group-detail">
               <div v-for="(group, gIndex) in match.slice(1)" :key="gIndex" class="group-item">
                 <span class="group-label">Group {{ gIndex + 1 }}:</span>
                 <span class="group-value">{{ group }}</span>

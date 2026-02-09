@@ -1,7 +1,7 @@
 <template>
     <div class="jigsaw-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -16,7 +16,7 @@
         <main class="main-content">
             <div class="layout-grid" :class="{ 'settings-collapsed': !settingsExpanded }">
                 
-                <div class="game-section glass-card" ref="gameArea">
+                <div ref="gameArea" class="game-section glass-card">
                     <div class="game-header">
                         <div class="timer" :class="{ active: isPlaying }">
                             <el-icon>
@@ -29,7 +29,8 @@
                         </div>
                     </div>
 
-                    <div class="puzzle-container" ref="containerRef" :style="containerStyle"
+                    <div
+ref="containerRef" class="puzzle-container" :style="containerStyle"
                         @mousedown="handleContainerMouseDown" @mousemove="handleContainerMouseMove"
                         @mouseup="handleContainerMouseUp" @mouseleave="handleContainerMouseUp"
                         @touchstart.prevent="handleTouchStart" @touchmove.prevent="handleTouchMove"
@@ -39,7 +40,8 @@
                         <div class="hint-image" :style="hintStyle"></div>
 
                         
-                        <div v-for="piece in pieces" :key="piece.id" class="puzzle-piece" :class="{
+                        <div
+v-for="piece in pieces" :key="piece.id" class="puzzle-piece" :class="{
                             'is-dragging': draggedPieceId === piece.id,
                             'is-solved': piece.isSolved
                         }" :style="getPieceStyle(piece)">
@@ -65,12 +67,12 @@
                     </div>
 
                     <div class="game-controls">
-                        <button class="control-btn" @click="toggleHint" :class="{ active: showHint }" title="按住显示原图">
+                        <button class="control-btn" :class="{ active: showHint }" title="按住显示原图" @click="toggleHint">
                             <el-icon>
                                 <View />
                             </el-icon> 提示
                         </button>
-                        <button class="control-btn" @click="scatterPieces" :disabled="isGameComplete || loading">
+                        <button class="control-btn" :disabled="isGameComplete || loading" @click="scatterPieces">
                             <el-icon>
                                 <RefreshRight />
                             </el-icon> 打乱
@@ -98,15 +100,18 @@
                         <div class="settings-group">
                             <h3>选择图片</h3>
                             <div class="image-selector">
-                                <div v-for="(img, idx) in presetImages" :key="idx" class="img-option"
+                                <div
+v-for="(img, idx) in presetImages" :key="idx" class="img-option"
                                     :class="{ active: selectedImageIndex === idx && !customImage }"
                                     @click="selectPresetImage(idx)">
                                     <img :src="img.thumb" :alt="img.title">
                                 </div>
-                                <div class="img-option upload-option" :class="{ active: customImage }"
+                                <div
+class="img-option upload-option" :class="{ active: customImage }"
                                     @click="triggerUpload">
-                                    <input type="file" ref="fileInput" accept="image/*" @change="handleImageUpload"
-                                        hidden>
+                                    <input
+ref="fileInput" type="file" accept="image/*" hidden
+                                        @change="handleImageUpload">
                                     <el-icon>
                                         <Plus />
                                     </el-icon>
@@ -118,7 +123,8 @@
                         <div class="settings-group">
                             <h3>难度选择 ({{ activeGridSize.cols }}x{{ activeGridSize.rows }})</h3>
                             <div class="difficulty-slider">
-                                <el-slider v-model="difficulty" :min="2" :max="10" :step="1" show-stops
+                                <el-slider
+v-model="difficulty" :min="2" :max="10" :step="1" show-stops
                                     @change="resetGame" />
                             </div>
                             <div class="piece-count-preview">
@@ -127,7 +133,7 @@
 
                             <div class="checkbox-group" style="margin-top: 10px;">
                                 <label class="checkbox-label">
-                                    <input type="checkbox" v-model="fixedGrid" @change="resetGame" />
+                                    <input v-model="fixedGrid" type="checkbox" @change="resetGame" />
                                     <span>强制正方形布局 (忽略图片比例)</span>
                                 </label>
                             </div>
@@ -136,7 +142,8 @@
                         <div class="settings-group">
                             <h3>吸附灵敏度</h3>
                             <div class="difficulty-options">
-                                <span v-for="opt in snapOptions" :key="opt.value" class="text-option"
+                                <span
+v-for="opt in snapOptions" :key="opt.value" class="text-option"
                                     :class="{ active: snapDistance === opt.value }" @click="snapDistance = opt.value">
                                     {{ opt.label }}
                                 </span>

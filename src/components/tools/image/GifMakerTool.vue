@@ -11,8 +11,9 @@
                 <span class="tool-subtitle">GIF Maker</span>
             </div>
             <div class="header-right">
-                <el-button type="primary" @click="generateGif" :disabled="images.length < 2 || generating"
-                    :loading="generating">
+                <el-button
+type="primary" :disabled="images.length < 2 || generating" :loading="generating"
+                    @click="generateGif">
                     <el-icon>
                         <VideoPlay />
                     </el-icon> {{ generating ? '生成中...' : '生成 GIF' }}
@@ -29,16 +30,17 @@
                                 <Plus />
                             </el-icon> 添加图片
                         </el-button>
-                        <el-button @click="clearAll" :disabled="!images.length">
+                        <el-button :disabled="!images.length" @click="clearAll">
                             <el-icon>
                                 <Delete />
                             </el-icon> 清空
                         </el-button>
-                        <span class="count-badge" v-if="images.length">共 {{ images.length }} 帧</span>
-                        <input type="file" ref="fileRef" multiple hidden accept="image/*" @change="handleUpload" />
+                        <span v-if="images.length" class="count-badge">共 {{ images.length }} 帧</span>
+                        <input ref="fileRef" type="file" multiple hidden accept="image/*" @change="handleUpload" />
                     </div>
 
-                    <div v-if="images.length === 0" class="empty-state" @click="triggerUpload" @dragover.prevent
+                    <div
+v-if="images.length === 0" class="empty-state" @click="triggerUpload" @dragover.prevent
                         @drop.prevent="handleDrop">
                         <el-icon class="empty-icon">
                             <Picture />
@@ -90,7 +92,7 @@
 
                         <el-divider />
 
-                        <div class="preview-result" v-if="resultGif">
+                        <div v-if="resultGif" class="preview-result">
                             <h4>生成结果</h4>
                             <div class="result-img-wrapper">
                                 <img :src="resultGif" alt="Generated GIF" />

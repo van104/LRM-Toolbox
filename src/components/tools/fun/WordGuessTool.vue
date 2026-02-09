@@ -1,7 +1,7 @@
 <template>
     <div class="word-guess-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -41,15 +41,17 @@
                     </button>
                 </div>
 
-                <div class="feedback-message" v-if="message">
+                <div v-if="message" class="feedback-message">
                     {{ message }}
                 </div>
 
                 
                 <div class="grid-container" :class="mode">
-                    <div v-for="(row, rowIndex) in board" :key="rowIndex" class="grid-row"
+                    <div
+v-for="(row, rowIndex) in board" :key="rowIndex" class="grid-row"
                         :class="{ 'shake': shakingRow === rowIndex }">
-                        <div v-for="(cell, colIndex) in row" :key="colIndex" class="grid-cell"
+                        <div
+v-for="(cell, colIndex) in row" :key="colIndex" class="grid-cell"
                             :class="[cell.status, { 'filled': cell.char }]"
                             :style="{ animationDelay: `${colIndex * 100}ms` }">
                             {{ cell.char }}
@@ -58,9 +60,10 @@
                 </div>
 
                 
-                <div class="keyboard-container" v-if="mode === 'english'">
-                    <div class="keyboard-row" v-for="(row, rIdx) in keyboardRows" :key="rIdx">
-                        <button v-for="key in row" :key="key" class="key-btn"
+                <div v-if="mode === 'english'" class="keyboard-container">
+                    <div v-for="(row, rIdx) in keyboardRows" :key="rIdx" class="keyboard-row">
+                        <button
+v-for="key in row" :key="key" class="key-btn"
                             :class="[getKeyStatus(key), key === 'ENTER' || key === 'DEL' ? 'action-key' : '']"
                             @click="handleKeyClick(key)">
                             <el-icon v-if="key === 'DEL'">
@@ -72,10 +75,11 @@
                 </div>
 
                 
-                <div class="chinese-input-area" v-if="mode === 'chinese' && gameState === 'playing'">
-                    <input ref="chineseInputRef" type="text" v-model="chineseInputDisplay" @input="handleChineseInput"
-                        @keydown.enter="submitGuess" placeholder="点击此处输入四字成语，按回车确认" class="real-input" maxlength="4">
-                    <button class="submit-btn" @click="submitGuess" :disabled="currentGuess.length !== 4">确认提交</button>
+                <div v-if="mode === 'chinese' && gameState === 'playing'" class="chinese-input-area">
+                    <input
+ref="chineseInputRef" v-model="chineseInputDisplay" type="text" placeholder="点击此处输入四字成语，按回车确认"
+                        class="real-input" maxlength="4" @input="handleChineseInput" @keydown.enter="submitGuess">
+                    <button class="submit-btn" :disabled="currentGuess.length !== 4" @click="submitGuess">确认提交</button>
                 </div>
 
                 <div v-if="gameState !== 'playing'" class="game-over-actions">

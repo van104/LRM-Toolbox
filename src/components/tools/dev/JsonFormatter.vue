@@ -74,7 +74,8 @@
             </el-button>
           </div>
         </div>
-        <textarea v-model="inputJson" class="code-editor" placeholder="在此粘贴 JSON 数据..." spellcheck="false"
+        <textarea
+v-model="inputJson" class="code-editor" placeholder="在此粘贴 JSON 数据..." spellcheck="false"
           @input="autoValidate"></textarea>
       </div>
 
@@ -83,13 +84,13 @@
         <div class="panel-header">
           <span class="panel-title">输出结果</span>
           <div class="panel-actions">
-            <el-button text size="small" @click="copyToClipboard" :disabled="!outputJson">
+            <el-button text size="small" :disabled="!outputJson" @click="copyToClipboard">
               <el-icon>
                 <CopyDocument />
               </el-icon>
               复制
             </el-button>
-            <el-button text size="small" @click="downloadJson" :disabled="!outputJson">
+            <el-button text size="small" :disabled="!outputJson" @click="downloadJson">
               <el-icon>
                 <Download />
               </el-icon>

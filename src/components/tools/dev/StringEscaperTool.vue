@@ -25,7 +25,8 @@
                         </div>
                     </div>
                     <div class="editor-wrapper">
-                        <textarea v-model="inputText" class="code-editor" placeholder="输入需要处理的文本..."
+                        <textarea
+v-model="inputText" class="code-editor" placeholder="输入需要处理的文本..."
                             spellcheck="false"></textarea>
                     </div>
                 </section>
@@ -72,11 +73,12 @@
                     <div class="panel-header">
                         <span class="panel-title">结果</span>
                         <div class="actions">
-                            <el-button size="small" @click="copyResult" :disabled="!outputText">复制</el-button>
+                            <el-button size="small" :disabled="!outputText" @click="copyResult">复制</el-button>
                         </div>
                     </div>
                     <div class="editor-wrapper">
-                        <textarea v-model="outputText" class="code-editor result-editor" readonly
+                        <textarea
+v-model="outputText" class="code-editor result-editor" readonly
                             placeholder="处理结果..."></textarea>
                     </div>
                 </section>

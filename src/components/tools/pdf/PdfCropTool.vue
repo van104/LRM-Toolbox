@@ -38,21 +38,26 @@
                                 <div class="page-nav">
                                     <el-button :disabled="currentPage <= 1" @click="currentPage--">上一页</el-button>
                                     <span>{{ currentPage }} / {{ totalPages }}</span>
-                                    <el-button :disabled="currentPage >= totalPages"
+                                    <el-button
+:disabled="currentPage >= totalPages"
                                         @click="currentPage++">下一页</el-button>
                                 </div>
 
-                                <div class="pdf-preview" ref="previewContainer">
-                                    <div class="canvas-wrapper" ref="canvasWrapper">
+                                <div ref="previewContainer" class="pdf-preview">
+                                    <div ref="canvasWrapper" class="canvas-wrapper">
                                         <canvas ref="pdfCanvas"></canvas>
                                         
-                                        <div v-if="showCropIndicators" class="crop-border crop-left"
+                                        <div
+v-if="showCropIndicators" class="crop-border crop-left"
                                             :style="{ width: cropBox.left + 'px' }"></div>
-                                        <div v-if="showCropIndicators" class="crop-border crop-right"
+                                        <div
+v-if="showCropIndicators" class="crop-border crop-right"
                                             :style="{ width: cropBox.right + 'px' }"></div>
-                                        <div v-if="showCropIndicators" class="crop-border crop-top"
+                                        <div
+v-if="showCropIndicators" class="crop-border crop-top"
                                             :style="{ height: cropBox.top + 'px' }"></div>
-                                        <div v-if="showCropIndicators" class="crop-border crop-bottom"
+                                        <div
+v-if="showCropIndicators" class="crop-border crop-bottom"
                                             :style="{ height: cropBox.bottom + 'px' }"></div>
                                     </div>
                                 </div>
@@ -76,7 +81,8 @@
                                     </div>
                                     <div class="input-group">
                                         <label>下边距 (pt)</label>
-                                        <el-input-number v-model="cropMargins.bottom" :min="0" :max="300"
+                                        <el-input-number
+v-model="cropMargins.bottom" :min="0" :max="300"
                                             size="small" />
                                     </div>
                                 </div>
@@ -89,17 +95,18 @@
                                     </el-radio-group>
                                 </div>
 
-                                <el-button @click="resetCrop" style="margin-top: 1rem;">重置裁剪</el-button>
+                                <el-button style="margin-top: 1rem;" @click="resetCrop">重置裁剪</el-button>
                             </div>
                         </div>
 
-                        <el-button type="primary" size="large" class="action-btn" :loading="processing"
+                        <el-button
+type="primary" size="large" class="action-btn" :loading="processing"
                             @click="applyCrop">
                             裁剪并下载
                         </el-button>
                     </div>
 
-                    <input type="file" ref="fileRef" hidden accept=".pdf" @change="handleUpload" />
+                    <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
                 </div>
             </div>
         </main>

@@ -1,7 +1,7 @@
 <template>
     <div class="mortgage-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -25,14 +25,16 @@
 
                     <div class="form-grid">
                         
-                        <div class="form-group" v-if="loanType !== 'fund'">
+                        <div v-if="loanType !== 'fund'" class="form-group">
                             <label>商贷金额 (万元)</label>
-                            <el-input-number v-model="commercialAmt" :min="0" :precision="2" class="w-full"
+                            <el-input-number
+v-model="commercialAmt" :min="0" :precision="2" class="w-full"
                                 placeholder="输入商贷金额" />
                         </div>
-                        <div class="form-group" v-if="loanType !== 'commercial'">
+                        <div v-if="loanType !== 'commercial'" class="form-group">
                             <label>公积金金额 (万元)</label>
-                            <el-input-number v-model="fundAmt" :min="0" :precision="2" class="w-full"
+                            <el-input-number
+v-model="fundAmt" :min="0" :precision="2" class="w-full"
                                 placeholder="输入公积金金额" />
                         </div>
 
@@ -46,10 +48,11 @@
 
                         
                         <div class="rate-config-section">
-                            <div class="form-group" v-if="loanType !== 'fund'">
+                            <div v-if="loanType !== 'fund'" class="form-group">
                                 <div class="label-with-tip">
                                     <label>商贷利率 (%)</label>
-                                    <el-popover placement="top" :width="240" trigger="hover"
+                                    <el-popover
+placement="top" :width="240" trigger="hover"
                                         content="最新LPR参考：5年期以上通常为3.6%~3.95%左右，各城市BP浮动不同。">
                                         <template #reference>
                                             <el-icon class="info-icon">
@@ -59,7 +62,8 @@
                                     </el-popover>
                                 </div>
                                 <div class="lpr-input-group">
-                                    <el-input-number v-model="commercialRate" :step="0.01" :precision="2"
+                                    <el-input-number
+v-model="commercialRate" :step="0.01" :precision="2"
                                         class="rate-input" />
                                     <div class="lpr-helper">
                                         <span class="label">LPR</span>
@@ -71,7 +75,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group" v-if="loanType !== 'commercial'">
+                            <div v-if="loanType !== 'commercial'" class="form-group">
                                 <label>公积金利率 (%)</label>
                                 <el-input-number v-model="fundRate" :step="0.01" :precision="2" class="w-full" />
                                 <div class="rate-presets">
@@ -82,21 +86,23 @@
                         </div>
                     </div>
 
-                    <el-button type="primary" class="calc-btn" @click="calculateAll" size="large">开始计算对比</el-button>
+                    <el-button type="primary" class="calc-btn" size="large" @click="calculateAll">开始计算对比</el-button>
                 </section>
 
                 
-                <div class="results-area" v-if="hasResult">
+                <div v-if="hasResult" class="results-area">
                     
                     <div class="comparison-cards">
-                        <div class="comp-card" :class="{ active: activeMode === 'benxi' }"
+                        <div
+class="comp-card" :class="{ active: activeMode === 'benxi' }"
                             @click="activeMode = 'benxi'">
                             <div class="card-title">等额本息</div>
                             <div class="card-desc">每月还款金额固定</div>
                             <div class="main-val">¥ {{ formatMoney(results.benxi.monthlyPayment) }}</div>
                             <div class="sub-val">总利息: {{ formatMoney(results.benxi.totalInterest / 10000) }} 万</div>
                         </div>
-                        <div class="comp-card" :class="{ active: activeMode === 'benjin' }"
+                        <div
+class="comp-card" :class="{ active: activeMode === 'benjin' }"
                             @click="activeMode = 'benjin'">
                             <div class="card-title">等额本金</div>
                             <div class="card-desc">还款逐月递减</div>

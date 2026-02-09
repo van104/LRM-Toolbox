@@ -1,7 +1,7 @@
 <template>
     <div class="decision-maker">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -22,7 +22,7 @@
                         </div>
                         <canvas ref="canvasRef" width="500" height="500" class="wheel-canvas"></canvas>
 
-                        <div class="center-button" @click="spin" :disabled="isSpinning">
+                        <div class="center-button" :disabled="isSpinning" @click="spin">
                             <span>{{ isSpinning ? '转动中' : '开始' }}</span>
                         </div>
                     </div>
@@ -53,7 +53,7 @@
                         <div v-for="(opt, index) in options" :key="index" class="option-item">
                             <el-input v-model="options[index]" placeholder="输入选项内容">
                                 <template #append>
-                                    <el-button @click="removeOption(index)" :disabled="options.length <= 2">
+                                    <el-button :disabled="options.length <= 2" @click="removeOption(index)">
                                         <el-icon>
                                             <Delete />
                                         </el-icon>

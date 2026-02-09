@@ -1,7 +1,7 @@
 <template>
     <div class="utility-bill-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -32,7 +32,7 @@
                 <div class="input-section">
                     <label>{{ type === 'electric' ? '月度用电量 (kWh)' : '月度用水量 (m³)' }}</label>
                     <div class="main-input-wrapper">
-                        <input type="number" v-model.number="usage" placeholder="0" class="hg-input" />
+                        <input v-model.number="usage" type="number" placeholder="0" class="hg-input" />
                         <span class="unit">{{ type === 'electric' ? '度' : '方' }}</span>
                     </div>
                 </div>
@@ -51,7 +51,7 @@
                     <div v-if="calcMode === 'flat'" class="flat-config">
                         <div class="input-row">
                             <span class="label">单价</span>
-                            <input type="number" v-model.number="flatPrice" />
+                            <input v-model.number="flatPrice" type="number" />
                             <span class="curr">元/{{ type === 'electric' ? '度' : '方' }}</span>
                         </div>
                     </div>
@@ -65,20 +65,21 @@
                                     <span v-if="idx === 0">0 ~ </span>
                                     <span v-else>{{ ladders[idx - 1].limit }} ~ </span>
 
-                                    <input type="number" v-if="idx < ladders.length - 1" v-model.number="level.limit"
+                                    <input
+v-if="idx < ladders.length - 1" v-model.number="level.limit" type="number"
                                         class="limit-input" />
                                     <span v-else>∞</span>
                                 </div>
                                 <div class="price-input">
-                                    <input type="number" v-model.number="level.price" placeholder="单价" />
+                                    <input v-model.number="level.price" type="number" placeholder="单价" />
                                     <span>元</span>
                                 </div>
                             </div>
-                            <div class="actions" v-if="idx === ladders.length - 1">
-                                <el-icon class="add-btn" @click="addLadder" v-if="ladders.length < 5">
+                            <div v-if="idx === ladders.length - 1" class="actions">
+                                <el-icon v-if="ladders.length < 5" class="add-btn" @click="addLadder">
                                     <Plus />
                                 </el-icon>
-                                <el-icon class="del-btn" @click="removeLadder" v-if="ladders.length > 1">
+                                <el-icon v-if="ladders.length > 1" class="del-btn" @click="removeLadder">
                                     <Minus />
                                 </el-icon>
                             </div>
@@ -94,7 +95,7 @@
                             <small>¥</small>{{ formatMoney(result.total) }}
                         </div>
                     </div>
-                    <div class="detail-row" v-if="calcMode === 'ladder' && result.details.length > 0">
+                    <div v-if="calcMode === 'ladder' && result.details.length > 0" class="detail-row">
                         <div class="detail-title">费用明细：</div>
                         <div v-for="(d, i) in result.details" :key="i" class="d-item">
                             <span>第{{ i + 1 }}档 ({{ d.amount }}{{ type === 'electric' ? '度' : '方' }})</span>
@@ -117,7 +118,8 @@
         </main>
 
         <div class="disclaimer-wrap" style="max-width: 500px; margin: 0 auto; padding: 0 1.5rem 2rem;">
-            <div class="disclaimer-card"
+            <div
+class="disclaimer-card"
                 style="display: flex; gap: 0.8rem; padding: 1rem; background: #fffbeb; color: #92400e; border-radius: 12px; font-size: 0.8rem; align-items: start;">
                 <el-icon>
                     <InfoFilled />

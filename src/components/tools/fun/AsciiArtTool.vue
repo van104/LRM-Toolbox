@@ -29,7 +29,8 @@
                     <div v-if="currentTab === 'text'" class="config-group">
                         <div class="input-group">
                             <div class="label">输入文本</div>
-                            <el-input v-model="textConfig.input" type="textarea" :rows="3"
+                            <el-input
+v-model="textConfig.input" type="textarea" :rows="3"
                                 placeholder="Type something..." @input="genTextBanner" />
                         </div>
 
@@ -56,7 +57,8 @@
                             <div class="label">字符集 (Dark -> Light)</div>
                             <el-select v-model="imgConfig.charset" @change="genImageAscii">
                                 <el-option label="标准 (Standard)" value="@%#*+=-:. " />
-                                <el-option label="复杂 (Complex)"
+                                <el-option
+label="复杂 (Complex)"
                                     value="$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\^`'. " />
                                 <el-option label="简单 (Simple)" value="#+-. " />
                                 <el-option label="数字 (Binary)" value="10" />
@@ -75,7 +77,8 @@
 
                         <div class="config-item">
                             <el-button type="primary" class="full-btn" @click="triggerUpload">选择图片</el-button>
-                            <input type="file" ref="fileInput" accept="image/*" class="hidden-input"
+                            <input
+ref="fileInput" type="file" accept="image/*" class="hidden-input"
                                 @change="handleFileChange" />
                         </div>
                     </div>
@@ -87,7 +90,7 @@
                     <div class="panel-header">
                         <span class="panel-title">预览结果</span>
                         <div class="actions">
-                            <el-button size="small" @click="copyResult" :disabled="!resultText"><el-icon>
+                            <el-button size="small" :disabled="!resultText" @click="copyResult"><el-icon>
                                     <CopyDocument />
                                 </el-icon> 复制</el-button>
                         </div>

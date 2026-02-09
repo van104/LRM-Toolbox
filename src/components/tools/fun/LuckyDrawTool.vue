@@ -1,7 +1,7 @@
 <template>
     <div class="lucky-draw-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -22,11 +22,11 @@
                         <div class="wheel-canvas-wrap" :style="wheelStyle">
                             <canvas ref="wheelCanvas" width="400" height="400"></canvas>
                         </div>
-                        <button class="spin-btn" @click="startSpin" :disabled="isSpinning || options.length < 2">
+                        <button class="spin-btn" :disabled="isSpinning || options.length < 2" @click="startSpin">
                             {{ isSpinning ? '抽奖中...' : '开始' }}
                         </button>
                     </div>
-                    <div class="result-display" v-if="result">
+                    <div v-if="result" class="result-display">
                         <p class="result-label">恭喜你抽中：</p>
                         <h2 class="result-text">{{ result.text }}</h2>
                     </div>
@@ -49,10 +49,11 @@
                             <input v-model="opt.text" placeholder="奖项文本" class="opt-input" @change="drawWheel" />
                             <div class="opt-weight">
                                 <span>权重:</span>
-                                <input type="number" v-model.number="opt.weight" min="1" max="100" class="weight-input"
+                                <input
+v-model.number="opt.weight" type="number" min="1" max="100" class="weight-input"
                                     @change="drawWheel" />
                             </div>
-                            <button class="del-btn" @click="removeOption(index)" :disabled="options.length <= 2">
+                            <button class="del-btn" :disabled="options.length <= 2" @click="removeOption(index)">
                                 <el-icon>
                                     <Delete />
                                 </el-icon>
@@ -66,7 +67,8 @@
                             <div v-for="opt in options" :key="opt.id" class="prob-bar-wrap">
                                 <div class="prob-label">{{ opt.text || '-' }}</div>
                                 <div class="prob-bar-bg">
-                                    <div class="prob-bar-fill"
+                                    <div
+class="prob-bar-fill"
                                         :style="{ width: getProb(opt) + '%', backgroundColor: opt.color }"></div>
                                 </div>
                                 <div class="prob-val">{{ getProb(opt) }}%</div>
@@ -74,7 +76,7 @@
                         </div>
                     </div>
 
-                    <div class="history-section" v-if="history.length">
+                    <div v-if="history.length" class="history-section">
                         <h4>抽奖记录</h4>
                         <div class="history-list">
                             <div v-for="(h, i) in history" :key="i" class="history-item">

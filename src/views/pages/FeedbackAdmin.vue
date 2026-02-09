@@ -11,7 +11,8 @@
                 </template>
                 <el-form @submit.prevent="handleLogin">
                     <el-form-item>
-                        <el-input v-model="loginPassword" type="password" placeholder="请输入密码" show-password
+                        <el-input
+v-model="loginPassword" type="password" placeholder="请输入密码" show-password
                             @keyup.enter="handleLogin">
                             <template #prefix>
                                 <el-icon>
@@ -20,7 +21,7 @@
                             </template>
                         </el-input>
                     </el-form-item>
-                    <el-button type="primary" class="login-btn" @click="handleLogin" :loading="loading">
+                    <el-button type="primary" class="login-btn" :loading="loading" @click="handleLogin">
                         登录
                     </el-button>
                     <el-button class="login-btn-back" @click="$router.push('/')">
@@ -34,12 +35,13 @@
         <template v-else>
             <div class="header">
                 <div class="header-content">
-                    <el-button @click="$router.push('/')" icon="ArrowLeft">返回首页</el-button>
+                    <el-button icon="ArrowLeft" @click="$router.push('/')">返回首页</el-button>
                     <h2>反馈管理中心</h2>
                     <div class="actions">
-                        <el-button @click="handleLogout" plain style="margin-right: 12px;">退出登录</el-button>
-                        <el-button type="primary" :icon="Refresh" @click="fetchFeedback"
-                            :loading="loading">刷新数据</el-button>
+                        <el-button plain style="margin-right: 12px;" @click="handleLogout">退出登录</el-button>
+                        <el-button
+type="primary" :icon="Refresh" :loading="loading"
+                            @click="fetchFeedback">刷新数据</el-button>
                     </div>
                 </div>
             </div>
@@ -86,7 +88,8 @@
                     </el-row>
                 </el-card>
 
-                <el-table :data="feedbackList" style="width: 100%" v-loading="loading" border stripe
+                <el-table
+v-loading="loading" :data="feedbackList" style="width: 100%" border stripe
                     class="feedback-table">
                     <el-table-column type="index" width="50" />
                     <el-table-column prop="status" label="状态" width="100">
@@ -108,7 +111,7 @@
                     </el-table-column>
                     <el-table-column prop="contact" label="联系方式" width="150">
                         <template #default="{ row }">
-                            <el-tooltip :content="row.contact" v-if="row.contact">
+                            <el-tooltip v-if="row.contact" :content="row.contact">
                                 <span>{{ row.contact }}</span>
                             </el-tooltip>
                             <span v-else class="text-muted">未提供</span>
@@ -122,7 +125,8 @@
                     <el-table-column label="操作" width="180" fixed="right">
                         <template #default="{ row }">
                             <el-button type="primary" link @click="viewDetail(row)">详情</el-button>
-                            <el-button v-if="row.status !== 'resolved'" type="success" link
+                            <el-button
+v-if="row.status !== 'resolved'" type="success" link
                                 @click="handleResolve(row)">标记已办</el-button>
                             <el-popconfirm title="确定删除这条反馈吗？" @confirm="handleDelete(row)">
                                 <template #reference>

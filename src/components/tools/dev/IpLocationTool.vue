@@ -1,7 +1,7 @@
 <template>
     <div class="ip-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -18,9 +18,10 @@
                 
                 <div class="search-section">
                     <div class="input-wrapper">
-                        <input type="text" v-model="ipInput" placeholder="输入 IP 地址 (留空查询本机)" @keyup.enter="fetchInfo"
-                            :class="{ error: !isValidIp && ipInput }" />
-                        <button class="search-btn" @click="fetchInfo" :disabled="loading">
+                        <input
+v-model="ipInput" type="text" placeholder="输入 IP 地址 (留空查询本机)" :class="{ error: !isValidIp && ipInput }"
+                            @keyup.enter="fetchInfo" />
+                        <button class="search-btn" :disabled="loading" @click="fetchInfo">
                             <el-icon v-if="loading" class="is-loading">
                                 <Loading />
                             </el-icon>
@@ -68,7 +69,8 @@
                             <div class="label">地理坐标</div>
                             <div class="value code-font">{{ result.latitude }}, {{ result.longitude }}</div>
                             <div class="action-link">
-                                <a :href="`https://www.google.com/maps/search/?api=1&query=${result.latitude},${result.longitude}`"
+                                <a
+:href="`https://www.google.com/maps/search/?api=1&query=${result.latitude},${result.longitude}`"
                                     target="_blank">
                                     在地图中查看 <el-icon>
                                         <Right />

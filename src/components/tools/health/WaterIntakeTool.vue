@@ -1,7 +1,7 @@
 <template>
     <div class="water-intake-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -43,7 +43,7 @@
                     <div class="progress-section">
                         <div class="water-bottle-visual">
                             <div class="water" :style="{ height: progressPercent + '%' }">
-                                <span class="percent-label" v-if="progressPercent > 10">{{ Math.round(progressPercent)
+                                <span v-if="progressPercent > 10" class="percent-label">{{ Math.round(progressPercent)
                                     }}%</span>
                             </div>
                         </div>
@@ -61,7 +61,8 @@
                     </div>
 
                     <div class="action-grid">
-                        <div v-for="amount in quickAddOptions" :key="amount" class="quick-add-card"
+                        <div
+v-for="amount in quickAddOptions" :key="amount" class="quick-add-card"
                             @click="addWater(amount)">
                             <el-icon :size="24">
                                 <Coffee />
@@ -76,7 +77,7 @@
                         </div>
                     </div>
 
-                    <div class="history-list" v-if="history.length">
+                    <div v-if="history.length" class="history-list">
                         <h4 class="list-title">今日饮水记录</h4>
                         <el-scrollbar max-height="200px">
                             <div v-for="(record, idx) in history" :key="idx" class="history-item">
@@ -91,7 +92,8 @@
         </main>
 
         <div class="disclaimer-wrap" style="padding: 0 1.5rem 2rem; text-align: center;">
-            <div class="disclaimer-card"
+            <div
+class="disclaimer-card"
                 style="display: inline-flex; gap: 0.8rem; padding: 1rem; background: #eff6ff; color: #1e40af; border-radius: 12px; font-size: 0.8rem; align-items: start; text-align: left; border: 1px solid #dbeafe;">
                 <el-icon style="margin-top: 2px;">
                     <InfoFilled />

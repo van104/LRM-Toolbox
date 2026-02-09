@@ -2,7 +2,7 @@
   <div class="password-generator">
     
     <nav class="nav-bar">
-      <button @click="goHome" class="nav-back">
+      <button class="nav-back" @click="goHome">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
@@ -23,8 +23,8 @@
         <div class="generator-panel">
           
           <div class="password-display-wrap">
-            <input type="text" v-model="generatedPassword" class="password-display" readonly placeholder="生成密码...">
-            <button @click="copyPassword(generatedPassword)" class="copy-main-btn" title="复制密码">
+            <input v-model="generatedPassword" type="text" class="password-display" readonly placeholder="生成密码...">
+            <button class="copy-main-btn" title="复制密码" @click="copyPassword(generatedPassword)">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -50,38 +50,39 @@
                 <label>密码长度</label>
                 <span class="length-val">{{ passwordLength }}</span>
               </div>
-              <input type="range" v-model.number="passwordLength" min="6" max="64" class="length-slider"
+              <input
+v-model.number="passwordLength" type="range" min="6" max="64" class="length-slider"
                 @input="generatePassword">
             </div>
 
             <div class="option-group toggles-group">
               <label class="toggle-item">
-                <input type="checkbox" v-model="options.uppercase" @change="generatePassword">
+                <input v-model="options.uppercase" type="checkbox" @change="generatePassword">
                 <span class="checkbox-box"></span>
                 <span>大写字母 (A-Z)</span>
               </label>
               <label class="toggle-item">
-                <input type="checkbox" v-model="options.lowercase" @change="generatePassword">
+                <input v-model="options.lowercase" type="checkbox" @change="generatePassword">
                 <span class="checkbox-box"></span>
                 <span>小写字母 (a-z)</span>
               </label>
               <label class="toggle-item">
-                <input type="checkbox" v-model="options.numbers" @change="generatePassword">
+                <input v-model="options.numbers" type="checkbox" @change="generatePassword">
                 <span class="checkbox-box"></span>
                 <span>数字 (0-9)</span>
               </label>
               <label class="toggle-item">
-                <input type="checkbox" v-model="options.special" @change="generatePassword">
+                <input v-model="options.special" type="checkbox" @change="generatePassword">
                 <span class="checkbox-box"></span>
                 <span>特殊字符 (!@#$)</span>
               </label>
               <label class="toggle-item">
-                <input type="checkbox" v-model="options.excludeSimilar" @change="generatePassword">
+                <input v-model="options.excludeSimilar" type="checkbox" @change="generatePassword">
                 <span class="checkbox-box"></span>
                 <span>排除相似 (i,l,1,0,o)</span>
               </label>
               <label class="toggle-item">
-                <input type="checkbox" v-model="options.includeAmbiguous" @change="generatePassword">
+                <input v-model="options.includeAmbiguous" type="checkbox" @change="generatePassword">
                 <span class="checkbox-box"></span>
                 <span>包含模糊 ({}[])</span>
               </label>
@@ -89,7 +90,7 @@
           </div>
 
           <div class="action-buttons">
-            <button @click="generatePassword" class="generate-btn primary">
+            <button class="generate-btn primary" @click="generatePassword">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M23 4v6h-6"></path>
                 <path d="M1 20v-6h6"></path>
@@ -97,7 +98,7 @@
               </svg>
               生成新密码
             </button>
-            <button @click="saveToHistory" class="generate-btn secondary">
+            <button class="generate-btn secondary" @click="saveToHistory">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
                 <polyline points="17 21 17 13 7 13 7 21"></polyline>
@@ -115,14 +116,14 @@
             <div class="card-header">
               <h3>最近生成</h3>
               <div class="actions">
-                <button v-if="history.length > 0" @click="clearHistory" class="clear-btn">清空</button>
+                <button v-if="history.length > 0" class="clear-btn" @click="clearHistory">清空</button>
               </div>
             </div>
             <div class="history-list">
               <div v-if="history.length === 0" class="no-data">暂无记录</div>
               <div v-for="item in history" :key="item" class="history-item">
                 <span class="code">{{ item }}</span>
-                <button @click="copyPassword(item)" class="copy-sm-btn">
+                <button class="copy-sm-btn" @click="copyPassword(item)">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -133,7 +134,7 @@
           </section>
 
           
-          <button @click="showBatchModal = true" class="batch-btn">
+          <button class="batch-btn" @click="showBatchModal = true">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
@@ -182,12 +183,12 @@
         <div class="modal-box">
           <div class="modal-header">
             <h3>批量生成密码</h3>
-            <button @click="showBatchModal = false" class="close-btn">✕</button>
+            <button class="close-btn" @click="showBatchModal = false">✕</button>
           </div>
           <div class="modal-body">
             <div class="form-item">
               <label>生成数量 (1-50)</label>
-              <input type="number" v-model.number="batchCount" min="1" max="50" class="input-num">
+              <input v-model.number="batchCount" type="number" min="1" max="50" class="input-num">
             </div>
 
             <div v-if="batchResults.length > 0" class="batch-results">
@@ -198,8 +199,8 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button v-if="batchResults.length > 0" @click="copyAllBatch" class="action-btn secondary">复制全部</button>
-            <button @click="generateBatch" class="action-btn primary">开始生成</button>
+            <button v-if="batchResults.length > 0" class="action-btn secondary" @click="copyAllBatch">复制全部</button>
+            <button class="action-btn primary" @click="generateBatch">开始生成</button>
           </div>
         </div>
       </div>

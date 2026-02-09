@@ -29,9 +29,10 @@
                         </div>
                         <div class="quick-masks">
                             <span class="label">常用掩码：</span>
-                            <el-tag v-for="c in [8, 16, 24, 25, 26, 27, 28, 29, 30]" :key="c"
-                                :type="cidr === c ? 'primary' : 'info'" @click="cidr = c; calculate()"
-                                style="cursor:pointer; margin-right: 8px;">
+                            <el-tag
+v-for="c in [8, 16, 24, 25, 26, 27, 28, 29, 30]" :key="c"
+                                :type="cidr === c ? 'primary' : 'info'" style="cursor:pointer; margin-right: 8px;"
+                                @click="cidr = c; calculate()">
                                 /{{ c }}
                             </el-tag>
                         </div>
@@ -90,7 +91,8 @@
                             <span>掩码</span>
                             <span>主机数</span>
                         </div>
-                        <div v-for="item in cidrTable" :key="item.cidr" class="table-row"
+                        <div
+v-for="item in cidrTable" :key="item.cidr" class="table-row"
                             :class="{ active: cidr === item.cidr }">
                             <span>/{{ item.cidr }}</span>
                             <span>{{ item.mask }}</span>

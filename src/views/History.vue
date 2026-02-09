@@ -39,30 +39,47 @@
 
       
       <div v-if="filteredHistory.length > 0" class="timeline-container">
-        <div v-for="(group, index) in groupedHistory" :key="index" class="timeline-group">
-          <div class="timeline-title">{{ group.title }}</div>
-          <div class="timeline-list">
-            <div v-for="item in group.items" :key="item.id + item.usedAt" class="history-item" @click="goToTool(item)">
-              <div class="item-time-badge">{{ formatTime(item.usedAt) }}</div>
-              <div class="item-card">
-                <div class="item-icon">
-                  <el-icon :size="20">
-                    <component :is="item.icon" />
-                  </el-icon>
-                </div>
-                <div class="item-content">
-                  <div class="item-name">{{ item.name }}</div>
-                  <div class="item-full-time">{{ formatDate(item.usedAt) }}</div>
-                </div>
-                <div class="item-arrow">
-                  <el-icon>
-                    <ArrowRight />
-                  </el-icon>
+        <DynamicScroller
+          :items="flatHistory"
+          :min-item-size="80"
+          key-field="id"
+          page-mode
+          class="scroller"
+        >
+          <template #default="{ item, index, active }">
+            <DynamicScrollerItem
+              :item="item"
+              :active="active"
+              :size-dependencies="[item.type]"
+              :data-index="index"
+            >
+              <div v-if="item.type === 'header'" class="timeline-group">
+                 <div class="timeline-title">{{ item.title }}</div>
+              </div>
+              <div v-else class="timeline-list">
+                 <div class="history-item" @click="goToTool(item.data)">
+                  <div class="item-time-badge">{{ formatTime(item.data.usedAt) }}</div>
+                  <div class="item-card">
+                    <div class="item-icon">
+                      <el-icon :size="20">
+                        <component :is="item.data.icon" />
+                      </el-icon>
+                    </div>
+                    <div class="item-content">
+                      <div class="item-name">{{ item.data.name }}</div>
+                      <div class="item-full-time">{{ formatDate(item.data.usedAt) }}</div>
+                    </div>
+                    <div class="item-arrow">
+                      <el-icon>
+                        <ArrowRight />
+                      </el-icon>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
+            </DynamicScrollerItem>
+          </template>
+        </DynamicScroller>
       </div>
 
       
@@ -128,8 +145,19 @@ const groupedHistory = computed(() => {
     }
   })
 
-  
   return Object.values(groups).filter(group => group.items.length > 0)
+})
+
+const flatHistory = computed(() => {
+  const groups = groupedHistory.value
+  const flat = []
+  groups.forEach(group => {
+    flat.push({ type: 'header', title: group.title, id: `header-${group.title}` })
+    group.items.forEach(item => {
+      flat.push({ type: 'item', data: item, id: `${item.id}-${item.usedAt}` })
+    })
+  })
+  return flat
 })
 
 

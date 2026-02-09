@@ -1,7 +1,7 @@
 <template>
     <div class="bmr-advanced-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -32,11 +32,13 @@
                             <el-input-number v-model="form.height" :min="100" :max="250" style="width: 100%" />
                         </el-form-item>
                         <el-form-item label="体重 (kg)">
-                            <el-input-number v-model="form.weight" :min="30" :max="250" :precision="1"
+                            <el-input-number
+v-model="form.weight" :min="30" :max="250" :precision="1"
                                 style="width: 100%" />
                         </el-form-item>
                         <el-form-item label="体脂率 (%) [可选]">
-                            <el-input-number v-model="form.bodyFat" :min="3" :max="60" :precision="1"
+                            <el-input-number
+v-model="form.bodyFat" :min="3" :max="60" :precision="1"
                                 style="width: 100%" placeholder="输入后自动切换高精度公式" />
                         </el-form-item>
                         <el-form-item label="日常活动量">
@@ -108,7 +110,8 @@
         </main>
 
         <div class="disclaimer-wrap" style="padding: 0 1.5rem 2rem; text-align: center;">
-            <div class="disclaimer-card"
+            <div
+class="disclaimer-card"
                 style="display: inline-flex; gap: 0.8rem; padding: 1rem; background: #eff6ff; color: #1e40af; border-radius: 12px; font-size: 0.8rem; align-items: start; text-align: left; border: 1px solid #dbeafe;">
                 <el-icon style="margin-top: 2px;">
                     <InfoFilled />

@@ -1,7 +1,7 @@
 <template>
     <div class="text-line-break-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -21,19 +21,19 @@
 
                     <div class="control-group">
                         <label>单行最大字数: {{ maxLength }}</label>
-                        <input type="range" v-model.number="maxLength" min="10" max="50" step="1" class="slider" />
+                        <input v-model.number="maxLength" type="range" min="10" max="50" step="1" class="slider" />
                     </div>
 
                     <div class="control-group">
                         <label>分行模式</label>
                         <div class="radio-group">
                             <label class="radio-label">
-                                <input type="radio" value="smart" v-model="mode" />
+                                <input v-model="mode" type="radio" value="smart" />
                                 智能语义
                                 <span class="tip">按标点符号分行</span>
                             </label>
                             <label class="radio-label">
-                                <input type="radio" value="fixed" v-model="mode" />
+                                <input v-model="mode" type="radio" value="fixed" />
                                 固定字数
                                 <span class="tip">强制截断</span>
                             </label>
@@ -42,15 +42,15 @@
 
                     <div class="control-group">
                         <label class="checkbox-label">
-                            <input type="checkbox" v-model="removeEmptyLines" />
+                            <input v-model="removeEmptyLines" type="checkbox" />
                             去除原空行
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" v-model="addSpaceBetween" />
+                            <input v-model="addSpaceBetween" type="checkbox" />
                             段落增加空行
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" v-model="centerMode" />
+                            <input v-model="centerMode" type="checkbox" />
                             居中对齐预览
                         </label>
                     </div>

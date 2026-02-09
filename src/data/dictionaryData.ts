@@ -1,4 +1,13 @@
-export const dictionary = [
+export interface DictionaryItem {
+  name: string;
+  pinyin: string;
+  meaning: string;
+  synonyms?: string[];
+  antonyms?: string[];
+  example: string;
+}
+
+export const dictionary: DictionaryItem[] = [
     {
         name: '胸有成竹',
         pinyin: 'xiōng yǒu chéng zhú',

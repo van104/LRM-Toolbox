@@ -2,7 +2,7 @@
     <div class="maze-tool">
         
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -19,12 +19,13 @@
                 <div ref="container" class="canvas-container"></div>
 
                 
-                <div class="ui-overlay" v-if="!isPlaying">
+                <div v-if="!isPlaying" class="ui-overlay">
                     <div class="start-screen glass-panel">
                         <h2>3D 迷宫挑战</h2>
                         <div class="settings">
                             <label>难度: {{ difficulty }}</label>
-                            <input type="range" min="10" max="30" step="2" v-model.number="difficulty"
+                            <input
+v-model.number="difficulty" type="range" min="10" max="30" step="2"
                                 @input="updateDifficultyLabel" />
                         </div>
                         <button class="primary-btn pulse" @click="startGame">开始探索</button>
@@ -32,13 +33,13 @@
                     </div>
                 </div>
 
-                <div class="hud-overlay" v-if="isPlaying">
+                <div v-if="isPlaying" class="hud-overlay">
                     <div class="timer">{{ formattedTime }}</div>
                     <div class="level-info">Level {{ level }}</div>
                     <button class="reset-btn" @click="resetGame">重置</button>
                 </div>
 
-                <div class="victory-overlay" v-if="victory">
+                <div v-if="victory" class="victory-overlay">
                     <div class="glass-panel">
                         <h2>挑战成功!</h2>
                         <p>用时: {{ formattedTime }}</p>

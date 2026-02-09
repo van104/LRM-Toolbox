@@ -1,7 +1,7 @@
 <template>
     <div class="bmi-calculator-tool">
         <nav class="nav-bar">
-            <button @click="$router.back()" class="nav-back">
+            <button class="nav-back" @click="$router.back()">
                 <el-icon>
                     <Back />
                 </el-icon> 返回
@@ -19,7 +19,7 @@
                     <div class="form-group">
                         <label>身高 (cm)</label>
                         <div class="input-wrapper">
-                            <input type="number" v-model.number="height" placeholder="例如：175" @input="calculate" />
+                            <input v-model.number="height" type="number" placeholder="例如：175" @input="calculate" />
                             <span class="unit">cm</span>
                         </div>
                     </div>
@@ -27,14 +27,14 @@
                     <div class="form-group">
                         <label>体重 (kg)</label>
                         <div class="input-wrapper">
-                            <input type="number" v-model.number="weight" placeholder="例如：65" @input="calculate" />
+                            <input v-model.number="weight" type="number" placeholder="例如：65" @input="calculate" />
                             <span class="unit">kg</span>
                         </div>
                     </div>
                 </div>
 
                 
-                <div class="result-display" v-if="bmiResult">
+                <div v-if="bmiResult" class="result-display">
                     <div class="bmi-value" :class="bmiResult.colorClass">
                         {{ bmiResult.bmi }}
                     </div>
@@ -70,13 +70,13 @@
 
                     <div class="suggestion-box">
                         <p>您的健康体重范围应为：<br><b>{{ healthyRange }}</b></p>
-                        <p class="to-health" v-if="weightDiff">
+                        <p v-if="weightDiff" class="to-health">
                             {{ weightDiff.msg }} <b :class="weightDiff.type">{{ weightDiff.val }} kg</b>
                         </p>
                     </div>
                 </div>
 
-                <div class="empty-state" v-else>
+                <div v-else class="empty-state">
                     <el-icon>
                         <User />
                     </el-icon>
@@ -117,7 +117,8 @@
         </main>
 
         <div class="disclaimer-wrap" style="padding: 0 1.5rem 2rem; text-align: center;">
-            <div class="disclaimer-card"
+            <div
+class="disclaimer-card"
                 style="display: inline-flex; gap: 0.8rem; padding: 1rem; background: #eff6ff; color: #1e40af; border-radius: 12px; font-size: 0.8rem; align-items: start; text-align: left; border: 1px solid #dbeafe;">
                 <el-icon style="margin-top: 2px;">
                     <InfoFilled />

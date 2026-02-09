@@ -2,7 +2,7 @@
   <div class="data-visualizer">
     
     <nav class="nav-bar">
-      <button @click="goHome" class="nav-back">
+      <button class="nav-back" @click="goHome">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
@@ -17,7 +17,7 @@
 
     <main class="main-content">
       
-      <section class="intro-section" v-if="!dataLoaded">
+      <section v-if="!dataLoaded" class="intro-section">
         <h2>功能特性</h2>
         <div class="features-grid">
           <div class="feature-card">
@@ -68,11 +68,12 @@
         </div>
       </section>
       
-      <section class="upload-section" v-if="!dataLoaded">
-        <div class="upload-card-content" :class="{ dragover: isDragOver }" @click="openUpload"
+      <section v-if="!dataLoaded" class="upload-section">
+        <div
+class="upload-card-content" :class="{ dragover: isDragOver }" @click="openUpload"
           @dragover.prevent="isDragOver = true" @dragleave.prevent="isDragOver = false" @drop.prevent="handleDrop">
           
-          <input type="file" ref="fileInput" accept=".xlsx,.xls,.csv" @change="handleFileSelect" hidden />
+          <input ref="fileInput" type="file" accept=".xlsx,.xls,.csv" hidden @change="handleFileSelect" />
 
           
           <div class="upload-part">
@@ -95,7 +96,7 @@
 
           
           <div class="generator-part">
-            <button @click.stop="openGeneratorModal" class="demo-btn">
+            <button class="demo-btn" @click.stop="openGeneratorModal">
               <span class="mr-2">✨</span> 生成演示数据
             </button>
             <p class="demo-hint">快速体验图表功能</p>
@@ -111,7 +112,7 @@
             <span class="file-name">{{ fileInfo.name }}</span>
             <span class="file-size">{{ fileInfo.size }}</span>
           </div>
-          <button @click="resetData" class="btn text-danger">重新上传</button>
+          <button class="btn text-danger" @click="resetData">重新上传</button>
         </div>
 
         <div class="workspace-grid">
@@ -121,7 +122,8 @@
             <div class="panel-section">
               <h3>图表类型</h3>
               <div class="chart-types">
-                <button v-for="type in chartTypes" :key="type.value" class="type-btn"
+                <button
+v-for="type in chartTypes" :key="type.value" class="type-btn"
                   :class="{ active: config.chartType === type.value }" @click="config.chartType = type.value">
                   <span class="type-icon">{{ type.icon }}</span>
                   <span>{{ type.label }}</span>
@@ -153,36 +155,37 @@
               <h3>样式配置</h3>
               <div class="form-group">
                 <label>标题</label>
-                <input type="text" v-model="config.title" class="form-input" placeholder="图表标题" />
+                <input v-model="config.title" type="text" class="form-input" placeholder="图表标题" />
               </div>
 
               <div class="form-group">
                 <label>配色主题</label>
                 <div class="color-themes">
-                  <button v-for="theme in themes" :key="theme.name" class="theme-dot"
+                  <button
+v-for="theme in themes" :key="theme.name" class="theme-dot"
                     :style="{ background: theme.color }" :class="{ active: config.theme === theme.name }"
-                    @click="config.theme = theme.name" :title="theme.label"></button>
+                    :title="theme.label" @click="config.theme = theme.name"></button>
                 </div>
               </div>
 
               <div class="options-row">
                 <label class="checkbox-label">
-                  <input type="checkbox" v-model="config.showLegend">
+                  <input v-model="config.showLegend" type="checkbox">
                   <span class="check-box"></span>
                   显示图例
                 </label>
                 <label class="checkbox-label">
-                  <input type="checkbox" v-model="config.showGrid">
+                  <input v-model="config.showGrid" type="checkbox">
                   <span class="check-box"></span>
                   网格线
                 </label>
               </div>
             </div>
 
-            <button @click="generateChart" class="btn primary full-width">
+            <button class="btn primary full-width" @click="generateChart">
               生成图表
             </button>
-            <button @click="exportImage" class="btn secondary full-width mt-2">
+            <button class="btn secondary full-width mt-2" @click="exportImage">
               导出图片
             </button>
           </div>
@@ -199,10 +202,10 @@
               <div class="card-header">
                 <h3>数据编辑器</h3>
                 <div class="table-actions">
-                  <button @click="addRow" class="action-btn" title="添加行">
+                  <button class="action-btn" title="添加行" @click="addRow">
                     <span class="icon">+</span> 行
                   </button>
-                  <button @click="addColumn" class="action-btn" title="添加列">
+                  <button class="action-btn" title="添加列" @click="addColumn">
                     <span class="icon">+</span> 列
                   </button>
                 </div>
@@ -216,8 +219,9 @@
                       <th v-for="(col, cIdx) in columns" :key="cIdx" class="relative group">
                         <div class="flex items-center">
                           <input v-model="rawData[0][cIdx]" class="th-input" @change="handleDataChange">
-                          <button @click="removeColumn(cIdx)" class="del-col-btn group-hover:opacity-100"
-                            v-if="columns.length > 2">×</button>
+                          <button
+v-if="columns.length > 2" class="del-col-btn group-hover:opacity-100"
+                            @click="removeColumn(cIdx)">×</button>
                         </div>
                       </th>
                       <th class="w-10"></th>
@@ -230,8 +234,9 @@
                         <input v-model="rawData[rIdx + 1][cIdx]" class="td-input" @change="handleDataChange">
                       </td>
                       <td class="text-center">
-                        <button @click="removeRow(rIdx + 1)" class="del-row-btn" title="删除行">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        <button class="del-row-btn" title="删除行" @click="removeRow(rIdx + 1)">
+                          <svg
+width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <path d="M18 6L6 18M6 6l12 12"></path>
                           </svg>
@@ -271,7 +276,7 @@
             <span class="mr-2">✨</span>
             生成测试数据
           </h3>
-          <button @click="showGenerator = false" class="close-btn">&times;</button>
+          <button class="close-btn" @click="showGenerator = false">&times;</button>
         </div>
         <div class="modal-body">
           <p class="text-secondary text-sm mb-4">选择数据类型自动生成 Excel 格式数据，用于测试图表功能。</p>
@@ -279,7 +284,8 @@
           <div class="form-group">
             <label>数据主题</label>
             <div class="topic-grid">
-              <button v-for="topic in generatorTopics" :key="topic.value" class="topic-btn"
+              <button
+v-for="topic in generatorTopics" :key="topic.value" class="topic-btn"
                 :class="{ active: Number(genConfig.type) === Number(topic.value) || genConfig.type === topic.value }"
                 @click="genConfig.type = topic.value">
                 <span class="topic-icon">{{ topic.icon }}</span>
@@ -290,12 +296,12 @@
 
           <div class="form-group">
             <label>数据行数 ({{ genConfig.rows }})</label>
-            <input type="range" v-model.number="genConfig.rows" min="5" max="50" class="range-input">
+            <input v-model.number="genConfig.rows" type="range" min="5" max="50" class="range-input">
           </div>
 
           <div class="modal-actions">
-            <button @click="generateAndLoad" class="btn primary full-width">生成并加载数据</button>
-            <button @click="generateAndDownload" class="btn secondary full-width">仅下载 Excel</button>
+            <button class="btn primary full-width" @click="generateAndLoad">生成并加载数据</button>
+            <button class="btn secondary full-width" @click="generateAndDownload">仅下载 Excel</button>
           </div>
         </div>
       </div>

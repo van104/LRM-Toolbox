@@ -31,7 +31,7 @@
                             </div>
                             <div class="preview-panel">
                                 <div class="preview-header">预览</div>
-                                <div class="preview-content" ref="previewRef" v-html="renderedHtml"></div>
+                                <div ref="previewRef" class="preview-content" v-html="renderedHtml"></div>
                             </div>
                         </div>
                     </div>
@@ -55,7 +55,8 @@
                         </div>
                     </div>
 
-                    <el-button type="primary" size="large" class="action-btn" :loading="processing"
+                    <el-button
+type="primary" size="large" class="action-btn" :loading="processing"
                         :disabled="!inputContent.trim()" @click="generatePdf">
                         <el-icon>
                             <Download />
