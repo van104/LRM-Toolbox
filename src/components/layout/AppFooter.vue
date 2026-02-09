@@ -98,7 +98,10 @@
           <div class="changelog-version">v1.7.0</div>
           <div class="changelog-date">2026-02-09</div>
           <ul class="changelog-list">
-            <li>修复 2048 游戏 Bug，优化显示适配与汉化细节</li>
+            <li>[2048] 深度优化：支持多规格网格，修复高位数字字号溢出，新增“撤销”与“继续挑战”功能</li>
+            <li>[2048] 逻辑修复：解决合并方块异常消失及游戏提前结束判定问题，恢复原始掉落概率</li>
+            <li>[系统] 体验增强：全站默认汉化配置 (zh-CN)，修正生产环境子路径接口解析异常</li>
+            <li>[SEO] 搜索优化：重构项目元数据与 README 结构，大幅提升 GitHub 检索权重</li>
           </ul>
         </div>
         <div class="changelog-item">
