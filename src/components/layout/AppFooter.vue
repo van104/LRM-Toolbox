@@ -95,6 +95,13 @@
     <el-dialog v-model="showChangelog" title="更新日志" width="500px">
       <div class="changelog">
         <div class="changelog-item">
+          <div class="changelog-version">v1.7.0</div>
+          <div class="changelog-date">2026-02-09</div>
+          <ul class="changelog-list">
+            <li>修复 2048 游戏 Bug，优化显示适配与汉化细节</li>
+          </ul>
+        </div>
+        <div class="changelog-item">
           <div class="changelog-version">v1.6.0</div>
           <div class="changelog-date">2026-02-08</div>
           <ul class="changelog-list">
