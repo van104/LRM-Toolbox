@@ -47,7 +47,9 @@
 
       <section class="content-section">
         <h2>5. 条款修改</h2>
-        <p>本站保留随时修改本服务条款的权利。修改后的条款将在本页面公布，继续使用本站服务即表示您接受修改后的条款。</p>
+        <p>
+          本站保留随时修改本服务条款的权利。修改后的条款将在本页面公布，继续使用本站服务即表示您接受修改后的条款。
+        </p>
       </section>
 
       <section class="content-section">
@@ -59,120 +61,119 @@
 </template>
 
 <script setup>
-import { ArrowLeft } from '@element-plus/icons-vue'
+  import { ArrowLeft } from '@element-plus/icons-vue';
 </script>
 
 <style scoped>
-.page-container {
-  min-height: 100vh;
-  background: #f0f4f8;
-}
+  .page-container {
+    min-height: 100vh;
+    background: #f0f4f8;
+  }
 
-.page-header {
-  padding: 1rem 1.5rem;
-  background: #ffffff;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
+  .page-header {
+    padding: 1rem 1.5rem;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
 
-.page-content {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem;
-}
+  .page-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
 
-.page-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 0.5rem;
-  text-align: center;
-}
+  .page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
 
-.update-time {
-  text-align: center;
-  color: #94a3b8;
-  font-size: 0.875rem;
-  margin-bottom: 2rem;
-}
+  .update-time {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+  }
 
-.content-section {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-}
+  .content-section {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
 
-.content-section h2 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 1rem;
-}
+  .content-section h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 1rem;
+  }
 
-.content-section p {
-  color: #64748b;
-  line-height: 1.8;
-  margin-bottom: 0.75rem;
-}
+  .content-section p {
+    color: #64748b;
+    line-height: 1.8;
+    margin-bottom: 0.75rem;
+  }
 
-.content-section ul {
-  list-style: none;
-  padding: 0;
-  margin: 0.75rem 0;
-}
+  .content-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0;
+  }
 
-.content-section li {
-  color: #64748b;
-  line-height: 2;
-  padding-left: 1.5rem;
-  position: relative;
-}
+  .content-section li {
+    color: #64748b;
+    line-height: 2;
+    padding-left: 1.5rem;
+    position: relative;
+  }
 
-.content-section li::before {
-  content: '•';
-  color: #06b6d4;
-  font-weight: bold;
-  position: absolute;
-  left: 0;
-}
+  .content-section li::before {
+    content: '•';
+    color: #06b6d4;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+  }
 
+  [data-theme='dark'] .page-container {
+    background: var(--bg-primary);
+  }
 
-[data-theme="dark"] .page-container {
-  background: var(--bg-primary);
-}
+  [data-theme='dark'] .page-header {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+  }
 
-[data-theme="dark"] .page-header {
-  background: var(--bg-secondary);
-  border-color: var(--border-color);
-}
+  [data-theme='dark'] .el-button {
+    color: var(--text-primary);
+  }
 
-[data-theme="dark"] .el-button {
-  color: var(--text-primary);
-}
+  [data-theme='dark'] .el-button:hover {
+    color: var(--accent-cyan);
+  }
 
-[data-theme="dark"] .el-button:hover {
-  color: var(--accent-cyan);
-}
+  [data-theme='dark'] .page-title {
+    color: var(--text-primary);
+  }
 
-[data-theme="dark"] .page-title {
-  color: var(--text-primary);
-}
+  [data-theme='dark'] .update-time {
+    color: var(--text-secondary);
+  }
 
-[data-theme="dark"] .update-time {
-  color: var(--text-secondary);
-}
+  [data-theme='dark'] .content-section {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+  }
 
-[data-theme="dark"] .content-section {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-}
+  [data-theme='dark'] .content-section h2 {
+    color: var(--text-primary);
+  }
 
-[data-theme="dark"] .content-section h2 {
-  color: var(--text-primary);
-}
-
-[data-theme="dark"] .content-section p,
-[data-theme="dark"] .content-section li {
-  color: var(--text-secondary);
-}
+  [data-theme='dark'] .content-section p,
+  [data-theme='dark'] .content-section li {
+    color: var(--text-secondary);
+  }
 </style>

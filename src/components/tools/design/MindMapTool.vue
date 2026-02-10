@@ -1,82 +1,88 @@
 <template>
-    <div class="mindmap-tool">
-        <nav class="nav-bar">
-            <button class="nav-back" @click="$router.back()">
-                <el-icon>
-                    <Back />
-                </el-icon> 返回
-            </button>
-            <div class="nav-center">
-                <h1>思维导图生成器</h1>
-                <span class="nav-subtitle">Mind Map Generator</span>
-            </div>
-            <div class="nav-spacer"></div>
-        </nav>
+  <div class="mindmap-tool">
+    <nav class="nav-bar">
+      <button class="nav-back" @click="$router.back()">
+        <el-icon>
+          <Back />
+        </el-icon>
+        返回
+      </button>
+      <div class="nav-center">
+        <h1>思维导图生成器</h1>
+        <span class="nav-subtitle">Mind Map Generator</span>
+      </div>
+      <div class="nav-spacer"></div>
+    </nav>
 
-        <main class="main-content">
-            <div class="editor-layout">
-                
-                <div class="left-panel glass-card">
-                    <div class="panel-header">
-                        <h3><el-icon>
-                                <Edit />
-                            </el-icon> 编辑大纲 (Markdown)</h3>
-                        <div class="actions">
-                            <button class="action-btn" @click="loadExample">载入示例</button>
-                            <button class="action-btn danger" @click="clearText">清空</button>
-                        </div>
-                    </div>
-                    <textarea
-v-model="markdownInput" class="md-editor" placeholder="# 中心主题
+    <main class="main-content">
+      <div class="editor-layout">
+        <div class="left-panel glass-card">
+          <div class="panel-header">
+            <h3>
+              <el-icon>
+                <Edit />
+              </el-icon>
+              编辑大纲 (Markdown)
+            </h3>
+            <div class="actions">
+              <button class="action-btn" @click="loadExample">载入示例</button>
+              <button class="action-btn danger" @click="clearText">清空</button>
+            </div>
+          </div>
+          <textarea
+            v-model="markdownInput"
+            class="md-editor"
+            placeholder="# 中心主题
 ## 分支1
 - 子节点A
 - 子节点B
 ## 分支2
-..."></textarea>
-                </div>
+..."
+          ></textarea>
+        </div>
 
-                
-                <div class="right-panel glass-card">
-                    <div class="panel-header">
-                        <h3><el-icon>
-                                <View />
-                            </el-icon> 导图预览</h3>
-                        <div class="actions">
-                            <button class="action-btn" @click="fitView">
-                                <el-icon>
-                                    <FullScreen />
-                                </el-icon> 适应视图
-                            </button>
-                            <button class="action-btn primary" @click="downloadSVG">
-                                <el-icon>
-                                    <Download />
-                                </el-icon> 导出 SVG
-                            </button>
-                        </div>
-                    </div>
-                    <div ref="svgContainerRef" class="svg-container">
-                        <svg ref="svgRef" style="width: 100%; height: 100%;"></svg>
-                    </div>
-                    <div class="tips">
-                        提示：支持拖拽移动画布，鼠标滚轮缩放，点击节点收缩/展开。
-                    </div>
-                </div>
+        <div class="right-panel glass-card">
+          <div class="panel-header">
+            <h3>
+              <el-icon>
+                <View />
+              </el-icon>
+              导图预览
+            </h3>
+            <div class="actions">
+              <button class="action-btn" @click="fitView">
+                <el-icon>
+                  <FullScreen />
+                </el-icon>
+                适应视图
+              </button>
+              <button class="action-btn primary" @click="downloadSVG">
+                <el-icon>
+                  <Download />
+                </el-icon>
+                导出 SVG
+              </button>
             </div>
-        </main>
-        <footer class="footer">
-            © 2026 LRM工具箱 - 思维导图生成器
-        </footer>
-    </div>
+          </div>
+          <div ref="svgContainerRef" class="svg-container">
+            <svg ref="svgRef" style="width: 100%; height: 100%"></svg>
+          </div>
+          <div class="tips">提示：支持拖拽移动画布，鼠标滚轮缩放，点击节点收缩/展开。</div>
+        </div>
+      </div>
+    </main>
+    <footer class="footer">© 2026 LRM工具箱 - 思维导图生成器</footer>
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch, onUnmounted } from 'vue'
-import { Back, Edit, View, FullScreen, Download } from '@element-plus/icons-vue'
-import { Transformer } from 'markmap-lib'
-import { Markmap } from 'markmap-view'
-import { ElMessage } from 'element-plus'
+  import { ref, onMounted, watch, onUnmounted } from 'vue';
+  import { Back, Edit, View, FullScreen, Download } from '@element-plus/icons-vue';
+  import { Transformer } from 'markmap-lib';
+  import { Markmap } from 'markmap-view';
+  import { ElMessage } from 'element-plus';
 
-const markdownInput = ref(`# 思维导图生成器
+  const markdownInput = ref(`# 思维导图生成器
 ## 核心功能
 - 简单易用
 - 实时预览
@@ -89,45 +95,43 @@ const markdownInput = ref(`# 思维导图生成器
 - 使用 Markdown 语法
 - # 表示一级标题
 - - 表示列表项
-`)
+`);
 
-const svgRef = ref(null)
-const svgContainerRef = ref(null)
-let markmapInstance = null
-const transformer = new Transformer()
+  const svgRef = ref(null);
+  const svgContainerRef = ref(null);
+  let markmapInstance = null;
+  const transformer = new Transformer();
 
-const updateMindMap = () => {
-    if (!markmapInstance || !svgRef.value) return
+  const updateMindMap = () => {
+    if (!markmapInstance || !svgRef.value) return;
 
-    const { root } = transformer.transform(markdownInput.value)
-    markmapInstance.setData(root)
-    markmapInstance.fit()
-}
+    const { root } = transformer.transform(markdownInput.value);
+    markmapInstance.setData(root);
+    markmapInstance.fit();
+  };
 
-onMounted(() => {
+  onMounted(() => {
     if (svgRef.value) {
-        
-        markmapInstance = Markmap.create(svgRef.value, {
-            autoFit: true,
-            padding: 20
-        }) 
-        updateMindMap()
+      markmapInstance = Markmap.create(svgRef.value, {
+        autoFit: true,
+        padding: 20
+      });
+      updateMindMap();
     }
-})
+  });
 
-onUnmounted(() => {
+  onUnmounted(() => {
     if (markmapInstance) {
-        markmapInstance.destroy()
-        markmapInstance = null
+      markmapInstance.destroy();
+      markmapInstance = null;
     }
-})
+  });
 
+  watch(markdownInput, () => {
+    updateMindMap();
+  });
 
-watch(markdownInput, () => {
-    updateMindMap()
-})
-
-const loadExample = () => {
+  const loadExample = () => {
     markdownInput.value = `# 项目计划
 ## 准备阶段
 - 需求分析
@@ -143,41 +147,39 @@ const loadExample = () => {
 - 单元测试
 - 集成测试
 ## 上线部署
-`
-}
+`;
+  };
 
-const clearText = () => {
-    markdownInput.value = '# 中心主题'
-}
+  const clearText = () => {
+    markdownInput.value = '# 中心主题';
+  };
 
-const fitView = () => {
-    markmapInstance?.fit()
-}
+  const fitView = () => {
+    markmapInstance?.fit();
+  };
 
-const downloadSVG = () => {
-    if (!svgRef.value) return
+  const downloadSVG = () => {
+    if (!svgRef.value) return;
 
-    
-    const svgData = new XMLSerializer().serializeToString(svgRef.value)
-    const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' })
-    const url = URL.createObjectURL(blob)
+    const svgData = new XMLSerializer().serializeToString(svgRef.value);
+    const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
 
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `mindmap_${Date.now()}.svg`
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `mindmap_${Date.now()}.svg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-    ElMessage.success('已导出 SVG 图片')
-}
-
+    ElMessage.success('已导出 SVG 图片');
+  };
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap');
 
-.mindmap-tool {
+  .mindmap-tool {
     --bg: #faf9f7;
     --card: #ffffff;
     --border: #e8e6e3;
@@ -192,11 +194,9 @@ const downloadSVG = () => {
     background: var(--bg);
     color: var(--text);
     overflow: hidden;
-    
-}
+  }
 
-.nav-bar {
-    
+  .nav-bar {
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -205,14 +205,14 @@ const downloadSVG = () => {
     background: var(--card);
     border-bottom: 1px solid var(--border);
     z-index: 10;
-}
+  }
 
-.nav-back,
-.nav-spacer {
+  .nav-back,
+  .nav-spacer {
     width: 80px;
-}
+  }
 
-.nav-back {
+  .nav-back {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -222,36 +222,35 @@ const downloadSVG = () => {
     cursor: pointer;
     font-size: 0.9rem;
     padding: 0.5rem 0;
-}
+  }
 
-.nav-center h1 {
+  .nav-center h1 {
     font-family: 'Noto Serif SC', serif;
     font-size: 1.25rem;
     font-weight: 600;
-}
+  }
 
-.nav-subtitle {
+  .nav-subtitle {
     font-size: 0.7rem;
     color: var(--text-2);
     text-transform: uppercase;
     display: block;
     text-align: center;
-}
+  }
 
-.main-content {
+  .main-content {
     flex: 1;
     padding: 1.5rem;
     min-height: 0;
-    
-}
+  }
 
-.editor-layout {
+  .editor-layout {
     display: flex;
     height: 100%;
     gap: 1.5rem;
-}
+  }
 
-.glass-card {
+  .glass-card {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -259,45 +258,45 @@ const downloadSVG = () => {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-}
+  }
 
-.left-panel {
+  .left-panel {
     flex: 1;
     max-width: 400px;
     display: flex;
     flex-direction: column;
-}
+  }
 
-.right-panel {
+  .right-panel {
     flex: 2;
     display: flex;
     flex-direction: column;
-}
+  }
 
-.panel-header {
+  .panel-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--border);
     background: #fdfdfd;
-}
+  }
 
-.panel-header h3 {
+  .panel-header h3 {
     font-size: 0.95rem;
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     margin: 0;
-}
+  }
 
-.actions {
+  .actions {
     display: flex;
     gap: 0.5rem;
-}
+  }
 
-.action-btn {
+  .action-btn {
     padding: 4px 10px;
     border: 1px solid var(--border);
     background: white;
@@ -309,34 +308,34 @@ const downloadSVG = () => {
     align-items: center;
     gap: 4px;
     transition: all 0.2s;
-}
+  }
 
-.action-btn:hover {
+  .action-btn:hover {
     border-color: var(--text-2);
     color: var(--text);
-}
+  }
 
-.action-btn.primary {
+  .action-btn.primary {
     background: var(--text);
     color: white;
     border-color: var(--text);
-}
+  }
 
-.action-btn.primary:hover {
+  .action-btn.primary:hover {
     opacity: 0.9;
-}
+  }
 
-.action-btn.danger {
+  .action-btn.danger {
     color: #ef4444;
     border-color: rgba(239, 68, 68, 0.3);
-}
+  }
 
-.action-btn.danger:hover {
+  .action-btn.danger:hover {
     background: #fee2e2;
     border-color: #ef4444;
-}
+  }
 
-.md-editor {
+  .md-editor {
     flex: 1;
     width: 100%;
     border: none;
@@ -347,38 +346,38 @@ const downloadSVG = () => {
     font-size: 0.95rem;
     line-height: 1.6;
     background: #fafaf9;
-}
+  }
 
-.svg-container {
+  .svg-container {
     flex: 1;
     width: 100%;
     position: relative;
     overflow: hidden;
     background: white;
-}
+  }
 
-.tips {
+  .tips {
     padding: 0.5rem 1rem;
     font-size: 0.75rem;
     color: var(--text-2);
     background: #fdfdfd;
     border-top: 1px solid var(--border);
     text-align: center;
-}
+  }
 
-@media (max-width: 768px) {
+  @media (max-width: 768px) {
     .editor-layout {
-        flex-direction: column;
+      flex-direction: column;
     }
 
     .left-panel {
-        max-width: none;
-        height: 300px;
-        flex: none;
+      max-width: none;
+      height: 300px;
+      flex: none;
     }
-}
+  }
 
-.footer {
+  .footer {
     text-align: center;
     padding: 1rem;
     color: var(--text-2);
@@ -386,5 +385,5 @@ const downloadSVG = () => {
     border-top: 1px solid var(--border);
     flex-shrink: 0;
     margin-top: auto;
-}
+  }
 </style>

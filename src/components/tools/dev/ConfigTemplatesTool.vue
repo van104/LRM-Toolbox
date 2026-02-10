@@ -4,7 +4,8 @@
       <button class="nav-back" @click="$router.back()">
         <el-icon>
           <Back />
-        </el-icon> 返回
+        </el-icon>
+        返回
       </button>
       <div class="nav-center">
         <h1>配置模版生成器</h1>
@@ -15,7 +16,6 @@
 
     <main class="main-content">
       <div class="layout-grid">
-        
         <aside class="config-sidebar glass-card">
           <h3 class="sidebar-title">快捷配置</h3>
 
@@ -51,10 +51,14 @@
             </div>
           </el-form>
 
-          <el-alert title="提示：生成的模版仅供参考，生产环境请根据实际安全需求调整参数。" type="warning" :closable="false" class="mt-6" />
+          <el-alert
+            title="提示：生成的模版仅供参考，生产环境请根据实际安全需求调整参数。"
+            type="warning"
+            :closable="false"
+            class="mt-6"
+          />
         </aside>
 
-        
         <section class="code-preview glass-card">
           <div class="preview-header">
             <el-tag effect="dark" type="info">{{ fileName }}</el-tag>
@@ -67,42 +71,38 @@
       </div>
     </main>
 
-    <footer class="footer">
-      © 2026 LRM工具箱 - 配置模版生成器
-    </footer>
+    <footer class="footer">© 2026 LRM工具箱 - 配置模版生成器</footer>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { Back, CopyDocument } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
-import useClipboard from 'vue-clipboard3'
+  import { ref, computed } from 'vue';
+  import { Back, CopyDocument } from '@element-plus/icons-vue';
+  import { ElMessage } from 'element-plus';
+  import useClipboard from 'vue-clipboard3';
 
-const { toClipboard } = useClipboard()
+  const { toClipboard } = useClipboard();
 
-const selectedType = ref('nginx-proxy')
-const vars = ref({
-  domain: 'api.example.com',
-  proxyPass: '127.0.0.1:3000',
-  root: '/usr/share/nginx/html',
-  containerName: 'my-web-app',
-  ports: '8080:80'
-})
+  const selectedType = ref('nginx-proxy');
+  const vars = ref({
+    domain: 'api.example.com',
+    proxyPass: '127.0.0.1:3000',
+    root: '/usr/share/nginx/html',
+    containerName: 'my-web-app',
+    ports: '8080:80'
+  });
 
-const resetVars = () => {
-  
-}
+  const resetVars = () => {};
 
-const fileName = computed(() => {
-  if (selectedType.value.startsWith('nginx')) return 'nginx.conf'
-  if (selectedType.value.startsWith('docker')) return 'docker-compose.yml'
-  return 'config'
-})
+  const fileName = computed(() => {
+    if (selectedType.value.startsWith('nginx')) return 'nginx.conf';
+    if (selectedType.value.startsWith('docker')) return 'docker-compose.yml';
+    return 'config';
+  });
 
-const generatedCode = computed(() => {
-  if (selectedType.value === 'nginx-proxy') {
-    return `server {
+  const generatedCode = computed(() => {
+    if (selectedType.value === 'nginx-proxy') {
+      return `server {
     listen 80;
     server_name ${vars.value.domain};
 
@@ -117,11 +117,11 @@ const generatedCode = computed(() => {
     # 开启 Gzip
     gzip on;
     gzip_types text/plain text/css application/json;
-}`
-  }
+}`;
+    }
 
-  if (selectedType.value === 'nginx-static') {
-    return `server {
+    if (selectedType.value === 'nginx-static') {
+      return `server {
     listen 80;
     server_name ${vars.value.domain};
 
@@ -136,11 +136,11 @@ const generatedCode = computed(() => {
     location = /404.html {
         internal;
     }
-}`
-  }
+}`;
+    }
 
-  if (selectedType.value === 'docker-node') {
-    return `version: '3.8'
+    if (selectedType.value === 'docker-node') {
+      return `version: '3.8'
 services:
   ${vars.value.containerName}:
     image: node:18-alpine
@@ -152,11 +152,11 @@ services:
       - "${vars.value.ports}"
     environment:
       - NODE_ENV=production
-    restart: always`
-  }
+    restart: always`;
+    }
 
-  if (selectedType.value === 'docker-mysql') {
-    return `version: '3.8'
+    if (selectedType.value === 'docker-mysql') {
+      return `version: '3.8'
 services:
   ${vars.value.containerName}:
     image: mysql:8.0
@@ -171,141 +171,141 @@ services:
     restart: always
 
 volumes:
-  mysql_data:`
-  }
+  mysql_data:`;
+    }
 
-  return ''
-})
+    return '';
+  });
 
-const copyCode = async () => {
-  try {
-    await toClipboard(generatedCode.value)
-    ElMessage.success('配置已复制到剪贴板')
-  } catch (e) {
-    ElMessage.error('复制失败')
-  }
-}
+  const copyCode = async () => {
+    try {
+      await toClipboard(generatedCode.value);
+      ElMessage.success('配置已复制到剪贴板');
+    } catch {
+      ElMessage.error('复制失败');
+    }
+  };
 </script>
 
 <style scoped>
-.config-templates-tool {
-  --primary: #4f46e5;
-  --bg: #f8fafc;
-  --card: #ffffff;
-  --border: #e2e8f0;
-  --text: #1e293b;
+  .config-templates-tool {
+    --primary: #4f46e5;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #1e293b;
 
-  min-height: 100vh;
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', system-ui, sans-serif;
-}
-
-.nav-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  background: var(--card);
-  border-bottom: 1px solid var(--border);
-}
-
-.nav-back {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: none;
-  border: none;
-  color: #64748b;
-  cursor: pointer;
-}
-
-.nav-center {
-  text-align: center;
-}
-
-.nav-center h1 {
-  font-size: 1.25rem;
-  margin: 0;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.nav-subtitle {
-  font-size: 0.75rem;
-  color: #94a3b8;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.main-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.layout-grid {
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 2rem;
-}
-
-.glass-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
-}
-
-.sidebar-title {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  color: #334155;
-}
-
-.preview-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.code-container {
-  background: #1e293b;
-  border-radius: 8px;
-  padding: 1.5rem;
-  overflow: auto;
-}
-
-.code-container pre {
-  margin: 0;
-  color: #e2e8f0;
-  font-family: 'Fira Code', monospace;
-  font-size: 0.9rem;
-  line-height: 1.6;
-}
-
-.mt-6 {
-  margin-top: 1.5rem;
-}
-
-.footer {
-  text-align: center;
-  padding: 3rem 2rem;
-  color: #94a3b8;
-  font-size: 0.85rem;
-  border-top: 1px solid var(--border);
-  margin-top: 4rem;
-  background: #fff;
-}
-
-@media (max-width: 1024px) {
-  .layout-grid {
-    grid-template-columns: 1fr;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
   }
-}
+
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-back {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+  }
+
+  .nav-center {
+    text-align: center;
+  }
+
+  .nav-center h1 {
+    font-size: 1.25rem;
+    margin: 0;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .nav-subtitle {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .main-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .layout-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 2rem;
+  }
+
+  .glass-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+  }
+
+  .sidebar-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #334155;
+  }
+
+  .preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-container {
+    background: #1e293b;
+    border-radius: 8px;
+    padding: 1.5rem;
+    overflow: auto;
+  }
+
+  .code-container pre {
+    margin: 0;
+    color: #e2e8f0;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .mt-6 {
+    margin-top: 1.5rem;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+    margin-top: 4rem;
+    background: #fff;
+  }
+
+  @media (max-width: 1024px) {
+    .layout-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>

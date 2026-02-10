@@ -598,11 +598,6 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/components/tools/fun/TowerOfHanoiTool.vue')
   },
   {
-    path: '/tools/chemistry-lab',
-    name: 'ChemistryLabTool',
-    component: () => import('@/components/tools/fun/ChemistryLabTool.vue')
-  },
-  {
     path: '/tools/life-simulator',
     name: 'LifeSimulatorTool',
     component: () => import('@/components/tools/fun/LifeSimulatorTool.vue')

@@ -1,15 +1,14 @@
-
 export function printWelcomeLog(): void {
-    const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    const titleText = ' LRM 工具箱 ToolBox';
-    const bodyText =`
+  const titleText = ' LRM 工具箱 ToolBox';
+  const bodyText = `
   🚀 欢迎使用 LRM 开发者工具箱！                        
   👉 本项目旨在提供高效的开发体验，完全免费开源。         
   📝 Github: https://github.com/van104/LRM-Toolbox.git
   ⚠️ 请勿将本工具用于任何非法用途。                      `;
 
-    const titleStyle = `
+  const titleStyle = `
     display: inline-block;
     font-size: 16px;
     font-weight: 700;
@@ -25,7 +24,7 @@ export function printWelcomeLog(): void {
     box-sizing: border-box;
   `;
 
-    const bodyStyle = `
+  const bodyStyle = `
     display: inline-block;
     font-size: 12px;
     font-family: "Menlo", "Monaco", "Consolas", monospace;
@@ -40,17 +39,17 @@ export function printWelcomeLog(): void {
     box-sizing: border-box;
   `;
 
-    // 
-    // 
-    // 
-    //
+  //
+  //
+  //
+  //
 
-    console.log(`%c${titleText}%c${bodyText}`, titleStyle, bodyStyle);
+  console.log(`%c${titleText}%c${bodyText}`, titleStyle, bodyStyle);
 
-    // 
-    console.log(
-        '%c 💡 Tip: %c 按 Ctrl+K 可快速唤起全局搜索',
-        'background: #fbbf24; color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: bold;',
-        'color: #64748b; margin-left: 5px;'
-    );
+  //
+  console.log(
+    '%c 💡 Tip: %c 按 Ctrl+K 可快速唤起全局搜索',
+    'background: #fbbf24; color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: bold;',
+    'color: #64748b; margin-left: 5px;'
+  );
 }

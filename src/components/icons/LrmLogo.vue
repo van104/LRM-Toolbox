@@ -1,93 +1,81 @@
 <template>
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    viewBox="0 0 100 100" 
-    :width="size" 
-    :height="size" 
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 100 100"
+    :width="size"
+    :height="size"
     class="lrm-logo"
     role="img"
     aria-label="LRM Toolbox Logo"
   >
     <defs>
       <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#0ea5e9" /> 
-        <stop offset="100%" stop-color="#3b82f6" /> 
+        <stop offset="0%" stop-color="#0ea5e9" />
+        <stop offset="100%" stop-color="#3b82f6" />
       </linearGradient>
-      
-      
+
       <linearGradient id="latch-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
         <stop offset="0%" stop-color="white" stop-opacity="0.9" />
         <stop offset="100%" stop-color="white" stop-opacity="0.5" />
       </linearGradient>
     </defs>
-    
-    
-    
-    <path 
-      d="M 36 28 L 36 18 Q 36 12 44 12 L 56 12 Q 64 12 64 18 L 64 28" 
-      fill="none" 
-      stroke="url(#logo-gradient)" 
-      stroke-width="8" 
-      stroke-linecap="round" 
+
+    <path
+      d="M 36 28 L 36 18 Q 36 12 44 12 L 56 12 Q 64 12 64 18 L 64 28"
+      fill="none"
+      stroke="url(#logo-gradient)"
+      stroke-width="8"
+      stroke-linecap="round"
       stroke-linejoin="round"
     />
-    
-    
-    
-    <rect 
-      x="12" 
-      y="28" 
-      width="76" 
-      height="60" 
-      rx="10" 
-      fill="url(#logo-gradient)" 
-      stroke="none"
-    />
-    
-    
+
+    <rect x="12" y="28" width="76" height="60" rx="10" fill="url(#logo-gradient)" stroke="none" />
+
     <rect x="24" y="28" width="8" height="12" rx="2" fill="url(#latch-gradient)" />
     <rect x="68" y="28" width="8" height="12" rx="2" fill="url(#latch-gradient)" />
-    
-    
-    
-    <text 
-      x="50" 
-      y="66" 
-      font-family="Arial, Roboto, sans-serif" 
-      font-weight="900" 
-      font-size="32" 
-      fill="white" 
-      text-anchor="middle" 
+
+    <text
+      x="50"
+      y="66"
+      font-family="Arial, Roboto, sans-serif"
+      font-weight="900"
+      font-size="32"
+      fill="white"
+      text-anchor="middle"
       dominant-baseline="middle"
       letter-spacing="-1"
-    >LRM</text>
-    
-    
-    <path d="M 20 80 H 80" stroke="white" stroke-width="2" stroke-opacity="0.2" stroke-linecap="round" />
+    >
+      LRM
+    </text>
 
+    <path
+      d="M 20 80 H 80"
+      stroke="white"
+      stroke-width="2"
+      stroke-opacity="0.2"
+      stroke-linecap="round"
+    />
   </svg>
 </template>
 
 <script setup>
-defineProps({
-  size: {
-    type: [Number, String],
-    default: 32
-  }
-})
+  defineProps({
+    size: {
+      type: [Number, String],
+      default: 32
+    }
+  });
 </script>
 
 <style scoped>
-.lrm-logo {
-  display: inline-block;
-  vertical-align: middle;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
+  .lrm-logo {
+    display: inline-block;
+    vertical-align: middle;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
 
-.lrm-logo:hover {
-  transform: scale(1.1) rotate(-3deg);
-}
-
-
+  .lrm-logo:hover {
+    transform: scale(1.1) rotate(-3deg);
+  }
 </style>
