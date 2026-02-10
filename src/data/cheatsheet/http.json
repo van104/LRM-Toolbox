@@ -1,0 +1,43 @@
+{
+  "id": "http",
+  "name": "HTTP 状态码",
+  "sections": [
+    {
+      "title": "常用代码",
+      "items": [
+        {
+          "cmd": "200 OK",
+          "desc": "请求成功"
+        },
+        {
+          "cmd": "301 / 302",
+          "desc": "永久/临时重定向"
+        },
+        {
+          "cmd": "400 Bad Request",
+          "desc": "参数错误"
+        },
+        {
+          "cmd": "401 Unauthorized",
+          "desc": "未登录"
+        },
+        {
+          "cmd": "403 Forbidden",
+          "desc": "权限不足"
+        },
+        {
+          "cmd": "404 Not Found",
+          "desc": "资源丢失"
+        },
+        {
+          "cmd": "500 Internal Error",
+          "desc": "服务器崩溃"
+        },
+        {
+          "cmd": "503 Service Unavailable",
+          "desc": "过载/维护"
+        }
+      ]
+    }
+  ]
+}

@@ -103,6 +103,15 @@
     <el-dialog v-model="showChangelog" title="更新日志" width="500px">
       <div class="changelog">
         <div class="changelog-item">
+          <div class="changelog-version">v1.8.0</div>
+          <div class="changelog-date">2026-02-11</div>
+          <ul class="changelog-list">
+            <li>[性能] 数据异步加载：人生模拟器、调休放假、元素周期表数据拆分为 JSON 并按需加载</li>
+            <li>[质量] 全站 Lint 清理：修复多个组件的属性顺序、未使用变量、XSS 警告等问题</li>
+            <li>[配置] ESLint 优化：禁用与 Prettier 冲突的格式化规则，消除持久性警告</li>
+          </ul>
+        </div>
+        <div class="changelog-item">
           <div class="changelog-version">v1.7.0</div>
           <div class="changelog-date">2026-02-09</div>
           <ul class="changelog-list">

@@ -1,0 +1,387 @@
+[
+  {
+    "name": "拔刀相助",
+    "pinyin": "bá dāo xiāng zhù",
+    "meaning": "旧指见义勇为，打抱不平。",
+    "synonyms": [
+      "见义勇为"
+    ],
+    "example": "路见不平，拔刀相助，是侠客的本色。"
+  },
+  {
+    "name": "八面玲珑",
+    "pinyin": "bā miàn líng lóng",
+    "meaning": "原指窗户宽敞明亮。后形容人处世圆滑，待人接物面面俱到。",
+    "synonyms": [
+      "左右逢源",
+      "面面俱到"
+    ],
+    "antonyms": [
+      "刚正不阿",
+      "直言不讳"
+    ],
+    "example": "他在社交场合八面玲珑，谁也不得罪。"
+  },
+  {
+    "name": "拔苗助长",
+    "pinyin": "bá miáo zhù zhǎng",
+    "meaning": "比喻违反事物的发展规律，急于求成，反而把事情弄糟。",
+    "synonyms": [
+      "急于求成"
+    ],
+    "antonyms": [
+      "循序渐进"
+    ],
+    "example": "教育孩子不能拔苗助长，要遵循他们的成长规律。"
+  },
+  {
+    "name": "拔山举鼎",
+    "pinyin": "bá shān jǔ dǐng",
+    "meaning": "形容力气很大。",
+    "synonyms": [
+      "力大无穷"
+    ],
+    "example": "即使有拔山举鼎之力，也难敌众人的智慧。"
+  },
+  {
+    "name": "八仙过海",
+    "pinyin": "bā xiān guò hǎi",
+    "meaning": "比喻各自拿出本领或办法，互相竞赛。",
+    "synonyms": [
+      "各显神通"
+    ],
+    "example": "这次比赛大家真是八仙过海，各显神通。"
+  },
+  {
+    "name": "白璧无瑕",
+    "pinyin": "bái bì wú xiá",
+    "meaning": "洁白的美玉没有一点瑕疵。比喻人或事物完美无缺。",
+    "synonyms": [
+      "完美无缺"
+    ],
+    "antonyms": [
+      "美中不足"
+    ],
+    "example": "这件艺术品简直是白璧无瑕。"
+  },
+  {
+    "name": "百发百中",
+    "pinyin": "bǎi fā bǎi zhòng",
+    "meaning": "形容射箭或射击技术高超，每次都能命中。",
+    "synonyms": [
+      "弹无虚发"
+    ],
+    "example": "神枪手百发百中，令敌人胆寒。"
+  },
+  {
+    "name": "百孔千疮",
+    "pinyin": "bǎi kǒng qiān chuāng",
+    "meaning": "形容破坏得很严重或弊病很多。",
+    "synonyms": [
+      "千疮百孔"
+    ],
+    "example": "这座古城历经战乱，已是百孔千疮。"
+  },
+  {
+    "name": "百口莫辩",
+    "pinyin": "bǎi kǒu mò biàn",
+    "meaning": "即使有一百张嘴也辩解不清。形容受到冤屈，难以分辩。",
+    "example": "面对确凿的证据，他真是百口莫辩。"
+  },
+  {
+    "name": "百里挑一",
+    "pinyin": "bǎi lǐ tiāo yī",
+    "meaning": "一百个里面挑选出一个。形容极其优秀或难得。",
+    "synonyms": [
+      "凤毛麟角"
+    ],
+    "example": "这匹马可是百里挑一的良驹。"
+  },
+  {
+    "name": "百年大计",
+    "pinyin": "bǎi nián dà jì",
+    "meaning": "指关系到长远利益的计划或措施。",
+    "example": "教育是国家的百年大计。"
+  },
+  {
+    "name": "白手起家",
+    "pinyin": "bái shǒu qǐ jiā",
+    "meaning": "形容在没有基础和条件很差的情况下自力更生，艰苦创业。",
+    "synonyms": [
+      "自力更生"
+    ],
+    "example": "他白手起家，创办了这家跨国公司。"
+  },
+  {
+    "name": "百闻不如一见",
+    "pinyin": "bǎi wén bù rú yī jiàn",
+    "meaning": "听一百次比如看一次。形容亲眼看到的才真实可靠。",
+    "example": "真是百闻不如一见，这里的风景比传说中更美。"
+  },
+  {
+    "name": "百依百顺",
+    "pinyin": "bǎi yī bǎi shùn",
+    "meaning": "形容一切都顺从别人。",
+    "synonyms": [
+      "唯命是从"
+    ],
+    "antonyms": [
+      "桀骜不驯"
+    ],
+    "example": "由于溺爱，他对孩子总是百依百顺。"
+  },
+  {
+    "name": "百战百胜",
+    "pinyin": "bǎi zhàn bǎi shèng",
+    "meaning": "每战必胜。形容所向无敌。",
+    "synonyms": [
+      "所向披靡"
+    ],
+    "antonyms": [
+      "屡战屡败"
+    ],
+    "example": "这支百战百胜的军队是国家的骄傲。"
+  },
+  {
+    "name": "百折不挠",
+    "pinyin": "bǎi zhé bù náo",
+    "meaning": "比喻意志坚强，无论受到多少次挫折都不屈服。",
+    "synonyms": [
+      "坚忍不拔",
+      "百折不回"
+    ],
+    "antonyms": [
+      "知难而退",
+      "一蹶不振"
+    ],
+    "example": "科学家们正是凭着这种百折不挠的精神，才攻克了一个又一个难关。"
+  },
+  {
+    "name": "半斤八两",
+    "pinyin": "bàn jīn bā liǎng",
+    "meaning": "比喻彼此一样，不相上下（多含贬义）。",
+    "synonyms": [
+      "旗鼓相当"
+    ],
+    "example": "你们两个的水平真是半斤八两，谁也别笑话谁。"
+  },
+  {
+    "name": "班门弄斧",
+    "pinyin": "bān mén nòng fǔ",
+    "meaning": "比喻在行家面前卖弄本领。",
+    "synonyms": [
+      "布鼓雷门",
+      "自不量力"
+    ],
+    "antonyms": [
+      "深藏不露",
+      "虚怀若谷"
+    ],
+    "example": "我在各位专家面前谈建筑，真是班门弄斧了。"
+  },
+  {
+    "name": "半途而废",
+    "pinyin": "bàn tú ér fèi",
+    "meaning": "指做事不能坚持到底，中途停顿，有始无终。",
+    "synonyms": [
+      "浅尝辄止",
+      "有始无终"
+    ],
+    "antonyms": [
+      "持之以恒",
+      "坚持不懈"
+    ],
+    "example": "学习要有恒心，绝不能半途而废。"
+  },
+  {
+    "name": "半信半疑",
+    "pinyin": "bàn xìn bàn yí",
+    "meaning": "有点相信，又有点怀疑。",
+    "synonyms": [
+      "将信将疑"
+    ],
+    "antonyms": [
+      "深信不疑"
+    ],
+    "example": "对于这种传言，大家都是半信半疑。"
+  },
+  {
+    "name": "包罗万象",
+    "pinyin": "bāo luó wàn xiàng",
+    "meaning": "形容内容丰富，应有尽有。",
+    "synonyms": [
+      "应有尽有"
+    ],
+    "example": "这座博物馆的藏品真是包罗万象。"
+  },
+  {
+    "name": "暴跳如雷",
+    "pinyin": "bào tiào rú léi",
+    "meaning": "形容大发脾气或十分着急的样子。",
+    "synonyms": [
+      "大发雷霆"
+    ],
+    "antonyms": [
+      "心平气和"
+    ],
+    "example": "听到这个消息，他气得暴跳如雷。"
+  },
+  {
+    "name": "抱头鼠窜",
+    "pinyin": "bào tóu shǔ cuàn",
+    "meaning": "形容受到打击后狼狈逃跑。",
+    "synonyms": [
+      "丢盔弃甲"
+    ],
+    "example": "敌军被打得抱头鼠窜，四处逃散。"
+  },
+  {
+    "name": "杯弓蛇影",
+    "pinyin": "bēi gōng shé yǐng",
+    "meaning": "比喻疑神疑鬼，自相惊扰。",
+    "synonyms": [
+      "草木皆兵",
+      "疑神疑鬼"
+    ],
+    "antonyms": [
+      "坦荡无私"
+    ],
+    "example": "那是你由于过于紧张而产生的幻觉，不要杯弓蛇影了。"
+  },
+  {
+    "name": "笨鸟先飞",
+    "pinyin": "bèn niǎo xiān fēi",
+    "meaning": "比喻能力差的人怕落后，做事比别人先动手。",
+    "synonyms": [
+      "勤能补拙"
+    ],
+    "example": "既然我不聪明，那我就笨鸟先飞，多花点时间复习。"
+  },
+  {
+    "name": "比比皆是",
+    "pinyin": "bǐ bǐ jiē shì",
+    "meaning": "到处都是，形容极其常见。",
+    "synonyms": [
+      "触目皆是",
+      "多如牛毛"
+    ],
+    "antonyms": [
+      "凤毛麟角"
+    ],
+    "example": "这种好人在我们这里比比皆是。"
+  },
+  {
+    "name": "闭门造车",
+    "pinyin": "bì mén zào chē",
+    "meaning": "关起门来造车子。比喻脱离实际，只凭主观办事。",
+    "example": "搞设计不能闭门造车，要多去现场看看。"
+  },
+  {
+    "name": "逼上梁山",
+    "pinyin": "bī shàng liáng shān",
+    "meaning": "比喻被迫进行反抗或做某事。",
+    "example": "我也是被逼上梁山，才不得不出此下策。"
+  },
+  {
+    "name": "别出心裁",
+    "pinyin": "bié chū xīn cái",
+    "meaning": "独创一格，与众不同。",
+    "synonyms": [
+      "别具一格",
+      "独树一帜"
+    ],
+    "example": "这次晚会的节目安排真是别出心裁。"
+  },
+  {
+    "name": "别具一格",
+    "pinyin": "bié jù yī gé",
+    "meaning": "另有一种独特的风格。",
+    "synonyms": [
+      "独树一帜",
+      "别开生面"
+    ],
+    "antonyms": [
+      "千篇一律",
+      "如出一辙"
+    ],
+    "example": "他的装修风格别具一格，让人眼前一亮。"
+  },
+  {
+    "name": "兵贵神速",
+    "pinyin": "bīng guì shén sù",
+    "meaning": "用兵贵在行动迅速。",
+    "example": "兵贵神速，我们必须立刻出发救援。"
+  },
+  {
+    "name": "冰清玉洁",
+    "pinyin": "bīng qīng yù jié",
+    "meaning": "像冰那样清澈，像玉那样洁白。比喻人操行清白，品格高洁。",
+    "example": "她有着冰清玉洁的高尚品质。"
+  },
+  {
+    "name": "冰释前嫌",
+    "pinyin": "bīng shì qián xián",
+    "meaning": "比喻人与人之间的矛盾完全消除。",
+    "synonyms": [
+      "重归于好"
+    ],
+    "example": "经过这次谈话，两人终于冰释前嫌。"
+  },
+  {
+    "name": "博古通今",
+    "pinyin": "bó gǔ tōng jīn",
+    "meaning": "通晓古今的事情。形容知识渊博。",
+    "synonyms": [
+      "博学多才"
+    ],
+    "example": "这位老教授博古通今，深受学生爱戴。"
+  },
+  {
+    "name": "不卑不亢",
+    "pinyin": "bù bēi bù kàng",
+    "meaning": "既不自卑，也不高傲。形容态度得体，分寸掌握得好。",
+    "example": "在外交场合，我们要做到不卑不亢。"
+  },
+  {
+    "name": "不耻下问",
+    "pinyin": "bù chǐ xià wèn",
+    "meaning": "指不以向地位比自己低、知识比自己少的人请教为耻。形容虚心好学。",
+    "synonyms": [
+      "虚心好学",
+      "不耻下教"
+    ],
+    "antonyms": [
+      "好为人师",
+      "骄傲自满"
+    ],
+    "example": "我们在学习上要发扬不耻下问的精神。"
+  },
+  {
+    "name": "不甘示弱",
+    "pinyin": "bù gān shì ruò",
+    "meaning": "不甘心表现得比别人差。",
+    "synonyms": [
+      "力争上游",
+      "奋起直追"
+    ],
+    "antonyms": [
+      "甘拜下风",
+      "自暴自弃"
+    ],
+    "example": "在比赛中，选手们个个精神抖擞，谁也不甘示弱。"
+  },
+  {
+    "name": "不可思议",
+    "pinyin": "bù kě sī yì",
+    "meaning": "原为佛教用语，指言语思维无法达到的境界。现形容事物无法想象，难以理解。",
+    "synonyms": [
+      "难以置信",
+      "匪夷所思"
+    ],
+    "antonyms": [
+      "一目了然",
+      "顺理成章"
+    ],
+    "example": "这简直是个不可思议的奇迹。"
+  }
+]

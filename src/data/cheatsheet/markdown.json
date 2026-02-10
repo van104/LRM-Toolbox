@@ -1,0 +1,61 @@
+{
+  "id": "markdown",
+  "name": "Markdown 语法",
+  "sections": [
+    {
+      "title": "基础样式",
+      "items": [
+        {
+          "cmd": "# H1, ## H2, ### H3",
+          "desc": "各级标题"
+        },
+        {
+          "cmd": "**Bold**, *Italic*",
+          "desc": "粗体与斜体"
+        },
+        {
+          "cmd": "[Title](URL)",
+          "desc": "超链接"
+        },
+        {
+          "cmd": "![Alt](ImageURL)",
+          "desc": "插入图片"
+        }
+      ]
+    },
+    {
+      "title": "列表与引用",
+      "items": [
+        {
+          "cmd": "- Item, 1. First",
+          "desc": "无序/有序列表"
+        },
+        {
+          "cmd": "> Quote line",
+          "desc": "引用块"
+        },
+        {
+          "cmd": "- [ ] Task, - [x] Done",
+          "desc": "任务列表"
+        }
+      ]
+    },
+    {
+      "title": "代码与表格",
+      "items": [
+        {
+          "cmd": "`code` / ```lang ... ```",
+          "desc": "行内/块状代码"
+        },
+        {
+          "cmd": "| H1 | H2 |",
+          "desc": "表格结构"
+        },
+        {
+          "cmd": "---",
+          "desc": "水平分割线"
+        }
+      ]
+    }
+  ]
+}

@@ -56,44 +56,36 @@
   import { ref, onMounted } from 'vue';
   import { Back } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
-  import { quoteCategories, quotes } from '@/data/quotesData';
-  import { poems } from '@/data/poetryData';
+  import { quoteCategories, loadQuotes } from '@/data/quotes';
 
   const activeCategory = ref('poetry');
   const currentQuote = ref(null);
   const fontSize = ref(24);
   const currentBg = ref('#ffffff');
+  const currentCategoryQuotes = ref([]);
 
   const backgrounds = ['#ffffff', '#fdf2f8', '#eff6ff', '#f0fdf4', '#fffbeb', '#f5f3ff'];
 
-  const switchCategory = id => {
+  const switchCategory = async id => {
     activeCategory.value = id;
+    currentCategoryQuotes.value = await loadQuotes(id);
     generateQuote();
   };
 
-  const generateQuote = () => {
-    if (activeCategory.value === 'poetry') {
-      const randomPoemIdx = Math.floor(Math.random() * poems.length);
-      const poem = poems[randomPoemIdx];
-
-      const lines = poem.content.filter(l => l.length >= 4);
-      const randomLineIdx = Math.floor(Math.random() * lines.length);
-
-      currentQuote.value = {
-        content: lines[randomLineIdx],
-        author: `${poem.author}《${poem.title}》`
-      };
-    } else {
-      const list = quotes.filter(q => q.category === activeCategory.value);
-      if (list.length === 0) return;
-
-      let random;
-      do {
-        random = Math.floor(Math.random() * list.length);
-      } while (list.length > 1 && list[random].content === currentQuote.value?.content);
-
-      currentQuote.value = list[random];
+  const generateQuote = async () => {
+    if (currentCategoryQuotes.value.length === 0) {
+      currentCategoryQuotes.value = await loadQuotes(activeCategory.value);
     }
+
+    const list = currentCategoryQuotes.value;
+    if (list.length === 0) return;
+
+    let random;
+    do {
+      random = Math.floor(Math.random() * list.length);
+    } while (list.length > 1 && list[random].content === currentQuote.value?.content);
+
+    currentQuote.value = list[random];
   };
 
   const changeBg = () => {
@@ -102,13 +94,14 @@
   };
 
   const copyQuote = () => {
+    if (!currentQuote.value) return;
     const text = `“${currentQuote.value.content}” ${currentQuote.value.author ? '— ' + currentQuote.value.author : ''}`;
     navigator.clipboard.writeText(text);
     ElMessage.success('已复制到剪贴板');
   };
 
-  onMounted(() => {
-    generateQuote();
+  onMounted(async () => {
+    await switchCategory('poetry');
   });
 </script>
 

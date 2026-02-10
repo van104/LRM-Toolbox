@@ -72,17 +72,26 @@
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue';
+  import { ref, watch, onMounted } from 'vue';
   import * as Icons from '@element-plus/icons-vue';
-  import { searchServices } from '@/data/publicServicesData';
+  import { searchServices } from '@/data/public_services';
 
   // For template use
   const { Back, Search, ArrowRight } = Icons;
 
   const searchQuery = ref('');
+  const filteredServices = ref([]);
 
-  const filteredServices = computed(() => {
-    return searchServices(searchQuery.value);
+  const performSearch = async () => {
+    filteredServices.value = await searchServices(searchQuery.value);
+  };
+
+  watch(searchQuery, () => {
+    performSearch();
+  });
+
+  onMounted(() => {
+    performSearch();
   });
 
   const openService = service => {

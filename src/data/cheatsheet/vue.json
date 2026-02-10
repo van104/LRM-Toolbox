@@ -1,0 +1,65 @@
+{
+  "id": "vue",
+  "name": "Vue 3 核心语法",
+  "sections": [
+    {
+      "title": "响应式 API",
+      "items": [
+        {
+          "cmd": "const count = ref(0)",
+          "desc": "基本类型响应式"
+        },
+        {
+          "cmd": "const state = reactive({})",
+          "desc": "对象响应式"
+        },
+        {
+          "cmd": "computed(() => count.value * 2)",
+          "desc": "计算属性"
+        },
+        {
+          "cmd": "watch(src, (n, o) => {})",
+          "desc": "监听器"
+        }
+      ]
+    },
+    {
+      "title": "生命周期",
+      "items": [
+        {
+          "cmd": "onMounted(() => {})",
+          "desc": "挂载完成"
+        },
+        {
+          "cmd": "onUpdated(() => {})",
+          "desc": "更新完成"
+        },
+        {
+          "cmd": "onUnmounted(() => {})",
+          "desc": "卸载完成"
+        }
+      ]
+    },
+    {
+      "title": "指令",
+      "items": [
+        {
+          "cmd": "v-if / v-else",
+          "desc": "条件渲染"
+        },
+        {
+          "cmd": "v-for=\"(item, i) in list\"",
+          "desc": "列表渲染"
+        },
+        {
+          "cmd": "v-model=\"val\"",
+          "desc": "双向绑定"
+        },
+        {
+          "cmd": "@click=\"handler\"",
+          "desc": "事件绑定"
+        }
+      ]
+    }
+  ]
+}

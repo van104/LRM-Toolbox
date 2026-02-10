@@ -1,0 +1,17 @@
+[
+  {
+    "name": "修复字典数据中的语法错误 (Fix syntax error in dictionary data)",
+    "status": "completed",
+    "description": "Fixed the syntax error caused by extra closing brace and text around line 483 in `src/data/dictionaryData.ts`."
+  },
+  {
+    "name": "批量补充成语释义和例句 (Batch populate idiom meanings and examples)",
+    "status": "completed",
+    "description": "Systematically replaced all placeholders for idioms starting with 'A' (including 'An', 'Ang', 'Ao') with accurate meanings and examples."
+  },
+  {
+    "name": "验证剩余占位符 (Verify remaining placeholders)",
+    "status": "completed",
+    "description": "Verified and fixed user-reported missing entries (e.g., '昂首伸眉', '卬首信眉', '昂首天外'). Confirmed file integrity."
+  }
+]

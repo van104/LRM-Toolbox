@@ -1,0 +1,109 @@
+[
+  {
+    "name": "喜出望外",
+    "pinyin": "xǐ chū wàng wài",
+    "meaning": "由于没有想到的好事而非常高兴。",
+    "synonyms": [
+      "大喜过望"
+    ],
+    "antonyms": [
+      "大失所望"
+    ],
+    "example": "收到这封录取通知书，全家人都喜出望外。"
+  },
+  {
+    "name": "心旷神怡",
+    "pinyin": "xīn kuàng shén yí",
+    "meaning": "心情舒畅，精神愉快。",
+    "synonyms": [
+      "赏心悦目"
+    ],
+    "antonyms": [
+      "心烦意乱"
+    ],
+    "example": "站在山顶俯瞰美景，令人心旷神怡。"
+  },
+  {
+    "name": "信誓旦旦",
+    "pinyin": "xìn shì dàn dàn",
+    "meaning": "誓言说得真实可信。",
+    "synonyms": [
+      "言之凿凿"
+    ],
+    "antonyms": [
+      "言而无信"
+    ],
+    "example": "他信誓旦旦地保证一定会完成任务。"
+  },
+  {
+    "name": "欣欣向荣",
+    "pinyin": "xīn xīn xiàng róng",
+    "meaning": "形容草木长得茂盛。比喻事业蓬勃发展。",
+    "synonyms": [
+      "昌盛",
+      "繁荣"
+    ],
+    "antonyms": [
+      "枯萎",
+      "凋谢"
+    ],
+    "example": "这里的经济呈现出一派欣欣向荣的景象。"
+  },
+  {
+    "name": "雄心壮志",
+    "pinyin": "xióng xīn zhuàng zhì",
+    "meaning": "指远大的理想和抱负。",
+    "synonyms": [
+      "胸怀大志"
+    ],
+    "example": "年轻人应该树立起雄心壮志。"
+  },
+  {
+    "name": "胸有成竹",
+    "pinyin": "xiōng yǒu chéng zhú",
+    "meaning": "原指画竹子要在心里有一幅竹子的形象。后比喻做事之前已经有通盘的考虑。",
+    "synonyms": [
+      "心中有数",
+      "成竹在胸"
+    ],
+    "antonyms": [
+      "不知所措",
+      "手忙脚乱"
+    ],
+    "example": "对于这次考试，他早已复习得胸有成竹了。"
+  },
+  {
+    "name": "栩栩如生",
+    "pinyin": "xǔ xǔ rú shēng",
+    "meaning": "指画作、雕塑等艺术品非常生动，像活的一样。",
+    "synonyms": [
+      "绘声绘色",
+      "惟妙惟肖"
+    ],
+    "antonyms": [
+      "死气沉沉"
+    ],
+    "example": "这尊雕像刻画得栩栩如生，仿佛随时都会走下来。"
+  },
+  {
+    "name": "悬梁刺股",
+    "pinyin": "xuán liáng cì gǔ",
+    "meaning": "形容刻苦学习。",
+    "synonyms": [
+      "刻苦钻研"
+    ],
+    "antonyms": [
+      "贪图安逸"
+    ],
+    "example": "古人悬梁刺股，发奋读书，最终成就了一番事业。"
+  },
+  {
+    "name": "循循善诱",
+    "pinyin": "xún xún shàn yòu",
+    "meaning": "善于有步骤地引导别人学习。",
+    "synonyms": [
+      "诲人不倦"
+    ],
+    "example": "王老师循循善诱，总能激发起学生的学习兴趣。"
+  }
+]

@@ -1,0 +1,61 @@
+[
+  {
+    "name": "杞人忧天",
+    "pinyin": "qǐ rén yōu tiān",
+    "meaning": "比喻不必要的忧虑。",
+    "synonyms": [
+      "庸人自扰"
+    ],
+    "antonyms": [
+      "高枕无忧"
+    ],
+    "example": "这事还没发生呢，你别杞人忧天。"
+  },
+  {
+    "name": "气势磅礴",
+    "pinyin": "qì shì páng bó",
+    "meaning": "形容气势极其宏伟浩大。",
+    "synonyms": [
+      "雄伟壮观"
+    ],
+    "example": "黄河壶口瀑布气势磅礴，令人震撼。"
+  },
+  {
+    "name": "千锤百炼",
+    "pinyin": "qiān chuí bǎi liàn",
+    "meaning": "比喻经历多次艰苦斗争的锻炼和考验。也指对文章和作品进行多次精心的修改。",
+    "synonyms": [
+      "精益求精"
+    ],
+    "antonyms": [
+      "粗制滥造"
+    ],
+    "example": "这篇好文章是经过千锤百炼改出来的。"
+  },
+  {
+    "name": "锲而不舍",
+    "pinyin": "qiè ér bù shě",
+    "meaning": "比喻有恒心，有毅力。",
+    "synonyms": [
+      "坚持不懈",
+      "持之以恒"
+    ],
+    "antonyms": [
+      "半途而废",
+      "有始无终"
+    ],
+    "example": "做任何事情都要有锲而不舍的精神。"
+  },
+  {
+    "name": "青出于蓝",
+    "pinyin": "qīng chū yú lán",
+    "meaning": "比喻学生超过老师，或后人超过前人。",
+    "synonyms": [
+      "后来居上"
+    ],
+    "antonyms": [
+      "一代不如一代"
+    ],
+    "example": "他的画功已经超过了他的老师，真是青出于蓝。"
+  }
+]

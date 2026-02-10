@@ -71,9 +71,9 @@
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue';
+  import { ref, watch, onMounted } from 'vue';
   import { Back, InfoFilled } from '@element-plus/icons-vue';
-  import { availableYears, getHolidaysByYear, getNextHoliday } from '@/data/holidayData';
+  import { availableYears, loadHolidays, getNextHoliday } from '@/data/holidays';
 
   const now = new Date();
   const defaultYear = now.getFullYear().toString();
@@ -81,12 +81,27 @@
     availableYears.includes(defaultYear) ? defaultYear : availableYears[availableYears.length - 1]
   );
 
-  const filteredHolidays = computed(() => {
-    return getHolidaysByYear(currentYear.value);
+  const filteredHolidays = ref([]);
+  const nextHoliday = ref({
+    name: '加载中...',
+    daysLeft: '-',
+    range: '-',
+    length: 0
   });
 
-  const nextHoliday = computed(() => {
-    return getNextHoliday();
+  const updateHolidays = async () => {
+    filteredHolidays.value = await loadHolidays(currentYear.value);
+  };
+
+  const updateNextHoliday = async () => {
+    nextHoliday.value = await getNextHoliday();
+  };
+
+  watch(currentYear, updateHolidays);
+
+  onMounted(() => {
+    updateHolidays();
+    updateNextHoliday();
   });
 </script>
 

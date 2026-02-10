@@ -132,19 +132,19 @@
     Warning,
     Grid
   } from '@element-plus/icons-vue';
-  import { wasteCategories, searchWaste, getCategoryTagType } from '@/data/wasteData';
+  import { wasteCategories, searchWaste, getCategoryTagType } from '@/data/waste';
 
   const searchQuery = ref('');
   const searchResult = ref([]);
 
   const categories = wasteCategories;
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (!searchQuery.value) {
       searchResult.value = [];
       return;
     }
-    searchResult.value = searchWaste(searchQuery.value);
+    searchResult.value = await searchWaste(searchQuery.value);
   };
 
   const getCategoryType = getCategoryTagType;

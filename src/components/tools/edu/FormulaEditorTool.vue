@@ -54,7 +54,8 @@
               class="preset-btn"
               @click="insert(item.latex)"
             >
-              <span v-if="item.label" class="p-latex">{{ item.label }}</span>
+              <!-- eslint-disable-next-line vue/no-v-html -->
+              <span v-if="item.label" class="p-latex" v-html="item.label"></span>
               <span v-else class="p-latex">$$ {{ item.latex }} $$</span>
             </button>
           </div>
@@ -99,6 +100,7 @@
   import { ElMessage } from 'element-plus';
   import useClipboard from 'vue-clipboard3';
   import 'mathlive';
+  import { MathfieldElement } from 'mathlive';
   import html2canvas from 'html2canvas';
   import katex from 'katex';
   import 'katex/dist/katex.min.css';
@@ -108,6 +110,73 @@
   const mathFieldRef = ref(null);
   const latex = ref('E = mc^2');
   const previewRef = ref(null);
+
+  // 全局汉化 MathfieldElement
+  const zhStrings = {
+    'menu.insert': '插入',
+    'menu.mode': '模式',
+    'menu.font-style': '字体样式',
+    'menu.color': '颜色',
+    'menu.background': '背景',
+    'menu.background-color': '背景颜色',
+    'menu.borders': '边框',
+    'menu.cut': '剪切',
+    'menu.copy': '复制',
+    'menu.paste': '粘贴',
+    'menu.select-all': '全选',
+    'menu.undo': '撤销',
+    'menu.redo': '重做',
+    'menu.insert matrix': '插入矩阵',
+
+    // 矩阵/数组操作
+    'menu.array.add row above': '在上方插入行',
+    'menu.array.add row below': '在下方插入行',
+    'menu.array.add column after': '在右侧插入列',
+    'menu.array.add column before': '在左侧插入列',
+    'menu.array.delete row': '删除行',
+    'menu.array.delete rows': '删除选中行',
+    'menu.array.delete column': '删除列',
+    'menu.array.delete columns': '删除选中列',
+
+    // 模式
+    'menu.mode-math': '数学模式',
+    'menu.mode-text': '文本模式',
+    'menu.mode-latex': 'LaTeX 模式',
+
+    // 插入子菜单
+    'menu.insert.abs': '绝对值',
+    'menu.insert.nth-root': 'N 次根号',
+    'menu.insert.log-base': '对数 (底数 a)',
+    'menu.insert.heading-calculus': '微积分',
+    'menu.insert.derivative': '导数',
+    'menu.insert.nth-derivative': 'N 阶导数',
+    'menu.insert.integral': '积分',
+    'menu.insert.sum': '求和',
+    'menu.insert.product': '乘积',
+    'menu.insert.heading-complex-numbers': '复数',
+    'menu.insert.modulus': '模',
+    'menu.insert.argument': '幅角',
+    'menu.insert.real-part': '实部',
+    'menu.insert.imaginary-part': '虚部',
+    'menu.insert.conjugate': '共轭',
+
+    // 其他
+    'menu.accent': '重音符号',
+    'menu.decoration': '装饰',
+    'menu.evaluate': '计算',
+    'menu.simplify': '化简',
+    'menu.solve': '求解',
+
+    // 复制为 (MathLive 常用 key 格式)
+    'menu.copy-as-latex': '复制为 LaTeX',
+    'menu.copy-as-mathml': '复制为 MathML',
+    'menu.copy-as-typst': '复制为 Typst',
+    'menu.copy-as-ascii-math': '复制为 AsciiMath'
+  };
+
+  MathfieldElement.strings['zh-cn'] = { ...MathfieldElement.strings?.['zh-cn'], ...zhStrings };
+  MathfieldElement.strings['zh-CN'] = MathfieldElement.strings['zh-cn']; // 兼容大小写
+  MathfieldElement.locale = 'zh-cn';
 
   const presets = [
     { label: '分数', latex: '\\frac{a}{b}' },
@@ -188,72 +257,57 @@
     if (mathFieldRef.value) {
       mathFieldRef.value.setOptions({
         virtualKeyboardMode: 'manual',
-        menuItems: [
-          {
-            label: '剪切',
-            command: 'cut'
-          },
-          {
-            label: '复制',
-            command: 'copy'
-          },
-          {
-            label: '粘贴',
-            command: 'paste'
-          },
-          { type: 'divider' },
-          {
-            label: '全选',
-            command: 'select-all'
-          },
-          { type: 'divider' },
-          {
-            label: '插入',
-            submenu: [
-              { label: '分数', command: ['insert', '\\frac{#@}{#?}'] },
-              { label: '根号', command: ['insert', '\\sqrt{#0}'] },
-              { label: '幂', command: ['insert', '#@^{#?}'] },
-              { label: '下标', command: ['insert', '#@_{#?}'] }
-            ]
-          },
-          {
-            label: '矩阵',
-            submenu: [
-              {
-                label: '插入矩阵',
-                command: ['insert', '\\begin{pmatrix} & \\\\ & \\end{pmatrix}']
-              },
-              { label: '增加行', command: 'addRowAfter' },
-              { label: '增加列', command: 'addColumnAfter' },
-              { label: '删除行', command: 'removeRow' },
-              { label: '删除列', command: 'removeColumn' }
-            ]
-          },
-          {
-            label: '色彩',
-            submenu: [
-              { label: '红色', command: ['applyStyle', { color: 'red' }] },
-              { label: '蓝色', command: ['applyStyle', { color: 'blue' }] },
-              { label: '绿色', command: ['applyStyle', { color: 'green' }] }
-            ]
-          },
-          {
-            label: '背景',
-            submenu: [
-              { label: '黄色高亮', command: ['applyStyle', { backgroundColor: 'yellow' }] },
-              { label: '清除背景', command: ['applyStyle', { backgroundColor: 'none' }] }
-            ]
-          },
-          { type: 'divider' },
-          {
-            label: '撤销',
-            command: 'undo'
-          },
-          {
-            label: '重做',
-            command: 'redo'
-          }
-        ]
+        locale: 'zh-cn',
+        computeContextMenu: () => {
+          return [
+            { label: '剪切', command: 'cut' },
+            { label: '复制', command: 'copy' },
+            { label: '粘贴', command: 'paste' },
+            { type: 'divider' },
+            { label: '全选', command: 'select-all' },
+            { type: 'divider' },
+            {
+              label: '插入',
+              submenu: [
+                { label: '分数', command: ['insert', '\\frac{#@}{#?}'] },
+                { label: '根号', command: ['insert', '\\sqrt{#0}'] },
+                { label: '幂', command: ['insert', '#@^{#?}'] },
+                { label: '下标', command: ['insert', '#@_{#?}'] }
+              ]
+            },
+            {
+              label: '矩阵',
+              submenu: [
+                {
+                  label: '插入矩阵',
+                  command: ['insert', '\\begin{pmatrix} & \\\\ & \\end{pmatrix}']
+                },
+                { label: '增加行', command: 'addRowAfter' },
+                { label: '增加列', command: 'addColumnAfter' },
+                { label: '删除行', command: 'removeRow' },
+                { label: '删除列', command: 'removeColumn' }
+              ]
+            },
+            {
+              label: '色彩',
+              submenu: [
+                { label: '红色', command: ['applyStyle', { color: 'red' }] },
+                { label: '蓝色', command: ['applyStyle', { color: 'blue' }] },
+                { label: '绿色', command: ['applyStyle', { color: 'green' }] }
+              ]
+            },
+            {
+              label: '背景',
+              submenu: [
+                { label: '黄色高亮', command: ['applyStyle', { backgroundColor: 'yellow' }] },
+                { label: '清除背景', command: ['applyStyle', { backgroundColor: 'none' }] }
+              ]
+            },
+            { type: 'divider' },
+            { label: '撤销', command: 'undo' },
+            { label: '重做', command: 'redo' }
+          ];
+        }
       });
     }
   });

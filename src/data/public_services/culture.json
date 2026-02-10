@@ -1,0 +1,35 @@
+{
+  "id": "culture",
+  "name": "文化旅游",
+  "icon": "MapLocation",
+  "items": [
+    {
+      "title": "国家博物馆预约",
+      "desc": "中国国家博物馆参观预约",
+      "icon": "Ticket",
+      "color": "#f5222d",
+      "url": "https://www.chnmuseum.cn/"
+    },
+    {
+      "title": "故宫博物院票务",
+      "desc": "故宫门票预约及展览查询",
+      "icon": "Location",
+      "color": "#cf1322",
+      "url": "https://piao.dpm.org.cn/"
+    },
+    {
+      "title": "国家图书馆",
+      "desc": "图书检索、数字资源访问",
+      "icon": "Reading",
+      "color": "#1890ff",
+      "url": "http://www.nlc.cn/"
+    },
+    {
+      "title": "全国重点文物保护",
+      "desc": "全国重点文物保护单位名录",
+      "icon": "Stamp",
+      "color": "#faad14",
+      "url": "http://www.ncha.gov.cn/"
+    }
+  ]
+}

@@ -142,9 +142,11 @@
         </el-tab-pane>
         <el-tab-pane label="全库浏览" name="browse">
           <div class="browse-area glass-card">
+            <div v-if="loading" class="loading-hint">正在加载成语词库...</div>
             <RecycleScroller
+              v-else
               class="dictionary-scroller"
-              :items="dictionary"
+              :items="allIdioms"
               :item-size="60"
               key-field="name"
             >
@@ -168,9 +170,11 @@
   import { ref, onMounted } from 'vue';
   import { Back, Search, Right, Refresh } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
-  import { dictionary } from '@/data/dictionaryData';
+  import { loadAll, search, getRandomIdioms } from '@/data/idioms';
 
   const activeTab = ref('solitaire');
+  const loading = ref(true);
+  const allIdioms = ref([]);
 
   const chain = ref([]);
   const userInput = ref('');
@@ -214,14 +218,14 @@
   const query = ref('');
   const result = ref(null);
 
-  const lookupWord = () => {
+  const lookupWord = async () => {
     if (!query.value) {
       result.value = null;
       return;
     }
-    const found = dictionary.find(d => d.name === query.value || d.name.includes(query.value));
-    if (found) {
-      result.value = found;
+    const results = await search(query.value);
+    if (results.length > 0) {
+      result.value = results[0];
     } else {
       ElMessage.info('词库中暂未收录该词条。');
       result.value = null;
@@ -230,9 +234,8 @@
 
   const randomIdioms = ref([]);
 
-  const refreshRandomIdioms = () => {
-    const shuffled = [...dictionary].sort(() => 0.5 - Math.random());
-    randomIdioms.value = shuffled.slice(0, 6);
+  const refreshRandomIdioms = async () => {
+    randomIdioms.value = await getRandomIdioms(6);
   };
 
   const selectIdiom = item => {
@@ -245,8 +248,11 @@
     activeTab.value = 'lookup';
   };
 
-  onMounted(() => {
-    refreshRandomIdioms();
+  onMounted(async () => {
+    loading.value = true;
+    allIdioms.value = await loadAll();
+    loading.value = false;
+    await refreshRandomIdioms();
   });
 </script>
 

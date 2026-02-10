@@ -1,0 +1,61 @@
+{
+  "id": "css",
+  "name": "CSS 现代布局",
+  "sections": [
+    {
+      "title": "Flexbox (弹性)",
+      "items": [
+        {
+          "cmd": "display: flex;",
+          "desc": "开启弹性布局"
+        },
+        {
+          "cmd": "justify-content: center;",
+          "desc": "主轴居中"
+        }
+      ]
+    },
+    {
+      "title": "Grid (网格)",
+      "items": [
+        {
+          "cmd": "display: grid;",
+          "desc": "开启网格布局"
+        },
+        {
+          "cmd": "grid-template-columns: 1fr 1fr;",
+          "desc": "两列等宽"
+        },
+        {
+          "cmd": "gap: 10px;",
+          "desc": "行列间距"
+        },
+        {
+          "cmd": "place-items: center;",
+          "desc": "全面居中"
+        }
+      ]
+    },
+    {
+      "title": "常用技巧",
+      "items": [
+        {
+          "cmd": "text-overflow: ellipsis;",
+          "desc": "文本溢出省略"
+        },
+        {
+          "cmd": "box-sizing: border-box;",
+          "desc": "盒模型修正"
+        },
+        {
+          "cmd": "cursor: pointer;",
+          "desc": "鼠标手型"
+        },
+        {
+          "cmd": "z-index: 100;",
+          "desc": "层级控制"
+        }
+      ]
+    }
+  ]
+}

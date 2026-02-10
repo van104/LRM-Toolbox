@@ -1,0 +1,111 @@
+[
+  {
+    "name": "慢条斯理",
+    "pinyin": "màn tiáo sī lǐ",
+    "meaning": "形容动作缓慢，情绪从容。",
+    "synonyms": [
+      "从容不迫"
+    ],
+    "antonyms": [
+      "风风火火",
+      "心急如焚"
+    ],
+    "example": "他总是慢条斯理地说话，从来不着急。"
+  },
+  {
+    "name": "满载而归",
+    "pinyin": "mǎn zài ér guī",
+    "meaning": "装得满满地回来。比喻收获很大。",
+    "example": "这次出海捕鱼，渔民们满载而归。"
+  },
+  {
+    "name": "眉飞色舞",
+    "pinyin": "méi fēi sè wǔ",
+    "meaning": "形容非常高兴得意。",
+    "synonyms": [
+      "喜笑颜开"
+    ],
+    "antonyms": [
+      "愁眉苦脸"
+    ],
+    "example": "想起那件事，他忍不住眉飞色舞地讲了起来。"
+  },
+  {
+    "name": "门庭若市",
+    "pinyin": "mén tíng ruò shì",
+    "meaning": "形容来往的人很多。",
+    "synonyms": [
+      "热闹非凡"
+    ],
+    "antonyms": [
+      "门可罗雀",
+      "冷冷清清"
+    ],
+    "example": "自从他当选后，家里每天都是门庭若市。"
+  },
+  {
+    "name": "妙语连珠",
+    "pinyin": "miào yǔ lián zhū",
+    "meaning": "巧妙风趣的话一个接一个。",
+    "synonyms": [
+      "出口成章"
+    ],
+    "example": "他在台上的演讲妙语连珠，引得台下掌声雷动。"
+  },
+  {
+    "name": "名副其实",
+    "pinyin": "míng fù qí shí",
+    "meaning": "名声与实际相符。",
+    "synonyms": [
+      "名副其实",
+      "言行一致"
+    ],
+    "antonyms": [
+      "名不副实",
+      "虚有其表"
+    ],
+    "example": "他是一个名副其实的运动天才。"
+  },
+  {
+    "name": "名贯满盈",
+    "pinyin": "míng guàn mǎn yíng",
+    "meaning": "形容名声很大。",
+    "synonyms": [
+      "赫赫有名",
+      "声名显赫"
+    ],
+    "antonyms": [
+      "默默无闻",
+      "名不见经传"
+    ],
+    "example": "他是一位名贯满盈的科学家。"
+  },
+  {
+    "name": "名列前茅",
+    "pinyin": "míng liè qián máo",
+    "meaning": "比喻名次排在前面。",
+    "synonyms": [
+      "首屈一指",
+      "出类拔萃"
+    ],
+    "antonyms": [
+      "名落孙山",
+      "滥竽充数"
+    ],
+    "example": "他在这次期末考试中名列前茅。"
+  },
+  {
+    "name": "莫名其妙",
+    "pinyin": "mò míng qí miào",
+    "meaning": "原意是说不出其中的奥妙。现指事情很奇怪，让人不明白。",
+    "synonyms": [
+      "百思不解",
+      "不可思议"
+    ],
+    "antonyms": [
+      "显而易见",
+      "一目了然"
+    ],
+    "example": "他突然发火，让大家感到莫名其妙。"
+  }
+]

@@ -1,0 +1,49 @@
+{
+  "id": "utility",
+  "name": "生活工具",
+  "icon": "HelpFilled",
+  "items": [
+    {
+      "title": "天气预报查询",
+      "desc": "中国天气网权威预报",
+      "icon": "Sunny",
+      "color": "#faad14",
+      "url": "http://www.weather.com.cn/"
+    },
+    {
+      "title": "空气质量查询",
+      "desc": "全国城市空气质量指数",
+      "icon": "WindPower",
+      "color": "#52c41a",
+      "url": "http://www.cnemc.cn/"
+    },
+    {
+      "title": "汇率查询",
+      "desc": "实时外汇牌价、汇率换算",
+      "icon": "TrendCharts",
+      "color": "#1890ff",
+      "url": "https://www.boc.cn/sourcedb/whpj/"
+    },
+    {
+      "title": "邮编区号查询",
+      "desc": "全国邮政编码、区号查询",
+      "icon": "Location",
+      "color": "#722ed1",
+      "url": "https://www.ip138.com/"
+    },
+    {
+      "title": "万年历/老黄历",
+      "desc": "农历、节气、宜忌查询",
+      "icon": "Calendar",
+      "color": "#eb2f96",
+      "url": "https://wannianli.tianqi.com/"
+    },
+    {
+      "title": "度量衡换算",
+      "desc": "长度、重量、面积单位换算",
+      "icon": "DataLine",
+      "color": "#13c2c2",
+      "url": "https://www.convertworld.com/zh-hans/"
+    }
+  ]
+}

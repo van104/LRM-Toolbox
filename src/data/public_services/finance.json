@@ -1,0 +1,35 @@
+{
+  "id": "finance",
+  "name": "金融服务",
+  "icon": "Money",
+  "items": [
+    {
+      "title": "生活缴费",
+      "desc": "水费、电费、燃气费在线缴纳",
+      "icon": "Wallet",
+      "color": "#fa8c16",
+      "url": "https://www.alipay.com/"
+    },
+    {
+      "title": "个人信用报告",
+      "desc": "央行征信中心，信用记录查询",
+      "icon": "Document",
+      "color": "#1890ff",
+      "url": "https://ipcrs.pbccrc.org.cn/"
+    },
+    {
+      "title": "银联在线",
+      "desc": "银行卡查询、转账服务",
+      "icon": "CreditCard",
+      "color": "#f5222d",
+      "url": "https://www.unionpay.com/"
+    },
+    {
+      "title": "发票查验",
+      "desc": "全国增值税发票查验平台",
+      "icon": "Tickets",
+      "color": "#722ed1",
+      "url": "https://inv-veri.chinatax.gov.cn/"
+    }
+  ]
+}

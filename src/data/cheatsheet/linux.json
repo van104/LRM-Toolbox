@@ -1,0 +1,69 @@
+{
+  "id": "linux",
+  "name": "Linux 常用命令",
+  "sections": [
+    {
+      "title": "文件与目录",
+      "items": [
+        {
+          "cmd": "ls -alh",
+          "desc": "查看文件列表及详情"
+        },
+        {
+          "cmd": "cd /path/to/dir",
+          "desc": "切换目录"
+        },
+        {
+          "cmd": "pwd",
+          "desc": "显示当前路径"
+        },
+        {
+          "cmd": "mkdir -p logs/2026",
+          "desc": "递归创建目录"
+        },
+        {
+          "cmd": "rm -rf tmp/",
+          "desc": "强制删除目录(慎用)"
+        }
+      ]
+    },
+    {
+      "title": "系统信息",
+      "items": [
+        {
+          "cmd": "top",
+          "desc": "监控系统进程(实时)"
+        },
+        {
+          "cmd": "df -h",
+          "desc": "查看磁盘空间"
+        },
+        {
+          "cmd": "free -m",
+          "desc": "查看内存使用"
+        },
+        {
+          "cmd": "uname -a",
+          "desc": "查看内核/系统信息"
+        }
+      ]
+    },
+    {
+      "title": "网络工具",
+      "items": [
+        {
+          "cmd": "ping <host>",
+          "desc": "测试网络连通性"
+        },
+        {
+          "cmd": "curl -I <url>",
+          "desc": "查看HTTP响应头"
+        },
+        {
+          "cmd": "netstat -tuln",
+          "desc": "查看监听端口"
+        }
+      ]
+    }
+  ]
+}

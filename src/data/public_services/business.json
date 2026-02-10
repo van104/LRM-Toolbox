@@ -1,0 +1,35 @@
+{
+  "id": "business",
+  "name": "企业服务",
+  "icon": "Shop",
+  "items": [
+    {
+      "title": "国家企业信用中心",
+      "desc": "企业信息、经营异常、行政处罚",
+      "icon": "Monitor",
+      "color": "#1890ff",
+      "url": "http://www.gsxt.gov.cn/"
+    },
+    {
+      "title": "企查查",
+      "desc": "企业背景、股权结构、法律诉讼",
+      "icon": "Search",
+      "color": "#52c41a",
+      "url": "https://www.qcc.com/"
+    },
+    {
+      "title": "天眼查",
+      "desc": "商业查询、关系发现",
+      "icon": "View",
+      "color": "#1890ff",
+      "url": "https://www.tianyancha.com/"
+    },
+    {
+      "title": "国家知识产权局",
+      "desc": "专利、商标查询与办理",
+      "icon": "Lock",
+      "color": "#faad14",
+      "url": "https://www.cnipa.gov.cn/"
+    }
+  ]
+}

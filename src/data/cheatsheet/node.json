@@ -1,0 +1,40 @@
+{
+  "id": "node",
+  "name": "Node.js 运行时",
+  "sections": [
+    {
+      "title": "基础命令",
+      "items": [
+        {
+          "cmd": "node -v",
+          "desc": "查看 node 版本"
+        },
+        {
+          "cmd": "node app.js",
+          "desc": "运行脚本"
+        },
+        {
+          "cmd": "node --inspect app.js",
+          "desc": "启动调试模式"
+        },
+        {
+          "cmd": "nvm install <ver>",
+          "desc": "使用 nvm 安装版本"
+        }
+      ]
+    },
+    {
+      "title": "环境变量",
+      "items": [
+        {
+          "cmd": "process.env.NODE_ENV",
+          "desc": "获取环境标志"
+        },
+        {
+          "cmd": "PORT=3000 node index.js",
+          "desc": "临时指定端口运行"
+        }
+      ]
+    }
+  ]
+}

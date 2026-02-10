@@ -1,0 +1,35 @@
+{
+  "id": "logistics",
+  "name": "生活物流",
+  "icon": "List",
+  "items": [
+    {
+      "title": "快递100",
+      "desc": "聚合顺丰、中通、圆通等物流",
+      "icon": "Connection",
+      "color": "#722ed1",
+      "url": "https://www.kuaidi100.com/"
+    },
+    {
+      "title": "顺丰速运",
+      "desc": "顺丰快递查询、寄件",
+      "icon": "Van",
+      "color": "#f5222d",
+      "url": "https://www.sf-express.com/"
+    },
+    {
+      "title": "中国邮政",
+      "desc": "EMS、挂号信查询",
+      "icon": "Message",
+      "color": "#52c41a",
+      "url": "https://www.ems.com.cn/"
+    },
+    {
+      "title": "菜鸟裹裹",
+      "desc": "快递查询、寄件、驿站服务",
+      "icon": "Box",
+      "color": "#fa8c16",
+      "url": "https://www.guoguo-app.com/"
+    }
+  ]
+}

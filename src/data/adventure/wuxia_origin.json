@@ -1,0 +1,174 @@
+{
+  "id": "wuxia_origin",
+  "title": "苍穹之剑：初涉江湖",
+  "category": "武侠",
+  "difficulty": "简单",
+  "summary": "这里是梦开始的地方。你背着生锈的铁剑，站在命运的十字路口。",
+  "initialState": {
+    "hp": 100,
+    "maxHp": 100,
+    "gold": 20,
+    "strength": 10,
+    "inventory": [
+      "生锈的铁剑"
+    ]
+  },
+  "startNode": "village_gate",
+  "nodes": {
+    "village_gate": {
+      "text": "清晨的薄雾笼罩着牛家村。你紧了紧背后的包袱，那是你全部的家当。村口的老槐树下，一个衣衫褴褛的老乞丐正瑟瑟发抖，浑浊的眼睛盯着你腰间的干粮袋。",
+      "choices": [
+        {
+          "text": "施舍一些干粮给他",
+          "next": "beggar_feed",
+          "history": "你心生怜悯，分了一半干粮给老乞丐。"
+        },
+        {
+          "text": "无视他，直接出村",
+          "next": "wild_path",
+          "history": "江湖险恶，你决定不惹麻烦，径直走出了村子。"
+        },
+        {
+          "text": "呵斥他走开",
+          "next": "beggar_angry",
+          "history": "你凶狠地赶走了乞丐，觉得自己颇有威风。"
+        }
+      ]
+    },
+    "beggar_feed": {
+      "text": "老乞丐狼吞虎咽地吃完干粮，眼中闪过一丝精光：“小伙子心肠不错。老叫花子没什么值钱的，这本破书如果不嫌弃，就拿去吧。”",
+      "choices": [
+        {
+          "text": "收下破书",
+          "next": "receive_book",
+          "effect": {
+            "addItems": [
+              "无名秘籍"
+            ],
+            "karma": 10
+          },
+          "history": "你接过那本沾满油污的书，小心收好。"
+        },
+        {
+          "text": "婉言谢绝",
+          "next": "wild_path",
+          "effect": {
+            "karma": 5
+          },
+          "history": "你摇摇头，表示助人并不图回报，转身离开了。"
+        }
+      ]
+    },
+    "beggar_angry": {
+      "text": "老乞丐冷笑一声，手中的打狗棒突然在地上一点，一道劲风擦着你的脸颊飞过。你惊出一身冷汗，意识到这绝非凡人。",
+      "choices": [
+        {
+          "text": "跪地求饶",
+          "next": "beggar_mercy",
+          "effect": {
+            "gold": -10,
+            "karma": -10
+          },
+          "history": "你好汉不吃眼前亏，连忙磕头认错。"
+        },
+        {
+          "text": "拔剑相向",
+          "next": "game_over_beggar",
+          "history": "你恼羞成怒，拔剑刺向乞丐。"
+        }
+      ]
+    },
+    "receive_book": {
+      "text": "你告别了老乞丐，揣着秘籍走出村子。没走多远，前方林子里传来一阵打斗声。",
+      "choices": [
+        {
+          "text": "悄悄过去看看",
+          "next": "forest_fight"
+        },
+        {
+          "text": "多一事不如少一事，绕路",
+          "next": "wild_path"
+        }
+      ]
+    },
+    "wild_path": {
+      "text": "你走在荒野的小道上，突然从草丛中窜出一只野狼，拦住了去路！",
+      "choices": [
+        {
+          "text": "拔剑战斗",
+          "next": "wolf_fight",
+          "req": {
+            "minStrength": 8
+          },
+          "history": "你深吸一口气，拔剑迎战。"
+        },
+        {
+          "text": "逃跑",
+          "next": "flee_wolf",
+          "effect": {
+            "hp": -10
+          },
+          "history": "你转身就跑，被野狼抓伤了后背。"
+        }
+      ]
+    },
+    "wolf_fight": {
+      "text": "野狼虽然凶猛，但你平日勤修苦练的基础剑法发挥了作用。几个回合后，野狼哀嚎一声逃走了。你发现路边草丛里有一个布袋。",
+      "choices": [
+        {
+          "text": "捡起布袋",
+          "next": "town_arrival",
+          "effect": {
+            "gold": 50,
+            "addItems": [
+              "狼牙"
+            ]
+          },
+          "history": "你捡起布袋，发现里面竟然有不少铜钱！"
+        }
+      ]
+    },
+    "town_arrival": {
+      "text": "经过长途跋涉，你终于来到了平安镇。这里的繁华远超你的想象。你摸了摸怀里的银两，决定先去哪里？",
+      "choices": [
+        {
+          "text": "去客栈休息",
+          "next": "inn_rest",
+          "cost": {
+            "gold": 10
+          }
+        },
+        {
+          "text": "去集市逛逛",
+          "next": "market_visit"
+        },
+        {
+          "text": "去武馆拜师",
+          "next": "dojo_enter"
+        }
+      ]
+    },
+    "game_over_beggar": {
+      "text": "你还没看清对方的动作，就感觉胸口一阵剧痛。老乞丐摇摇头：“朽木不可雕也。”你的江湖路，还没开始就结束了。",
+      "choices": [
+        {
+          "text": "重新开始",
+          "next": "__RESTART__"
+        }
+      ],
+      "isEnding": true
+    },
+    "flee_wolf": {
+      "text": "你狼狈地逃到了大路上，虽然受了伤，但这反而让你更加明白了江湖的残酷。",
+      "choices": [
+        {
+          "text": "前往平安镇",
+          "next": "town_arrival",
+          "effect": {
+            "strength": 2
+          }
+        }
+      ]
+    }
+  }
+}

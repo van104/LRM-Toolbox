@@ -1,0 +1,69 @@
+{
+  "id": "npm",
+  "name": "npm / Yarn 包管理",
+  "sections": [
+    {
+      "title": "常用命令",
+      "items": [
+        {
+          "cmd": "npm init -y",
+          "desc": "快速初始化项目"
+        },
+        {
+          "cmd": "npm install <pkg>",
+          "desc": "安装包"
+        },
+        {
+          "cmd": "npm i -D <pkg>",
+          "desc": "安装开发依赖"
+        },
+        {
+          "cmd": "npm uninstall <pkg>",
+          "desc": "卸载包"
+        },
+        {
+          "cmd": "npm update",
+          "desc": "更新所有包"
+        }
+      ]
+    },
+    {
+      "title": "运行与发布",
+      "items": [
+        {
+          "cmd": "npm run <script>",
+          "desc": "执行自定义脚本"
+        },
+        {
+          "cmd": "npm login",
+          "desc": "登录 npm 账号"
+        },
+        {
+          "cmd": "npm publish",
+          "desc": "发布包到 npm"
+        },
+        {
+          "cmd": "npm version patch",
+          "desc": "更新小版本号"
+        }
+      ]
+    },
+    {
+      "title": "Yarn 对应命令",
+      "items": [
+        {
+          "cmd": "yarn add",
+          "desc": "对应 npm install"
+        },
+        {
+          "cmd": "yarn global add",
+          "desc": "对应 npm i -g"
+        },
+        {
+          "cmd": "yarn remove",
+          "desc": "对应 npm uninstall"
+        }
+      ]
+    }
+  ]
+}

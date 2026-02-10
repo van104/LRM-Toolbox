@@ -1,0 +1,437 @@
+[
+  {
+    "name": "餐巾纸",
+    "category": "其他垃圾",
+    "tips": "无法回收"
+  },
+  {
+    "name": "卫生纸",
+    "category": "其他垃圾",
+    "tips": "无法回收"
+  },
+  {
+    "name": "纸巾",
+    "category": "其他垃圾",
+    "tips": "无法回收"
+  },
+  {
+    "name": "污染纸张",
+    "category": "其他垃圾",
+    "tips": "被油污等污染的纸张"
+  },
+  {
+    "name": "大骨头",
+    "category": "其他垃圾",
+    "tips": "猪大骨、牛大骨等"
+  },
+  {
+    "name": "猪骨",
+    "category": "其他垃圾",
+    "tips": "大型骨头难以降解"
+  },
+  {
+    "name": "牛骨",
+    "category": "其他垃圾",
+    "tips": "大型骨头难以降解"
+  },
+  {
+    "name": "贝壳",
+    "category": "其他垃圾",
+    "tips": "难以降解"
+  },
+  {
+    "name": "蛤蜊壳",
+    "category": "其他垃圾",
+    "tips": "难以降解"
+  },
+  {
+    "name": "牡蛎壳",
+    "category": "其他垃圾",
+    "tips": "难以降解"
+  },
+  {
+    "name": "陶瓷碗",
+    "category": "其他垃圾",
+    "tips": "无回收价值"
+  },
+  {
+    "name": "陶瓷杯",
+    "category": "其他垃圾",
+    "tips": "无回收价值"
+  },
+  {
+    "name": "陶瓷碎片",
+    "category": "其他垃圾",
+    "tips": "包好后投放"
+  },
+  {
+    "name": "玻璃陶瓷碎片",
+    "category": "其他垃圾",
+    "tips": "包好后投放"
+  },
+  {
+    "name": "尿不湿",
+    "category": "其他垃圾",
+    "tips": "包好后投放"
+  },
+  {
+    "name": "纸尿裤",
+    "category": "其他垃圾",
+    "tips": "包好后投放"
+  },
+  {
+    "name": "卫生巾",
+    "category": "其他垃圾",
+    "tips": "包好后投放"
+  },
+  {
+    "name": "香烟盒",
+    "category": "其他垃圾",
+    "tips": "无回收价值"
+  },
+  {
+    "name": "烟蒂",
+    "category": "其他垃圾",
+    "tips": "确保熄灭"
+  },
+  {
+    "name": "灰土",
+    "category": "其他垃圾",
+    "tips": "直接投放"
+  },
+  {
+    "name": "头发",
+    "category": "其他垃圾",
+    "tips": "直接投放"
+  },
+  {
+    "name": "宠物粪便",
+    "category": "其他垃圾",
+    "tips": "包好后投放或冲入马桶"
+  },
+  {
+    "name": "一次性餐具",
+    "category": "其他垃圾",
+    "tips": "无回收价值"
+  },
+  {
+    "name": "创可贴",
+    "category": "其他垃圾",
+    "tips": "直接投放"
+  },
+  {
+    "name": "口罩",
+    "category": "其他垃圾",
+    "tips": "包好后投放"
+  },
+  {
+    "name": "棉签",
+    "category": "其他垃圾",
+    "tips": "直接投放"
+  },
+  {
+    "name": "牙刷",
+    "category": "其他垃圾",
+    "tips": "直接投放"
+  },
+  {
+    "name": "塑料袋",
+    "category": "其他垃圾",
+    "tips": "污染后无回收价值"
+  },
+  {
+    "name": "保鲜膜",
+    "category": "其他垃圾",
+    "tips": "无回收价值"
+  },
+  {
+    "name": "榴莲壳",
+    "category": "其他垃圾",
+    "tips": "坚硬不易腐烂"
+  },
+  {
+    "name": "椰子壳",
+    "category": "其他垃圾",
+    "tips": "坚硬不易腐烂"
+  },
+  {
+    "name": "核桃壳",
+    "category": "其他垃圾",
+    "tips": "坚硬不易腐烂"
+  },
+  {
+    "name": "坚果壳",
+    "category": "其他垃圾",
+    "tips": "坚硬不易腐烂"
+  },
+  {
+    "name": "玉米衣",
+    "category": "其他垃圾",
+    "tips": "纤维粗不易腐烂"
+  },
+  {
+    "name": "甘蔗皮",
+    "category": "其他垃圾",
+    "tips": "纤维粗不易腐烂"
+  },
+  {
+    "name": "粽叶",
+    "category": "其他垃圾",
+    "tips": "纤维粗不易腐烂"
+  },
+  {
+    "name": "湿巾",
+    "category": "其他垃圾",
+    "tips": "难降解"
+  },
+  {
+    "name": "卫生间废纸",
+    "category": "其他垃圾",
+    "tips": "污染纸张"
+  },
+  {
+    "name": "烟头",
+    "category": "其他垃圾",
+    "tips": "确保熄灭"
+  },
+  {
+    "name": "干燥剂",
+    "category": "其他垃圾",
+    "tips": "化学废物但无毒通常归其他"
+  },
+  {
+    "name": "胶带",
+    "category": "其他垃圾",
+    "tips": "难降解"
+  },
+  {
+    "name": "笔",
+    "category": "其他垃圾",
+    "tips": "复合材料"
+  },
+  {
+    "name": "圆珠笔",
+    "category": "其他垃圾",
+    "tips": "复合材料"
+  },
+  {
+    "name": "铅笔",
+    "category": "其他垃圾",
+    "tips": "复合材料"
+  },
+  {
+    "name": "打火机",
+    "category": "其他垃圾",
+    "tips": "确保无气"
+  },
+  {
+    "name": "橡皮泥",
+    "category": "其他垃圾",
+    "tips": "难降解"
+  },
+  {
+    "name": "尘土",
+    "category": "其他垃圾",
+    "tips": "无利用价值"
+  },
+  {
+    "name": "编织袋",
+    "category": "其他垃圾",
+    "tips": "难降解"
+  },
+  {
+    "name": "泡泡糖",
+    "category": "其他垃圾",
+    "tips": "胶基难降解"
+  },
+  {
+    "name": "口香糖",
+    "category": "其他垃圾",
+    "tips": "胶基难降解"
+  },
+  {
+    "name": "雪糕棒",
+    "category": "其他垃圾",
+    "tips": "通常污染"
+  },
+  {
+    "name": "避孕套",
+    "category": "其他垃圾",
+    "tips": "卫生废弃物"
+  },
+  {
+    "name": "安全套",
+    "category": "其他垃圾",
+    "tips": "卫生废弃物"
+  },
+  {
+    "name": "竹签",
+    "category": "其他垃圾",
+    "tips": "尖锐物"
+  },
+  {
+    "name": "牙签",
+    "category": "其他垃圾",
+    "tips": "尖锐物"
+  },
+  {
+    "name": "筷子",
+    "category": "其他垃圾",
+    "tips": "竹木制品"
+  },
+  {
+    "name": "花盆",
+    "category": "其他垃圾",
+    "tips": "陶瓷/泥瓦"
+  },
+  {
+    "name": "花土",
+    "category": "其他垃圾",
+    "tips": "泥土"
+  },
+  {
+    "name": "太空沙",
+    "category": "其他垃圾",
+    "tips": "复合材料"
+  },
+  {
+    "name": "猫砂",
+    "category": "其他垃圾",
+    "tips": "视材质而定，通常其他"
+  },
+  {
+    "name": "烟灰",
+    "category": "其他垃圾",
+    "tips": "直接投放"
+  },
+  {
+    "name": "印泥",
+    "category": "其他垃圾",
+    "tips": "难降解"
+  },
+  {
+    "name": "胶卷",
+    "category": "其他垃圾",
+    "tips": "难降解"
+  },
+  {
+    "name": "唱片",
+    "category": "其他垃圾",
+    "tips": "复合材料"
+  },
+  {
+    "name": "磁带",
+    "category": "其他垃圾",
+    "tips": "复合材料"
+  },
+  {
+    "name": "照片",
+    "category": "其他垃圾",
+    "tips": "复合材料"
+  },
+  {
+    "name": "海绵",
+    "category": "其他垃圾",
+    "tips": "难降解"
+  },
+  {
+    "name": "搓澡巾",
+    "category": "其他垃圾",
+    "tips": "纺织品"
+  },
+  {
+    "name": "钢丝球",
+    "category": "其他垃圾",
+    "tips": "金属污染"
+  },
+  {
+    "name": "抹布",
+    "category": "其他垃圾",
+    "tips": "纺织品污染"
+  },
+  {
+    "name": "拖把",
+    "category": "其他垃圾",
+    "tips": "复合材料"
+  },
+  {
+    "name": "扫把",
+    "category": "其他垃圾",
+    "tips": "复合材料"
+  },
+  {
+    "name": "雨伞",
+    "category": "其他垃圾",
+    "tips": "骨架复杂难分离"
+  },
+  {
+    "name": "雨衣",
+    "category": "其他垃圾",
+    "tips": "塑料制品"
+  },
+  {
+    "name": "眼镜",
+    "category": "其他垃圾",
+    "tips": "复合材料"
+  },
+  {
+    "name": "墨镜",
+    "category": "其他垃圾",
+    "tips": "复合材料"
+  },
+  {
+    "name": "隐形眼镜",
+    "category": "其他垃圾",
+    "tips": "塑料制品"
+  },
+  {
+    "name": "美瞳",
+    "category": "其他垃圾",
+    "tips": "塑料制品"
+  },
+  {
+    "name": "发卡",
+    "category": "其他垃圾",
+    "tips": "复合材料"
+  },
+  {
+    "name": "头绳",
+    "category": "其他垃圾",
+    "tips": "纺织品"
+  },
+  {
+    "name": "浴球",
+    "category": "其他垃圾",
+    "tips": "塑料制品"
+  },
+  {
+    "name": "粉扑",
+    "category": "其他垃圾",
+    "tips": "海绵"
+  },
+  {
+    "name": "化妆棉",
+    "category": "其他垃圾",
+    "tips": "棉制品"
+  },
+  {
+    "name": "面膜",
+    "category": "其他垃圾",
+    "tips": "湿垃圾"
+  },
+  {
+    "name": "暖宝宝",
+    "category": "其他垃圾",
+    "tips": "化学发热"
+  },
+  {
+    "name": "退热贴",
+    "category": "其他垃圾",
+    "tips": "化学凝胶"
+  },
+  {
+    "name": "膏药",
+    "category": "其他垃圾",
+    "tips": "药物残留"
+  }
+]

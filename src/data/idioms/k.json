@@ -1,0 +1,65 @@
+[
+  {
+    "name": "开卷有益",
+    "pinyin": "kāi juàn yǒu yì",
+    "meaning": "打开书本看，就会有收获。",
+    "synonyms": [
+      "博览群书"
+    ],
+    "antonyms": [
+      "不学无术"
+    ],
+    "example": "老师常教导我们，开卷有益，要多读书。"
+  },
+  {
+    "name": "慷慨解囊",
+    "pinyin": "kāng kǎi jiě náng",
+    "meaning": "形容大方地捐助钱财。",
+    "synonyms": [
+      "乐善好施"
+    ],
+    "antonyms": [
+      "一门不出"
+    ],
+    "example": "面对地震灾情，社会各界积极慷慨解囊。"
+  },
+  {
+    "name": "刻舟求剑",
+    "pinyin": "kè zhōu qiú jiàn",
+    "meaning": "比喻死守教条，不知道跟着情况的变化而改变。",
+    "synonyms": [
+      "守株待兔",
+      "墨守成规"
+    ],
+    "antonyms": [
+      "随机应变"
+    ],
+    "example": "我们不能刻舟求剑，要学会根据形势的变化调整策略。"
+  },
+  {
+    "name": "空中楼阁",
+    "pinyin": "kōng zhōng lóu gé",
+    "meaning": "比喻虚幻、没有根据的事物。",
+    "synonyms": [
+      "虚无缥缈",
+      "纸上谈兵"
+    ],
+    "antonyms": [
+      "脚踏实地"
+    ],
+    "example": "没有基础的计划只能是空中楼阁。"
+  },
+  {
+    "name": "口是心非",
+    "pinyin": "kǒu shì xīn fēi",
+    "meaning": "嘴上说的是一套，心里想的是另一套。",
+    "synonyms": [
+      "阳奉阴违"
+    ],
+    "antonyms": [
+      "言行一致",
+      "表里如一"
+    ],
+    "example": "像他这种口是心非的人，不值得深交。"
+  }
+]

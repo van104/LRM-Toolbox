@@ -1,0 +1,427 @@
+[
+  {
+    "name": "纸板箱",
+    "category": "可回收物",
+    "tips": "请压扁后投放"
+  },
+  {
+    "name": "废纸箱",
+    "category": "可回收物",
+    "tips": "请压扁后投放"
+  },
+  {
+    "name": "玻璃瓶",
+    "category": "可回收物",
+    "tips": "清洗干净"
+  },
+  {
+    "name": "玻璃杯",
+    "category": "可回收物",
+    "tips": "清洗干净"
+  },
+  {
+    "name": "金属易拉罐",
+    "category": "可回收物",
+    "tips": "清洗干净，压扁"
+  },
+  {
+    "name": "塑料瓶",
+    "category": "可回收物",
+    "tips": "清洗干净，去掉瓶盖"
+  },
+  {
+    "name": "矿泉水瓶",
+    "category": "可回收物",
+    "tips": "清洗干净，去掉瓶盖"
+  },
+  {
+    "name": "旧衣服",
+    "category": "可回收物",
+    "tips": "清洗干净，打包"
+  },
+  {
+    "name": "旧鞋子",
+    "category": "可回收物",
+    "tips": "清洗干净，打包"
+  },
+  {
+    "name": "废旧手电筒",
+    "category": "可回收物",
+    "tips": "取出电池后投放"
+  },
+  {
+    "name": "书本",
+    "category": "可回收物",
+    "tips": "捆扎整齐"
+  },
+  {
+    "name": "报纸",
+    "category": "可回收物",
+    "tips": "捆扎整齐"
+  },
+  {
+    "name": "杂志",
+    "category": "可回收物",
+    "tips": "捆扎整齐"
+  },
+  {
+    "name": "纸箱",
+    "category": "可回收物",
+    "tips": "压扁后投放"
+  },
+  {
+    "name": "易拉罐",
+    "category": "可回收物",
+    "tips": "清洗压扁"
+  },
+  {
+    "name": "铁罐",
+    "category": "可回收物",
+    "tips": "清洗干净"
+  },
+  {
+    "name": "铝箔",
+    "category": "可回收物",
+    "tips": "清洗干净"
+  },
+  {
+    "name": "塑料桶",
+    "category": "可回收物",
+    "tips": "清洗干净"
+  },
+  {
+    "name": "塑料盆",
+    "category": "可回收物",
+    "tips": "清洗干净"
+  },
+  {
+    "name": "旧电脑",
+    "category": "可回收物",
+    "tips": "建议送专业回收点"
+  },
+  {
+    "name": "旧手机",
+    "category": "可回收物",
+    "tips": "建议送专业回收点"
+  },
+  {
+    "name": "传单",
+    "category": "可回收物",
+    "tips": "纸张可回收"
+  },
+  {
+    "name": "信封",
+    "category": "可回收物",
+    "tips": "去除胶带"
+  },
+  {
+    "name": "挂历",
+    "category": "可回收物",
+    "tips": "去除金属环"
+  },
+  {
+    "name": "纸袋",
+    "category": "可回收物",
+    "tips": "保持干燥"
+  },
+  {
+    "name": "塑料玩具",
+    "category": "可回收物",
+    "tips": "去除电池"
+  },
+  {
+    "name": "泡沫塑料",
+    "category": "可回收物",
+    "tips": "清洁后投放"
+  },
+  {
+    "name": "塑料衣架",
+    "category": "可回收物",
+    "tips": "清洁后投放"
+  },
+  {
+    "name": "碎玻璃",
+    "category": "可回收物",
+    "tips": "包裹好防止割伤"
+  },
+  {
+    "name": "镜子",
+    "category": "可回收物",
+    "tips": "包裹好防止割伤"
+  },
+  {
+    "name": "螺丝",
+    "category": "可回收物",
+    "tips": "金属可回收"
+  },
+  {
+    "name": "铁钉",
+    "category": "可回收物",
+    "tips": "金属可回收"
+  },
+  {
+    "name": "钥匙",
+    "category": "可回收物",
+    "tips": "金属可回收"
+  },
+  {
+    "name": "锁",
+    "category": "可回收物",
+    "tips": "金属可回收"
+  },
+  {
+    "name": "床单",
+    "category": "可回收物",
+    "tips": "清洁干燥"
+  },
+  {
+    "name": "枕套",
+    "category": "可回收物",
+    "tips": "清洁干燥"
+  },
+  {
+    "name": "毛巾",
+    "category": "可回收物",
+    "tips": "清洁干燥"
+  },
+  {
+    "name": "书包",
+    "category": "可回收物",
+    "tips": "清洁干燥"
+  },
+  {
+    "name": "键盘",
+    "category": "可回收物",
+    "tips": "电子废弃物"
+  },
+  {
+    "name": "鼠标",
+    "category": "可回收物",
+    "tips": "电子废弃物"
+  },
+  {
+    "name": "耳机",
+    "category": "可回收物",
+    "tips": "电子废弃物"
+  },
+  {
+    "name": "遥控器",
+    "category": "可回收物",
+    "tips": "取出电池"
+  },
+  {
+    "name": "插座",
+    "category": "可回收物",
+    "tips": "电子废弃物"
+  },
+  {
+    "name": "数据线",
+    "category": "可回收物",
+    "tips": "电子废弃物"
+  },
+  {
+    "name": "洗发水瓶",
+    "category": "可回收物",
+    "tips": "清洗干净"
+  },
+  {
+    "name": "沐浴露瓶",
+    "category": "可回收物",
+    "tips": "清洗干净"
+  },
+  {
+    "name": "洗衣液瓶",
+    "category": "可回收物",
+    "tips": "清洗干净"
+  },
+  {
+    "name": "订书机",
+    "category": "可回收物",
+    "tips": "金属/塑料可回收"
+  },
+  {
+    "name": "订书钉",
+    "category": "可回收物",
+    "tips": "金属可回收"
+  },
+  {
+    "name": "回形针",
+    "category": "可回收物",
+    "tips": "金属可回收"
+  },
+  {
+    "name": "长尾夹",
+    "category": "可回收物",
+    "tips": "金属可回收"
+  },
+  {
+    "name": "文件夹",
+    "category": "可回收物",
+    "tips": "塑料/纸质可回收"
+  },
+  {
+    "name": "文件袋",
+    "category": "可回收物",
+    "tips": "塑料可回收"
+  },
+  {
+    "name": "名片",
+    "category": "可回收物",
+    "tips": "纸质可回收"
+  },
+  {
+    "name": "台历",
+    "category": "可回收物",
+    "tips": "去除金属环"
+  },
+  {
+    "name": "笔记本",
+    "category": "可回收物",
+    "tips": "纸质可回收"
+  },
+  {
+    "name": "剪刀",
+    "category": "可回收物",
+    "tips": "金属/塑料可回收"
+  },
+  {
+    "name": "美工刀",
+    "category": "可回收物",
+    "tips": "小心刀片"
+  },
+  {
+    "name": "计算器",
+    "category": "可回收物",
+    "tips": "电子废弃物"
+  },
+  {
+    "name": "插排",
+    "category": "可回收物",
+    "tips": "电子废弃物"
+  },
+  {
+    "name": "充电宝",
+    "category": "可回收物",
+    "tips": "电子废弃物"
+  },
+  {
+    "name": "U盘",
+    "category": "可回收物",
+    "tips": "电子废弃物"
+  },
+  {
+    "name": "移动硬盘",
+    "category": "可回收物",
+    "tips": "电子废弃物"
+  },
+  {
+    "name": "路由器",
+    "category": "可回收物",
+    "tips": "电子废弃物"
+  },
+  {
+    "name": "旧锅",
+    "category": "可回收物",
+    "tips": "金属可回收"
+  },
+  {
+    "name": "炒锅",
+    "category": "可回收物",
+    "tips": "金属可回收"
+  },
+  {
+    "name": "高压锅",
+    "category": "可回收物",
+    "tips": "金属可回收"
+  },
+  {
+    "name": "电饭煲",
+    "category": "可回收物",
+    "tips": "电子废弃物"
+  },
+  {
+    "name": "热水壶",
+    "category": "可回收物",
+    "tips": "电子废弃物"
+  },
+  {
+    "name": "微波炉",
+    "category": "可回收物",
+    "tips": "电子废弃物"
+  },
+  {
+    "name": "烤箱",
+    "category": "可回收物",
+    "tips": "电子废弃物"
+  },
+  {
+    "name": "榨汁机",
+    "category": "可回收物",
+    "tips": "电子废弃物"
+  },
+  {
+    "name": "豆浆机",
+    "category": "可回收物",
+    "tips": "电子废弃物"
+  },
+  {
+    "name": "酒瓶",
+    "category": "可回收物",
+    "tips": "玻璃可回收"
+  },
+  {
+    "name": "酱油瓶",
+    "category": "可回收物",
+    "tips": "玻璃/塑料可回收"
+  },
+  {
+    "name": "醋瓶",
+    "category": "可回收物",
+    "tips": "玻璃/塑料可回收"
+  },
+  {
+    "name": "食用油桶",
+    "category": "可回收物",
+    "tips": "塑料可回收"
+  },
+  {
+    "name": "窗帘",
+    "category": "可回收物",
+    "tips": "纺织品"
+  },
+  {
+    "name": "被单",
+    "category": "可回收物",
+    "tips": "纺织品"
+  },
+  {
+    "name": "枕头",
+    "category": "可回收物",
+    "tips": "纺织品（部分城市）"
+  },
+  {
+    "name": "地毯",
+    "category": "可回收物",
+    "tips": "纺织品（部分城市）"
+  },
+  {
+    "name": "皮鞋",
+    "category": "可回收物",
+    "tips": "纺织品"
+  },
+  {
+    "name": "运动鞋",
+    "category": "可回收物",
+    "tips": "纺织品"
+  },
+  {
+    "name": "拖鞋",
+    "category": "可回收物",
+    "tips": "塑料/橡胶可回收"
+  },
+  {
+    "name": "毛绒玩具",
+    "category": "可回收物",
+    "tips": "纺织品"
+  }
+]

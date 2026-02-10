@@ -1,0 +1,56 @@
+{
+  "id": "government",
+  "name": "政务与社保",
+  "icon": "Stamp",
+  "items": [
+    {
+      "title": "国家政务服务平台",
+      "desc": "一网通办，各类政务在线办理",
+      "icon": "Coordinate",
+      "color": "#1890ff",
+      "url": "http://gjzwfw.www.gov.cn/"
+    },
+    {
+      "title": "掌上社保查询",
+      "desc": "养老、医保、失业保险查询",
+      "icon": "User",
+      "color": "#52c41a",
+      "url": "http://www.12333.gov.cn/"
+    },
+    {
+      "title": "住房公积金查询",
+      "desc": "全国公积金余额与贷款查询",
+      "icon": "House",
+      "color": "#faad14",
+      "url": "http://www.mohurd.gov.cn/"
+    },
+    {
+      "title": "个人所得税",
+      "desc": "个税申报、退税、年度汇算",
+      "icon": "Wallet",
+      "color": "#eb2f96",
+      "url": "https://etax.chinatax.gov.cn/"
+    },
+    {
+      "title": "出入境证件预约",
+      "desc": "护照、港澳通行证在线预约",
+      "icon": "Stamp",
+      "color": "#722ed1",
+      "url": "https://s.nia.gov.cn/"
+    },
+    {
+      "title": "学信网",
+      "desc": "学历查询、学籍验证",
+      "icon": "Reading",
+      "color": "#13c2c2",
+      "url": "https://www.chsi.com.cn/"
+    },
+    {
+      "title": "中国人事考试网",
+      "desc": "职业资格考试报名查询",
+      "icon": "Notebook",
+      "color": "#fa541c",
+      "url": "http://www.cpta.com.cn/"
+    }
+  ]
+}

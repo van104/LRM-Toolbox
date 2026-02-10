@@ -1,0 +1,86 @@
+{
+  "id": "git",
+  "name": "Git 版本控制",
+  "sections": [
+    {
+      "title": "基础配置",
+      "items": [
+        {
+          "cmd": "git config --global user.name \"Your Name\"",
+          "desc": "设置全局用户名"
+        },
+        {
+          "cmd": "git config --global user.email \"email@example.com\"",
+          "desc": "设置全局邮箱"
+        },
+        {
+          "cmd": "git init",
+          "desc": "初始化本地仓库"
+        }
+      ]
+    },
+    {
+      "title": "日常操作",
+      "items": [
+        {
+          "cmd": "git add .",
+          "desc": "暂存所有更改"
+        },
+        {
+          "cmd": "git commit -m \"msg\"",
+          "desc": "提交更改"
+        },
+        {
+          "cmd": "git status",
+          "desc": "查看工作区状态"
+        },
+        {
+          "cmd": "git log --oneline",
+          "desc": "查看精简日志"
+        }
+      ]
+    },
+    {
+      "title": "分支管理",
+      "items": [
+        {
+          "cmd": "git branch",
+          "desc": "列出本地分支"
+        },
+        {
+          "cmd": "git checkout -b <name>",
+          "desc": "创建并切换分支"
+        },
+        {
+          "cmd": "git merge <name>",
+          "desc": "合并指定分支到当前分支"
+        },
+        {
+          "cmd": "git branch -d <name>",
+          "desc": "删除本地分支"
+        }
+      ]
+    },
+    {
+      "title": "远程协作",
+      "items": [
+        {
+          "cmd": "git push origin main",
+          "desc": "推送到远程主分支"
+        },
+        {
+          "cmd": "git pull origin main",
+          "desc": "拉取远程更新并合并"
+        },
+        {
+          "cmd": "git fetch origin",
+          "desc": "获取远程更新不合并"
+        },
+        {
+          "cmd": "git remote -v",
+          "desc": "查看远程库信息"
+        }
+      ]
+    }
+  ]
+}

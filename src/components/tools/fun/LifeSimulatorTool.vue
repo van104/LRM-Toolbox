@@ -12,16 +12,17 @@
         <span class="nav-subtitle">Text Life Simulator</span>
       </div>
       <div class="nav-actions">
-        <el-button v-if="gameState.isAlive && gameStage === 'game'" size="small" @click="saveGame"
-          >保存存档</el-button
-        >
+        <el-button v-if="gameState.isAlive && gameStage === 'game'" size="small" @click="saveGame">
+          保存存档
+        </el-button>
         <el-button
           v-if="gameState.isAlive || gameStage !== 'intro'"
           size="small"
           type="danger"
           @click="restart"
-          >重开</el-button
         >
+          重开
+        </el-button>
       </div>
     </nav>
 
@@ -83,12 +84,12 @@
 
           <div class="stats-allocation">
             <div class="alloc-row">
-              <span class="label"
-                ><el-icon>
+              <span class="label">
+                <el-icon>
                   <FirstAidKit />
                 </el-icon>
-                健康</span
-              >
+                健康
+              </span>
               <el-slider
                 v-model="tempStats.health"
                 :min="0"
@@ -99,12 +100,12 @@
               />
             </div>
             <div class="alloc-row">
-              <span class="label"
-                ><el-icon>
+              <span class="label">
+                <el-icon>
                   <Reading />
                 </el-icon>
-                智力</span
-              >
+                智力
+              </span>
               <el-slider
                 v-model="tempStats.smarts"
                 :min="0"
@@ -115,12 +116,12 @@
               />
             </div>
             <div class="alloc-row">
-              <span class="label"
-                ><el-icon>
+              <span class="label">
+                <el-icon>
                   <Camera />
                 </el-icon>
-                颜值</span
-              >
+                颜值
+              </span>
               <el-slider
                 v-model="tempStats.looks"
                 :min="0"
@@ -131,12 +132,12 @@
               />
             </div>
             <div class="alloc-row">
-              <span class="label"
-                ><el-icon>
+              <span class="label">
+                <el-icon>
                   <Sunny />
                 </el-icon>
-                家境</span
-              >
+                家境
+              </span>
               <el-slider
                 v-model="tempStats.happiness"
                 :min="0"
@@ -559,7 +560,19 @@
 
   const BankIcon = Money;
 
-  import { lifeData, initialStats } from '@/data/lifeSimulatorData.js';
+  import { loadLifeData, initialStats } from '@/data/life_simulator';
+
+  const lifeData = reactive({
+    careers: [],
+    talents: [],
+    education: { levels: [] },
+    housing: [],
+    vehicles: [],
+    bank: { depositRates: { fixed1: 0 }, loanRate: 0 },
+    ageEvents: {},
+    deathEvents: {},
+    periods: {}
+  });
 
   const cityMapUrl =
     'url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=2144&auto=format&fit=crop")';
@@ -606,7 +619,10 @@
     });
   });
 
-  onMounted(() => {
+  onMounted(async () => {
+    const data = await loadLifeData();
+    Object.assign(lifeData, data);
+
     if (localStorage.getItem('lifeSimSave')) {
       hasSave.value = true;
     }

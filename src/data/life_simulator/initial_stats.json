@@ -1,0 +1,17 @@
+{
+  "age": 0,
+  "health": 0,
+  "happiness": 0,
+  "smarts": 0,
+  "looks": 0,
+  "wealth": 0,
+  "fame": 0,
+  "isAlive": true,
+  "log": [],
+  "job": null,
+  "savings": 0,
+  "houses": [],
+  "cars": [],
+  "degree": "none",
+  "inventory": []
+}

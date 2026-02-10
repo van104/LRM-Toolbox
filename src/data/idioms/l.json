@@ -1,0 +1,150 @@
+[
+  {
+    "name": "滥竽充数",
+    "pinyin": "làn yú chōng shù",
+    "meaning": "比喻无本领的人混在有本领的人中。也比喻以次充好。",
+    "synonyms": [
+      "鱼目混珠"
+    ],
+    "antonyms": [
+      "名副其实"
+    ],
+    "example": "我们公司绝不允许有人在这里滥竽充数。"
+  },
+  {
+    "name": "狼吞虎咽",
+    "pinyin": "láng tūn hǔ yàn",
+    "meaning": "形容吃东西又急又猛。",
+    "synonyms": [
+      "大快朵颐"
+    ],
+    "antonyms": [
+      "细嚼慢咽"
+    ],
+    "example": "他饿极了，一回家就狼吞虎咽地吃起来。"
+  },
+  {
+    "name": "老当益壮",
+    "pinyin": "lǎo dāng yì zhuàng",
+    "meaning": "年纪虽老，气概更豪壮。",
+    "synonyms": [
+      "老骥伏枥"
+    ],
+    "example": "爷爷虽然八十岁了，但依然老当益壮，每天坚持跑步。"
+  },
+  {
+    "name": "老马识途",
+    "pinyin": "lǎo mǎ shí tú",
+    "meaning": "老马认识路。比喻年纪大的人经验丰富。",
+    "synonyms": [
+      "识途老马"
+    ],
+    "antonyms": [
+      "幼稚可笑"
+    ],
+    "example": "这种事情还是向他请教吧，毕竟老马识途嘛。"
+  },
+  {
+    "name": "乐极生悲",
+    "pinyin": "lè jí shēng bēi",
+    "meaning": "高兴到极点，往往会引起悲伤的事。",
+    "synonyms": [
+      "否极泰来"
+    ],
+    "antonyms": [
+      "因祸得福"
+    ],
+    "example": "玩耍的时候要注意安全，千万不要乐极生悲。"
+  },
+  {
+    "name": "力不从心",
+    "pinyin": "lì bù cóng xīn",
+    "meaning": "心里想做，可是力量不够。",
+    "synonyms": [
+      "无能为力"
+    ],
+    "antonyms": [
+      "得心应手",
+      "游刃有余"
+    ],
+    "example": "看着孩子一天天长大，年迈的父母感到有些力不从心了。"
+  },
+  {
+    "name": "历历在目",
+    "pinyin": "lì lì zài mù",
+    "meaning": "指过去的景物清楚地呈现在眼前。",
+    "synonyms": [
+      "记忆犹新"
+    ],
+    "antonyms": [
+      "模糊不清"
+    ],
+    "example": "往事历历在目，仿佛就发生在昨天。"
+  },
+  {
+    "name": "力挽狂澜",
+    "pinyin": "lì wǎn kuáng lán",
+    "meaning": "比喻尽力挽回危险的局势。",
+    "synonyms": [
+      "扭转乾坤"
+    ],
+    "example": "在球队落后的情况下，他力挽狂澜，连进两球扳平比分。"
+  },
+  {
+    "name": "理直气壮",
+    "pinyin": "lǐ zhí qì zhuàng",
+    "meaning": "理由充分，说话气势就壮。",
+    "synonyms": [
+      "义正辞严"
+    ],
+    "antonyms": [
+      "理屈词穷"
+    ],
+    "example": "他由于抓住了对方的把柄，说话变得理直气壮起来。"
+  },
+  {
+    "name": "梁上君子",
+    "pinyin": "liáng shàng jūn zǐ",
+    "meaning": "指小偷。",
+    "example": "他由于不务正业，最终沦为了梁上君子。"
+  },
+  {
+    "name": "炉火纯青",
+    "pinyin": "lú huǒ chún qīng",
+    "meaning": "比喻功夫达到了纯熟完美的地步。",
+    "synonyms": [
+      "出神入化",
+      "登峰造极"
+    ],
+    "antonyms": [
+      "半途而废"
+    ],
+    "example": "他的书法技艺已经达到了炉火纯青的境界。"
+  },
+  {
+    "name": "落井下石",
+    "pinyin": "luò jǐng xià shí",
+    "meaning": "比喻乘人危难时加以陷害。",
+    "synonyms": [
+      "乘人之危"
+    ],
+    "antonyms": [
+      "雪中送炭"
+    ],
+    "example": "在别人遇到困难时，我们应该伸出援手，而不是落井下石。"
+  },
+  {
+    "name": "络绎不绝",
+    "pinyin": "luò yì bù jué",
+    "meaning": "形容行人车马来来往往，接连不断。",
+    "synonyms": [
+      "川流不息",
+      "源源不断"
+    ],
+    "antonyms": [
+      "门可罗雀",
+      "冷冷清清"
+    ],
+    "example": "马路上行人车辆络绎不绝。"
+  }
+]

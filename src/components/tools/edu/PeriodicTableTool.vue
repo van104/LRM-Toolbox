@@ -81,13 +81,14 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue';
+  import { ref, onMounted } from 'vue';
   import { Back } from '@element-plus/icons-vue';
-  import { elements } from '@/data/periodicTableData';
+  import { loadPeriodicElements } from '@/data/periodic_table';
 
   const dialogVisible = ref(false);
   const selectedElement = ref(null);
   const hoverCategory = ref(null);
+  const elements = ref([]);
 
   const categories = {
     alkali: { label: '碱金属', color: '#ff8d8d' },
@@ -110,6 +111,10 @@
     selectedElement.value = el;
     dialogVisible.value = true;
   };
+
+  onMounted(async () => {
+    elements.value = await loadPeriodicElements();
+  });
 </script>
 
 <style scoped>

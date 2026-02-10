@@ -1,0 +1,35 @@
+{
+  "id": "medical",
+  "name": "医疗健康",
+  "icon": "FirstAidKit",
+  "items": [
+    {
+      "title": "医院挂号预约",
+      "desc": "全国医院统一预约挂号",
+      "icon": "Calendar",
+      "color": "#1890ff",
+      "url": "https://www.114yygh.com/"
+    },
+    {
+      "title": "药品查询",
+      "desc": "国家药品监督管理局",
+      "icon": "FirstAidKit",
+      "color": "#52c41a",
+      "url": "https://www.nmpa.gov.cn/"
+    },
+    {
+      "title": "健康码查询",
+      "desc": "各地健康码服务入口",
+      "icon": "Checked",
+      "color": "#13c2c2",
+      "url": "https://gjzwfw.www.gov.cn/"
+    },
+    {
+      "title": "核酸/疫苗查询",
+      "desc": "新冠疫苗接种、核酸检测记录",
+      "icon": "Document",
+      "color": "#eb2f96",
+      "url": "https://gjzwfw.www.gov.cn/"
+    }
+  ]
+}

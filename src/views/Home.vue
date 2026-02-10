@@ -308,6 +308,7 @@
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
+    padding-top: var(--header-height);
   }
 
   .particles-bg {

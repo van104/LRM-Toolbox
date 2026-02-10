@@ -22,7 +22,7 @@
             :key="sub.id"
             class="nav-item"
             :class="{ active: currentSubject.id === sub.id }"
-            @click="currentSubject = sub"
+            @click="selectSubject(sub)"
           >
             <el-icon>
               <collection />
@@ -81,18 +81,23 @@
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue';
+  import { ref, computed, onMounted } from 'vue';
   import { Back, CopyDocument, Collection, InfoFilled } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
-  import { subjects } from '@/data/cheatSheetData';
+  import { subjectList, loadSubject } from '@/data/cheatsheet';
 
   const filterKey = ref('');
+  const subjects = subjectList;
   const currentSubject = ref(subjects[0]);
+  const currentDetails = ref(null);
 
   const filteredSections = computed(() => {
-    if (!filterKey.value) return currentSubject.value.sections;
+    if (!currentDetails.value) return [];
 
-    return currentSubject.value.sections
+    const sections = currentDetails.value.sections;
+    if (!filterKey.value) return sections;
+
+    return sections
       .map(sec => ({
         ...sec,
         items: sec.items.filter(
@@ -104,11 +109,22 @@
       .filter(sec => sec.items.length > 0);
   });
 
+  const selectSubject = async sub => {
+    currentSubject.value = sub;
+    // Optional: add loading state
+    currentDetails.value = null;
+    currentDetails.value = await loadSubject(sub.id);
+  };
+
   const copy = text => {
     navigator.clipboard.writeText(text).then(() => {
       ElMessage.success('复制成功: ' + text);
     });
   };
+
+  onMounted(() => {
+    selectSubject(subjects[0]);
+  });
 </script>
 
 <style scoped>
@@ -124,6 +140,10 @@
 
     font-family: 'Noto Sans SC', sans-serif;
     min-height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     background: var(--bg);
   }
 
@@ -177,14 +197,21 @@
 
   .main-content {
     max-width: 1200px;
+    width: 100%;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
+    padding: 1.5rem;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   .layout-container {
     display: grid;
     grid-template-columns: 260px 1fr;
     gap: 1.5rem;
+    flex: 1;
+    min-height: 0;
   }
 
   .glass-card {
@@ -196,7 +223,8 @@
 
   .side-nav {
     padding: 1rem;
-    height: fit-content;
+    overflow-y: auto;
+    height: 100%;
   }
 
   .nav-item {
@@ -223,6 +251,7 @@
 
   .content-view {
     padding: 2.5rem;
+    overflow-y: auto;
   }
 
   .subject-header {
@@ -324,7 +353,6 @@
     color: var(--text-2);
     font-size: 0.85rem;
     border-top: 1px solid var(--border);
-    margin-top: 2rem;
   }
 
   @media (max-width: 900px) {

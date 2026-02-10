@@ -1,0 +1,82 @@
+{
+  "id": "redis",
+  "name": "Redis 缓存数据库",
+  "sections": [
+    {
+      "title": "字符串 (String)",
+      "items": [
+        {
+          "cmd": "SET key val EX 60",
+          "desc": "设置键值及过期(秒)"
+        },
+        {
+          "cmd": "GET key",
+          "desc": "获取值"
+        },
+        {
+          "cmd": "INCR key",
+          "desc": "自增1"
+        },
+        {
+          "cmd": "DEL key",
+          "desc": "删除键"
+        }
+      ]
+    },
+    {
+      "title": "哈希 (Hash)",
+      "items": [
+        {
+          "cmd": "HSET key field val",
+          "desc": "设置字段值"
+        },
+        {
+          "cmd": "HGET key field",
+          "desc": "获取字段值"
+        },
+        {
+          "cmd": "HGETALL key",
+          "desc": "获取所有字段"
+        },
+        {
+          "cmd": "HDEL key field",
+          "desc": "删除字段"
+        }
+      ]
+    },
+    {
+      "title": "列表 (List)",
+      "items": [
+        {
+          "cmd": "LPUSH key val",
+          "desc": "左侧推入"
+        },
+        {
+          "cmd": "RPOP key",
+          "desc": "右侧弹出"
+        },
+        {
+          "cmd": "LRANGE key 0 -1",
+          "desc": "查看列表所有元素"
+        }
+      ]
+    },
+    {
+      "title": "集合 (Set)",
+      "items": [
+        {
+          "cmd": "SADD key val",
+          "desc": "添加元素"
+        },
+        {
+          "cmd": "SMEMBERS key",
+          "desc": "查看所有元素"
+        },
+        {
+          "cmd": "SISMEMBER key val",
+          "desc": "判断是否存在"
+        }
+      ]
+    }
+  ]
+}

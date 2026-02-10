@@ -1,0 +1,82 @@
+{
+  "id": "fantasy_cave",
+  "title": "深渊回响",
+  "category": "奇幻",
+  "difficulty": "中等",
+  "summary": "作为一名赏金猎人，你接受了探索“哭泣洞穴”的委托。传说那里藏着古代王国的宝藏，也埋葬着无数贪婪的灵魂。",
+  "initialState": {
+    "hp": 120,
+    "maxHp": 120,
+    "mp": 50,
+    "gold": 0,
+    "strength": 15,
+    "inventory": [
+      "精钢短剑",
+      "火把"
+    ]
+  },
+  "startNode": "cave_entrance",
+  "nodes": {
+    "cave_entrance": {
+      "text": "洞穴入口像一张巨大的嘴，不断吹出阴冷的风。你点燃火把，光亮只能照亮前方几米。左边是一条平坦但潮湿的通道，右边是一条向下延伸的陡峭石阶。",
+      "choices": [
+        {
+          "text": "走左边通道",
+          "next": "wet_passage"
+        },
+        {
+          "text": "下右边石阶",
+          "next": "steep_stairs"
+        }
+      ]
+    },
+    "wet_passage": {
+      "text": "通道里布满了青苔，非常湿滑。你隐约听到前方有滴水声，还有某种生物的呼吸声。",
+      "choices": [
+        {
+          "text": "小心翼翼地前进",
+          "next": "slime_encounter"
+        },
+        {
+          "text": "大声呵斥壮胆",
+          "next": "slime_ambush"
+        }
+      ]
+    },
+    "steep_stairs": {
+      "text": "石阶非常陡峭，你不得不扶着墙壁。突然，脚下的石阶松动了！",
+      "choices": [
+        {
+          "text": "依靠敏捷跳开",
+          "next": "safe_landing",
+          "req": {
+            "minDex": 10
+          }
+        },
+        {
+          "text": "抓住墙壁边缘",
+          "next": "wall_hang",
+          "effect": {
+            "hp": -5
+          }
+        }
+      ]
+    },
+    "slime_encounter": {
+      "text": "一只巨大的史莱姆挡在了路中间。它看起来并不强，但很恶心。",
+      "choices": [
+        {
+          "text": "挥剑攻击",
+          "next": "slime_defeat",
+          "effect": {
+            "gold": 10
+          }
+        },
+        {
+          "text": "用火把驱赶",
+          "next": "slime_flee"
+        }
+      ]
+    }
+  }
+}

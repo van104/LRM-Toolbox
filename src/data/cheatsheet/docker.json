@@ -1,0 +1,52 @@
+{
+  "id": "docker",
+  "name": "Docker 容器化",
+  "sections": [
+    {
+      "title": "镜像操作",
+      "items": [
+        {
+          "cmd": "docker pull <image>",
+          "desc": "拉取镜像"
+        },
+        {
+          "cmd": "docker images",
+          "desc": "列出本地镜像"
+        },
+        {
+          "cmd": "docker build -t <tag> .",
+          "desc": "构建镜像"
+        },
+        {
+          "cmd": "docker rmi <id>",
+          "desc": "删除镜像"
+        }
+      ]
+    },
+    {
+      "title": "容器管理",
+      "items": [
+        {
+          "cmd": "docker run -d -p 80:80 <img>",
+          "desc": "后台运行并映射端口"
+        },
+        {
+          "cmd": "docker ps -a",
+          "desc": "查看所有容器"
+        },
+        {
+          "cmd": "docker stop <id>",
+          "desc": "停止容器"
+        },
+        {
+          "cmd": "docker rm <id>",
+          "desc": "删除容器"
+        },
+        {
+          "cmd": "docker logs -f <id>",
+          "desc": "查看实时日志"
+        }
+      ]
+    }
+  ]
+}

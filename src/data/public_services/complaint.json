@@ -1,0 +1,49 @@
+{
+  "id": "complaint",
+  "name": "投诉维权",
+  "icon": "Bell",
+  "items": [
+    {
+      "title": "12315消费者投诉",
+      "desc": "全国消费者投诉举报平台",
+      "icon": "Bell",
+      "color": "#f5222d",
+      "url": "https://www.12315.cn/"
+    },
+    {
+      "title": "12345政务服务热线",
+      "desc": "各地政务服务便民热线",
+      "icon": "Phone",
+      "color": "#1890ff",
+      "url": "https://gjzwfw.www.gov.cn/"
+    },
+    {
+      "title": "国家信访局",
+      "desc": "网上信访投诉平台",
+      "icon": "ChatDotSquare",
+      "color": "#722ed1",
+      "url": "https://www.gjxfj.gov.cn/"
+    },
+    {
+      "title": "中国裁判文书网",
+      "desc": "司法判决文书公开查询",
+      "icon": "Document",
+      "color": "#fa8c16",
+      "url": "https://wenshu.court.gov.cn/"
+    },
+    {
+      "title": "执行信息公开网",
+      "desc": "失信被执行人、执行案件查询",
+      "icon": "CircleCheck",
+      "color": "#f5222d",
+      "url": "http://zxgk.court.gov.cn/"
+    },
+    {
+      "title": "中国法律服务网",
+      "desc": "法律咨询、法律援助、公证办理",
+      "icon": "Service",
+      "color": "#1890ff",
+      "url": "http://www.12348.gov.cn/"
+    }
+  ]
+}

@@ -175,7 +175,7 @@
     Refresh,
     Opportunity
   } from '@element-plus/icons-vue';
-  import { chineseIdioms, englishWords } from '@/data/wordGuessData';
+  import { loadChineseIdioms, loadEnglishWords } from '@/data/word_guess';
 
   const mode = ref('english');
   const board = ref([]);
@@ -204,8 +204,18 @@
 
   const keyStatus = reactive({});
 
-  const initGame = () => {
-    const wordList = mode.value === 'english' ? englishWords : chineseIdioms;
+  const initGame = async () => {
+    let wordList = [];
+    if (mode.value === 'english') {
+      wordList = await loadEnglishWords();
+    } else {
+      wordList = await loadChineseIdioms();
+    }
+
+    if (wordList.length === 0) {
+      showMessage('数据加载失败');
+      return;
+    }
 
     targetWord.value = wordList[Math.floor(Math.random() * wordList.length)].toUpperCase();
 
@@ -228,10 +238,10 @@
     }
   };
 
-  const switchMode = newMode => {
+  const switchMode = async newMode => {
     if (newMode === mode.value) return;
     mode.value = newMode;
-    initGame();
+    await initGame();
   };
 
   const handleKeyClick = key => {
@@ -254,7 +264,15 @@
   };
 
   const handlePhysicalKeydown = e => {
-    if (mode.value !== 'english' || gameState.value !== 'playing') return;
+    if (gameState.value !== 'playing') return;
+
+    // Allow Chinese input handling if in Chinese mode (though input element handles it usually)
+    // But if focus is elsewhere?
+    if (mode.value === 'chinese') {
+      if (e.key === 'Enter') submitGuess();
+      return;
+    }
+
     if (e.ctrlKey || e.altKey || e.metaKey) return;
 
     const key = e.key.toUpperCase();
@@ -276,6 +294,13 @@
 
   const updateBoard = () => {
     const row = board.value[currentRow.value];
+    for (let i = 0; i < row.length; i++) {
+      // Reset row first? No, we are updating in place
+    }
+    // Clear first?
+    for (let i = 0; i < row.length; i++) {
+      row[i].char = '';
+    }
     for (let i = 0; i < row.length; i++) {
       row[i].char = currentGuess.value[i] || '';
     }
@@ -428,9 +453,9 @@
     }
   };
 
-  onMounted(() => {
+  onMounted(async () => {
     loadStats();
-    initGame();
+    await initGame();
     window.addEventListener('keydown', handlePhysicalKeydown);
   });
 

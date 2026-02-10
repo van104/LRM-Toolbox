@@ -247,11 +247,21 @@
 
 <style scoped>
   .app-header {
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    width: 100%;
     z-index: 100;
     height: var(--header-height);
     border-bottom: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.85);
+    /* Fallback/Ensure background */
+    backdrop-filter: blur(12px);
+    /* Enhance glass effect */
+  }
+
+  [data-theme='dark'] .app-header {
+    background: rgba(30, 41, 59, 0.85);
   }
 
   .header-content {

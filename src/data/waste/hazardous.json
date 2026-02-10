@@ -1,0 +1,257 @@
+[
+  {
+    "name": "电池",
+    "category": "有害垃圾",
+    "tips": "请带包装投放"
+  },
+  {
+    "name": "废电池",
+    "category": "有害垃圾",
+    "tips": "请带包装投放"
+  },
+  {
+    "name": "充电电池",
+    "category": "有害垃圾",
+    "tips": "请带包装投放"
+  },
+  {
+    "name": "纽扣电池",
+    "category": "有害垃圾",
+    "tips": "请带包装投放"
+  },
+  {
+    "name": "废灯管",
+    "category": "有害垃圾",
+    "tips": "小心轻放，防止破碎"
+  },
+  {
+    "name": "荧光灯管",
+    "category": "有害垃圾",
+    "tips": "小心轻放，防止破碎"
+  },
+  {
+    "name": "LED灯",
+    "category": "有害垃圾",
+    "tips": "小心轻放"
+  },
+  {
+    "name": "废药品",
+    "category": "有害垃圾",
+    "tips": "连同包装一起投放"
+  },
+  {
+    "name": "过期药品",
+    "category": "有害垃圾",
+    "tips": "连同包装一起投放"
+  },
+  {
+    "name": "药片",
+    "category": "有害垃圾",
+    "tips": "连同包装一起投放"
+  },
+  {
+    "name": "油漆桶",
+    "category": "有害垃圾",
+    "tips": "密封后投放"
+  },
+  {
+    "name": "杀虫剂",
+    "category": "有害垃圾",
+    "tips": "密封后投放"
+  },
+  {
+    "name": "农药",
+    "category": "有害垃圾",
+    "tips": "密封后投放"
+  },
+  {
+    "name": "过期化妆品",
+    "category": "有害垃圾",
+    "tips": "连同包装投放"
+  },
+  {
+    "name": "指甲油",
+    "category": "有害垃圾",
+    "tips": "密封后投放"
+  },
+  {
+    "name": "温度计",
+    "category": "有害垃圾",
+    "tips": "小心轻放，防止破碎"
+  },
+  {
+    "name": "水银温度计",
+    "category": "有害垃圾",
+    "tips": "小心轻放，防止破碎"
+  },
+  {
+    "name": "血压计",
+    "category": "有害垃圾",
+    "tips": "含水银，小心投放"
+  },
+  {
+    "name": "消毒液",
+    "category": "有害垃圾",
+    "tips": "密封后投放"
+  },
+  {
+    "name": "染发剂",
+    "category": "有害垃圾",
+    "tips": "密封后投放"
+  },
+  {
+    "name": "胶水",
+    "category": "有害垃圾",
+    "tips": "化学废物"
+  },
+  {
+    "name": "强力胶",
+    "category": "有害垃圾",
+    "tips": "化学废物"
+  },
+  {
+    "name": "墨盒",
+    "category": "有害垃圾",
+    "tips": "电子化工废物"
+  },
+  {
+    "name": "硒鼓",
+    "category": "有害垃圾",
+    "tips": "电子化工废物"
+  },
+  {
+    "name": "洁厕灵",
+    "category": "有害垃圾",
+    "tips": "腐蚀性化学品"
+  },
+  {
+    "name": "消毒剂",
+    "category": "有害垃圾",
+    "tips": "化学品"
+  },
+  {
+    "name": "蓄电池",
+    "category": "有害垃圾",
+    "tips": "重金属污染"
+  },
+  {
+    "name": "相纸",
+    "category": "有害垃圾",
+    "tips": "化学感光材料"
+  },
+  {
+    "name": "底片",
+    "category": "有害垃圾",
+    "tips": "化学感光材料"
+  },
+  {
+    "name": "发胶",
+    "category": "有害垃圾",
+    "tips": "易燃易爆"
+  },
+  {
+    "name": "注射器",
+    "category": "有害垃圾",
+    "tips": "医疗废物"
+  },
+  {
+    "name": "针头",
+    "category": "有害垃圾",
+    "tips": "医疗废物"
+  },
+  {
+    "name": "纱布",
+    "category": "有害垃圾",
+    "tips": "医疗废物"
+  },
+  {
+    "name": "输液管",
+    "category": "有害垃圾",
+    "tips": "医疗废物"
+  },
+  {
+    "name": "急支糖浆瓶",
+    "category": "有害垃圾",
+    "tips": "残留药物"
+  },
+  {
+    "name": "口服液瓶",
+    "category": "有害垃圾",
+    "tips": "残留药物"
+  },
+  {
+    "name": "老鼠药",
+    "category": "有害垃圾",
+    "tips": "剧毒"
+  },
+  {
+    "name": "蟑螂药",
+    "category": "有害垃圾",
+    "tips": "剧毒"
+  },
+  {
+    "name": "除草剂",
+    "category": "有害垃圾",
+    "tips": "剧毒"
+  },
+  {
+    "name": "蚊香片",
+    "category": "有害垃圾",
+    "tips": "微毒"
+  },
+  {
+    "name": "电蚊香液",
+    "category": "有害垃圾",
+    "tips": "微毒"
+  },
+  {
+    "name": "指甲油瓶",
+    "category": "有害垃圾",
+    "tips": "化学残留"
+  },
+  {
+    "name": "洗甲水",
+    "category": "有害垃圾",
+    "tips": "化学残留"
+  },
+  {
+    "name": "染发剂壳",
+    "category": "有害垃圾",
+    "tips": "化学残留"
+  },
+  {
+    "name": "修正液",
+    "category": "有害垃圾",
+    "tips": "化学品"
+  },
+  {
+    "name": "水彩笔",
+    "category": "有害垃圾",
+    "tips": "化学品"
+  },
+  {
+    "name": "记号笔",
+    "category": "有害垃圾",
+    "tips": "化学品"
+  },
+  {
+    "name": "荧光笔",
+    "category": "有害垃圾",
+    "tips": "化学品"
+  },
+  {
+    "name": "打印机墨盒",
+    "category": "有害垃圾",
+    "tips": "电子化工废物"
+  },
+  {
+    "name": "调色板",
+    "category": "有害垃圾",
+    "tips": "化学残留"
+  },
+  {
+    "name": "颜料管",
+    "category": "有害垃圾",
+    "tips": "化学残留"
+  }
+]

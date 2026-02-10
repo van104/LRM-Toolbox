@@ -1,0 +1,352 @@
+[
+  {
+    "name": "剩菜",
+    "category": "厨余垃圾",
+    "tips": "沥干水分"
+  },
+  {
+    "name": "剩饭",
+    "category": "厨余垃圾",
+    "tips": "沥干水分"
+  },
+  {
+    "name": "剩菜剩饭",
+    "category": "厨余垃圾",
+    "tips": "沥干水分"
+  },
+  {
+    "name": "苹果核",
+    "category": "厨余垃圾",
+    "tips": "直接投放"
+  },
+  {
+    "name": "香蕉皮",
+    "category": "厨余垃圾",
+    "tips": "直接投放"
+  },
+  {
+    "name": "西瓜皮",
+    "category": "厨余垃圾",
+    "tips": "沥干水分"
+  },
+  {
+    "name": "菜叶",
+    "category": "厨余垃圾",
+    "tips": "沥干水分"
+  },
+  {
+    "name": "菜梗",
+    "category": "厨余垃圾",
+    "tips": "沥干水分"
+  },
+  {
+    "name": "果壳",
+    "category": "厨余垃圾",
+    "tips": "直接投放"
+  },
+  {
+    "name": "瓜皮",
+    "category": "厨余垃圾",
+    "tips": "沥干水分"
+  },
+  {
+    "name": "茶叶渣",
+    "category": "厨余垃圾",
+    "tips": "沥干水分"
+  },
+  {
+    "name": "咖啡渣",
+    "category": "厨余垃圾",
+    "tips": "沥干水分"
+  },
+  {
+    "name": "落叶",
+    "category": "厨余垃圾",
+    "tips": "直接投放"
+  },
+  {
+    "name": "残枝",
+    "category": "厨余垃圾",
+    "tips": "直接投放"
+  },
+  {
+    "name": "小骨头",
+    "category": "厨余垃圾",
+    "tips": "鸡骨鱼骨等小型骨头"
+  },
+  {
+    "name": "鱼骨",
+    "category": "厨余垃圾",
+    "tips": "直接投放"
+  },
+  {
+    "name": "鸡骨",
+    "category": "厨余垃圾",
+    "tips": "直接投放"
+  },
+  {
+    "name": "蛋壳",
+    "category": "厨余垃圾",
+    "tips": "直接投放"
+  },
+  {
+    "name": "花生壳",
+    "category": "厨余垃圾",
+    "tips": "直接投放"
+  },
+  {
+    "name": "玉米棒",
+    "category": "厨余垃圾",
+    "tips": "直接投放"
+  },
+  {
+    "name": "过期食品",
+    "category": "厨余垃圾",
+    "tips": "去除外包装后投放"
+  },
+  {
+    "name": "葡萄皮",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "荔枝壳",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "芒果皮",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "龙眼壳",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "土豆皮",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "萝卜皮",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "豆角",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "辣椒",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "蛋糕",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "饼干",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "糖果",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "巧克力",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "中药渣",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "宠物饲料",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "面包",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "面条",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "大米",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "洋葱皮",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "蒜皮",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "番茄",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "草莓",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "樱桃",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "蓝莓",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "桃子",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "李子",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "杏子",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "梨",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "菠萝皮",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "火龙果皮",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "山竹壳",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "开心果壳",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "瓜子壳",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "鲜花",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "植物",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "盆栽植物",
+    "category": "厨余垃圾",
+    "tips": "去除盆土"
+  },
+  {
+    "name": "中草药",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "甘蔗渣",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "茶包",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "奶粉",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "麦片",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "香料",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "酱料",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "虾壳",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "蟹壳",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "小龙虾",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "动物内脏",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "腊肉",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "香肠",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  },
+  {
+    "name": "火腿",
+    "category": "厨余垃圾",
+    "tips": "易腐烂"
+  }
+]

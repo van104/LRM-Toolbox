@@ -6,10 +6,10 @@ import eslintConfigPrettier from 'eslint-config-prettier';
 
 export default [
   {
-    files: ['**/*.{js,mjs,cjs,ts,vue}'],
+    files: ['**/*.{js,mjs,cjs,ts,vue}']
   },
   {
-    languageOptions: { 
+    languageOptions: {
       globals: {
         ...globals.browser,
         ...globals.node
@@ -24,19 +24,21 @@ export default [
     files: ['**/*.vue'],
     languageOptions: {
       parserOptions: {
-        parser: tseslint.parser,
-      },
-    },
+        parser: tseslint.parser
+      }
+    }
   },
   eslintConfigPrettier,
   {
     rules: {
       'vue/multi-word-component-names': 'off',
+      'vue/max-attributes-per-line': 'off',
+      'vue/first-attribute-linebreak': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-      'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    },
+      'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off'
+    }
   },
   {
     ignores: ['dist/*', 'node_modules/', 'public/', '*.d.ts']

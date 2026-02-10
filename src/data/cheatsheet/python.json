@@ -1,0 +1,90 @@
+{
+  "id": "python",
+  "name": "Python 常用语法",
+  "sections": [
+    {
+      "title": "基础操作",
+      "items": [
+        {
+          "cmd": "print(f\"Hello {name}\")",
+          "desc": "f-string 格式化"
+        },
+        {
+          "cmd": "len(lst)",
+          "desc": "获取长度"
+        },
+        {
+          "cmd": "range(0, 10, 2)",
+          "desc": "生成序列"
+        },
+        {
+          "cmd": "input(\"Prompt: \")",
+          "desc": "获取输入"
+        }
+      ]
+    },
+    {
+      "title": "列表与字典",
+      "items": [
+        {
+          "cmd": "lst.append(x)",
+          "desc": "列表追加"
+        },
+        {
+          "cmd": "lst[1:3]",
+          "desc": "列表切片"
+        },
+        {
+          "cmd": "dict.get(key, default)",
+          "desc": "安全获取字典值"
+        },
+        {
+          "cmd": "[x**2 for x in range(5)]",
+          "desc": "列表推导式"
+        }
+      ]
+    },
+    {
+      "title": "文件操作",
+      "items": [
+        {
+          "cmd": "with open(\"f.txt\") as f:",
+          "desc": "上下文管理"
+        },
+        {
+          "cmd": "f.read()",
+          "desc": "读取全部"
+        },
+        {
+          "cmd": "f.readlines()",
+          "desc": "按行读取"
+        },
+        {
+          "cmd": "json.load(f)",
+          "desc": "加载JSON"
+        }
+      ]
+    },
+    {
+      "title": "常用库",
+      "items": [
+        {
+          "cmd": "pip install requests",
+          "desc": "安装库"
+        },
+        {
+          "cmd": "import os",
+          "desc": "系统模块"
+        },
+        {
+          "cmd": "import sys",
+          "desc": "环境模块"
+        },
+        {
+          "cmd": "from datetime import datetime",
+          "desc": "时间模块"
+        }
+      ]
+    }
+  ]
+}

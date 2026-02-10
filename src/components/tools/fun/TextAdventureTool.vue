@@ -115,10 +115,10 @@
   import { ref, computed, nextTick, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { Back, Coin, Goods, Lock } from '@element-plus/icons-vue';
-  import { textAdventureStories } from '@/data/textAdventureStories.js';
+  import { loadAll } from '@/data/adventure';
 
   const router = useRouter();
-  const stories = ref(textAdventureStories);
+  const stories = ref([]);
   const currentStory = ref(null);
   const currentNodeId = ref('');
   const gameLogs = ref([]);
@@ -227,7 +227,9 @@
     loadNode(choice.next);
   }
 
-  onMounted(() => {});
+  onMounted(async () => {
+    stories.value = await loadAll();
+  });
 </script>
 
 <style scoped>

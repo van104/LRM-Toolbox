@@ -1,0 +1,277 @@
+[
+  {
+    "category": "coder",
+    "content": "Talk is cheap. Show me the code.",
+    "author": "Linus Torvalds"
+  },
+  {
+    "category": "coder",
+    "content": "在我的机器上是好的啊！",
+    "author": "程序员经典"
+  },
+  {
+    "category": "coder",
+    "content": "代码没写完，怎么能睡觉呢？",
+    "author": "某资深开发"
+  },
+  {
+    "category": "coder",
+    "content": "删库跑路虽然不提倡，但有时候真的是种解脱。",
+    "author": "代码哲学家"
+  },
+  {
+    "category": "coder",
+    "content": "程序出bug了不要慌，先重启一下试试。",
+    "author": "运维大神"
+  },
+  {
+    "category": "coder",
+    "content": "世上只有 10 种人：懂得二进制的和不懂得二进制的。",
+    "author": "二进制传说"
+  },
+  {
+    "category": "coder",
+    "content": "First, solve the problem. Then, write the code.",
+    "author": "John Johnson"
+  },
+  {
+    "category": "coder",
+    "content": "Java 之于 JavaScript 就像狗之于热狗。",
+    "author": "Jeremy Keith"
+  },
+  {
+    "category": "coder",
+    "content": "世界上最远的距离，是我在写 Bug，你在改 Bug。",
+    "author": "网络"
+  },
+  {
+    "category": "coder",
+    "content": "一个好的程序员在过马路时，总是向两边看。",
+    "author": "Doug Linder"
+  },
+  {
+    "category": "coder",
+    "content": "如果不确定该怎么办，就先写个注释吧。",
+    "author": "鲁迅没说过"
+  },
+  {
+    "category": "coder",
+    "content": "我的代码不需要注释，因为好的代码本身就是文档。",
+    "author": "某自信程序员"
+  },
+  {
+    "category": "coder",
+    "content": "软件交付后，唯一的文档就是源代码。",
+    "author": "架构师格言"
+  },
+  {
+    "category": "coder",
+    "content": "简单化是长久生存的关键。",
+    "author": "Rich Hickey"
+  },
+  {
+    "category": "coder",
+    "content": "写代码就像写诗，只是韵律是逻辑。",
+    "author": "匿名"
+  },
+  {
+    "category": "coder",
+    "content": "Bug 并不是错误，它们只是意外的特性。",
+    "author": "微软风格"
+  },
+  {
+    "category": "coder",
+    "content": "如果一个程序在第一次运行就没报错，那它一定有问题。",
+    "author": "程序员直觉"
+  },
+  {
+    "category": "coder",
+    "content": "调试（Debugging）就像是在侦探小说中寻找真凶。",
+    "author": "网络"
+  },
+  {
+    "category": "coder",
+    "content": "只有当你意识到代码是写给人看而非虚拟机看的时候，你才算入门了。",
+    "author": "资深开发"
+  },
+  {
+    "category": "coder",
+    "content": "程序员的快乐，就是看到满屏绿色的测试通过。",
+    "author": "TDD 信徒"
+  },
+  {
+    "category": "coder",
+    "content": "这个需求很简单，怎么还没做完？",
+    "author": "产品经理"
+  },
+  {
+    "category": "coder",
+    "content": "Ctrl+C 和 Ctrl+V 是我最常用的设计模式。",
+    "author": "CV 工程师"
+  },
+  {
+    "category": "coder",
+    "content": "只要逻辑不出错，世界就在我手中。",
+    "author": "全栈工程师"
+  },
+  {
+    "category": "coder",
+    "content": "过早的优化是万恶之源。",
+    "author": "Donald Knuth"
+  },
+  {
+    "category": "coder",
+    "content": "代码是写给未来的自己看的。",
+    "author": "网络"
+  },
+  {
+    "category": "coder",
+    "content": "如果所有的程序员由于某种原因突然罢工，世界将会停止运转。",
+    "author": "事实"
+  },
+  {
+    "category": "coder",
+    "content": "为了理解什么是递归，你必须首先理解什么是递归。",
+    "author": "递归原理"
+  },
+  {
+    "category": "coder",
+    "content": "任何功能，只要你努力尝试，都可以用一行代码写完（虽然没人看得懂）。",
+    "author": "Perl 玩家"
+  },
+  {
+    "category": "coder",
+    "content": "比起重写代码，我更倾向于直接重写人生。",
+    "author": "厌世开发者"
+  },
+  {
+    "category": "coder",
+    "content": "昨晚做梦，梦里我也在写 Bug。",
+    "author": "职业病"
+  },
+  {
+    "category": "coder",
+    "content": "我不是在修 Bug，我是在优化用户体验。",
+    "author": "辩论达人"
+  },
+  {
+    "category": "coder",
+    "content": "Git Commit 时写「fixed」是我的底线。",
+    "author": "匿名"
+  },
+  {
+    "category": "coder",
+    "content": "世界上有两种程序员：一种是觉得 C++ 太难的，另一种是还没发现 C++ 有多难的。",
+    "author": "程序员幽默"
+  },
+  {
+    "category": "coder",
+    "content": "PHP 是世界上最好的语言。",
+    "author": "传世经典"
+  },
+  {
+    "category": "coder",
+    "content": "没有什么问题是重启解决不了的，如果有，就再重启一次。",
+    "author": "万能法则"
+  },
+  {
+    "category": "coder",
+    "content": "代码评审（Code Review）不是为了找茬，是为了共同进步（才怪）。",
+    "author": "真实独白"
+  },
+  {
+    "category": "coder",
+    "content": "我的电脑很听话，因为它只做我命令它做的事，哪怕是错的。",
+    "author": "事实"
+  },
+  {
+    "category": "coder",
+    "content": "如果架构设计得足够好，编码只是体力活。",
+    "author": "架构大牛"
+  },
+  {
+    "category": "coder",
+    "content": "不要把所有的鸡蛋都放进一个缓存逻辑里。",
+    "author": "性能专家"
+  },
+  {
+    "category": "coder",
+    "content": "任何你觉得会出问题的地方，由于墨菲定律，它一定会出问题。",
+    "author": "后端痛点"
+  },
+  {
+    "category": "coder",
+    "content": "前端：我只是调调 CSS；后端：我只是查查数据库。",
+    "author": "相互误解"
+  },
+  {
+    "category": "coder",
+    "content": "如果你发现自己写了太多重复的代码，请反思一下 DRY 原则。",
+    "author": "洁癖开发"
+  },
+  {
+    "category": "coder",
+    "content": "程序员最讨厌的两件事：写文档，和别人不写文档。",
+    "author": "自相矛盾"
+  },
+  {
+    "category": "coder",
+    "content": "有些 Bug 就像鬼魂，你觉得它在，可当你盯着它看时它又消失了。",
+    "author": "海森堡 Bug"
+  },
+  {
+    "category": "coder",
+    "content": "写代码是一门手艺，而不仅仅是一份工作。",
+    "author": "匠心精神"
+  },
+  {
+    "category": "coder",
+    "content": "所谓的技术债，就是今天为了便利而欠下的明天的麻烦。",
+    "author": "真相"
+  },
+  {
+    "category": "coder",
+    "content": "API 文档就像一张地图，如果地图画错了，那目的地也就没意义了。",
+    "author": "集成笔记"
+  },
+  {
+    "category": "coder",
+    "content": "在二进制的世界里，没有灰色地带。",
+    "author": "逻辑之魂"
+  },
+  {
+    "category": "coder",
+    "content": "每一个成功的 App 背后，都有无数个被删掉的 Bug。",
+    "author": "开发史"
+  },
+  {
+    "category": "coder",
+    "content": "别问我是怎么实现的，问就是黑魔法。",
+    "author": "高级开发"
+  },
+  {
+    "category": "coder",
+    "content": "代码如人，简洁即是高级。",
+    "author": "美学追求"
+  },
+  {
+    "category": "coder",
+    "content": "如果一个程序员看起来在发呆，其实他可能正在运行数个复杂的逻辑模型。",
+    "author": "生存现状"
+  },
+  {
+    "category": "coder",
+    "content": "头发和代码，总有一个要变乱。",
+    "author": "岁月痕迹"
+  },
+  {
+    "category": "coder",
+    "content": "只要心中有逻辑，哪怕用记事本也能写出改变世界的代码。",
+    "author": "信徒"
+  },
+  {
+    "category": "coder",
+    "content": "祝所有的程序员：新的一年，0 Error，0 Warning！",
+    "author": "终极梦想"
+  }
+]

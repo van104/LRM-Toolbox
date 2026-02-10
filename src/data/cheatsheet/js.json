@@ -1,0 +1,65 @@
+{
+  "id": "js",
+  "name": "JS / ES6+ 语法",
+  "sections": [
+    {
+      "title": "常用数组方法",
+      "items": [
+        {
+          "cmd": "arr.map(x => x * 2)",
+          "desc": "映射新数组"
+        },
+        {
+          "cmd": "arr.filter(x => x > 0)",
+          "desc": "过滤元素"
+        },
+        {
+          "cmd": "arr.reduce((a, b) => a + b)",
+          "desc": "聚合计算"
+        },
+        {
+          "cmd": "arr.find(x => x.id === 1)",
+          "desc": "查找首个符合项"
+        }
+      ]
+    },
+    {
+      "title": "现代语法",
+      "items": [
+        {
+          "cmd": "const { a, b } = obj",
+          "desc": "对象解构"
+        },
+        {
+          "cmd": "[...arr1, ...arr2]",
+          "desc": "展开/合并数组"
+        },
+        {
+          "cmd": "`Hello, ${name}`",
+          "desc": "模板字符串"
+        },
+        {
+          "cmd": "obj?.prop",
+          "desc": "可选链操作符"
+        }
+      ]
+    },
+    {
+      "title": "异步处理",
+      "items": [
+        {
+          "cmd": "async function foo() {}",
+          "desc": "定义异步函数"
+        },
+        {
+          "cmd": "await promise",
+          "desc": "等待异步结果"
+        },
+        {
+          "cmd": "Promise.all([p1, p2])",
+          "desc": "并行处理Promise"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "id": "traffic",
+  "name": "交通出行",
+  "icon": "Van",
+  "items": [
+    {
+      "title": "交管12123",
+      "desc": "违章查询、驾照分、处理缴费",
+      "icon": "Management",
+      "color": "#1890ff",
+      "url": "https://gd.122.gov.cn/"
+    },
+    {
+      "title": "铁路12306",
+      "desc": "火车票购票、改签、退票",
+      "icon": "Ticket",
+      "color": "#1890ff",
+      "url": "https://www.12306.cn/"
+    },
+    {
+      "title": "航班信息查询",
+      "desc": "航班动态、机票预订",
+      "icon": "Position",
+      "color": "#2f54eb",
+      "url": "https://flights.ctrip.com/"
+    },
+    {
+      "title": "高速ETC服务",
+      "desc": "ETC办理、充值、账单查询",
+      "icon": "CreditCard",
+      "color": "#52c41a",
+      "url": "https://www.etc.cn/"
+    },
+    {
+      "title": "驾驶证查询",
+      "desc": "驾驶证信息、记分查询",
+      "icon": "Postcard",
+      "color": "#faad14",
+      "url": "https://gd.122.gov.cn/"
+    },
+    {
+      "title": "机动车违法查询",
+      "desc": "全国机动车违法记录查询",
+      "icon": "Warning",
+      "color": "#f5222d",
+      "url": "https://gd.122.gov.cn/"
+    }
+  ]
+}

@@ -41,3 +41,6 @@ _redundant_backup
 
 # Internal Docs
 docs/modifications.md
+
+# Data
+src/data/成语.txt

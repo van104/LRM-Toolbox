@@ -1,0 +1,82 @@
+{
+  "id": "sql",
+  "name": "SQL 数据库操作",
+  "sections": [
+    {
+      "title": "数据定义 (DDL)",
+      "items": [
+        {
+          "cmd": "CREATE DATABASE db_name",
+          "desc": "创建数据库"
+        },
+        {
+          "cmd": "CREATE TABLE tb (id INT, name VARCHAR(255))",
+          "desc": "创建表"
+        },
+        {
+          "cmd": "ALTER TABLE tb ADD col_name TEXT",
+          "desc": "添加列"
+        },
+        {
+          "cmd": "DROP TABLE tb_name",
+          "desc": "删除表"
+        }
+      ]
+    },
+    {
+      "title": "数据操作 (DML)",
+      "items": [
+        {
+          "cmd": "INSERT INTO tb (col1, col2) VALUES (v1, v2)",
+          "desc": "插入数据"
+        },
+        {
+          "cmd": "UPDATE tb SET col = val WHERE id = 1",
+          "desc": "修改数据"
+        },
+        {
+          "cmd": "DELETE FROM tb WHERE id = 1",
+          "desc": "删除单条数据"
+        },
+        {
+          "cmd": "TRUNCATE TABLE tb",
+          "desc": "清空表数据"
+        }
+      ]
+    },
+    {
+      "title": "数据检索 (DQL)",
+      "items": [
+        {
+          "cmd": "SELECT * FROM tb WHERE col LIKE \"%val%\"",
+          "desc": "模糊匹配查询"
+        },
+        {
+          "cmd": "SELECT col1, col2 FROM tb ORDER BY col1 DESC",
+          "desc": "指定列排序查询"
+        },
+        {
+          "cmd": "SELECT * FROM tb LIMIT 10 OFFSET 20",
+          "desc": "分页查询"
+        }
+      ]
+    },
+    {
+      "title": "聚合与关联",
+      "items": [
+        {
+          "cmd": "SELECT COUNT(*), category FROM tb GROUP BY category",
+          "desc": "分组统计"
+        },
+        {
+          "cmd": "SELECT * FROM a JOIN b ON a.id = b.a_id",
+          "desc": "内连接查询"
+        },
+        {
+          "cmd": "SELECT * FROM a LEFT JOIN b ON a.id = b.a_id",
+          "desc": "左连接查询"
+        }
+      ]
+    }
+  ]
+}

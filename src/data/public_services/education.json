@@ -1,0 +1,35 @@
+{
+  "id": "education",
+  "name": "教育考试",
+  "icon": "Reading",
+  "items": [
+    {
+      "title": "中国教育考试网",
+      "desc": "各类考试报名、成绩查询",
+      "icon": "Notebook",
+      "color": "#1890ff",
+      "url": "http://www.neea.edu.cn/"
+    },
+    {
+      "title": "四六级成绩查询",
+      "desc": "大学英语四六级成绩",
+      "icon": "Tickets",
+      "color": "#52c41a",
+      "url": "http://cet.neea.edu.cn/"
+    },
+    {
+      "title": "普通话水平测试",
+      "desc": "普通话考试报名成绩",
+      "icon": "Microphone",
+      "color": "#722ed1",
+      "url": "https://www.cltt.org/"
+    },
+    {
+      "title": "计算机等级考试",
+      "desc": "NCRE报名成绩查询",
+      "icon": "Monitor",
+      "color": "#fa8c16",
+      "url": "https://ncre.neea.edu.cn/"
+    }
+  ]
+}

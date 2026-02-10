@@ -1,0 +1,45 @@
+[
+  {
+    "name": "谈笑风生",
+    "pinyin": "tán xiào fēng shēng",
+    "meaning": "形容谈话时有说有笑，兴致很高，并且很有风趣。",
+    "synonyms": [
+      "谈笑自若"
+    ],
+    "antonyms": [
+      "沉默寡言"
+    ],
+    "example": "在晚会上，他谈笑风生，赢得了大家的阵阵掌声。"
+  },
+  {
+    "name": "谈笑自若",
+    "pinyin": "tán xiào zì ruò",
+    "meaning": "指在不平常的情况下，仍能跟平时一样谈笑得很自然。",
+    "synonyms": [
+      "面不改色"
+    ],
+    "example": "面对敌人的重重包围，将军谈笑自若。"
+  },
+  {
+    "name": "天伦之乐",
+    "pinyin": "tiān lún zhī lè",
+    "meaning": "指家庭骨肉团聚的欢乐。",
+    "synonyms": [
+      "其乐融融"
+    ],
+    "antonyms": [
+      "孤苦伶仃"
+    ],
+    "example": "每逢过节，全家人聚在一起享受天伦之乐。"
+  },
+  {
+    "name": "铁杵成针",
+    "pinyin": "tiě chǔ chéng zhēn",
+    "meaning": "比喻只要有恒心，肯努力，再难的事也能成功。",
+    "synonyms": [
+      "磨杵成针",
+      "持之以恒"
+    ],
+    "example": "只要肯下功夫，铁杵成针。"
+  }
+]

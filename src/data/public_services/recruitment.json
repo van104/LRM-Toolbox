@@ -1,0 +1,35 @@
+{
+  "id": "recruitment",
+  "name": "求职招聘",
+  "icon": "UserFilled",
+  "items": [
+    {
+      "title": "国家大学生就业服务",
+      "desc": "教育部大学生就业服务平台",
+      "icon": "Promotion",
+      "color": "#1890ff",
+      "url": "https://24365.smartedu.cn/"
+    },
+    {
+      "title": "智联招聘",
+      "desc": "全国领先的求职招聘平台",
+      "icon": "User",
+      "color": "#1890ff",
+      "url": "https://www.zhaopin.com/"
+    },
+    {
+      "title": "前程无忧",
+      "desc": "专业的人力资源服务机构",
+      "icon": "Suitcase",
+      "color": "#fa8c16",
+      "url": "https://www.51job.com/"
+    },
+    {
+      "title": "BOSS直聘",
+      "desc": "互联网求职招聘平台",
+      "icon": "ChatLineRound",
+      "color": "#13c2c2",
+      "url": "https://www.zhipin.com/"
+    }
+  ]
+}
