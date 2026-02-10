@@ -1,9 +1,8 @@
 # 🛠️ LRM工具箱 (Online Utilities)
 
-**LRM工具箱** 是一个功能强大的在线开源工具箱，基于 **Vue 3** + **Vite** + **TailwindCSS** + **Element Plus** 构建。提供了包括开发运维、图像处理、文本清洗、生活常用、金融理财、教育学习、健康运动、趣味游戏和 PDF 处理等在内的 100+ 种实用工具。
+**LRM工具箱** 是一个功能强大的在线开源工具箱，基于 **Vue 3** + **Vite** + **TailwindCSS v4** + **Element Plus** + **TypeScript** 构建。提供了包括开发运维、图像处理、文本清洗、生活常用、金融理财、教育学习、健康运动、趣味游戏和 PDF 处理等在内的 100+ 种实用工具。
 
 **🌐 演示地址：[https://www.lrm123.site/](https://www.lrm123.site/)**
-
 
 ## ✨ 特性
 
@@ -164,11 +163,10 @@ toolbox/
 │   │   ├── pages/          # 独立页面 (About, FeedbackAdmin)
 │   │   └── Home.vue        # 首页
 │   ├── App.vue             # 根组件
-│   └── main.js             # 入口文件
-├── DEPLOY_GUIDE.md         # 详细部署与 Nginx 配置指南
+│   └── main.ts             # 入口文件
 ├── index.html              # 入口 HTML
 ├── package.json            # 前端项目配置
-└── vite.config.js          # Vite 配置
+└── vite.config.ts          # Vite 配置
 ```
 
 ## 🤝 贡献指南 (Contributing)
