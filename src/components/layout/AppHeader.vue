@@ -23,6 +23,11 @@
           <button
             v-for="cat in categories"
             :key="cat.id"
+            :ref="
+              el => {
+                if (el) navItemsRef[cat.id] = el;
+              }
+            "
             :class="['nav-item', { active: activeCategory === cat.id }]"
             @click="handleCategoryClick($event, cat.id)"
           >
@@ -32,6 +37,7 @@
             <span>{{ cat.name }}</span>
             <span class="count-badge">{{ getCategoryCount(cat.id) }}</span>
           </button>
+          <div ref="indicatorRef" class="nav-indicator"></div>
         </nav>
       </el-tooltip>
 
@@ -97,7 +103,7 @@
           :class="['mobile-nav-item', { active: activeCategory === cat.id }]"
           @click="handleMobileNavClick(cat.id)"
         >
-          <el-icon :size="20">
+          <el-icon :size="24">
             <component :is="iconMap[cat.icon]" />
           </el-icon>
           <span>{{ cat.name }}</span>
@@ -109,7 +115,7 @@
 </template>
 
 <script setup>
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, watch } from 'vue';
   import LrmLogo from '@/components/icons/LrmLogo.vue';
   import { useThemeStore } from '@/stores/theme';
   import { useUserStore } from '@/stores/user';
@@ -146,7 +152,7 @@
     IceTea
   };
 
-  defineProps({
+  const props = defineProps({
     activeCategory: {
       type: String,
       default: 'all'
@@ -165,11 +171,22 @@
   const mobileMenuOpen = ref(false);
 
   const navMenuRef = ref(null);
+  const indicatorRef = ref(null);
+  const navItemsRef = ref({});
   const toolsCountMap = ref({});
   let isDragging = false;
   let startX = 0;
   let scrollLeft = 0;
   let dragMoved = false;
+
+  const updateIndicator = id => {
+    const el = navItemsRef.value[id];
+    if (el && indicatorRef.value) {
+      indicatorRef.value.style.width = `${el.offsetWidth}px`;
+      indicatorRef.value.style.left = `${el.offsetLeft}px`;
+      indicatorRef.value.style.opacity = '1';
+    }
+  };
 
   onMounted(async () => {
     // 加载所有工具来计算每个分类的数量
@@ -183,7 +200,18 @@
       }
     });
     toolsCountMap.value = counts;
+
+    setTimeout(() => {
+      updateIndicator(props.activeCategory);
+    }, 100);
   });
+
+  watch(
+    () => props.activeCategory,
+    newId => {
+      updateIndicator(newId);
+    }
+  );
 
   function handleMouseDown(e) {
     isDragging = true;
@@ -286,42 +314,46 @@
     width: 100%;
     z-index: 100;
     height: var(--header-height);
-    border-bottom: 1px solid var(--border-color);
-    background: rgba(255, 255, 255, 0.85);
-    /* Fallback/Ensure background */
-    backdrop-filter: blur(12px);
-    /* Enhance glass effect */
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
   }
 
   [data-theme='dark'] .app-header {
-    background: rgba(30, 41, 59, 0.85);
+    background: rgba(15, 23, 42, 0.7);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   }
 
   .header-content {
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
     height: 100%;
-    padding: 0 1.5rem;
+    padding: 0 2rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 2rem;
+    gap: 1.5rem;
   }
 
   .logo {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
     flex-shrink: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
-  .logo-icon {
-    color: var(--accent-cyan);
+  .logo:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.3));
   }
 
   .logo-text {
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
     background: var(--accent-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -330,11 +362,19 @@
 
   .nav-menu {
     display: flex;
-    gap: 0.25rem;
+    gap: 0.5rem;
+    padding: 0.25rem;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 12px;
+    position: relative;
     overflow-x: auto;
     scrollbar-width: none;
     cursor: grab;
     user-select: none;
+  }
+
+  [data-theme='dark'] .nav-menu {
+    background: rgba(255, 255, 255, 0.05);
   }
 
   .nav-menu.is-dragging {
@@ -350,32 +390,43 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius-md);
+    padding: 0.5rem 1.25rem;
+    border-radius: 10px;
     color: var(--text-secondary);
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
     white-space: nowrap;
-    transition: all var(--transition-fast);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 1;
+    border: none;
+    background: transparent;
   }
 
   .nav-item:hover {
     color: var(--text-primary);
-    background: var(--bg-primary);
   }
 
   .nav-item.active {
     color: var(--accent-purple);
-    background: rgba(59, 130, 246, 0.1);
-
-    font-weight: 500;
   }
 
-  [data-theme='dark'] .nav-item.active {
-    background: rgba(59, 130, 246, 0.15);
+  .nav-indicator {
+    position: absolute;
+    bottom: 4px;
+    top: 4px;
+    height: auto;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 0;
+    opacity: 0;
   }
 
-  [data-theme='dark'] .nav-item.active {
-    background: rgba(59, 130, 246, 0.15);
+  [data-theme='dark'] .nav-indicator {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   }
 
   .count-badge {
@@ -477,31 +528,39 @@
   .mobile-menu {
     position: absolute;
     top: var(--header-height);
-    left: 0;
-    right: 0;
-    padding: 1rem;
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    left: 1rem;
+    right: 1rem;
+    padding: 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    transform-origin: top center;
   }
 
   .mobile-nav-item {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border-radius: var(--radius-md);
+    justify-content: center;
+    padding: 1.25rem 0.5rem;
+    border-radius: 12px;
+    background: var(--bg-secondary);
     color: var(--text-secondary);
-    transition: all var(--transition-fast);
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    transition: all 0.2s;
+    border: 1px solid transparent;
   }
 
   .mobile-nav-item:hover,
   .mobile-nav-item.active {
     color: var(--accent-purple);
-    background: rgba(59, 130, 246, 0.1);
+    background: rgba(139, 92, 246, 0.1);
+    border-color: rgba(139, 92, 246, 0.2);
   }
 
   .slide-enter-active,

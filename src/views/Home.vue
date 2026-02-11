@@ -55,12 +55,12 @@
         </div>
       </section>
 
-      <div v-if="activeCategory === 'all' && !searchKeyword" class="all-tools-header">
+      <div v-if="!searchKeyword" class="all-tools-header">
         <h2 class="section-title">
           <el-icon>
-            <Grid />
+            <component :is="iconMap[currentCategoryInfo?.icon] || Grid" />
           </el-icon>
-          全部工具
+          {{ currentCategoryInfo?.name || '全部工具' }}
         </h2>
       </div>
 
@@ -109,66 +109,31 @@
 
     <ToolModal :visible="modalVisible" :tool="selectedTool" @close="modalVisible = false" />
 
-    <el-dialog
-      v-model="searchDialogVisible"
-      title="快速搜索"
-      width="500px"
-      :show-close="false"
-      @opened="focusSearchInput"
-    >
-      <el-input
-        ref="searchInputRef"
-        v-model="quickSearchKeyword"
-        placeholder="输入工具名称搜索..."
-        size="large"
-        clearable
-        @input="handleQuickSearch"
-      >
-        <template #prefix>
-          <el-icon>
-            <Search />
-          </el-icon>
-        </template>
-      </el-input>
-
-      <div v-if="quickSearchResults.length > 0" class="quick-search-results">
-        <div
-          v-for="tool in quickSearchResults"
-          :key="tool.id"
-          class="quick-search-item"
-          @click="selectQuickSearchTool(tool)"
-        >
-          <div class="quick-search-icon">
-            <el-icon :size="24">
-              <component :is="tool.icon" />
-            </el-icon>
-          </div>
-          <div class="quick-search-info">
-            <div class="quick-search-name">{{ tool.name }}</div>
-            <div class="quick-search-summary">{{ tool.summary }}</div>
-          </div>
-        </div>
-      </div>
-
-      <div v-else-if="quickSearchKeyword" class="quick-search-empty">没有找到匹配的工具</div>
-
-      <template #footer>
-        <span class="dialog-footer-hint"> 按 <kbd>Esc</kbd> 关闭 </span>
-      </template>
-    </el-dialog>
-
     <el-backtop :right="40" :bottom="40" />
   </div>
 </template>
 
 <script setup>
-  import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
+  import { ref, computed, onMounted, onUnmounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
 
   defineOptions({
     name: 'Home'
   });
-  import { Search, Grid, ArrowDown } from '@element-plus/icons-vue';
+  import {
+    Search,
+    Grid,
+    ArrowDown,
+    Monitor,
+    Document,
+    Picture,
+    Brush,
+    Wallet,
+    Service,
+    Coffee,
+    Notebook,
+    IceTea
+  } from '@element-plus/icons-vue';
   import AppHeader from '@/components/layout/AppHeader.vue';
   import AppFooter from '@/components/layout/AppFooter.vue';
   import ParticlesBackground from '@/components/common/ParticlesBackground.vue';
@@ -191,15 +156,29 @@
   const selectedTool = ref({});
   const loading = ref(true);
 
-  const searchDialogVisible = ref(false);
-  const quickSearchKeyword = ref('');
-  const quickSearchResults = ref([]);
   const allTools = ref([]);
   const displayedTools = ref([]);
-  const searchInputRef = ref(null);
 
   const isShowAll = ref(false);
   const DISPLAY_LIMIT = 12;
+
+  const iconMap = {
+    Grid,
+    Monitor,
+    Document,
+    Picture,
+    Brush,
+    Wallet,
+    Service,
+    Coffee,
+    Notebook,
+    IceTea
+  };
+
+  import { categories } from '@/data/tools';
+  const currentCategoryInfo = computed(() => {
+    return categories.find(c => c.id === activeCategory.value);
+  });
 
   onMounted(async () => {
     // 初始加载当前分类工具
@@ -210,13 +189,9 @@
     loadAllTools().then(res => {
       allTools.value = res;
     });
-
-    document.addEventListener('keydown', handleGlobalKeydown);
   });
 
-  onUnmounted(() => {
-    document.removeEventListener('keydown', handleGlobalKeydown);
-  });
+  onUnmounted(() => {});
 
   const filteredTools = computed(() => {
     return displayedTools.value;
@@ -291,49 +266,6 @@
   function handleToolClick(tool) {
     if (tool.route) {
       userStore.addToHistory(tool);
-      if (tool.isLocal === false || tool.route.startsWith('http')) {
-        window.open(tool.route, '_blank');
-      } else {
-        router.push(tool.route);
-      }
-    } else {
-      openToolModal(tool);
-    }
-  }
-
-  function handleGlobalKeydown(e) {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-      e.preventDefault();
-      searchDialogVisible.value = true;
-    }
-
-    if (e.key === 'Escape' && searchDialogVisible.value) {
-      searchDialogVisible.value = false;
-    }
-  }
-
-  function focusSearchInput() {
-    nextTick(() => {
-      searchInputRef.value?.focus();
-    });
-  }
-
-  async function handleQuickSearch() {
-    if (quickSearchKeyword.value.trim()) {
-      quickSearchResults.value = await searchToolsAsync(quickSearchKeyword.value);
-    } else {
-      quickSearchResults.value = [];
-    }
-  }
-
-  function selectQuickSearchTool(tool) {
-    searchDialogVisible.value = false;
-    quickSearchKeyword.value = '';
-    quickSearchResults.value = [];
-
-    userStore.addToHistory(tool);
-
-    if (tool.route) {
       if (tool.isLocal === false || tool.route.startsWith('http')) {
         window.open(tool.route, '_blank');
       } else {

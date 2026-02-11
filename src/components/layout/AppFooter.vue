@@ -14,7 +14,7 @@
           </p>
           <div class="status-indicator">
             <span class="status-dot"></span>
-            <span class="status-text">系统运行正常 | 已上线 168+ 工具</span>
+            <span class="status-text">系统运行正常 | 已上线 {{ totalTools }}+ 工具</span>
           </div>
           <div class="footer-social">
             <a
@@ -187,9 +187,10 @@
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue';
+  import { ref, computed, onMounted } from 'vue';
   import { ElMessage } from 'element-plus';
   import LrmLogo from '@/components/icons/LrmLogo.vue';
+  import { loadAllTools } from '@/data/tools';
 
   import { submitFeedbackToBackend } from '@/api/feedback';
 
@@ -199,6 +200,16 @@
   const isSubmitting = ref(false);
 
   const currentYear = computed(() => new Date().getFullYear());
+  const totalTools = ref(168);
+
+  onMounted(async () => {
+    try {
+      const allTools = await loadAllTools();
+      totalTools.value = allTools.length;
+    } catch (err) {
+      console.error('Failed to load tools count for footer:', err);
+    }
+  });
 
   const feedbackForm = ref({
     type: '',
