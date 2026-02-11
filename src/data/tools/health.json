@@ -1,0 +1,122 @@
+[
+  {
+    "id": "workout-timer",
+    "name": "训练助手",
+    "category": "health",
+    "icon": "Timer",
+    "summary": "训练倒计时与计划管理工具",
+    "description": "提供专业训练倒计时（支持组间休息）、训练计划管理（自定义动作/组数）以及自由通用计时器功能。",
+    "usage": "1. 创建或选择训练计划\n2. 开始训练并跟随倒计时\n3. 也可使用自由计时模式进行通用计时",
+    "route": "/tools/workout-timer",
+    "isLocal": true,
+    "tags": ["健身", "倒计时", "计划", "运动"]
+  },
+  {
+    "id": "bmi-calculator",
+    "name": "BMI 体脂计算",
+    "category": "health",
+    "icon": "User",
+    "summary": "身体质量指数(BMI)计算与健康评估",
+    "description": "输入身高体重，快速计算 BMI 指数，对照中国成人标准判断偏瘦、正常、超重或肥胖，并提供健康体重范围建议。",
+    "usage": "1. 输入身高(cm)和体重(kg)\n2. 自动计算 BMI 值并显示健康等级\n3. 查看对应的健康体重范围建议",
+    "route": "/tools/bmi-calculator",
+    "isLocal": true,
+    "tags": ["BMI", "健康", "体重", "体脂", "计算"]
+  },
+  {
+    "id": "calorie-calculator",
+    "name": "卡路里计算器",
+    "category": "health",
+    "icon": "Bowl",
+    "summary": "热量查询与每日消耗测算",
+    "description": "健身减肥必备。提供常见食物热量查询，支持计算每日热量消耗（TDEE），并给出减脂、维持或增肌的热量摄入建议。",
+    "usage": "1. 计算 TDEE：输入身体数据与活动量，获取每日消耗\n2. 查询热量：输入食物名称，添加至今日清单，统计总摄入",
+    "route": "/tools/calorie-calculator",
+    "isLocal": true,
+    "tags": ["卡路里", "热量", "减肥", "健身", "TDEE", "食物"]
+  },
+  {
+    "id": "water-intake",
+    "name": "饮水记录系统",
+    "category": "health",
+    "icon": "Coffee",
+    "summary": "每日补水计划与实时进度管理",
+    "description": "根据您的体重与活动水平计算建议饮水量，支持实时点击记录喝水进度，提供每日水量阶梯视图，并支持桌面提醒，助您养成健康饮水习惯。",
+    "usage": "1. 点击设置输入基础身体数据\n2. 点击\"饮水\"按钮快速记录\n3. 查看今日进度百分比及喝水历史",
+    "route": "/tools/water-intake",
+    "isLocal": true,
+    "tags": ["饮水", "习惯", "健康", "提醒"]
+  },
+  {
+    "id": "vision-test",
+    "name": "视力自我监测",
+    "category": "health",
+    "icon": "View",
+    "summary": "色盲测试与护眼专注工具",
+    "description": "提供标准的色敏度测试图、散光自测图以及基于 20-20-20 法则的护眼专注计时器（工作20分钟，远眺20秒，看20英尺外），科学保护您的视力。",
+    "usage": "1. 选择测试类型（色盲/散光等）\n2. 按照屏幕提示保持距离进行测试\n3. 开启护眼计时器开始专注工作",
+    "route": "/tools/vision-test",
+    "isLocal": true,
+    "tags": ["视力", "色盲", "护眼", "测试", "健康"]
+  },
+  {
+    "id": "pregnancy-due",
+    "name": "预产期计算器",
+    "category": "health",
+    "icon": "User",
+    "summary": "预产期推算与孕期发育参考",
+    "description": "根据末次月经日期计算预产期；按周提供胎儿发育百科知识、妈妈身体变化参考及重要产检时间提醒。",
+    "usage": "1. 输入末次月经日期\n2. 点击计算获取预产期及当前孕周\n3. 浏览每周发育详情和产检计划",
+    "route": "/tools/pregnancy-due",
+    "isLocal": true,
+    "tags": ["孕期", "预产期", "母婴", "健康", "计算器"]
+  },
+  {
+    "id": "healthy-diet",
+    "name": "健康饮食建议",
+    "category": "health",
+    "icon": "Bowl",
+    "summary": "目标导向的营养配餐建议",
+    "description": "根据您的减脂、增肌或维持体重目标，自动生成每日碳水、蛋白质、脂肪的建议摄入比例及三餐热量分配模型。",
+    "usage": "1. 输入基本身体信息和活动强度\n2. 选择您的目标（减脂/增肌等）\n3. 获取结构化的营养建议和食谱模型",
+    "route": "/tools/healthy-diet",
+    "isLocal": true,
+    "tags": ["饮食", "营养", "减肥", "健身", "食谱", "计算器"]
+  },
+  {
+    "id": "bmr-advanced",
+    "name": "BMR 高阶版计算",
+    "category": "health",
+    "icon": "Histogram",
+    "summary": "多公式多维度的能量代谢评估",
+    "description": "对比 Mifflin-St Jeor 与 Katch-McArdle 等国际权威公式，更精确地评估您的基础代谢率（BMR）与总消耗（TDEE），并分析体脂率对代谢的影响。",
+    "usage": "1. 输入身高、体重、年龄、体脂率（可选）\n2. 查看不同算法得出的多组 BMR 结果\n3. 获取详细的能量缺口建议",
+    "route": "/tools/bmr-calculator",
+    "isLocal": true,
+    "tags": ["BMR", "代谢", "TDEE", "健身", "热量", "计算器"]
+  },
+  {
+    "id": "pomodoro",
+    "name": "番茄钟",
+    "category": "health",
+    "icon": "Timer",
+    "summary": "极简番茄工作法计时器",
+    "description": "助你保持专注的番茄钟工具。默认支持 25 分钟专注 + 5 分钟休息的工作流，提供清新的 UI 和自动统计功能。",
+    "usage": "1. 选择专注模式\n2. 点击开始\n3. 完成后休息",
+    "route": "/tools/pomodoro",
+    "isLocal": true,
+    "tags": ["番茄钟", "专注", "计时", "效率", "工作法"]
+  },
+  {
+    "id": "metronome",
+    "name": "节拍器",
+    "category": "health",
+    "icon": "Headset",
+    "summary": "精准稳定的在线节拍器",
+    "description": "音乐练习必备的节拍器工具。提供精准的 BPM 设置、多种拍号选择和可视化节拍显示，支持重音提示。",
+    "usage": "1. 设定 BPM 和拍号\n2. 点击播放\n3. 跟随节拍练习",
+    "route": "/tools/metronome",
+    "isLocal": true,
+    "tags": ["节拍器", "音乐", "BPM", "节奏", "乐器"]
+  }
+]

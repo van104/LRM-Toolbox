@@ -1,0 +1,98 @@
+[
+  {
+    "id": "mortgage-calculator",
+    "name": "房贷计算器",
+    "category": "finance",
+    "icon": "House",
+    "summary": "房贷月供与利息计算",
+    "description": "支持等额本息与等额本金两种方式。输入贷款金额、期限和利率，自动计算每月还款额、利息总额，并提供详细的最后还款明细表。",
+    "usage": "1. 选择还款方式（等额本息/等额本金）\n2. 输入贷款总额、年限和年利率\n3. 点击计算，查看月供分析图表和明细",
+    "route": "/tools/mortgage-calculator",
+    "isLocal": true,
+    "tags": ["房贷", "贷款", "利息", "月供", "金融", "买房"]
+  },
+  {
+    "id": "tax-calculator",
+    "name": "个税计算器",
+    "category": "finance",
+    "icon": "Wallet",
+    "summary": "工资税后收入计算",
+    "description": "2024 最新个税计算规则。支持计算实发工资、个人所得税及五险一金明细。支持自定义社保公积金缴纳比例和专项附加扣除。",
+    "usage": "1. 输入税前月薪\n2. 填写专项附加扣除总额（可选）\n3. 调整五险一金缴纳基数与比例（可选）\n4. 点击计算查看实发工资分布",
+    "route": "/tools/tax-calculator",
+    "isLocal": true,
+    "tags": ["个税", "工资", "社保", "公积金", "税后", "五险一金"]
+  },
+  {
+    "id": "discount-calculator",
+    "name": "折扣计算器",
+    "category": "finance",
+    "icon": "ShoppingBag",
+    "summary": "购物打折与凑单助手",
+    "description": "商场购物、电商大促必备工具。支持单品折扣计算（X折/百分比）和跨店满减凑单计算（满X减Y），帮你快速算清到手价和节省金额。",
+    "usage": "1. 单品模式：输入原价与折扣，即得折后价\n2. 凑单模式：设置满减规则，添加商品列表，自动计算是否达标及凑单建议",
+    "route": "/tools/discount-calculator",
+    "isLocal": true,
+    "tags": ["折扣", "购物", "打折", "满减", "凑单", "促销"]
+  },
+  {
+    "id": "utility-bill",
+    "name": "电费/水费计算",
+    "category": "finance",
+    "icon": "Lightning",
+    "summary": "水电费用估算与阶梯计价计算",
+    "description": "支持单一电价与阶梯电价两种模式。输入用量可快速计算月度费用。支持自定义阶梯档位和价格，适合租房核算与家庭记账。",
+    "usage": "1. 选择电费或水费模式\n2. 输入月度用量\n3. 选择计价模式（单一/阶梯）并设置价格\n4. 查看预估费用及明细",
+    "route": "/tools/utility-bill",
+    "isLocal": true,
+    "tags": ["电费", "水费", "阶梯电价", "生活", "计算器"]
+  },
+  {
+    "id": "compound-interest",
+    "name": "投资复利计算器",
+    "category": "finance",
+    "icon": "TrendCharts",
+    "summary": "财富增长复利估算",
+    "description": "专业的财富增值计算工具。支持初始本金、定期加仓（月/年）、预期收益率的多维度复利模拟，直观展示资产随时间增长的曲线与明细。",
+    "usage": "1. 输入初始本金与预期年收益率\n2. 设置定投频率与金额\n3. 设定投资年限并查看资产增长表",
+    "route": "/tools/compound-interest",
+    "isLocal": true,
+    "tags": ["复利", "投资", "理财", "理财计算", "财富增长"]
+  },
+  {
+    "id": "pension-estimator",
+    "name": "养老金估算器",
+    "category": "finance",
+    "icon": "UserFilled",
+    "summary": "退休养老金收入预测",
+    "description": "基于中国现行社保计算模型（基础养老金+个人账户养老金）。结合个人工资、缴费年限、社会平均工资等因素，科学预测退休后的月领金额。",
+    "usage": "1. 输入当前年龄、薪资及已缴费年限\n2. 设置预想退休年龄与当地社平工资\n3. 查看每月的预估领取金额与替代率分析",
+    "route": "/tools/pension-estimator",
+    "isLocal": true,
+    "tags": ["养老金", "退休", "社保", "五险一金", "财务规划"]
+  },
+  {
+    "id": "interest-rates",
+    "name": "利率查询与对比",
+    "category": "finance",
+    "icon": "DataLine",
+    "summary": "银行存款与 LPR 利率聚合查询",
+    "description": "聚合国内外主流银行定期存款利率、大额存单利率及 LPR 实时基准。支持多行利率横向对比，快速测算不同期限、不同银行的利息差异。",
+    "usage": "1. 输入预存本金并选择期限\n2. 切换“定期存款”或“大额存单”查看列表\n3. 系统自动算出各行预计利息总额",
+    "route": "/tools/interest-rates",
+    "isLocal": true,
+    "tags": ["利率", "存款", "LPR", "大额存单", "银行", "比较"]
+  },
+  {
+    "id": "profit-loss-calculator",
+    "name": "盈亏分摊计算器",
+    "category": "finance",
+    "icon": "TrendCharts",
+    "summary": "持仓成本平摊与损益分析",
+    "description": "专门为股票、基金、虚拟货币投资者设计的成本测算工具。支持补仓/减仓后的平均成本重算，自动扣除交易手续费，并提供盈亏平衡点（保本价）及目标涨幅价格预演。",
+    "usage": "1. 输入当前持仓数量与成本\n2. 录入拟操作的数量、价格及费率\n3. 查看实时平摊后的成本变化及目标价预警",
+    "route": "/tools/profit-loss-calculator",
+    "isLocal": true,
+    "tags": ["成本计算", "补仓", "盈亏", "股票", "基金", "理财", "补仓计算"]
+  }
+]

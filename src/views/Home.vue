@@ -39,7 +39,7 @@
         <div class="hero-search-wrapper">
           <el-input
             v-model="searchKeyword"
-            :placeholder="`搜索 ${tools.length}+ 个实用工具 (Ctrl + K)...`"
+            :placeholder="`搜索 ${allTools.length}+ 个实用工具 (Ctrl + K)...`"
             size="large"
             class="hero-search-input"
             :prefix-icon="Search"
@@ -171,7 +171,7 @@
   import SkeletonCard from '@/components/common/SkeletonCard.vue';
   import DecryptedText from '@/components/common/DecryptedText.vue';
   import AnimatedContent from '@/components/common/AnimatedContent.vue';
-  import { tools, getToolsByCategory, searchTools } from '@/data/tools';
+  import { loadToolsByCategory, searchToolsAsync, loadAllTools } from '@/data/tools';
   import { useUserStore } from '@/stores/user';
   import { watch } from 'vue';
 
@@ -188,12 +188,19 @@
   const searchDialogVisible = ref(false);
   const quickSearchKeyword = ref('');
   const quickSearchResults = ref([]);
+  const allTools = ref([]);
+  const displayedTools = ref([]);
   const searchInputRef = ref(null);
 
-  onMounted(() => {
-    setTimeout(() => {
-      loading.value = false;
-    }, 300);
+  onMounted(async () => {
+    // 初始加载当前分类工具
+    await fetchTools(activeCategory.value);
+    loading.value = false;
+
+    // 后台加载所有工具以供搜索快速响应
+    loadAllTools().then(res => {
+      allTools.value = res;
+    });
 
     document.addEventListener('keydown', handleGlobalKeydown);
   });
@@ -203,22 +210,35 @@
   });
 
   const filteredTools = computed(() => {
-    if (searchKeyword.value) {
-      return searchTools(searchKeyword.value);
-    }
-    return getToolsByCategory(activeCategory.value);
+    return displayedTools.value;
   });
+
+  async function fetchTools(category, keyword = '') {
+    loading.value = true;
+    if (keyword) {
+      displayedTools.value = await searchToolsAsync(keyword);
+    } else {
+      displayedTools.value = await loadToolsByCategory(category);
+    }
+    loading.value = false;
+  }
 
   watch(
     () => route.query.category,
-    newCategory => {
-      activeCategory.value = newCategory || 'all';
+    async newCategory => {
+      const cat = newCategory || 'all';
+      activeCategory.value = cat;
+      if (!searchKeyword.value) {
+        await fetchTools(cat);
+      }
     }
   );
 
-  function handleCategoryChange(categoryId) {
+  async function handleCategoryChange(categoryId) {
     activeCategory.value = categoryId;
     searchKeyword.value = '';
+
+    await fetchTools(categoryId);
 
     router.replace({
       query: {
@@ -228,10 +248,13 @@
     });
   }
 
-  function handleSearch(keyword) {
+  async function handleSearch(keyword) {
     searchKeyword.value = keyword;
     if (keyword) {
       activeCategory.value = 'all';
+      await fetchTools('all', keyword);
+    } else {
+      await fetchTools(activeCategory.value);
     }
   }
 
@@ -274,9 +297,9 @@
     });
   }
 
-  function handleQuickSearch() {
+  async function handleQuickSearch() {
     if (quickSearchKeyword.value.trim()) {
-      quickSearchResults.value = searchTools(quickSearchKeyword.value);
+      quickSearchResults.value = await searchToolsAsync(quickSearchKeyword.value);
     } else {
       quickSearchResults.value = [];
     }

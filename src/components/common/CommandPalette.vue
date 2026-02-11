@@ -76,7 +76,7 @@
   import { ref, watch, onMounted, onUnmounted, computed, nextTick, type Component } from 'vue';
   import { useRouter } from 'vue-router';
   import { Search, HomeFilled, InfoFilled } from '@element-plus/icons-vue';
-  import { searchTools, type Tool } from '@/data/tools';
+  import { searchToolsAsync, type Tool } from '@/data/tools';
 
   interface Command {
     id: string;
@@ -91,6 +91,7 @@
   const selectedIndex = ref(0);
   const inputRef = ref<HTMLInputElement | null>(null);
   const resultsRef = ref<HTMLElement | null>(null);
+  const filteredTools = ref<Tool[]>([]);
   const router = useRouter();
 
   const staticCommands: Command[] = [
@@ -104,16 +105,17 @@
     // 可以在此添加更多全局动作
   ];
 
-  const filteredTools = computed(() => {
-    return searchTools(query.value);
-  });
-
   const totalItems = computed(() => {
     return query.value ? filteredTools.value.length : staticCommands.length;
   });
 
-  watch(query, () => {
+  watch(query, async newVal => {
     selectedIndex.value = 0;
+    if (newVal) {
+      filteredTools.value = await searchToolsAsync(newVal);
+    } else {
+      filteredTools.value = [];
+    }
   });
 
   const open = () => {

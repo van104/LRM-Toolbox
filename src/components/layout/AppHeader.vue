@@ -133,11 +133,11 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue';
+  import { ref, onMounted } from 'vue';
   import LrmLogo from '@/components/icons/LrmLogo.vue';
   import { useThemeStore } from '@/stores/theme';
   import { useUserStore } from '@/stores/user';
-  import { categories, getToolsByCategory } from '@/data/tools';
+  import { categories, loadAllTools } from '@/data/tools';
   import {
     Search,
     Sunny,
@@ -189,10 +189,25 @@
   const mobileMenuOpen = ref(false);
 
   const navMenuRef = ref(null);
+  const toolsCountMap = ref({});
   let isDragging = false;
   let startX = 0;
   let scrollLeft = 0;
   let dragMoved = false;
+
+  onMounted(async () => {
+    // 加载所有工具来计算每个分类的数量
+    const allTools = await loadAllTools();
+    const counts = {};
+    categories.forEach(cat => {
+      if (cat.id === 'all') {
+        counts[cat.id] = allTools.length;
+      } else {
+        counts[cat.id] = allTools.filter(t => t.category === cat.id).length;
+      }
+    });
+    toolsCountMap.value = counts;
+  });
 
   function handleMouseDown(e) {
     isDragging = true;
@@ -241,7 +256,7 @@
   }
 
   function getCategoryCount(categoryId) {
-    return getToolsByCategory(categoryId).length;
+    return toolsCountMap.value[categoryId] || 0;
   }
 </script>
 

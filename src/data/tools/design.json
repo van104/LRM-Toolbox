@@ -1,0 +1,122 @@
+[
+  {
+    "id": "color-picker",
+    "name": "颜色选择器",
+    "category": "design",
+    "icon": "Brush",
+    "summary": "自由取色与 HEX/RGB/HSL 转换",
+    "description": "支持透明度的颜色选择器，实时预览并自动转换为 HEX, HEX8, RGB, HSL 等常用格式，一键复制。",
+    "usage": "点击取色盘选择颜色，或输入颜色代码，右侧自动生成各格式代码。",
+    "route": "/tools/color-picker",
+    "isLocal": true,
+    "tags": ["Color", "Design", "HEX", "RGB", "Converter"]
+  },
+  {
+    "id": "icon-library",
+    "name": "图标库大全",
+    "category": "design",
+    "icon": "Picture",
+    "summary": "矢量图标一站式搜索下载",
+    "description": "聚合全球主流矢量图标库（Iconfont, Font Awesome, Remix Icon等），提供官网直达与便捷的聚合搜索功能，设计开发必备。",
+    "usage": "1. 在上方搜索框输入关键词（如 \"home\"）。\n2. 点击对应卡片下方的\"搜索\"按钮，直接跳转至该平台的搜索结果页。\n3. 或点击\"访问官网\"浏览全部资源。",
+    "route": "/tools/icon-library",
+    "isLocal": true,
+    "tags": ["图标", "Icon", "SVG", "Design", "Resource"]
+  },
+  {
+    "id": "font-resource",
+    "name": "字体资源大全",
+    "category": "design",
+    "icon": "Edit",
+    "summary": "免费商用字体与 WebFont 聚合",
+    "description": "精选 Google Fonts, 字由, 100font 等优质字体资源站，提供免费商用字体下载指引和 WebFont 在线引用服务。",
+    "usage": "1. 输入字体名称关键词（如 \"Roboto\"）。\n2. 使用一键跳转功能在各平台搜索。\n3. 或直接访问平台浏览最新字体。",
+    "route": "/tools/font-resource",
+    "isLocal": true,
+    "tags": ["字体", "Font", "免费商用", "Design", "WebFont"]
+  },
+  {
+    "id": "prototype-design",
+    "name": "原型与UI设计",
+    "category": "design",
+    "icon": "Monitor",
+    "summary": "专业的界面设计、交互原型制作及团队协作工具",
+    "description": "聚合 Figma, Sketch, Adobe XD, Pixso, 即时设计等主流 UI/UX 设计工具，提供官方网站入口。",
+    "usage": "1. 浏览工具列表\n2. 点击“访问官网”跳转至对应平台\n3. 开始您的设计工作",
+    "route": "/tools/prototype-design",
+    "isLocal": true,
+    "tags": ["UI", "UX", "设计", "原型", "Figma", "Sketch"]
+  },
+  {
+    "id": "design-assets",
+    "name": "素材与图库",
+    "category": "design",
+    "icon": "PictureFilled",
+    "summary": "提供高清无版权图片、设计素材模版及设计灵感社区",
+    "description": "聚合 Unsplash, Pexels, Pixabay, Freepik, Dribbble, Behance 等优质设计资源站，一站式获取灵感与素材。",
+    "usage": "1. 选择需要的素材类型（图片/矢量/灵感）\n2. 点击卡片上的按钮跳转至对应网站\n3. 搜索或下载所需资源",
+    "route": "/tools/design-assets",
+    "isLocal": true,
+    "tags": ["素材", "图片", "图库", "灵感", "设计"]
+  },
+  {
+    "id": "data-visualizer",
+    "name": "数据可视化",
+    "category": "design",
+    "icon": "DataLine",
+    "summary": "Excel/CSV 数据一键生成图表",
+    "description": "支持导入 Excel/CSV 数据，生成柱状图、折线图、饼图等多种图表。支持数据在线编辑、即时预览，并可导出高清图片。",
+    "usage": "1. 上传数据文件或生成演示数据\n2. 选择图表类型和坐标轴\n3. 调整样式并导出图片",
+    "route": "/tools/data-visualizer",
+    "isLocal": true,
+    "tags": ["图表", "可视化", "Excel", "数据分析"]
+  },
+  {
+    "id": "mind-map",
+    "name": "思维导图生成",
+    "category": "design",
+    "icon": "Connection",
+    "summary": "文本大纲一键转思维导图",
+    "description": "通过 Markdown 大纲语法（# 标题，- 列表）快速自动生成精美的思维导图。支持实时预览、缩放查看及 SVG 图片导出，助您快速梳理思路。",
+    "usage": "1. 在左侧输入或粘贴 Markdown 文本\n2. 右侧实时预览思维导图\n3. 可拖拽、缩放画布\n4. 点击导出按钮保存为 SVG",
+    "route": "/tools/mind-map",
+    "isLocal": true,
+    "tags": ["思维导图", "MindMap", "大纲", "结构", "Markdown", "可视化"]
+  },
+  {
+    "id": "screen-ruler",
+    "name": "屏幕尺寸测量",
+    "category": "design",
+    "icon": "FullScreen",
+    "summary": "屏幕像素标尺与测量工具",
+    "description": "提供可视化的水平和垂直像素标尺。支持拖拽测量，实时显示坐标像素值。适合前端工程师和 UI 设计师快速校对页面元素位置与尺寸。",
+    "usage": "1. 点击添加水平或垂直标尺\n2. 拖动标尺线至目标位置\n3. 查看实时像素坐标\n4. 双击标尺可旋转方向",
+    "route": "/tools/screen-ruler",
+    "isLocal": true,
+    "tags": ["标尺", "像素", "测量", "前端", "设计", "UI"]
+  },
+  {
+    "id": "screen-size",
+    "name": "屏幕分辨率",
+    "category": "design",
+    "icon": "Monitor",
+    "summary": "常见设备分辨率与倍率",
+    "description": "收录常见手机、平板、电脑的逻辑分辨率、物理分辨率和 PPI 数据，辅助 UI 设计与适配。",
+    "usage": "搜索设备名称或切换分类查看。",
+    "route": "/tools/screen-size",
+    "isLocal": true,
+    "tags": ["屏幕", "分辨率", "UI", "适配", "前端"]
+  },
+  {
+    "id": "favicon-generator",
+    "name": "Favicon 生成器",
+    "category": "design",
+    "icon": "Picture",
+    "summary": "一键生成网站图标多种尺寸",
+    "description": "网站图标生成工具。上传一张图片，自动生成 favicon.ico、apple-touch-icon、android-chrome 等多种尺寸的网站图标。",
+    "usage": "1. 上传正方形图片\n2. 选择需要的尺寸\n3. 点击生成并下载",
+    "route": "/tools/favicon-generator",
+    "isLocal": true,
+    "tags": ["Favicon", "图标", "网站", "ICO", "PNG"]
+  }
+]
