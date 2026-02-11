@@ -84,7 +84,7 @@ export interface AgeEvent {
   minAge?: number;
   maxAge?: number;
 
-  choices?: any[];
+  choices?: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
   log?: string;
 }
 
@@ -112,12 +112,12 @@ export interface GameState {
   fame: number;
   isAlive: boolean;
 
-  log: any[];
+  log: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
   job: Career | null;
   savings: number;
   houses: string[];
   cars: string[];
   degree: string;
 
-  inventory: any[];
+  inventory: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
 }

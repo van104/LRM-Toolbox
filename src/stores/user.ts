@@ -11,6 +11,7 @@ export interface Tool {
   tags?: string[];
   isLocal?: boolean;
   isAi?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 

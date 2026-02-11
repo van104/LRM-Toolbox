@@ -1,0 +1,60 @@
+import type { RouteRecordRaw } from 'vue-router';
+
+/** 图片工具路由 */
+const imageRoutes: RouteRecordRaw[] = [
+  {
+    path: '/tools/image-compress',
+    name: 'ImageCompressTool',
+    component: () => import('@/components/tools/image/ImageCompressTool.vue')
+  },
+  {
+    path: '/tools/qrcode',
+    name: 'QrCodeTool',
+    component: () => import('@/components/tools/image/QrCodeTool.vue')
+  },
+  {
+    path: '/tools/batch-renamer',
+    name: 'BatchRenamer',
+    component: () => import('@/components/tools/image/BatchRenamer.vue')
+  },
+  {
+    path: '/tools/barcode-generator',
+    name: 'BarcodeGeneratorTool',
+    component: () => import('@/components/tools/image/BarcodeGeneratorTool.vue')
+  },
+  {
+    path: '/tools/image-converter',
+    name: 'ImageConverterTool',
+    component: () => import('@/components/tools/image/ImageConverterTool.vue')
+  },
+  {
+    path: '/tools/image-resizer',
+    component: () => import('@/components/tools/image/ImageResizerTool.vue')
+  },
+  {
+    path: '/tools/image-watermark',
+    component: () => import('@/components/tools/image/ImageWatermarkTool.vue')
+  },
+  {
+    path: '/tools/gif-maker',
+    component: () => import('@/components/tools/image/GifMakerTool.vue')
+  },
+  {
+    path: '/tools/photo-book',
+    component: () => import('@/components/tools/image/PhotoBookTool.vue')
+  },
+  {
+    path: '/tools/image-palette',
+    component: () => import('@/components/tools/image/ImagePaletteTool.vue')
+  },
+  {
+    path: '/tools/image-joiner',
+    component: () => import('@/components/tools/image/ImageJoinerTool.vue')
+  },
+  {
+    path: '/tools/bg-remover',
+    component: () => import('@/components/tools/image/ImageBgRemoverTool.vue')
+  }
+];
+
+export default imageRoutes;

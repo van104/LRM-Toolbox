@@ -33,9 +33,9 @@ app.use(ElementPlus, {
 
 app.mount('#app');
 
-// Initialize theme
-const themeStore = useThemeStore();
-themeStore.updateTheme();
+// Initialize theme — theme store 内部已自动调用 updateTheme()
+// 此处仅触发 store 实例化
+useThemeStore();
 
 // Print welcome log
 printWelcomeLog();

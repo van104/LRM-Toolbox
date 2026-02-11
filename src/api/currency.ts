@@ -49,12 +49,27 @@ export const popularCurrencies: string[] = [
   'KRW'
 ];
 
-export async function getCurrencies(): Promise<any> {
+interface LatestRateResponse {
+  amount: number;
+  base: string;
+  date: string;
+  rates: Record<string, number>;
+}
+
+interface HistoricalRatesResponse {
+  amount: number;
+  base: string;
+  start_date: string;
+  end_date: string;
+  rates: Record<string, Record<string, number>>;
+}
+
+export async function getCurrencies(): Promise<Record<string, string>> {
   try {
     const response = await fetch(`${BASE_URL}/currencies`);
     if (!response.ok) throw new Error('获取货币列表失败');
     return await response.json();
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('getCurrencies error:', error);
     // Fallback to local data if API fails
     return currencyNames;
@@ -65,14 +80,14 @@ export async function getLatestRate(
   from: string,
   to: string | string[],
   amount: number = 1
-): Promise<any> {
+): Promise<LatestRateResponse> {
   try {
     const toParam = Array.isArray(to) ? to.join(',') : to;
     const url = `${BASE_URL}/latest?from=${from}&to=${toParam}&amount=${amount}`;
     const response = await fetch(url);
     if (!response.ok) throw new Error('获取汇率失败');
     return await response.json();
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('getLatestRate error:', error);
     throw error;
   }
@@ -82,7 +97,7 @@ export async function getHistoricalRates(
   from: string,
   to: string,
   days: number = 30
-): Promise<any> {
+): Promise<HistoricalRatesResponse> {
   try {
     const endDate = new Date();
     const startDate = new Date();
@@ -94,14 +109,14 @@ export async function getHistoricalRates(
     const response = await fetch(url);
     if (!response.ok) throw new Error('获取历史汇率失败');
     return await response.json();
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('getHistoricalRates error:', error);
     throw error;
   }
 }
 
 export function formatHistoryForChart(
-  historyData: any,
+  historyData: HistoricalRatesResponse,
   targetCurrency: string
 ): { labels: string[]; values: number[] } {
   const rates = historyData.rates || {};

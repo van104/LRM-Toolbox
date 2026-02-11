@@ -12,7 +12,16 @@ export interface FeedbackResponse {
   success: boolean;
   message?: string;
   error?: string;
-  [key: string]: any;
+}
+
+export interface FeedbackItem {
+  id: string;
+  type: string;
+  content: string;
+  contact?: string;
+  status: 'pending' | 'processing' | 'resolved' | 'rejected';
+  timestamp: string;
+  userAgent?: string;
 }
 
 /**
@@ -42,7 +51,7 @@ export async function submitFeedbackToBackend(
     }
 
     return await response.json();
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Feedback submission error:', error);
     throw error;
   }
@@ -51,9 +60,9 @@ export async function submitFeedbackToBackend(
 /**
  * 获取反馈列表
  * @param {string} password - 管理员密码
- * @returns {Promise<Array<any>>} - 反馈列表
+ * @returns {Promise<Array<FeedbackItem>>} - 反馈列表
  */
-export async function getFeedbackFromBackend(password: string): Promise<any[]> {
+export async function getFeedbackFromBackend(password: string): Promise<FeedbackItem[]> {
   try {
     const response = await fetch(`${API_BASE_URL}/feedback`, {
       method: 'GET',
@@ -72,7 +81,7 @@ export async function getFeedbackFromBackend(password: string): Promise<any[]> {
     }
 
     return await response.json();
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Fetch feedback error:', error);
     throw error;
   }
@@ -88,7 +97,7 @@ export async function updateFeedbackStatus(
   id: string,
   status: string,
   password: string
-): Promise<any> {
+): Promise<FeedbackResponse> {
   try {
     const response = await fetch(`${API_BASE_URL}/feedback/update`, {
       method: 'POST',
@@ -104,7 +113,7 @@ export async function updateFeedbackStatus(
     }
 
     return await response.json();
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Update status error:', error);
     throw error;
   }
@@ -115,7 +124,7 @@ export async function updateFeedbackStatus(
  * @param {string} id - 反馈ID
  * @param {string} password - 管理员密码
  */
-export async function deleteFeedback(id: string, password: string): Promise<any> {
+export async function deleteFeedback(id: string, password: string): Promise<FeedbackResponse> {
   try {
     const response = await fetch(`${API_BASE_URL}/feedback/delete`, {
       method: 'POST',
@@ -131,7 +140,7 @@ export async function deleteFeedback(id: string, password: string): Promise<any>
     }
 
     return await response.json();
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Delete feedback error:', error);
     throw error;
   }

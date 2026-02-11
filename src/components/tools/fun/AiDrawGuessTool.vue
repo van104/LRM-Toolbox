@@ -564,7 +564,6 @@
         headers,
         body: JSON.stringify({
           model: config.modelId,
-          apiUrl: config.apiUrl,
           messages: [
             {
               role: 'user',

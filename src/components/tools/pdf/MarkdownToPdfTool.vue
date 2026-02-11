@@ -82,6 +82,7 @@
   import { ArrowLeft, Download } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
   import { marked } from 'marked';
+  import DOMPurify from 'dompurify';
 
   const router = useRouter();
   const goBack = () => router.back();
@@ -103,9 +104,10 @@
     if (!inputContent.value.trim()) return '<p style="color: #94a3b8;">预览内容将显示在这里</p>';
 
     if (inputMode.value === 'markdown') {
-      return marked(inputContent.value);
+      const rawHtml = marked(inputContent.value);
+      return DOMPurify.sanitize(rawHtml);
     } else {
-      return inputContent.value;
+      return DOMPurify.sanitize(inputContent.value);
     }
   });
 

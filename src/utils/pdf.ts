@@ -4,6 +4,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 // Using any here as pdfjs-dist types might be tricky to set up perfectly without installing @types/pdfjs-dist
 // which might not be strictly necessary for this simple configuration file.
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const _pdfjsLib: any = pdfjsLib;
 
 if (typeof window !== 'undefined' && 'Worker' in window) {

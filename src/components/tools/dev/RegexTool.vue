@@ -72,13 +72,14 @@
         </div>
 
         <div class="editor-container">
-          <!-- eslint-disable-next-line vue/no-v-html -->
+          <!-- eslint-disable vue/no-v-html -->
           <div
             ref="highlightRef"
             class="highlight-layer"
             aria-hidden="true"
             v-html="highlightedContent"
           ></div>
+          <!-- eslint-enable vue/no-v-html -->
 
           <textarea
             ref="textareaRef"
