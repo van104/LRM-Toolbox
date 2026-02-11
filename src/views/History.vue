@@ -485,4 +485,31 @@
   [data-theme='dark'] .timeline-list::before {
     background: rgba(255, 255, 255, 0.1);
   }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 2rem;
+    text-align: center;
+  }
+
+  .empty-state .el-icon {
+    margin-bottom: 1.5rem;
+    color: #cbd5e1;
+  }
+
+  .empty-state h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-state p {
+    color: #64748b;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
 </style>

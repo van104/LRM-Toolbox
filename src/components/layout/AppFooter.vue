@@ -1,29 +1,34 @@
 <template>
   <footer class="app-footer">
-    <div class="footer-content">
-      <div class="footer-main">
-        <div class="footer-brand">
-          <div class="footer-logo">
-            <LrmLogo :size="32" />
-            <span class="font-display">LRM工具箱</span>
+    <div class="footer-container">
+      <div class="footer-main-grid">
+        <!-- Brand Section -->
+        <div class="brand-section">
+          <div class="footer-brand-logo">
+            <LrmLogo :size="40" />
+            <h3 class="brand-name font-display">LRM工具箱</h3>
           </div>
-          <p class="brand-desc">
-            免费、在线的开发者实用工具箱。<br />
-            无需下载，即开即用，让工作更高效。
+          <p class="brand-slogan">
+            探索极致的高效工具，为开发者而生。<br />
+            纯净、安全、全开源，让灵感即刻落地。
           </p>
-          <div class="social-links">
+          <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span class="status-text">系统运行正常 | 已上线 168+ 工具</span>
+          </div>
+          <div class="footer-social">
             <a
               href="https://github.com/van104/LRM-Toolbox"
               target="_blank"
+              class="social-link-item github"
               title="GitHub"
-              class="social-btn"
             >
               <i class="fa-brands fa-github"></i>
             </a>
             <a
               href="mailto:powelabraham67@gmail.com"
-              title="点击复制邮箱"
-              class="social-btn"
+              class="social-link-item email"
+              title="联系我们"
               @click.prevent="handleEmailClick"
             >
               <i class="fa-solid fa-envelope"></i>
@@ -31,27 +36,29 @@
           </div>
         </div>
 
-        <div class="footer-nav-grid">
-          <div class="footer-col">
-            <h4 class="col-title">关于</h4>
-            <ul class="col-links">
+        <!-- Links Grid -->
+        <div class="nav-sections">
+          <div class="nav-column">
+            <h4 class="nav-title">核心资源</h4>
+            <ul class="nav-list">
+              <li><router-link to="/">全部工具库</router-link></li>
+              <li><router-link to="/favorites">我的收藏</router-link></li>
+              <li><router-link to="/history">最近记录</router-link></li>
+            </ul>
+          </div>
+
+          <div class="nav-column">
+            <h4 class="nav-title">关于与支持</h4>
+            <ul class="nav-list">
               <li><router-link to="/about">关于本站</router-link></li>
-              <li><router-link to="/about#contact">联系我们</router-link></li>
-            </ul>
-          </div>
-
-          <div class="footer-col">
-            <h4 class="col-title">支持</h4>
-            <ul class="col-links">
-              <li><router-link to="/">全部工具</router-link></li>
+              <li><router-link to="/changelog">更新日志</router-link></li>
               <li><a href="#" @click.prevent="showFeedback = true">意见反馈</a></li>
-              <li><a href="#" @click.prevent="showChangelog = true">更新日志</a></li>
             </ul>
           </div>
 
-          <div class="footer-col">
-            <h4 class="col-title">条款</h4>
-            <ul class="col-links">
+          <div class="nav-column">
+            <h4 class="nav-title">法律合规</h4>
+            <ul class="nav-list">
               <li><router-link to="/privacy">隐私政策</router-link></li>
               <li><router-link to="/terms">服务条款</router-link></li>
               <li><a href="#" @click.prevent="showDisclaimer = true">免责声明</a></li>
@@ -60,12 +67,18 @@
         </div>
       </div>
 
-      <div class="footer-bottom">
-        <div class="copyright">
-          © {{ currentYear }} <a href="https://www.lrm123.site">LRM工具箱</a> (www.lrm123.site). All
-          Rights Reserved.
+      <div class="footer-divider"></div>
+
+      <div class="footer-legal">
+        <div class="copyright-info">
+          <span
+            >© {{ currentYear }}
+            <a href="https://www.lrm123.site" class="copyright-link">LRM Toolbox</a></span
+          >
+          <span class="dot-separator">•</span>
+          <span>Crafted with ❤️ by LRM</span>
         </div>
-        <div class="icp">
+        <div class="beian-info">
           <a href="https://beian.miit.gov.cn/" target="_blank">桂ICP备2025070985号-1</a>
         </div>
       </div>
@@ -100,90 +113,61 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="showChangelog" title="更新日志" width="500px">
-      <div class="changelog">
-        <div class="changelog-item">
-          <div class="changelog-version">v1.8.0</div>
-          <div class="changelog-date">2026-02-11</div>
-          <ul class="changelog-list">
-            <li>[性能] 数据异步加载：人生模拟器、调休放假、元素周期表数据拆分为 JSON 并按需加载</li>
-            <li>[质量] 全站 Lint 清理：修复多个组件的属性顺序、未使用变量、XSS 警告等问题</li>
-            <li>[配置] ESLint 优化：禁用与 Prettier 冲突的格式化规则，消除持久性警告</li>
-          </ul>
-        </div>
-        <div class="changelog-item">
-          <div class="changelog-version">v1.7.0</div>
-          <div class="changelog-date">2026-02-09</div>
-          <ul class="changelog-list">
-            <li>
-              [2048] 深度优化：支持多规格网格，修复高位数字字号溢出，新增“撤销”与“继续挑战”功能
-            </li>
-            <li>[2048] 逻辑修复：解决合并方块异常消失及游戏提前结束判定问题，恢复原始掉落概率</li>
-            <li>[系统] 体验增强：全站默认汉化配置 (zh-CN)，修正生产环境子路径接口解析异常</li>
-            <li>[SEO] 搜索优化：重构项目元数据与 README 结构，大幅提升 GitHub 检索权重</li>
-          </ul>
-        </div>
-        <div class="changelog-item">
-          <div class="changelog-version">v1.6.0</div>
-          <div class="changelog-date">2026-02-08</div>
-          <ul class="changelog-list">
-            <li>修复了新工具的页脚样式对齐问题，优化了整体视觉一致性</li>
-            <li>修复已知问题，提升系统稳定性</li>
-          </ul>
-        </div>
-        <div class="changelog-item">
-          <div class="changelog-version">v1.5.0</div>
-          <div class="changelog-date">2026-02-04</div>
-          <ul class="changelog-list">
-            <li>[UI 重构] 全新首页设计，集成 React Bits 动效库</li>
-            <li>[新增] 首页标题解密动画 (Decrypted Text)</li>
-            <li>[新增] 沉浸式粒子背景 (Particles Background)</li>
-            <li>[优化] 工具卡片 3D 视差倾斜效果 (Tilted Card)</li>
-            <li>[优化] 页面元素平滑过渡动画 (GSAP)</li>
-          </ul>
-        </div>
-        <div class="changelog-item">
-          <div class="changelog-version">v1.4.0</div>
-          <div class="changelog-date">2026-02-03</div>
-          <ul class="changelog-list">
-            <li>
-              新增多款 PDF 处理工具（签名、元数据编辑、裁剪、叠加、修复、比例调整、附件提取等）
-            </li>
-            <li>新增 Markdown 转 PDF 工具</li>
-            <li>修复了新工具的页脚样式对齐问题，优化了整体视觉一致性</li>
-            <li>修复已知问题，提升系统稳定性</li>
-          </ul>
-        </div>
-        <div class="changelog-item">
-          <div class="changelog-version">v1.3.0</div>
-          <div class="changelog-date">2026-01-31</div>
-          <ul class="changelog-list">
-            <li>新增若干工具</li>
-            <li>优化全站工具 UI 细节，统一导航栏标题居中样式</li>
-            <li>优化浏览体验</li>
-          </ul>
-        </div>
-        <div class="changelog-item">
-          <div class="changelog-version">v1.2.0</div>
-          <div class="changelog-date">2026-01-30</div>
-          <ul class="changelog-list">
-            <li>新增多款实用文本、图片处理工具</li>
-            <li>优化网站交互体验与视觉细节</li>
-            <li>修复已知问题，提升系统稳定性</li>
-          </ul>
-        </div>
-        <div class="changelog-item">
-          <div class="changelog-version">v1.1.0</div>
-          <div class="changelog-date">2026-01-28</div>
-          <ul class="changelog-list">
-            <li>网站正式上线</li>
-            <li>UI 视觉与交互细节优化</li>
-            <li>页脚布局重构与体验改进</li>
-          </ul>
+    <el-dialog
+      v-model="showChangelog"
+      title="🚀 更新日志"
+      width="600px"
+      custom-class="changelog-dialog"
+    >
+      <div class="changelog-container">
+        <div class="changelog-timeline">
+          <div class="changelog-item featured">
+            <div class="version-tag">LATEST</div>
+            <div class="item-header">
+              <span class="version-num">v1.9.0</span>
+              <span class="version-date">2026-02-11</span>
+            </div>
+            <ul class="change-list">
+              <li>
+                <span class="tag tag-refactor">重构</span>工具数据模块化：异步按需导入，秒开体验
+              </li>
+              <li>
+                <span class="tag tag-ui">预览</span>首页布局优化：截断展示与一键展开，告别杂乱
+              </li>
+              <li>
+                <span class="tag tag-fx">动效</span>主题转场：View Transitions 圆形扩散/消退动画
+              </li>
+              <li><span class="tag tag-ui">重构</span>页脚重构：磨砂质感与实时运行状态指示</li>
+            </ul>
+          </div>
+
+          <div class="changelog-item">
+            <div class="item-header">
+              <span class="version-num">v1.8.0</span>
+              <span class="version-date">2026-02-11</span>
+            </div>
+            <ul class="change-list">
+              <li><span class="tag tag-perf">性能</span>特定大工具数据 JSON 化拆分</li>
+              <li><span class="tag tag-fix">修复</span>全站 Linter 清理，极致代码质量</li>
+              <li><span class="tag tag-fix">修复</span>ESLint 与 Prettier 冲突配置修正</li>
+            </ul>
+          </div>
+
+          <div class="changelog-item">
+            <div class="item-header">
+              <span class="version-num">v1.7.0</span>
+              <span class="version-date">2026-02-09</span>
+            </div>
+            <ul class="change-list">
+              <li><span class="tag tag-fix">2048</span>深度逻辑优化，支持撤销与多规格网格</li>
+              <li><span class="tag tag-sys">系统</span>默认汉化配置与生产环境接口修复</li>
+              <li><span class="tag tag-sys">SEO</span>GitHub 检索权重优化</li>
+            </ul>
+          </div>
         </div>
       </div>
       <template #footer>
-        <el-button type="primary" @click="showChangelog = false">我知道了</el-button>
+        <el-button class="close-btn" @click="showChangelog = false">我知道了</el-button>
       </template>
     </el-dialog>
 
@@ -258,219 +242,442 @@
 
 <style scoped>
   .app-footer {
-    background: var(--bg-secondary);
+    background: linear-gradient(to bottom, transparent, var(--bg-secondary));
     border-top: 1px solid var(--border-color);
     margin-top: auto;
-    padding-top: 4rem;
-    padding-bottom: 2rem;
-  }
-
-  .footer-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-  }
-
-  .footer-main {
-    display: flex;
-    justify-content: space-between;
-    gap: 4rem;
-    margin-bottom: 3rem;
-    flex-wrap: wrap;
-  }
-
-  .changelog-item {
-    margin-bottom: 2rem;
-  }
-
-  .changelog-version {
-    font-weight: 700;
-    color: var(--text-primary);
-    font-size: 1.125rem;
-    margin-bottom: 0.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .changelog-date {
-    font-size: 0.8125rem;
-    color: var(--text-muted);
-    margin-bottom: 1rem;
-    font-family: monospace;
-  }
-
-  .changelog-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .changelog-list li {
-    color: var(--text-secondary);
-    line-height: 1.7;
-    font-size: 0.9375rem;
+    padding-top: 6rem;
+    padding-bottom: 3rem;
     position: relative;
-    padding-left: 1.25rem;
-    margin-bottom: 0.5rem;
+    overflow: hidden;
   }
 
-  .changelog-list li::before {
+  /* 装饰背景 */
+  .app-footer::before {
     content: '';
     position: absolute;
-    left: 0;
-    top: 9px;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent-purple);
-    opacity: 0.7;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--accent-cyan),
+      var(--accent-purple),
+      transparent
+    );
+    opacity: 0.3;
   }
 
-  .disclaimer-content p {
-    color: var(--text-secondary);
-    line-height: 1.8;
-    margin-bottom: 0.75rem;
+  .footer-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
   }
 
-  .footer-brand {
-    max-width: 320px;
+  .footer-main-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 2fr;
+    gap: 4rem;
+    margin-bottom: 5rem;
   }
 
-  .footer-logo {
+  /* Brand Section */
+  .brand-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .footer-brand-logo {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 1rem;
   }
 
-  .logo-icon {
-    color: var(--accent-cyan);
+  .brand-name {
+    font-size: 1.75rem;
+    font-weight: 800;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
-  .brand-desc {
+  .brand-slogan {
+    font-size: 1rem;
+    line-height: 1.8;
     color: var(--text-secondary);
-    font-size: 0.9375rem;
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
+    max-width: 360px;
   }
 
-  .social-links {
+  .status-indicator {
     display: flex;
-    gap: 1rem;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem;
+    background: rgba(16, 185, 129, 0.05);
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    border-radius: 99px;
+    width: fit-content;
   }
 
-  .social-btn {
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #10b981;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      opacity: 0.4;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+    100% {
+      opacity: 0.4;
+      transform: scale(1);
+    }
+  }
+
+  .status-text {
+    font-size: 0.8125rem;
+    color: #10b981;
+    font-weight: 500;
+  }
+
+  .footer-social {
+    display: flex;
+    gap: 1.25rem;
+    margin-top: 0.5rem;
+  }
+
+  .social-link-item {
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--bg-primary);
-    color: var(--text-secondary);
+    border-radius: 12px;
+    background: var(--bg-card);
     border: 1px solid var(--border-color);
-    transition: all 0.2s ease;
-    font-size: 1.125rem;
+    color: var(--text-secondary);
+    font-size: 1.25rem;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
-  .social-btn:hover {
-    background: var(--accent-purple);
+  .social-link-item:hover {
+    transform: translateY(-4px) scale(1.1);
     color: white;
-    border-color: var(--accent-purple);
-    transform: translateY(-2px);
   }
 
-  .footer-nav-grid {
-    flex: 1;
+  .social-link-item.github:hover {
+    background: #24292f;
+    border-color: #24292f;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .social-link-item.email:hover {
+    background: var(--accent-purple);
+    border-color: var(--accent-purple);
+    box-shadow: 0 10px 20px rgba(139, 92, 246, 0.2);
+  }
+
+  /* Nav Sections */
+  .nav-sections {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
-    max-width: 800px;
   }
 
-  .col-title {
-    font-size: 0.9375rem;
-    font-weight: 600;
+  .nav-title {
+    font-size: 0.875rem;
+    font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: 1.25rem;
+    margin-bottom: 2rem;
     text-transform: uppercase;
+    letter-spacing: 0.1em;
+    position: relative;
+  }
+
+  .nav-title::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5rem;
+    left: 0;
+    width: 1.5rem;
+    height: 2px;
+    background: var(--accent-purple);
+    border-radius: 2px;
+  }
+
+  .nav-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .nav-list a {
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    transition: all 0.3s ease;
+    display: inline-block;
+  }
+
+  .nav-list a:hover {
+    color: var(--accent-purple);
+    transform: translateX(6px);
+  }
+
+  /* Footer Bottom */
+  .footer-divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border-color), transparent);
+    margin-bottom: 2.5rem;
+  }
+
+  /* Changelog UI Upgrade */
+  .changelog-container {
+    padding: 0.5rem 1rem;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .changelog-timeline {
+    position: relative;
+    padding-left: 2rem;
+    border-left: 2px solid var(--border-color);
+  }
+
+  .changelog-item {
+    position: relative;
+    margin-bottom: 3rem;
+  }
+
+  .changelog-item::before {
+    content: '';
+    position: absolute;
+    left: -2.35rem;
+    top: 0.25rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    z-index: 2;
+  }
+
+  .changelog-item.featured::before {
+    background: var(--accent-purple);
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+  }
+
+  .version-tag {
+    position: absolute;
+    top: -1.5rem;
+    left: 0;
+    font-size: 0.625rem;
+    font-weight: 800;
+    background: var(--accent-purple);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
     letter-spacing: 0.05em;
   }
 
-  .col-links {
+  .item-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .version-num {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+
+  .version-date {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    font-family: monospace;
+  }
+
+  .change-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
   }
 
-  .col-links a {
-    color: var(--text-muted);
-    font-size: 0.875rem;
-    transition: all 0.2s;
-  }
-
-  .col-links a:hover {
-    color: var(--accent-purple);
-    transform: translateX(2px);
-  }
-
-  .footer-bottom {
-    border-top: 1px solid var(--border-color);
-    padding-top: 2rem;
+  .change-list li {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    text-align: center;
+    align-items: flex-start;
+    gap: 0.75rem;
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    line-height: 1.6;
   }
 
-  .copyright a,
-  .icp a {
+  /* Tags */
+  .tag {
+    flex-shrink: 0;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+
+  .tag-refactor {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+  }
+  .tag-ui {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+  }
+  .tag-fx {
+    background: rgba(236, 72, 153, 0.1);
+    color: #ec4899;
+  }
+  .tag-perf {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+  }
+  .tag-fix {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+  }
+  .tag-sys {
+    background: rgba(107, 114, 128, 0.1);
+    color: #6b7280;
+  }
+
+  .changelog-more {
+    text-align: center;
     color: var(--text-muted);
+    font-size: 0.8125rem;
+    font-style: italic;
+    margin-top: 1rem;
+    padding-bottom: 2rem;
+  }
+
+  .close-btn {
+    width: 100%;
+    height: 48px;
+    border-radius: 12px;
+    font-weight: 600;
+  }
+
+  .footer-legal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .copyright-info {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .copyright-link {
+    font-weight: 600;
+    color: var(--text-secondary);
     transition: color 0.2s;
   }
 
-  .copyright a:hover,
-  .icp a:hover {
+  .copyright-link:hover {
+    color: var(--accent-purple);
+  }
+
+  .dot-separator {
+    opacity: 0.5;
+  }
+
+  .beian-info a {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    transition: all 0.2s;
+    opacity: 0.7;
+  }
+
+  .beian-info a:hover {
+    opacity: 1;
     color: var(--text-primary);
   }
 
-  .copyright {
-    font-size: 0.875rem;
-    color: var(--text-muted);
-  }
-
-  .icp {
-    font-size: 0.8125rem;
-    color: var(--text-muted);
-    opacity: 0.8;
-  }
-
-  @media (max-width: 1024px) {
-    .footer-main {
-      flex-direction: column;
+  /* Responsive */
+  @media (max-width: 1200px) {
+    .footer-main-grid {
+      grid-template-columns: 1fr;
       gap: 3rem;
     }
-
-    .footer-nav-grid {
-      width: 100%;
-      max-width: none;
+    .brand-section {
+      text-align: center;
+      align-items: center;
+    }
+    .brand-slogan {
+      max-width: 100%;
+    }
+    .nav-sections {
+      justify-items: center;
+      text-align: center;
+    }
+    .nav-title::after {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .nav-list a:hover {
+      transform: translateY(-2px);
     }
   }
 
-  @media (max-width: 640px) {
-    .footer-nav-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 2rem 1rem;
+  @media (max-width: 768px) {
+    .nav-sections {
+      grid-template-columns: 1fr;
+      gap: 3rem;
     }
-
+    .footer-legal {
+      flex-direction: column;
+      text-align: center;
+    }
     .app-footer {
-      padding-top: 3rem;
+      padding-top: 4rem;
     }
+  }
+
+  /* Dialog Styles for Changelog */
+  .changelog {
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 1.5rem;
+  }
+  .changelog::-webkit-scrollbar {
+    width: 6px;
+  }
+  .changelog::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
   }
 </style>
 

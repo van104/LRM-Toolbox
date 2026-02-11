@@ -226,3 +226,26 @@ h3 {
     --header-height: 56px;
   }
 }
+
+/* ============ View Transitions ============ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* 默认：新层在上方辐射 (适用于 Light -> Dark) */
+::view-transition-new(root) {
+  z-index: 999;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+/* 收缩模式：旧层在上方收缩 (适用于 Dark -> Light) */
+.theme-transition-recede::view-transition-old(root) {
+  z-index: 999;
+}
+.theme-transition-recede::view-transition-new(root) {
+  z-index: 1;
+}

@@ -79,7 +79,7 @@
         >
           <div class="tools-grid animate-stagger">
             <ToolCard
-              v-for="tool in filteredTools"
+              v-for="tool in visibleTools"
               :key="tool.id"
               :tool="tool"
               :is-favorite="userStore.isFavorite(tool.id)"
@@ -87,6 +87,12 @@
               @view-detail="openToolModal"
               @toggle-favorite="handleToggleFavorite"
             />
+          </div>
+          <div v-if="hasMoreTools && !isShowAll" class="show-more-wrapper">
+            <el-button class="show-more-btn" @click="isShowAll = true">
+              <span>查看全部工具 ({{ filteredTools.length }})</span>
+              <el-icon class="el-icon--right"><ArrowDown /></el-icon>
+            </el-button>
           </div>
         </AnimatedContent>
       </section>
@@ -162,7 +168,7 @@
   defineOptions({
     name: 'Home'
   });
-  import { Search, Grid } from '@element-plus/icons-vue';
+  import { Search, Grid, ArrowDown } from '@element-plus/icons-vue';
   import AppHeader from '@/components/layout/AppHeader.vue';
   import AppFooter from '@/components/layout/AppFooter.vue';
   import ParticlesBackground from '@/components/common/ParticlesBackground.vue';
@@ -192,6 +198,9 @@
   const displayedTools = ref([]);
   const searchInputRef = ref(null);
 
+  const isShowAll = ref(false);
+  const DISPLAY_LIMIT = 12;
+
   onMounted(async () => {
     // 初始加载当前分类工具
     await fetchTools(activeCategory.value);
@@ -213,8 +222,20 @@
     return displayedTools.value;
   });
 
+  const visibleTools = computed(() => {
+    if (isShowAll.value || searchKeyword.value) {
+      return filteredTools.value;
+    }
+    return filteredTools.value.slice(0, DISPLAY_LIMIT);
+  });
+
+  const hasMoreTools = computed(() => {
+    return filteredTools.value.length > DISPLAY_LIMIT;
+  });
+
   async function fetchTools(category, keyword = '') {
     loading.value = true;
+    isShowAll.value = false; // 切换分类或搜索时重置展示状态
     if (keyword) {
       displayedTools.value = await searchToolsAsync(keyword);
     } else {
@@ -624,6 +645,36 @@
     text-align: center;
     padding: 2rem;
     color: var(--text-muted);
+  }
+
+  .show-more-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+    padding-bottom: 2rem;
+  }
+
+  .show-more-btn {
+    height: 48px;
+    padding: 0 2.5rem;
+    border-radius: 24px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+  }
+
+  .show-more-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.15);
+    border-color: var(--accent-purple);
+    color: var(--accent-purple);
+  }
+
+  .show-more-btn:active {
+    transform: translateY(-2px);
   }
 
   .dialog-footer-hint {

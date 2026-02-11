@@ -74,36 +74,12 @@
           </el-badge>
         </button>
 
-        <el-dropdown trigger="click" @command="handleThemeChange">
-          <button class="icon-btn">
-            <el-icon :size="20">
-              <Sunny v-if="themeStore.theme === 'light'" />
-              <Moon v-else />
-            </el-icon>
-          </button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item command="light">
-                <el-icon>
-                  <Sunny />
-                </el-icon>
-                <span>浅色模式</span>
-              </el-dropdown-item>
-              <el-dropdown-item command="dark">
-                <el-icon>
-                  <Moon />
-                </el-icon>
-                <span>深色模式</span>
-              </el-dropdown-item>
-              <el-dropdown-item command="system">
-                <el-icon>
-                  <Monitor />
-                </el-icon>
-                <span>跟随系统</span>
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
+        <button ref="themeBtnRef" class="icon-btn" @click="toggleTheme">
+          <el-icon :size="20">
+            <Sunny v-if="themeStore.theme === 'light'" />
+            <Moon v-else />
+          </el-icon>
+        </button>
 
         <button class="mobile-menu-btn" @click="mobileMenuOpen = !mobileMenuOpen">
           <el-icon :size="24">
@@ -246,8 +222,50 @@
     emit('category-change', categoryId);
   }
 
-  function handleThemeChange(mode) {
-    themeStore.setMode(mode);
+  const themeBtnRef = ref(null);
+
+  async function toggleTheme(event) {
+    const isDark = themeStore.theme === 'dark';
+
+    // 如果浏览器不支持 View Transitions API，直接切换
+    if (!document.startViewTransition) {
+      themeStore.setMode(isDark ? 'light' : 'dark');
+      return;
+    }
+
+    // 获取按钮位置作为动画中心
+    const rect = themeBtnRef.value?.getBoundingClientRect();
+    const x = rect ? rect.left + rect.width / 2 : event.clientX;
+    const y = rect ? rect.top + rect.height / 2 : event.clientY;
+
+    const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+
+    const transition = document.startViewTransition(() => {
+      themeStore.setMode(isDark ? 'light' : 'dark');
+      // 给 html 加上标记类，方便 CSS 控制层级
+      if (isDark) {
+        document.documentElement.classList.add('theme-transition-recede');
+      }
+    });
+
+    transition.finished.finally(() => {
+      document.documentElement.classList.remove('theme-transition-recede');
+    });
+
+    transition.ready.then(() => {
+      const clipPath = [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`];
+
+      document.documentElement.animate(
+        {
+          clipPath: isDark ? [...clipPath].reverse() : clipPath
+        },
+        {
+          duration: 600,
+          easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+          pseudoElement: isDark ? '::view-transition-old(root)' : '::view-transition-new(root)'
+        }
+      );
+    });
   }
 
   function handleMobileNavClick(categoryId) {

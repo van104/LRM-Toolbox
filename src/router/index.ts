@@ -48,6 +48,11 @@ const pageRoutes: RouteRecordRaw[] = [
     path: '/history',
     name: 'History',
     component: () => import('@/views/History.vue')
+  },
+  {
+    path: '/changelog',
+    name: 'Changelog',
+    component: () => import('@/views/pages/Changelog.vue')
   }
 ];
 
@@ -106,7 +111,8 @@ router.afterEach(to => {
         '/privacy': '隐私政策',
         '/terms': '服务条款',
         '/favorites': '我的收藏',
-        '/history': '最近使用'
+        '/history': '最近使用',
+        '/changelog': '版本演进'
       };
       if (pageMap[to.path]) {
         title = `${pageMap[to.path]} - LRM 工具箱`;
