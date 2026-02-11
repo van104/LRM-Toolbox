@@ -133,9 +133,9 @@ npm run preview
    ```
 
 3. **安装依赖与启动**：
-   - 进入 `server` 目录，执行 `npm install` 安装依赖。
-   - 使用 **PM2** (推荐) 或 `node server.js` 启动服务。
-   - 默认端口为 `3000`。
+   - 进入 `server` 目录，执行 `npm install` 安装依赖 (包含 sqlite3)。
+   - 启动服务后，系统会自动在目录下生成 `database.sqlite` 数据库文件。
+   - **注意**：请勿将本地为空的 `database.sqlite` 覆盖到生产环境，以免丢失数据。建议在 `.gitignore` 中忽略此文件。
 
 ### 3. Nginx 反向代理 (解决跨域与 HTTPS 混合内容问题)
 

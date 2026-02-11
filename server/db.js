@@ -52,7 +52,6 @@ function migrateFromJson() {
             `INSERT OR IGNORE INTO feedbacks (id, type, content, contact, status, timestamp, userAgent) VALUES (?, ?, ?, ?, ?, ?, ?)`
           );
           feedbacks.forEach(fb => {
-            // 确保字段存在
             stmt.run(
               fb.id || Date.now().toString(),
               fb.type || 'unknown',
@@ -66,7 +65,6 @@ function migrateFromJson() {
           stmt.finalize();
         });
         console.log(`Migrated ${feedbacks.length} feedbacks from JSON onto DB.`);
-        // 只有成功迁移后才重命名
         fs.renameSync(OLD_JSON_PATH, OLD_JSON_PATH + '.bak');
       }
     } catch (e) {
