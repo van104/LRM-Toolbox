@@ -200,10 +200,22 @@
               <h3>AI 的猜测</h3>
             </div>
             <div class="result-body">
-              <div v-if="loading" class="loading-state">
-                <div class="ai-avatar">🤖</div>
-                <div class="thinking-dots"><span>.</span><span>.</span><span>.</span></div>
-                <p>让我想想，你画的是什么...</p>
+              <div v-if="loading" class="p-6 skeleton-loading">
+                <el-skeleton animated>
+                  <template #template>
+                    <div style="display: flex; flex-direction: column; align-items: center">
+                      <el-skeleton-item
+                        variant="circle"
+                        style="width: 60px; height: 60px; margin-bottom: 20px"
+                      />
+                      <el-skeleton-item
+                        variant="h3"
+                        style="width: 80%; height: 24px; margin-bottom: 16px"
+                      />
+                      <el-skeleton-item variant="text" style="width: 60%; height: 20px" />
+                    </div>
+                  </template>
+                </el-skeleton>
               </div>
               <div v-else-if="guessResult" class="result-state pulse-info">
                 <div class="ai-avatar">💡</div>

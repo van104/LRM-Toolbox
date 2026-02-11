@@ -1,3 +1,5 @@
+import PinyinMatch from 'pinyin-match';
+
 export interface Category {
   id: string;
   name: string;
@@ -2264,11 +2266,22 @@ export function getToolsByCategory(categoryId: string): Tool[] {
 }
 
 export function searchTools(keyword: string): Tool[] {
+  if (!keyword) return [];
   const lowerKeyword = keyword.toLowerCase();
-  return tools.filter(
-    tool =>
-      tool.name.toLowerCase().includes(lowerKeyword) ||
-      tool.summary.toLowerCase().includes(lowerKeyword) ||
-      tool.tags.some(tag => tag.toLowerCase().includes(lowerKeyword))
-  );
+
+  return tools.filter(tool => {
+    // 1. 拼音/首字母匹配 (支持 "jsq" -> "计算器", "mm" -> "密码")
+    // PinyinMatch.match 返回 boolean 或匹配索引数组，这里直接用作 boolean
+    const nameMatch = PinyinMatch.match(tool.name, keyword);
+
+    // 2. 摘要使用常规包含匹配 (拼音搜长文本太慢且干扰多)
+    const summaryMatch = tool.summary.toLowerCase().includes(lowerKeyword);
+
+    // 3. 标签匹配 (支持标签的拼音搜索)
+    const tagMatch = tool.tags.some(
+      tag => tag.toLowerCase().includes(lowerKeyword) || PinyinMatch.match(tag, keyword)
+    );
+
+    return nameMatch || summaryMatch || tagMatch;
+  });
 }

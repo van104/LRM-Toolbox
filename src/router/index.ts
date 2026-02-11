@@ -86,4 +86,35 @@ const router = createRouter({
   }
 });
 
+import { tools } from '@/data/tools';
+
+router.afterEach(to => {
+  let title = 'LRM 工具箱 - 高效实用的开发者工具箱';
+
+  if (to.meta && to.meta.title) {
+    title = `${to.meta.title} - LRM 工具箱`;
+  } else {
+    // 尝试在工具列表中查找匹配的路由
+    const tool = tools.find(t => t.route === to.path);
+    if (tool) {
+      title = `${tool.name} - LRM 工具箱`;
+    } else {
+      // 基础页面映射
+      const pageMap: Record<string, string> = {
+        '/': '首页',
+        '/about': '关于我们',
+        '/privacy': '隐私政策',
+        '/terms': '服务条款',
+        '/favorites': '我的收藏',
+        '/history': '最近使用'
+      };
+      if (pageMap[to.path]) {
+        title = `${pageMap[to.path]} - LRM 工具箱`;
+      }
+    }
+  }
+
+  document.title = title;
+});
+
 export default router;

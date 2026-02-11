@@ -56,6 +56,42 @@
             </el-dropdown-menu>
           </template>
         </el-dropdown>
+
+        <el-popover
+          v-model:visible="aiVisible"
+          placement="bottom"
+          title="AI 智能生成"
+          :width="300"
+          trigger="click"
+        >
+          <template #reference>
+            <el-button type="primary" :loading="isAiGenerating">
+              <el-icon class="mr-1">
+                <MagicStick />
+              </el-icon>
+              AI 生成
+            </el-button>
+          </template>
+          <div class="ai-prompt-box">
+            <el-input
+              v-model="aiPrompt"
+              type="textarea"
+              :rows="3"
+              placeholder="例如：匹配中国手机号，或者匹配 1900-2099 年之间的日期..."
+              @keyup.enter.ctrl="generateRegexWithAi"
+            />
+            <div class="mt-2 flex justify-end">
+              <el-button
+                size="small"
+                type="primary"
+                :disabled="!aiPrompt"
+                @click="generateRegexWithAi"
+              >
+                生成正则
+              </el-button>
+            </div>
+          </div>
+        </el-popover>
       </div>
 
       <div v-if="regexError" class="error-message">
@@ -121,7 +157,8 @@
 <script setup>
   import { ref, computed, watch } from 'vue';
   import { useRouter } from 'vue-router';
-  import { ArrowLeft, Delete, ArrowDown, Warning } from '@element-plus/icons-vue';
+  import { ArrowLeft, Delete, ArrowDown, Warning, MagicStick } from '@element-plus/icons-vue';
+  import { ElMessage } from 'element-plus';
 
   const router = useRouter();
 
@@ -129,6 +166,9 @@
   const regexFlags = ref('g');
   const testText = ref('');
   const regexError = ref('');
+  const aiVisible = ref(false);
+  const aiPrompt = ref('');
+  const isAiGenerating = ref(false);
 
   const textareaRef = ref(null);
   const currentTemplateName = ref('常用模板');
@@ -273,6 +313,54 @@
     regexPattern.value = '';
     testText.value = '';
     regexFlags.value = 'g';
+  }
+
+  async function generateRegexWithAi() {
+    if (!aiPrompt.value || isAiGenerating.value) return;
+
+    isAiGenerating.value = true;
+    try {
+      const response = await fetch('/lrm-api/ai-proxy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [
+            {
+              role: 'system',
+              content:
+                '你是一个正则表达式专家。请根据用户的描述，直接给出正则表达式的模式字符串，不要包含两侧的斜杠。如果有必要，在单独的一行给出建议的 flags。请保持回答极其简洁，只包含匹配模式和 flags。'
+            },
+            {
+              role: 'user',
+              content: aiPrompt.value
+            }
+          ]
+        })
+      });
+
+      if (!response.ok) throw new Error('AI 服务响应错误');
+
+      const data = await response.json();
+      const content = data.choices[0].message.content.trim();
+
+      // 简单的正则表达式和 flags 拆解逻辑
+      // 假设 AI 返回: ^\d+$ \n g
+      const lines = content.split('\n');
+      const pattern = lines[0].replace(/^\/|\/$/g, '').trim();
+      const flags = lines.length > 1 ? lines[1].replace(/[^gimsuy]/g, '').trim() : 'g';
+
+      regexPattern.value = pattern;
+      if (flags) regexFlags.value = flags;
+
+      ElMessage.success('AI 已成功生成正则表达式');
+      aiVisible.value = false;
+      aiPrompt.value = '';
+    } catch (error) {
+      console.error('AI Generation Error:', error);
+      ElMessage.error('AI 生成失败，请稍后重试');
+    } finally {
+      isAiGenerating.value = false;
+    }
   }
 </script>
 
