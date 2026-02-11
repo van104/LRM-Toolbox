@@ -116,25 +116,22 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            // Vue 生态：vue, vue-router, pinia -> vendor-vue
-            if (id.includes('vue') || id.includes('pinia') || id.includes('router')) {
-              return 'vendor-vue';
+            // 将核心框架组件 (Vue, Element Plus, Pinia) 合并在一个 chunk，确保初始化顺序稳定
+            if (
+              id.includes('vue') ||
+              id.includes('element-plus') ||
+              id.includes('pinia') ||
+              id.includes('router') ||
+              id.includes('@vue')
+            ) {
+              return 'vendor-core';
             }
-            // UI 组件库：element-plus -> vendor-ui
-            if (id.includes('element-plus')) {
-              return 'vendor-ui';
-            }
-            // 图表库：echarts -> vendor-echarts
+            // 保持大型独立库的拆分
             if (id.includes('echarts')) {
               return 'vendor-echarts';
             }
-            // PDF 处理库：pdfjs, jspdf -> vendor-pdf
             if (id.includes('pdfjs') || id.includes('jspdf')) {
               return 'vendor-pdf';
-            }
-            // 其他工具库：lodash, dayjs, axios -> vendor-utils
-            if (id.includes('lodash') || id.includes('dayjs') || id.includes('axios')) {
-              return 'vendor-utils';
             }
           }
         },
