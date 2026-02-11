@@ -5,7 +5,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { fileURLToPath } from 'url';
-import { dbAPI } from './db.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -97,6 +96,12 @@ const aiProxyLimiter = rateLimit({
 
 app.use(express.json({ limit: '1mb' }));
 
+// 数据存储路径
+const DATA_FILE = path.join(__dirname, 'data', 'feedback.json');
+if (!fs.existsSync(path.dirname(DATA_FILE)))
+  fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
+if (!fs.existsSync(DATA_FILE)) fs.writeFileSync(DATA_FILE, '[]', 'utf8');
+
 // 密码处理
 const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || '').trim();
 
@@ -128,7 +133,7 @@ function validateFeedbackInput(body) {
 // ========== API 路由 ==========
 
 // 提交反馈 API
-app.post('/lrm-api/feedback', feedbackSubmitLimiter, async (req, res) => {
+app.post('/lrm-api/feedback', feedbackSubmitLimiter, (req, res) => {
   try {
     // 输入验证
     const validationError = validateFeedbackInput(req.body);
@@ -145,20 +150,23 @@ app.post('/lrm-api/feedback', feedbackSubmitLimiter, async (req, res) => {
       content: content.trim(),
       contact: contact ? contact.trim() : '',
       status: 'pending',
-      timestamp: new Date().toISOString(),
-      userAgent: req.headers['user-agent']
+      timestamp: new Date().toISOString()
     };
 
-    await dbAPI.add(newFeedback);
+    const fileContent = fs.readFileSync(DATA_FILE, 'utf8');
+    const feedbackList = JSON.parse(fileContent || '[]');
+    feedbackList.unshift(newFeedback);
+    if (feedbackList.length > 1000) feedbackList.length = 1000;
+    fs.writeFileSync(DATA_FILE, JSON.stringify(feedbackList, null, 2), 'utf8');
+
     res.json({ success: true, message: '反馈提交成功' });
-  } catch (error) {
-    console.error('Submit feedback error:', error);
+  } catch {
     res.status(500).json({ success: false, message: '服务器内部错误' });
   }
 });
 
 // 获取反馈列表 API
-app.get('/lrm-api/feedback', async (req, res) => {
+app.get('/lrm-api/feedback', (req, res) => {
   const authHeader = (req.headers['x-admin-token'] || '').trim();
 
   if (!ADMIN_PASSWORD) {
@@ -173,16 +181,15 @@ app.get('/lrm-api/feedback', async (req, res) => {
   }
 
   try {
-    const feedbacks = await dbAPI.getAll();
-    res.json(feedbacks);
-  } catch (error) {
-    console.error('Fetch feedback error:', error);
+    const fileContent = fs.readFileSync(DATA_FILE, 'utf8');
+    res.json(JSON.parse(fileContent || '[]'));
+  } catch {
     res.status(500).json({ error: '读取数据失败' });
   }
 });
 
 // 更新反馈状态 API
-app.post('/lrm-api/feedback/update', async (req, res) => {
+app.post('/lrm-api/feedback/update', (req, res) => {
   const authHeader = (req.headers['x-admin-token'] || '').trim();
   const { id, status } = req.body;
 
@@ -196,20 +203,23 @@ app.post('/lrm-api/feedback/update', async (req, res) => {
   }
 
   try {
-    const changes = await dbAPI.updateStatus(id, status);
-    if (changes > 0) {
+    const fileContent = fs.readFileSync(DATA_FILE, 'utf8');
+    const feedbackList = JSON.parse(fileContent || '[]');
+    const index = feedbackList.findIndex(f => f.id === id);
+    if (index !== -1) {
+      feedbackList[index].status = status;
+      fs.writeFileSync(DATA_FILE, JSON.stringify(feedbackList, null, 2), 'utf8');
       res.json({ success: true });
     } else {
       res.status(404).json({ error: '未找到' });
     }
-  } catch (error) {
-    console.error('Update feedback error:', error);
+  } catch {
     res.status(500).json({ error: '操作失败' });
   }
 });
 
 // 删除反馈 API
-app.post('/lrm-api/feedback/delete', async (req, res) => {
+app.post('/lrm-api/feedback/delete', (req, res) => {
   const authHeader = (req.headers['x-admin-token'] || '').trim();
   const { id } = req.body;
 
@@ -221,15 +231,12 @@ app.post('/lrm-api/feedback/delete', async (req, res) => {
   }
 
   try {
-    // 即使没找到 ID，只要不出错，通常认为删除成功，或者返回 404
-    const changes = await dbAPI.delete(id);
-    if (changes > 0) {
-      res.json({ success: true });
-    } else {
-      res.status(404).json({ error: '未找到' });
-    }
-  } catch (error) {
-    console.error('Delete feedback error:', error);
+    const fileContent = fs.readFileSync(DATA_FILE, 'utf8');
+    const feedbackList = JSON.parse(fileContent || '[]');
+    const newList = feedbackList.filter(f => f.id !== id);
+    fs.writeFileSync(DATA_FILE, JSON.stringify(newList, null, 2), 'utf8');
+    res.json({ success: true });
+  } catch {
     res.status(500).json({ error: '操作失败' });
   }
 });
