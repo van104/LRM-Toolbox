@@ -154,10 +154,12 @@
 <script setup>
   import { ref, computed, watch } from 'vue';
   import { useRouter } from 'vue-router';
+  import { useCopy } from '@/composables/useCopy';
   import { ElMessage } from 'element-plus';
   import { ArrowLeft, InfoFilled, QuestionFilled } from '@element-plus/icons-vue';
 
   const router = useRouter();
+  const { copyToClipboard } = useCopy();
   const templateText = ref('');
   const dataInput = ref('');
   const curDataMode = ref('json');
@@ -259,8 +261,7 @@
   }
 
   function copyResult() {
-    if (!resultText.value) return;
-    navigator.clipboard.writeText(resultText.value).then(() => ElMessage.success('已复制'));
+    copyToClipboard(resultText.value, { success: '已复制' });
   }
 
   function goBack() {

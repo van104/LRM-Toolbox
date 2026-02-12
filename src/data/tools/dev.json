@@ -252,18 +252,6 @@
     "tags": ["端口", "网络", "运维", "开发"]
   },
   {
-    "id": "url-encoder",
-    "name": "URL 编解码",
-    "category": "dev",
-    "icon": "Link",
-    "summary": "URL Encode / Decode",
-    "description": "对 URL 进行编码和解码处理 (encodeURIComponent)，处理链接参数中的特殊字符。",
-    "usage": "输入文本点击编码或解码。",
-    "route": "/tools/url",
-    "isLocal": true,
-    "tags": ["URL", "编码", "解码", "网络", "开发"]
-  },
-  {
     "id": "html-entity",
     "name": "HTML 转义",
     "category": "dev",

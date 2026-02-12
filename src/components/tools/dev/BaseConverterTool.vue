@@ -156,7 +156,6 @@
 <script setup>
   import { ref, reactive, computed } from 'vue';
   import { Back, CopyDocument, Delete, Search } from '@element-plus/icons-vue';
-  import { ElMessage } from 'element-plus';
 
   const values = reactive({
     dec: '',
@@ -231,14 +230,12 @@
     Object.keys(errors).forEach(k => (errors[k] = false));
   };
 
+  import { useCopy } from '@/composables/useCopy';
+
+  const { copyToClipboard } = useCopy();
+
   const copy = async text => {
-    if (!text) return;
-    try {
-      await navigator.clipboard.writeText(text);
-      ElMessage.success('已复制');
-    } catch {
-      ElMessage.error('复制失败');
-    }
+    copyToClipboard(text, { success: '已复制' });
   };
 
   const asciiData = [

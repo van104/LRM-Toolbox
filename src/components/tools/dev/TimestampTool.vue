@@ -27,14 +27,12 @@
         <div class="timestamp-display">
           <span>Unix 时间戳 (秒):</span>
           <span class="highlight">{{ nowUnix }}</span>
-          <el-button link type="primary" size="small" @click="copyToClipboard(nowUnix)"
-            >复制</el-button
-          >
+          <el-button link type="primary" size="small" @click="handleCopy(nowUnix)">复制</el-button>
         </div>
         <div class="timestamp-display">
           <span>Unix 时间戳 (毫秒):</span>
           <span class="highlight">{{ nowUnixMs }}</span>
-          <el-button link type="primary" size="small" @click="copyToClipboard(nowUnixMs)"
+          <el-button link type="primary" size="small" @click="handleCopy(nowUnixMs)"
             >复制</el-button
           >
         </div>
@@ -76,7 +74,7 @@
                 v-if="tsToDateResult"
                 link
                 icon="CopyDocument"
-                @click="copyToClipboard(tsToDateResult)"
+                @click="handleCopy(tsToDateResult)"
               />
             </div>
             <div class="result-item">
@@ -86,7 +84,7 @@
                 v-if="tsToIsoResult"
                 link
                 icon="CopyDocument"
-                @click="copyToClipboard(tsToIsoResult)"
+                @click="handleCopy(tsToIsoResult)"
               />
             </div>
           </div>
@@ -123,7 +121,7 @@
                 v-if="dateToTsResult"
                 link
                 icon="CopyDocument"
-                @click="copyToClipboard(dateToTsResult)"
+                @click="handleCopy(dateToTsResult)"
               />
             </div>
             <div class="result-item">
@@ -133,7 +131,7 @@
                 v-if="dateToTsMsResult"
                 link
                 icon="CopyDocument"
-                @click="copyToClipboard(dateToTsMsResult)"
+                @click="handleCopy(dateToTsMsResult)"
               />
             </div>
           </div>
@@ -148,7 +146,6 @@
 <script setup>
   import { ref, onMounted, onUnmounted } from 'vue';
   import { useRouter } from 'vue-router';
-  import { ElMessage } from 'element-plus';
   import { ArrowLeft, Refresh, Timer, Calendar, ArrowDown } from '@element-plus/icons-vue';
   import dayjs from 'dayjs';
 
@@ -228,14 +225,16 @@
     }
   }
 
-  async function copyToClipboard(text) {
-    if (!text) return;
-    try {
-      await navigator.clipboard.writeText(text.toString());
-      ElMessage.success('复制成功');
-    } catch {
-      ElMessage.error('复制失败');
-    }
+  import { useCopy } from '@/composables/useCopy';
+
+  const { copyToClipboard } = useCopy();
+  // Renaming to avoid conflict if template uses copyToClipboard directly
+  // The template uses copyToClipboard(text), useCopy's signature is (text, options).
+  // It's compatible if we don't pass options, or we can wrap it.
+
+  // The template calls copyToClipboard with numbers (Unix timestamp), so we need to ensure string conversion.
+  function handleCopy(text) {
+    copyToClipboard(text.toString(), { success: '复制成功' });
   }
 
   onMounted(() => {

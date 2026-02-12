@@ -42,19 +42,16 @@
     </main>
 
     <footer class="footer">© 2026 LRM工具箱 - Emoji 表情检索</footer>
-
-    <Transition name="toast">
-      <div v-if="toastMsg" class="toast">已复制: {{ toastMsg }}</div>
-    </Transition>
   </div>
 </template>
 
 <script setup>
   import { ref, computed } from 'vue';
   import { Back } from '@element-plus/icons-vue';
+  import { useCopy } from '@/composables/useCopy';
 
   const currentCat = ref('mood');
-  const toastMsg = ref('');
+  const { copyToClipboard } = useCopy();
 
   const emojiData = {
     mood: [
@@ -690,13 +687,7 @@
   const currentEmojis = computed(() => emojiData[currentCat.value] || []);
 
   const copy = async txt => {
-    try {
-      await navigator.clipboard.writeText(txt);
-      toastMsg.value = txt;
-      setTimeout(() => (toastMsg.value = ''), 1500);
-    } catch {
-      // ignore error
-    }
+    copyToClipboard(txt, { success: `已复制: ${txt}` });
   };
 </script>
 

@@ -200,6 +200,9 @@
   import QRCode from 'qrcode';
   import jsQR from 'jsqr';
   import tinycolor from 'tinycolor2';
+  import { useCopy } from '@/composables/useCopy';
+
+  const { copyToClipboard } = useCopy();
 
   const router = useRouter();
   const currentTab = ref('generate');
@@ -319,7 +322,7 @@
 
   function copyScanResult() {
     if (!scan.result) return;
-    navigator.clipboard.writeText(scan.result).then(() => ElMessage.success('已复制'));
+    copyToClipboard(scan.result, { success: '已复制' });
   }
 
   function goBack() {

@@ -147,9 +147,12 @@
     ElMessage.success('已删除');
   };
 
+  import { useCopy } from '@/composables/useCopy';
+
+  const { copyToClipboard } = useCopy();
+
   const copyContent = () => {
-    navigator.clipboard.writeText(content.value);
-    ElMessage.success('已复制到剪贴板');
+    copyToClipboard(content.value, { success: '已复制到剪贴板' });
   };
 
   const downloadNote = () => {

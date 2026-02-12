@@ -55,14 +55,15 @@
 <script setup>
   import { ref, onMounted } from 'vue';
   import { Back } from '@element-plus/icons-vue';
-  import { ElMessage } from 'element-plus';
   import { quoteCategories, loadQuotes } from '@/data/quotes';
+  import { useCopy } from '@/composables/useCopy';
 
   const activeCategory = ref('poetry');
   const currentQuote = ref(null);
   const fontSize = ref(24);
   const currentBg = ref('#ffffff');
   const currentCategoryQuotes = ref([]);
+  const { copyToClipboard } = useCopy();
 
   const backgrounds = ['#ffffff', '#fdf2f8', '#eff6ff', '#f0fdf4', '#fffbeb', '#f5f3ff'];
 
@@ -96,8 +97,7 @@
   const copyQuote = () => {
     if (!currentQuote.value) return;
     const text = `“${currentQuote.value.content}” ${currentQuote.value.author ? '— ' + currentQuote.value.author : ''}`;
-    navigator.clipboard.writeText(text);
-    ElMessage.success('已复制到剪贴板');
+    copyToClipboard(text, { success: '已复制到剪贴板' });
   };
 
   onMounted(async () => {

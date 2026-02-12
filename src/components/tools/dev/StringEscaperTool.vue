@@ -225,9 +225,12 @@
     }
   }
 
+  import { useCopy } from '@/composables/useCopy';
+
+  const { copyToClipboard } = useCopy();
+
   function copyResult() {
-    if (!outputText.value) return;
-    navigator.clipboard.writeText(outputText.value).then(() => ElMessage.success('已复制'));
+    copyToClipboard(outputText.value, { success: '已复制' });
   }
 
   function goBack() {

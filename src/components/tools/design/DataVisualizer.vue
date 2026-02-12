@@ -300,12 +300,6 @@
       <p>© 2026 LRM工具箱 - 数据可视化</p>
     </footer>
 
-    <Transition name="toast">
-      <div v-if="toast.show" class="toast" :class="toast.type">
-        {{ toast.message }}
-      </div>
-    </Transition>
-
     <div v-if="showGenerator" class="modal-overlay" @click="showGenerator = false">
       <div class="modal-card" @click.stop>
         <div class="modal-header">
@@ -366,6 +360,7 @@
   import { ref, reactive, computed, nextTick, watch } from 'vue';
   import * as XLSX from 'xlsx';
   import Chart from 'chart.js/auto';
+  import { ElMessage } from 'element-plus';
 
   const fileInput = ref(null);
   const isDragOver = ref(false);
@@ -396,8 +391,6 @@
     { value: 'weather', label: '天气数据', icon: '🌤️' },
     { value: 'finance', label: '财务报表', icon: '💹' }
   ];
-
-  const toast = reactive({ show: false, message: '', type: 'info' });
 
   const chartTypes = [
     { value: 'bar', label: '柱状图', icon: '📊' },
@@ -798,10 +791,13 @@
   }
 
   function showToast(msg, type = 'info') {
-    toast.message = msg;
-    toast.type = type;
-    toast.show = true;
-    setTimeout(() => (toast.show = false), 3000);
+    if (type === 'error') {
+      ElMessage.error(msg);
+    } else if (type === 'success') {
+      ElMessage.success(msg);
+    } else {
+      ElMessage.info(msg);
+    }
   }
 
   function openGeneratorModal() {

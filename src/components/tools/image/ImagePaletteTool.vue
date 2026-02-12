@@ -105,6 +105,9 @@
   import { ElMessage } from 'element-plus';
   import { ArrowLeft, UploadFilled, Loading } from '@element-plus/icons-vue';
 
+  import { useCopy } from '@/composables/useCopy';
+
+  const { copyToClipboard } = useCopy();
   const router = useRouter();
   const goBack = () => router.back();
   const fileRef = ref(null);
@@ -174,8 +177,7 @@
 
   const copyColor = rgb => {
     const hex = rgbToHex(rgb);
-    navigator.clipboard.writeText(hex);
-    ElMessage.success(`已复制 ${hex}`);
+    copyToClipboard(hex, { success: `已复制 ${hex}` });
   };
 
   const downloadPalette = () => {

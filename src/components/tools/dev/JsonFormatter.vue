@@ -229,6 +229,10 @@
     }
   }
 
+  import { useCopy } from '@/composables/useCopy';
+
+  const { copyToClipboard: copy } = useCopy();
+
   async function pasteFromClipboard() {
     try {
       const text = await navigator.clipboard.readText();
@@ -240,13 +244,8 @@
     }
   }
 
-  async function copyToClipboard() {
-    try {
-      await navigator.clipboard.writeText(outputJson.value);
-      ElMessage.success('已复制到剪贴板');
-    } catch {
-      ElMessage.error('复制失败');
-    }
+  function copyToClipboard() {
+    copy(outputJson.value, { success: '已复制到剪贴板' });
   }
 
   function loadSample() {

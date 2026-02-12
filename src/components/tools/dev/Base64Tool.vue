@@ -220,15 +220,9 @@
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
-  async function copyToClipboard(text) {
-    if (!text) return;
-    try {
-      await navigator.clipboard.writeText(text);
-      ElMessage.success('已复制到剪贴板');
-    } catch {
-      ElMessage.error('复制失败');
-    }
-  }
+  import { useCopy } from '@/composables/useCopy';
+
+  const { copyToClipboard } = useCopy();
 
   function copyImgTag() {
     if (!imgBase64.value) return;
@@ -241,6 +235,7 @@
       .readText()
       .then(text => {
         inputText.value = text;
+        ElMessage.success('已粘贴');
       })
       .catch(() => {
         ElMessage.error('无法读取剪贴板');

@@ -291,24 +291,6 @@
     </div>
 
     <footer class="footer">© 2026 LRM工具箱 - 颜色选择器</footer>
-
-    <Transition name="toast">
-      <div v-if="toast.show" class="toast-popup">
-        <span class="toast-icon">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        </span>
-        {{ toast.message }}
-      </div>
-    </Transition>
   </div>
 </template>
 
@@ -326,7 +308,6 @@
   });
 
   const savedColors = ref([]);
-  const toast = reactive({ show: false, message: '' });
   const colorInput = ref(null);
   const isEyeDropperSupported = ref(false);
 
@@ -406,7 +387,7 @@
     } catch (e) {
       if (e.name !== 'AbortError') {
         console.error(e);
-        showToast('取色失败');
+        ElMessage.error('取色失败');
       }
     }
   }
@@ -463,6 +444,15 @@
     updateFromHex(event.target.value);
   }
 
+  import { ElMessage } from 'element-plus';
+  import { useCopy } from '@/composables/useCopy';
+
+  const { copyToClipboard } = useCopy();
+
+  function copyColor() {
+    copyToClipboard(currentColor.hex, { success: '颜色代码已复制: ' + currentColor.hex });
+  }
+
   function generateRandomColor() {
     const r = Math.floor(Math.random() * 256);
     const g = Math.floor(Math.random() * 256);
@@ -470,18 +460,12 @@
 
     currentColor.rgb = { r, g, b };
     updateFromRgb();
-    showToast('已生成随机颜色');
-  }
-
-  function copyColor() {
-    navigator.clipboard.writeText(currentColor.hex).then(() => {
-      showToast('颜色代码已复制: ' + currentColor.hex);
-    });
+    ElMessage.success('已生成随机颜色');
   }
 
   function saveCurrentColor() {
     if (savedColors.value.some(c => c.hex === currentColor.hex)) {
-      showToast('该颜色已保存');
+      ElMessage.warning('该颜色已保存');
       return;
     }
 
@@ -489,7 +473,7 @@
     if (savedColors.value.length > 20) savedColors.value.pop();
 
     localStorage.setItem('vb_saved_colors', JSON.stringify(savedColors.value));
-    showToast('颜色已保存');
+    ElMessage.success('颜色已保存');
   }
 
   function removeSavedColor(idx) {
@@ -501,7 +485,7 @@
     if (confirm('确定要清除所有保存的颜色吗？')) {
       savedColors.value = [];
       localStorage.removeItem('vb_saved_colors');
-      showToast('记录已清除');
+      ElMessage.success('记录已清除');
     }
   }
 
@@ -514,12 +498,6 @@
         console.error(e);
       }
     }
-  }
-
-  function showToast(msg) {
-    toast.message = msg;
-    toast.show = true;
-    setTimeout(() => (toast.show = false), 2000);
   }
 
   function getBrightness(r, g, b) {
@@ -1064,25 +1042,6 @@
     border-radius: 12px;
     background: #f8fafc;
     margin-top: 2rem;
-  }
-
-  .toast-popup {
-    position: fixed;
-    top: 24px;
-    right: 24px;
-    z-index: 100;
-    background: #1e293b;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .toast-icon {
-    color: #4ade80;
   }
 
   .footer {

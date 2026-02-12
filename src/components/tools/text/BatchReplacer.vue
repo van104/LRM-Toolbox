@@ -217,10 +217,6 @@
         </section>
       </div>
 
-      <Transition name="toast">
-        <div v-if="toast.show" class="toast">{{ toast.message }}</div>
-      </Transition>
-
       <Transition name="fade">
         <div v-if="showHelp" class="modal-overlay" @click="showHelp = false">
           <div class="modal-content" @click.stop>
@@ -262,10 +258,14 @@
   import { useRouter } from 'vue-router';
   import { ArrowLeft, Delete, CopyDocument, QuestionFilled } from '@element-plus/icons-vue';
 
+  import { useCopy } from '@/composables/useCopy';
+  import { ElMessage } from 'element-plus';
+
   const router = useRouter();
+  const { copyToClipboard } = useCopy();
   const inputText = ref('');
   const outputText = ref('');
-  const toast = reactive({ show: false, message: '' });
+
   const currentTab = ref('simple');
   const showHelp = ref(false);
 
@@ -293,8 +293,8 @@
   });
 
   function doSimpleReplace() {
-    if (!inputText.value) return showToast('请先输入文本');
-    if (!simpleOptions.find) return showToast('请输入查找内容');
+    if (!inputText.value) return ElMessage.warning('请先输入文本');
+    if (!simpleOptions.find) return ElMessage.warning('请输入查找内容');
 
     let text = inputText.value;
     try {
@@ -314,15 +314,15 @@
         }
       }
       outputText.value = text;
-      showToast('替换完成');
+      ElMessage.success('替换完成');
     } catch (e) {
-      showToast('正则错误: ' + e.message);
+      ElMessage.error('正则错误: ' + e.message);
     }
   }
 
   function doBatchReplace() {
-    if (!inputText.value) return showToast('请先输入文本');
-    if (!batchOptions.rules) return showToast('请先定义替换规则');
+    if (!inputText.value) return ElMessage.warning('请先输入文本');
+    if (!batchOptions.rules) return ElMessage.warning('请先定义替换规则');
 
     let text = inputText.value;
     const lines = batchOptions.rules.split('\n');
@@ -362,27 +362,27 @@
     }
 
     outputText.value = text;
-    showToast(`批量执行完成`);
+    ElMessage.success(`批量执行完成`);
   }
 
   function doLineModify() {
-    if (!inputText.value) return showToast('请先输入文本');
+    if (!inputText.value) return ElMessage.warning('请先输入文本');
     const lines = inputText.value.split('\n');
     outputText.value = lines
       .map(line => `${lineOptions.prefix}${line}${lineOptions.suffix}`)
       .join('\n');
-    showToast('前后缀添加完成');
+    ElMessage.success('前后缀添加完成');
   }
 
   function doLineFilter(mode) {
-    if (!inputText.value) return showToast('请先输入文本');
+    if (!inputText.value) return ElMessage.warning('请先输入文本');
     const lines = inputText.value.split('\n');
     let result = [];
 
     if (mode === 'empty') {
       result = lines.filter(l => l.trim());
     } else {
-      if (!lineOptions.filterText) return showToast('请输入过滤关键词');
+      if (!lineOptions.filterText) return ElMessage.warning('请输入过滤关键词');
       if (mode === 'keep') {
         result = lines.filter(l => l.includes(lineOptions.filterText));
       } else if (mode === 'remove') {
@@ -391,11 +391,11 @@
     }
 
     outputText.value = result.join('\n');
-    showToast(`过滤完成，剩余 ${result.length} 行`);
+    ElMessage.success(`过滤完成，剩余 ${result.length} 行`);
   }
 
   function doPadding(mode) {
-    if (!inputText.value) return showToast('请先输入文本');
+    if (!inputText.value) return ElMessage.warning('请先输入文本');
     const len = lineOptions.padLength || 10;
     const char = lineOptions.padChar || ' ';
     const lines = inputText.value.split('\n');
@@ -407,7 +407,7 @@
         return line;
       })
       .join('\n');
-    showToast('补全完成');
+    ElMessage.success('补全完成');
   }
 
   function fillDemoData() {
@@ -423,7 +423,7 @@
       lineOptions.prefix = '[LOG] ';
       lineOptions.filterText = 'Error';
     }
-    showToast('已加载示例数据');
+    ElMessage.success('已加载示例数据');
   }
 
   async function pasteText() {
@@ -431,7 +431,7 @@
       const text = await navigator.clipboard.readText();
       inputText.value = text;
     } catch {
-      showToast('无法读取剪贴板');
+      ElMessage.error('无法读取剪贴板');
     }
   }
 
@@ -445,16 +445,7 @@
   }
 
   function copyResult() {
-    if (!outputText.value) return;
-    navigator.clipboard.writeText(outputText.value).then(() => {
-      showToast('已复制结果');
-    });
-  }
-
-  function showToast(msg) {
-    toast.message = msg;
-    toast.show = true;
-    setTimeout(() => (toast.show = false), 2000);
+    copyToClipboard(outputText.value, { success: '已复制结果' });
   }
 
   function goHome() {
@@ -796,25 +787,12 @@
     color: var(--text-secondary);
   }
 
-  .stats-info,
-  .toast {
+  .stats-info {
     font-size: 0.75rem;
     background: #f3f4f6;
     padding: 2px 6px;
     border-radius: 4px;
     color: var(--text-secondary);
-  }
-
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 100px;
-    z-index: 1000;
   }
 
   .modal-overlay {

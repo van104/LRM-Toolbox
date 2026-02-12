@@ -231,17 +231,12 @@
     </main>
 
     <footer class="footer">© 2026 LRM工具箱 - 图片重命名</footer>
-
-    <Transition name="toast">
-      <div v-if="toast.show" class="toast" :class="toast.type">
-        {{ toast.message }}
-      </div>
-    </Transition>
   </div>
 </template>
 
 <script setup>
   import { ref, reactive, computed, onUnmounted } from 'vue';
+  import { ElMessage } from 'element-plus';
 
   const fileInput = ref(null);
   const isDragOver = ref(false);
@@ -256,8 +251,6 @@
     addNumbers: true,
     addTimestamp: false
   });
-
-  const toast = reactive({ show: false, message: '', type: 'info' });
 
   const processedFiles = computed(() => {
     return files.value.map((item, index) => {
@@ -342,7 +335,7 @@
     const validFiles = newFiles.filter(f => f.type.startsWith('image/'));
 
     if (validFiles.length === 0) {
-      showToast('请选择有效的图片文件', 'error');
+      ElMessage.error('请选择有效的图片文件');
       return;
     }
 
@@ -363,7 +356,7 @@
       });
     }
 
-    showToast(`已添加 ${validFiles.length} 个文件`, 'success');
+    ElMessage.success(`已添加 ${validFiles.length} 个文件`);
   }
 
   function generateThumbnail(file) {
@@ -414,7 +407,7 @@
     files.value.forEach(f => URL.revokeObjectURL(f.previewUrl));
     files.value = [];
     config.prefix = '';
-    showToast('已清空列表');
+    ElMessage.info('已清空列表');
   }
 
   function downloadSingle(processedFile) {
@@ -444,18 +437,11 @@
         if (count === total) {
           setTimeout(() => {
             isDownloading.value = false;
-            showToast(`成功下载 ${total} 个文件`, 'success');
+            ElMessage.success(`成功下载 ${total} 个文件`);
           }, 500);
         }
       }, index * 200);
     });
-  }
-
-  function showToast(msg, type = 'info') {
-    toast.message = msg;
-    toast.type = type;
-    toast.show = true;
-    setTimeout(() => (toast.show = false), 2000);
   }
 
   function goHome() {
@@ -932,39 +918,6 @@
     font-size: 0.85rem;
     color: var(--text-secondary);
     line-height: 1.5;
-  }
-
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 0.75rem 1.5rem;
-    border-radius: 50px;
-    color: white;
-    font-size: 0.9rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    background: var(--text);
-    z-index: 200;
-  }
-
-  .toast-enter-active,
-  .toast-leave-active {
-    transition: all 0.3s ease;
-  }
-
-  .toast-enter-from,
-  .toast-leave-to {
-    opacity: 0;
-    transform: translateY(20px) translateX(-50%);
-  }
-
-  .toast.success {
-    background: var(--success);
-  }
-
-  .toast.error {
-    background: var(--danger);
   }
 
   .spinner {

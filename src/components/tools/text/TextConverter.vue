@@ -132,10 +132,6 @@
           </div>
         </section>
       </div>
-
-      <Transition name="toast">
-        <div v-if="toast.show" class="toast">{{ toast.message }}</div>
-      </Transition>
     </main>
 
     <footer class="footer">© 2026 LRM工具箱 - 文本转换器</footer>
@@ -143,7 +139,7 @@
 </template>
 
 <script setup>
-  import { ref, reactive } from 'vue';
+  import { ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { ArrowLeft, Delete, CopyDocument } from '@element-plus/icons-vue';
   import { pinyin } from 'pinyin-pro';
@@ -151,11 +147,14 @@
 
   import * as OpenCC from 'opencc-js';
 
+  import { useCopy } from '@/composables/useCopy';
+  import { ElMessage } from 'element-plus';
+
   const router = useRouter();
+  const { copyToClipboard } = useCopy();
   const inputText = ref('');
   const outputText = ref('');
   const inputRef = ref(null);
-  const toast = reactive({ show: false, message: '' });
 
   let s2tConverter = null;
   let t2sConverter = null;
@@ -166,7 +165,7 @@
       t2sConverter = await OpenCC.Converter({ from: 'hk', to: 'cn' });
     } catch (e) {
       console.error('OpenCC init failed', e);
-      showToast('繁简转换组件加载失败');
+      ElMessage.error('繁简转换组件加载失败');
     }
   }
 
@@ -184,7 +183,7 @@
     }
 
     if (!text) {
-      showToast('请先输入或选择文本');
+      ElMessage.warning('请先输入或选择文本');
       return;
     }
 
@@ -211,14 +210,14 @@
           if (/^-?\d+(\.\d+)?$/.test(text.trim())) {
             outputText.value = Nzh.cn.toMoney(text.trim());
           } else {
-            showToast('请输入纯数字金额');
+            ElMessage.warning('请输入纯数字金额');
           }
           break;
         case 'num_upper':
           if (/^-?\d+(\.\d+)?$/.test(text.trim())) {
             outputText.value = Nzh.cn.encodeB(text.trim());
           } else {
-            showToast('请输入纯数字');
+            ElMessage.warning('请输入纯数字');
           }
           break;
         case 'rmb_lower':
@@ -226,14 +225,14 @@
             const cleanText = text.trim().replace(/[元圆角分整]/g, '');
             outputText.value = Nzh.cn.decodeB(cleanText);
           } catch {
-            showToast('无法解析为数字');
+            ElMessage.error('无法解析为数字');
           }
           break;
         case 'num_lower':
           try {
             outputText.value = Nzh.cn.decodeB(text.trim());
           } catch {
-            showToast('无法解析为数字');
+            ElMessage.error('无法解析为数字');
           }
           break;
 
@@ -295,7 +294,7 @@
         }
       }
     } catch (e) {
-      showToast('转换错误: ' + e.message);
+      ElMessage.error('转换错误: ' + e.message);
     }
   }
 
@@ -319,7 +318,7 @@
 3. 金额: 10086.50, 壹万零捌拾陆元伍角
 4. 进制: 255 (转16进制为FF)
 5. 编码: https://example.com/?q=测试`;
-    showToast('已加载示例数据');
+    ElMessage.success('已加载示例数据');
   }
 
   async function pasteText() {
@@ -327,7 +326,7 @@
       const text = await navigator.clipboard.readText();
       inputText.value = text;
     } catch {
-      showToast('无法读取剪贴板');
+      ElMessage.error('无法读取剪贴板');
     }
   }
 
@@ -341,16 +340,7 @@
   }
 
   function copyResult() {
-    if (!outputText.value) return;
-    navigator.clipboard.writeText(outputText.value).then(() => {
-      showToast('已复制结果');
-    });
-  }
-
-  function showToast(msg) {
-    toast.message = msg;
-    toast.show = true;
-    setTimeout(() => (toast.show = false), 2000);
+    copyToClipboard(outputText.value, { success: '已复制结果' });
   }
 
   function goHome() {
@@ -610,30 +600,6 @@
       height: auto;
       min-height: auto;
     }
-  }
-
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 100px;
-    font-size: 0.85rem;
-    z-index: 1000;
-  }
-
-  .toast-enter-active,
-  .toast-leave-active {
-    transition: all 0.3s ease;
-  }
-
-  .toast-enter-from,
-  .toast-leave-to {
-    opacity: 0;
-    transform: translateX(-50%) translateY(10px);
   }
 
   @media (prefers-color-scheme: dark) {

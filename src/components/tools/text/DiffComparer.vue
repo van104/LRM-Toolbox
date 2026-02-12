@@ -320,16 +320,15 @@
 
     <footer class="footer">© 2026 LRM工具箱 - 文本差异比较</footer>
 
-    <Transition name="toast">
-      <div v-if="toast.show" class="toast" :class="toast.type">
-        {{ toast.message }}
-      </div>
-    </Transition>
+    <footer class="footer">© 2026 LRM工具箱 - 文本差异比较</footer>
   </div>
 </template>
 
 <script setup>
   import { ref, reactive, computed, nextTick } from 'vue';
+
+  import { useCopy } from '@/composables/useCopy';
+  import { ElMessage } from 'element-plus';
 
   const originalText = ref('');
   const modifiedText = ref('');
@@ -339,7 +338,7 @@
   const isSideBySide = ref(false);
   const diffResult = ref(null);
   const stats = reactive({ added: 0, removed: 0, modified: 0, unchanged: 0 });
-  const toast = reactive({ show: false, message: '', type: 'info' });
+  const { copyToClipboard } = useCopy();
 
   function longestCommonSubsequence(a, b) {
     const m = a.length;
@@ -386,7 +385,7 @@
 
   function handleCompare() {
     if (!originalText.value && !modifiedText.value) {
-      showToast('请输入需要比较的文本', 'error');
+      ElMessage.error('请输入需要比较的文本');
       return;
     }
 
@@ -542,7 +541,7 @@
     reader.onload = e => {
       if (target === 'original') originalText.value = e.target.result;
       else modifiedText.value = e.target.result;
-      showToast('文件加载成功', 'success');
+      ElMessage.success('文件加载成功');
     };
     reader.readAsText(file);
     event.target.value = '';
@@ -551,16 +550,16 @@
   function loadSample(target) {
     if (target === 'original') {
       originalText.value = `这是原始文本示例。
-这是第二行内容。
-这是第三行，包含一些关键字。
-第四行内容。
-最后一行。`;
+  这是第二行内容。
+  这是第三行，包含一些关键字。
+  第四行内容。
+  最后一行。`;
     } else {
       modifiedText.value = `这是修改后的文本示例。
-这是第二行内容，有一些变化。
-这是第三行，包含一些不同的关键字。
-新增的一行内容。
-最后一行，有变化。`;
+  这是第二行内容，有一些变化。
+  这是第三行，包含一些不同的关键字。
+  新增的一行内容。
+  最后一行，有变化。`;
     }
   }
 
@@ -577,16 +576,7 @@
       })
       .join(compareMode.value === 'line' ? '\n' : '');
 
-    navigator.clipboard.writeText(text).then(() => {
-      showToast('结果已复制', 'success');
-    });
-  }
-
-  function showToast(msg, type = 'info') {
-    toast.message = msg;
-    toast.type = type;
-    toast.show = true;
-    setTimeout(() => (toast.show = false), 2000);
+    copyToClipboard(text, { success: '结果已复制' });
   }
 
   function goHome() {
@@ -1071,43 +1061,6 @@
       flex-wrap: wrap;
       gap: 1rem;
     }
-  }
-
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 0.75rem 1.5rem;
-    border-radius: 50px;
-    color: white;
-    font-size: 0.9rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    background: var(--text);
-    z-index: 200;
-  }
-
-  .toast.success {
-    background: var(--primary);
-  }
-
-  .toast.error {
-    background: var(--danger);
-  }
-
-  .toast.info {
-    background: var(--text);
-  }
-
-  .toast-enter-active,
-  .toast-leave-active {
-    transition: all 0.3s ease;
-  }
-
-  .toast-enter-from,
-  .toast-leave-to {
-    opacity: 0;
-    transform: translateY(20px) translateX(-50%);
   }
 
   .intro-section {

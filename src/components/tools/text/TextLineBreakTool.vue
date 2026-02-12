@@ -106,8 +106,9 @@
 <script setup>
   import { ref, computed } from 'vue';
   import { Back, DocumentCopy, Delete } from '@element-plus/icons-vue';
-  import { ElMessage } from 'element-plus';
+  import { useCopy } from '@/composables/useCopy';
 
+  const { copyToClipboard } = useCopy();
   const inputText = ref('');
   const maxLength = ref(18);
   const mode = ref('smart');
@@ -194,10 +195,7 @@
   const resultText = computed(() => resultLines.value.join('\n'));
 
   const handleCopy = () => {
-    if (!resultText.value) return;
-    navigator.clipboard.writeText(resultText.value).then(() => {
-      ElMessage.success('已复制到剪贴板');
-    });
+    copyToClipboard(resultText.value, { success: '已复制到剪贴板' });
   };
 
   const clearInput = () => {

@@ -202,15 +202,14 @@
         </div>
       </div>
     </Transition>
-
-    <Transition name="toast">
-      <div v-if="toast.show" class="toast">{{ toast.message }}</div>
-    </Transition>
   </div>
 </template>
 
 <script setup>
   import { ref, reactive, computed, onMounted } from 'vue';
+
+  import { useCopy } from '@/composables/useCopy';
+  import { ElMessage } from 'element-plus';
 
   const textContent = ref('');
   const includeSpaces = ref(false);
@@ -219,7 +218,7 @@
   const exportFormat = ref('txt');
   const history = ref([]);
   const historyLimit = 8;
-  const toast = reactive({ show: false, message: '' });
+  const { copyToClipboard } = useCopy();
 
   const exportFormats = [
     { value: 'txt', label: '纯文本格式 (.txt)' },
@@ -402,19 +401,21 @@
 
   function copyText() {
     if (!textContent.value) return;
-    navigator.clipboard.writeText(textContent.value).then(() => {
-      copyBtnText.value = '已复制!';
-      setTimeout(() => (copyBtnText.value = '复制'), 2000);
+    copyToClipboard(textContent.value).then(success => {
+      if (success) {
+        copyBtnText.value = '已复制!';
+        setTimeout(() => (copyBtnText.value = '复制'), 2000);
+      }
     });
   }
 
   function saveManually() {
     if (!textContent.value.trim()) {
-      showToast('内容为空，无法保存');
+      ElMessage.warning('内容为空，无法保存');
       return;
     }
     saveToHistory();
-    showToast('已保存到历史记录');
+    ElMessage.success('已保存到历史记录');
   }
 
   function saveToHistory() {
@@ -459,12 +460,12 @@
   function clearHistory() {
     history.value = [];
     localStorage.removeItem('textCounterHistory');
-    showToast('历史记录已清空');
+    ElMessage.success('历史记录已清空');
   }
 
   function exportStats() {
     if (!textContent.value.trim()) {
-      showToast('没有可导出的内容');
+      ElMessage.warning('没有可导出的内容');
       return;
     }
     let content, ext, mime;
@@ -515,13 +516,7 @@
     a.click();
     URL.revokeObjectURL(url);
     showExportModal.value = false;
-    showToast('导出成功!');
-  }
-
-  function showToast(msg) {
-    toast.message = msg;
-    toast.show = true;
-    setTimeout(() => (toast.show = false), 2000);
+    ElMessage.success('导出成功!');
   }
 
   function goHome() {
@@ -1024,20 +1019,6 @@
     text-align: right;
   }
 
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--text);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 100px;
-    font-size: 0.85rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 1100;
-  }
-
   .modal-enter-active,
   .modal-leave-active {
     transition: all 0.3s ease;
@@ -1051,16 +1032,5 @@
   .modal-enter-from .modal-box,
   .modal-leave-to .modal-box {
     transform: scale(0.9);
-  }
-
-  .toast-enter-active,
-  .toast-leave-active {
-    transition: all 0.3s ease;
-  }
-
-  .toast-enter-from,
-  .toast-leave-to {
-    opacity: 0;
-    transform: translateX(-50%) translateY(10px);
   }
 </style>

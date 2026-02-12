@@ -98,14 +98,14 @@
   import { ref, onMounted, computed } from 'vue';
   import { Back, EditPen, CopyDocument, Picture } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
-  import useClipboard from 'vue-clipboard3';
+  import { useCopy } from '@/composables/useCopy';
   import 'mathlive';
   import { MathfieldElement } from 'mathlive';
   import html2canvas from 'html2canvas';
   import katex from 'katex';
   import 'katex/dist/katex.min.css';
 
-  const { toClipboard } = useClipboard();
+  const { copyToClipboard } = useCopy();
 
   const mathFieldRef = ref(null);
   const latex = ref('E = mc^2');
@@ -222,13 +222,8 @@
     }
   };
 
-  const copy = async text => {
-    try {
-      await toClipboard(text);
-      ElMessage.success('已复制到剪贴板');
-    } catch {
-      ElMessage.error('复制失败');
-    }
+  const copy = text => {
+    copyToClipboard(text, { success: '已复制到剪贴板' });
   };
 
   const exportImage = async () => {

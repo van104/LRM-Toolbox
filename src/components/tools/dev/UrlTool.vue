@@ -89,10 +89,10 @@
   import { useRouter } from 'vue-router';
   import { ElMessage } from 'element-plus';
   import { ArrowLeft, Delete, Plus } from '@element-plus/icons-vue';
-  import useClipboard from 'vue-clipboard3';
+  import { useCopy } from '@/composables/useCopy';
 
   const router = useRouter();
-  const { toClipboard } = useClipboard();
+  const { copyToClipboard } = useCopy();
 
   const inputUrl = ref('');
   const parsedParams = ref([]);
@@ -166,13 +166,8 @@
     }
   }
 
-  async function copyInput() {
-    try {
-      await toClipboard(inputUrl.value);
-      ElMessage.success('已复制');
-    } catch {
-      ElMessage.error('复制失败');
-    }
+  function copyInput() {
+    copyToClipboard(inputUrl.value, { success: '已复制' });
   }
 
   function removeParam(index) {

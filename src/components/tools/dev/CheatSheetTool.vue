@@ -83,7 +83,6 @@
 <script setup>
   import { ref, computed, onMounted } from 'vue';
   import { Back, CopyDocument, Collection, InfoFilled } from '@element-plus/icons-vue';
-  import { ElMessage } from 'element-plus';
   import { subjectList, loadSubject } from '@/data/cheatsheet';
 
   const filterKey = ref('');
@@ -116,10 +115,12 @@
     currentDetails.value = await loadSubject(sub.id);
   };
 
+  import { useCopy } from '@/composables/useCopy';
+
+  const { copyToClipboard } = useCopy();
+
   const copy = text => {
-    navigator.clipboard.writeText(text).then(() => {
-      ElMessage.success('复制成功: ' + text);
-    });
+    copyToClipboard(text, { success: '复制成功: ' + text });
   };
 
   onMounted(() => {

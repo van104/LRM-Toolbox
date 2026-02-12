@@ -200,7 +200,6 @@
 <script setup>
   import { ref, reactive, onMounted, onUnmounted } from 'vue';
   import { useRouter } from 'vue-router';
-  import { ElMessage } from 'element-plus';
   import {
     ArrowLeft,
     Refresh,
@@ -368,9 +367,12 @@
     loading.value = false;
   };
 
+  import { useCopy } from '@/composables/useCopy';
+
+  const { copyToClipboard } = useCopy();
+
   const copyUA = () => {
-    navigator.clipboard.writeText(userAgent.value);
-    ElMessage.success('已复制到剪贴板');
+    copyToClipboard(userAgent.value, { success: '已复制到剪贴板' });
   };
 
   onMounted(() => {

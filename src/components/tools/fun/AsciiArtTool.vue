@@ -163,7 +163,6 @@
 <script setup>
   import { ref, reactive, computed, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
-  import { ElMessage } from 'element-plus';
   import { ArrowLeft, CopyDocument, QuestionFilled } from '@element-plus/icons-vue';
   import figlet from 'figlet';
 
@@ -301,9 +300,12 @@
     };
   });
 
+  import { useCopy } from '@/composables/useCopy';
+  const { copyToClipboard } = useCopy();
+
   function copyResult() {
     if (!resultText.value) return;
-    navigator.clipboard.writeText(resultText.value).then(() => ElMessage.success('已复制'));
+    copyToClipboard(resultText.value, { success: '已复制' });
   }
 
   function goBack() {

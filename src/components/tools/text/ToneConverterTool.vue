@@ -49,20 +49,17 @@
     </main>
 
     <footer class="footer">© 2026 LRM工具箱 - 语气句式转换工具</footer>
-
-    <Transition name="toast">
-      <div v-if="toastMsg" class="toast">{{ toastMsg }}</div>
-    </Transition>
   </div>
 </template>
 
 <script setup>
   import { ref, computed } from 'vue';
   import { Back } from '@element-plus/icons-vue';
+  import { useCopy } from '@/composables/useCopy';
 
+  const { copyToClipboard } = useCopy();
   const inputText = ref('');
   const mode = ref('polite');
-  const toastMsg = ref('');
 
   const resultText = computed(() => {
     let text = inputText.value.trim();
@@ -110,14 +107,8 @@
     return text;
   });
 
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(resultText.value);
-      toastMsg.value = '已复制';
-      setTimeout(() => (toastMsg.value = ''), 1500);
-    } catch {
-      // Ignore copy errors
-    }
+  const copy = () => {
+    copyToClipboard(resultText.value, { success: '已复制' });
   };
 </script>
 
@@ -275,28 +266,5 @@
     border-top: 1px solid var(--border);
     margin-top: 2rem;
     font-size: 0.85rem;
-  }
-
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #1f2937;
-    color: white;
-    padding: 0.6rem 1.2rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    z-index: 200;
-  }
-
-  .toast-enter-active,
-  .toast-leave-active {
-    transition: opacity 0.3s;
-  }
-
-  .toast-enter-from,
-  .toast-leave-to {
-    opacity: 0;
   }
 </style>

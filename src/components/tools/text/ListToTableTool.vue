@@ -67,22 +67,19 @@
     </main>
 
     <footer class="footer">© 2026 LRM工具箱 - 列表转表格工具</footer>
-
-    <Transition name="toast">
-      <div v-if="showToast" class="toast">已复制到剪贴板</div>
-    </Transition>
   </div>
 </template>
 
 <script setup>
   import { ref, computed } from 'vue';
   import { Back } from '@element-plus/icons-vue';
+  import { useCopy } from '@/composables/useCopy';
 
   const inputText = ref('');
   const separator = ref('auto');
   const firstRowHeader = ref(true);
   const activeTab = ref('md');
-  const showToast = ref(false);
+  const { copyToClipboard } = useCopy();
 
   const parsedData = computed(() => {
     if (!inputText.value.trim()) return [];
@@ -144,13 +141,7 @@
   });
 
   const copyResult = async () => {
-    try {
-      await navigator.clipboard.writeText(resultText.value);
-      showToast.value = true;
-      setTimeout(() => (showToast.value = false), 2000);
-    } catch (e) {
-      console.error(e);
-    }
+    copyToClipboard(resultText.value, { success: '已复制到剪贴板' });
   };
 </script>
 
@@ -357,27 +348,5 @@
     border-top: 1px solid var(--border);
     margin-top: 2rem;
     font-size: 0.85rem;
-  }
-
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #1f2937;
-    color: white;
-    padding: 0.6rem 1.2rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-  }
-
-  .toast-enter-active,
-  .toast-leave-active {
-    transition: opacity 0.3s;
-  }
-
-  .toast-enter-from,
-  .toast-leave-to {
-    opacity: 0;
   }
 </style>

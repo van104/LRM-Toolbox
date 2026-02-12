@@ -313,9 +313,12 @@ database.password=secret`
     }
   };
 
+  import { useCopy } from '@/composables/useCopy';
+
+  const { copyToClipboard } = useCopy();
+
   const copyOutput = () => {
-    navigator.clipboard.writeText(outputText.value);
-    ElMessage.success('已复制到剪贴板');
+    copyToClipboard(outputText.value, { success: '已复制到剪贴板' });
   };
 
   const downloadOutput = () => {

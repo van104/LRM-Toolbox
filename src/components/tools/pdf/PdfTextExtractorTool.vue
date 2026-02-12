@@ -107,6 +107,9 @@
   import { ElMessage } from 'element-plus';
   import pdfjsLib from '@/utils/pdf';
 
+  import { useCopy } from '@/composables/useCopy';
+
+  const { copyToClipboard } = useCopy();
   const router = useRouter();
   const goBack = () => router.back();
 
@@ -203,13 +206,11 @@
     }
   };
 
-  const copyText = async () => {
-    try {
-      await navigator.clipboard.writeText(extractedText.value);
-      ElMessage.success('已复制到剪贴板');
-    } catch {
-      ElMessage.error('复制失败');
-    }
+  const copyText = () => {
+    copyToClipboard(extractedText.value, {
+      success: '已复制到剪贴板',
+      error: '复制失败'
+    });
   };
 
   const downloadText = () => {

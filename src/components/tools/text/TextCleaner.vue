@@ -265,10 +265,6 @@
           </div>
         </section>
       </div>
-
-      <Transition name="toast">
-        <div v-if="toast.show" class="toast">{{ toast.message }}</div>
-      </Transition>
     </main>
 
     <footer class="footer">© 2026 LRM工具箱 - 文本清理</footer>
@@ -276,14 +272,17 @@
 </template>
 
 <script setup>
-  import { ref, reactive, computed } from 'vue';
+  import { ref, computed } from 'vue';
   import { useRouter } from 'vue-router';
   import { ArrowLeft, Delete, CopyDocument, Check, Close } from '@element-plus/icons-vue';
 
+  import { useCopy } from '@/composables/useCopy';
+  import { ElMessage } from 'element-plus';
+
   const router = useRouter();
+  const { copyToClipboard } = useCopy();
   const inputText = ref('');
   const outputText = ref('');
-  const toast = reactive({ show: false, message: '' });
   const selectedFunctions = ref([]);
 
   function toggleFunction(type) {
@@ -305,11 +304,11 @@
 
   function executeSelected() {
     if (!inputText.value) {
-      showToast('请输入文本');
+      ElMessage.warning('请输入文本');
       return;
     }
     if (selectedFunctions.value.length === 0) {
-      showToast('请选择至少一个功能');
+      ElMessage.warning('请选择至少一个功能');
       return;
     }
 
@@ -320,7 +319,7 @@
     }
 
     outputText.value = text;
-    showToast(`已执行 ${selectedFunctions.value.length} 个功能`);
+    ElMessage.success(`已执行 ${selectedFunctions.value.length} 个功能`);
   }
 
   const inputLines = computed(() => (inputText.value ? inputText.value.split('\n').length : 0));
@@ -408,7 +407,7 @@
         try {
           result = JSON.stringify(JSON.parse(text));
         } catch {
-          showToast('无效的 JSON 格式');
+          ElMessage.error('无效的 JSON 格式');
         }
         break;
     }
@@ -421,7 +420,7 @@
       const text = await navigator.clipboard.readText();
       inputText.value = text;
     } catch {
-      showToast('无法读取剪贴板');
+      ElMessage.error('无法读取剪贴板');
     }
   }
 
@@ -431,16 +430,7 @@
   }
 
   function copyResult() {
-    if (!outputText.value) return;
-    navigator.clipboard.writeText(outputText.value).then(() => {
-      showToast('已复制结果');
-    });
-  }
-
-  function showToast(msg) {
-    toast.message = msg;
-    toast.show = true;
-    setTimeout(() => (toast.show = false), 2000);
+    copyToClipboard(outputText.value, { success: '已复制结果' });
   }
 
   function goHome() {
@@ -749,30 +739,6 @@
       max-height: none;
       overflow-y: visible;
     }
-  }
-
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 100px;
-    font-size: 0.85rem;
-    z-index: 1000;
-  }
-
-  .toast-enter-active,
-  .toast-leave-active {
-    transition: all 0.3s ease;
-  }
-
-  .toast-enter-from,
-  .toast-leave-to {
-    opacity: 0;
-    transform: translateX(-50%) translateY(10px);
   }
 
   @media (prefers-color-scheme: dark) {

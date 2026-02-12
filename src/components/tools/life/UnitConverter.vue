@@ -166,17 +166,12 @@
     </main>
 
     <footer class="footer">© 2026 LRM工具箱 - 单位转换器</footer>
-
-    <Transition name="toast">
-      <div v-if="notification.visible" class="toast">
-        {{ notification.message }}
-      </div>
-    </Transition>
   </div>
 </template>
 
 <script setup>
-  import { ref, reactive, computed, onMounted } from 'vue';
+  import { ref, computed, onMounted } from 'vue';
+  import { ElMessage } from 'element-plus';
 
   const unitData = {
     length: {
@@ -412,7 +407,6 @@
   const dpi = ref(72);
   const history = ref([]);
   const historyLimit = 6;
-  const notification = reactive({ visible: false, message: '' });
 
   const currentUnits = computed(() => unitData[currentCategory.value]?.units || []);
 
@@ -536,7 +530,7 @@
   function clearHistory() {
     history.value = [];
     localStorage.removeItem('converterHistory');
-    showToast('已清空历史记录');
+    ElMessage.success('已清空历史记录');
   }
 
   function applyHistory(item) {
@@ -559,12 +553,6 @@
       if (s.category === 'resolution') dpi.value = 72;
       convert();
     }, 10);
-  }
-
-  function showToast(msg) {
-    notification.message = msg;
-    notification.visible = true;
-    setTimeout(() => (notification.visible = false), 2000);
   }
 
   function goHome() {
@@ -1037,30 +1025,6 @@
     padding: 2rem;
     font-size: 0.8rem;
     color: var(--text-muted);
-  }
-
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--text);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 100px;
-    font-size: 0.85rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-
-  .toast-enter-active,
-  .toast-leave-active {
-    transition: all 0.3s ease;
-  }
-
-  .toast-enter-from,
-  .toast-leave-to {
-    opacity: 0;
-    transform: translateX(-50%) translateY(10px);
   }
 
   .animate-fade-in {

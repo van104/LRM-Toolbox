@@ -205,10 +205,6 @@
         </section>
       </div>
 
-      <Transition name="toast">
-        <div v-if="toast.show" class="toast">{{ toast.message }}</div>
-      </Transition>
-
       <Transition name="fade">
         <div v-if="showHelp" class="modal-overlay" @click="showHelp = false">
           <div class="modal-content" @click.stop>
@@ -248,10 +244,14 @@
   import { useRouter } from 'vue-router';
   import { ArrowLeft, Delete, CopyDocument, QuestionFilled } from '@element-plus/icons-vue';
 
+  import { useCopy } from '@/composables/useCopy';
+  import { ElMessage } from 'element-plus';
+
   const router = useRouter();
+  const { copyToClipboard } = useCopy();
   const inputText = ref('');
   const outputText = ref('');
-  const toast = reactive({ show: false, message: '' });
+
   const currentTab = ref('split');
   const showHelp = ref(false);
 
@@ -278,7 +278,7 @@
   });
 
   function doSplit(mode) {
-    if (!inputText.value) return showToast('请先输入文本');
+    if (!inputText.value) return ElMessage.warning('请先输入文本');
     let result = [];
 
     if (mode === 'separator') {
@@ -317,11 +317,11 @@
     }
 
     outputText.value = result.join('\n');
-    showToast(`拆分完成，共 ${result.length} 项`);
+    ElMessage.success(`拆分完成，共 ${result.length} 项`);
   }
 
   function doJoin() {
-    if (!inputText.value) return showToast('请先输入文本');
+    if (!inputText.value) return ElMessage.warning('请先输入文本');
 
     let lines = inputText.value.split('\n');
 
@@ -340,18 +340,18 @@
     conn = conn.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
 
     outputText.value = lines.join(conn);
-    showToast('拼接完成');
+    ElMessage.success('拼接完成');
   }
 
   function doToJson() {
-    if (!inputText.value) return showToast('请先输入文本');
+    if (!inputText.value) return ElMessage.warning('请先输入文本');
     let lines = inputText.value.split('\n').filter(l => l.trim());
     outputText.value = JSON.stringify(lines, null, 2);
-    showToast('JSON 转换完成');
+    ElMessage.success('JSON 转换完成');
   }
 
   function doExtractColumn() {
-    if (!inputText.value) return showToast('请先输入文本');
+    if (!inputText.value) return ElMessage.warning('请先输入文本');
 
     const lines = inputText.value.split('\n');
     const sep = csvOptions.separator.replace(/\\t/g, '\t');
@@ -367,11 +367,11 @@
     });
 
     outputText.value = result.join('\n');
-    showToast(`提取完成，共 ${result.length} 行`);
+    ElMessage.success(`提取完成，共 ${result.length} 行`);
   }
 
   function doFormatList(type) {
-    if (!inputText.value) return showToast('请先输入文本');
+    if (!inputText.value) return ElMessage.warning('请先输入文本');
     let lines = inputText.value.split('\n').filter(l => l.trim());
 
     if (type === 'md') {
@@ -379,6 +379,7 @@
     } else if (type === 'html') {
       outputText.value = '<ul>\n' + lines.map(l => `  <li>${l}</li>`).join('\n') + '\n</ul>';
     }
+    ElMessage.success('列表转换完成');
   }
 
   function fillDemoData() {
@@ -397,7 +398,7 @@
 3,Charlie,28`;
       csvOptions.colIndex = 2;
     }
-    showToast('已加载当前模式的示例数据');
+    ElMessage.success('已加载当前模式的示例数据');
   }
 
   async function pasteText() {
@@ -405,7 +406,7 @@
       const text = await navigator.clipboard.readText();
       inputText.value = text;
     } catch {
-      showToast('无法读取剪贴板');
+      ElMessage.error('无法读取剪贴板');
     }
   }
 
@@ -419,16 +420,7 @@
   }
 
   function copyResult() {
-    if (!outputText.value) return;
-    navigator.clipboard.writeText(outputText.value).then(() => {
-      showToast('已复制结果');
-    });
-  }
-
-  function showToast(msg) {
-    toast.message = msg;
-    toast.show = true;
-    setTimeout(() => (toast.show = false), 2000);
+    copyToClipboard(outputText.value, { success: '已复制结果' });
   }
 
   function goHome() {
@@ -746,30 +738,6 @@
       max-width: none;
       height: auto;
     }
-  }
-
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 100px;
-    font-size: 0.85rem;
-    z-index: 1000;
-  }
-
-  .toast-enter-active,
-  .toast-leave-active {
-    transition: all 0.3s ease;
-  }
-
-  .toast-enter-from,
-  .toast-leave-to {
-    opacity: 0;
-    transform: translateX(-50%) translateY(10px);
   }
 
   .modal-overlay {

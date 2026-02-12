@@ -33,10 +33,6 @@
     </main>
 
     <footer class="footer">© 2026 LRM工具箱 - 特殊文字生成器</footer>
-
-    <Transition name="toast">
-      <div v-if="toastMsg" class="toast">{{ toastMsg }}</div>
-    </Transition>
   </div>
 </template>
 
@@ -44,8 +40,11 @@
   import { ref } from 'vue';
   import { Back } from '@element-plus/icons-vue';
 
+  import { useCopy } from '@/composables/useCopy';
+
+  const { copyToClipboard } = useCopy();
+
   const inputText = ref('Hello 2026');
-  const toastMsg = ref('');
 
   const effects = [
     { id: 'hollow', name: '空心字 (Hollow)' },
@@ -108,13 +107,7 @@
   };
 
   const copy = async txt => {
-    try {
-      await navigator.clipboard.writeText(txt);
-      toastMsg.value = '已复制!';
-      setTimeout(() => (toastMsg.value = ''), 1500);
-    } catch {
-      // Ignore
-    }
+    copyToClipboard(txt, { success: '已复制!' });
   };
 </script>
 
@@ -262,28 +255,5 @@
     border-top: 1px solid var(--border);
     margin-top: 2rem;
     font-size: 0.85rem;
-  }
-
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #1f2937;
-    color: white;
-    padding: 0.6rem 1.2rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    z-index: 200;
-  }
-
-  .toast-enter-active,
-  .toast-leave-active {
-    transition: opacity 0.3s;
-  }
-
-  .toast-enter-from,
-  .toast-leave-to {
-    opacity: 0;
   }
 </style>

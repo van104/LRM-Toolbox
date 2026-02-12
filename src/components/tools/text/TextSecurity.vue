@@ -181,10 +181,6 @@
         </section>
       </div>
 
-      <Transition name="toast">
-        <div v-if="toast.show" class="toast">{{ toast.message }}</div>
-      </Transition>
-
       <Transition name="fade">
         <div v-if="showHelp" class="modal-overlay" @click="showHelp = false">
           <div class="modal-content" @click.stop>
@@ -226,11 +222,14 @@
   import { ref, reactive } from 'vue';
   import { useRouter } from 'vue-router';
   import { ArrowLeft, Delete, CopyDocument, QuestionFilled } from '@element-plus/icons-vue';
+  import { useCopy } from '@/composables/useCopy';
+  import { ElMessage } from 'element-plus';
 
   const router = useRouter();
+  const { copyToClipboard } = useCopy();
   const inputText = ref('');
   const outputText = ref('');
-  const toast = reactive({ show: false, message: '' });
+
   const currentTab = ref('mask');
   const showHelp = ref(false);
 
@@ -286,7 +285,7 @@
   // const MORSE_REVERSE = Object.fromEntries(Object.entries(MORSE_CODE).map(([k, v]) => [v, k])); // Unused variable
 
   function doMask(type) {
-    if (!inputText.value) return showToast('请先输入文本');
+    if (!inputText.value) return ElMessage.warning('请先输入文本');
     let text = inputText.value;
 
     switch (type) {
@@ -316,17 +315,17 @@
           const char = maskOptions.char || '*';
           text = text.replace(re, match => char.repeat(match.length));
         } catch {
-          showToast('正则表达式有误');
+          ElMessage.error('正则表达式有误');
           return;
         }
         break;
     }
     outputText.value = text;
-    showToast('脱敏完成');
+    ElMessage.success('脱敏完成');
   }
 
   function doCaesar(mode) {
-    if (!inputText.value) return showToast('请先输入文本');
+    if (!inputText.value) return ElMessage.warning('请先输入文本');
     const shift = (encryptOptions.caesarShift || 3) * (mode === 'dec' ? -1 : 1);
 
     outputText.value = inputText.value
@@ -343,11 +342,11 @@
         return char;
       })
       .join('');
-    showToast('凯撒处理完成');
+    ElMessage.success('凯撒处理完成');
   }
 
   function doXor() {
-    if (!inputText.value) return showToast('请先输入文本');
+    if (!inputText.value) return ElMessage.warning('请先输入文本');
     const key = encryptOptions.xorKey || 'KEY';
     let result = '';
 
@@ -374,11 +373,11 @@
       }
     }
 
-    showToast('XOR 运算完成 (Hex)');
+    ElMessage.success('XOR 运算完成 (Hex)');
   }
 
   function doMorse(mode) {
-    if (!inputText.value) return showToast('请先输入文本');
+    if (!inputText.value) return ElMessage.warning('请先输入文本');
     if (mode === 'enc') {
       outputText.value = inputText.value
         .toUpperCase()
@@ -388,11 +387,11 @@
     } else {
       outputText.value = inputText.value.split(/\s+|\//);
     }
-    showToast('摩尔斯转换完成');
+    ElMessage.success('摩尔斯转换完成');
   }
 
   function doZeroWidth() {
-    if (!inputText.value) return showToast('请先输入文本');
+    if (!inputText.value) return ElMessage.warning('请先输入文本');
 
     const chars = inputText.value.split('');
     outputText.value = chars
@@ -401,7 +400,7 @@
       })
       .join('');
 
-    showToast('已插入零宽字符');
+    ElMessage.success('已插入零宽字符');
   }
 
   function fillDemoData() {
@@ -413,7 +412,7 @@
     } else {
       inputText.value = `这段文字将被秘密混淆，复制去试试？`;
     }
-    showToast('已加载示例数据');
+    ElMessage.success('已加载示例数据');
   }
 
   async function pasteText() {
@@ -421,7 +420,7 @@
       const text = await navigator.clipboard.readText();
       inputText.value = text;
     } catch {
-      showToast('无法读取剪贴板');
+      ElMessage.error('无法读取剪贴板');
     }
   }
 
@@ -435,16 +434,7 @@
   }
 
   function copyResult() {
-    if (!outputText.value) return;
-    navigator.clipboard.writeText(outputText.value).then(() => {
-      showToast('已复制结果');
-    });
-  }
-
-  function showToast(msg) {
-    toast.message = msg;
-    toast.show = true;
-    setTimeout(() => (toast.show = false), 2000);
+    copyToClipboard(outputText.value, { success: '已复制结果' });
   }
 
   function goHome() {
@@ -756,25 +746,12 @@
     align-items: center;
   }
 
-  .stats-info,
-  .toast {
+  .stats-info {
     font-size: 0.75rem;
     background: #f3f4f6;
     padding: 2px 6px;
     border-radius: 4px;
     color: var(--text-secondary);
-  }
-
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 100px;
-    z-index: 1000;
   }
 
   .modal-overlay {

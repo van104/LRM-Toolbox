@@ -172,10 +172,6 @@
           </div>
         </section>
       </div>
-
-      <Transition name="toast">
-        <div v-if="toast.show" class="toast">{{ toast.message }}</div>
-      </Transition>
     </main>
 
     <footer class="footer">© 2026 LRM工具箱 - 文本提取器</footer>
@@ -186,11 +182,13 @@
   import { ref, reactive, computed } from 'vue';
   import { useRouter } from 'vue-router';
   import { ArrowLeft, Delete, CopyDocument } from '@element-plus/icons-vue';
+  import { useCopy } from '@/composables/useCopy';
+  import { ElMessage } from 'element-plus';
 
   const router = useRouter();
+  const { copyToClipboard } = useCopy();
   const inputText = ref('');
   const outputText = ref('');
-  const toast = reactive({ show: false, message: '' });
 
   const customRegex = ref('');
   const includeKeyword = ref('');
@@ -231,7 +229,7 @@
 
   function extract(type) {
     if (!inputText.value) {
-      showToast('请先输入源文本');
+      ElMessage.warning('请先输入源文本');
       return;
     }
 
@@ -239,7 +237,7 @@
 
     if (type === 'customRegex') {
       if (!customRegex.value) {
-        showToast('请输入正则表达式');
+        ElMessage.warning('请输入正则表达式');
         return;
       }
       try {
@@ -250,7 +248,7 @@
           regex = new RegExp(customRegex.value, 'g');
         }
       } catch {
-        showToast('正则表达式格式错误');
+        ElMessage.error('正则表达式格式错误');
         return;
       }
     } else {
@@ -290,7 +288,7 @@
 
   function filterLines(mode) {
     if (!inputText.value) {
-      showToast('请先输入源文本');
+      ElMessage.warning('请先输入源文本');
       return;
     }
 
@@ -299,13 +297,13 @@
 
     if (mode === 'include') {
       if (!includeKeyword.value) {
-        showToast('请输入包含关键词');
+        ElMessage.warning('请输入包含关键词');
         return;
       }
       results = lines.filter(line => line.includes(includeKeyword.value));
     } else if (mode === 'exclude') {
       if (!excludeKeyword.value) {
-        showToast('请输入排除关键词');
+        ElMessage.warning('请输入排除关键词');
         return;
       }
       results = lines.filter(line => !line.includes(excludeKeyword.value));
@@ -321,7 +319,7 @@
 
   function countOccurrences() {
     if (!inputText.value || !countKeyword.value) {
-      showToast('请输入文本和关键词');
+      ElMessage.warning('请输入文本和关键词');
       return;
     }
 
@@ -332,7 +330,7 @@
 
     outputText.value = `关键词: "${countKeyword.value}"\n出现次数: ${count}`;
     matchCount.value = count;
-    showToast(`找到 ${count} 个匹配`);
+    ElMessage.success(`找到 ${count} 个匹配`);
   }
 
   function processResults(rawResults, title = '结果') {
@@ -365,9 +363,9 @@
     }
 
     if (results.length === 0) {
-      showToast('未找到匹配内容');
+      ElMessage.info('未找到匹配内容');
     } else {
-      showToast(`提取到 ${results.length} 条结果`);
+      ElMessage.success(`提取到 ${results.length} 条结果`);
     }
   }
 
@@ -402,7 +400,7 @@
 - 磁力链: magnet:?xt=urn:btih:5b3267325e1d4583d2c8038f220f883e
 - 邮编: 100080 (北京), 200001 (上海)
 `;
-    showToast('已加载演示数据');
+    ElMessage.success('已加载演示数据');
   }
 
   async function pasteText() {
@@ -410,7 +408,7 @@
       const text = await navigator.clipboard.readText();
       inputText.value = text;
     } catch {
-      showToast('无法读取剪贴板');
+      ElMessage.error('无法读取剪贴板');
     }
   }
 
@@ -426,16 +424,7 @@
   }
 
   function copyResult() {
-    if (!outputText.value) return;
-    navigator.clipboard.writeText(outputText.value).then(() => {
-      showToast('已复制结果');
-    });
-  }
-
-  function showToast(msg) {
-    toast.message = msg;
-    toast.show = true;
-    setTimeout(() => (toast.show = false), 2000);
+    copyToClipboard(outputText.value, { success: '已复制结果' });
   }
 
   function goHome() {
@@ -746,30 +735,6 @@
       height: auto;
       min-height: auto;
     }
-  }
-
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 100px;
-    font-size: 0.85rem;
-    z-index: 1000;
-  }
-
-  .toast-enter-active,
-  .toast-leave-active {
-    transition: all 0.3s ease;
-  }
-
-  .toast-enter-from,
-  .toast-leave-to {
-    opacity: 0;
-    transform: translateX(-50%) translateY(10px);
   }
 
   @media (prefers-color-scheme: dark) {

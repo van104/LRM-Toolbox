@@ -249,9 +249,12 @@
   const router = useRouter();
   const currentTab = ref('in');
 
+  import { useCopy } from '@/composables/useCopy';
+
+  const { copyToClipboard } = useCopy();
+
   function copy(text) {
-    if (!text) return;
-    navigator.clipboard.writeText(text).then(() => ElMessage.success('已复制'));
+    copyToClipboard(text, { success: '已复制' });
   }
 
   const inInput = ref('');

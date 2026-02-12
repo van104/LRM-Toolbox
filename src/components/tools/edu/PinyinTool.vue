@@ -108,9 +108,9 @@
   import { Back, EditPen, Finished } from '@element-plus/icons-vue';
   import { pinyin } from 'pinyin-pro';
   import { ElMessage } from 'element-plus';
-  import useClipboard from 'vue-clipboard3';
+  import { useCopy } from '@/composables/useCopy';
 
-  const { toClipboard } = useClipboard();
+  const { copyToClipboard } = useCopy();
 
   const inputText = ref('');
   const toneType = ref('symbol');
@@ -141,17 +141,12 @@
     });
   });
 
-  const copyResult = async () => {
+  const copyResult = () => {
     if (!pinyinResult.value) {
       ElMessage.warning('没有可复制的内容');
       return;
     }
-    try {
-      await toClipboard(pinyinResult.value);
-      ElMessage.success('已复制拼音结果');
-    } catch {
-      ElMessage.error('复制失败');
-    }
+    copyToClipboard(pinyinResult.value, { success: '已复制拼音结果' });
   };
 </script>
 
