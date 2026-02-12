@@ -56,7 +56,7 @@ interface LatestRateResponse {
   rates: Record<string, number>;
 }
 
-interface HistoricalRatesResponse {
+export interface HistoricalRatesResponse {
   amount: number;
   base: string;
   start_date: string;

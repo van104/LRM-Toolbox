@@ -266,17 +266,15 @@
         </div>
       </div>
     </Transition>
-
-    <Transition name="toast">
-      <div v-if="toast.show" class="toast" :class="toast.type">
-        {{ toast.message }}
-      </div>
-    </Transition>
   </div>
 </template>
 
 <script setup>
   import { ref, reactive, computed, onMounted } from 'vue';
+  import { ElMessage } from 'element-plus';
+  import { useCopy } from '@/composables/useCopy';
+
+  const { copyToClipboard } = useCopy();
 
   const generatedPassword = ref('');
   const passwordLength = ref(16);
@@ -284,7 +282,6 @@
   const showBatchModal = ref(false);
   const batchCount = ref(5);
   const batchResults = ref([]);
-  const toast = reactive({ show: false, message: '', type: 'info' });
 
   const options = reactive({
     uppercase: true,
@@ -354,7 +351,7 @@
   function generatePassword() {
     const pool = getPool();
     if (!pool) {
-      showToast('请至少选择一种字符类型', 'error');
+      ElMessage.error('请至少选择一种字符类型');
       return;
     }
 
@@ -378,7 +375,7 @@
   function generateBatch() {
     const pool = getPool();
     if (!pool) {
-      showToast('配置错误', 'error');
+      ElMessage.error('配置错误');
       return;
     }
     const results = [];
@@ -404,40 +401,28 @@
 
   function saveToHistory() {
     if (history.value.includes(generatedPassword.value)) {
-      showToast('已存在于历史记录', 'info');
+      ElMessage.info('已存在于历史记录');
       return;
     }
     history.value.unshift(generatedPassword.value);
     if (history.value.length > 10) history.value.pop();
     localStorage.setItem('pwdHistory', JSON.stringify(history.value));
-    showToast('已保存', 'success');
+    ElMessage.success('已保存');
   }
 
   function copyPassword(text) {
-    if (!text) return;
-    navigator.clipboard.writeText(text).then(() => {
-      showToast('已复制到剪贴板', 'success');
-    });
+    copyToClipboard(text, { success: '已复制到剪贴板' });
   }
 
   function copyAllBatch() {
     const text = batchResults.value.join('\n');
-    navigator.clipboard.writeText(text).then(() => {
-      showToast('已全部复制', 'success');
-    });
+    copyToClipboard(text, { success: '已全部复制' });
   }
 
   function clearHistory() {
     history.value = [];
     localStorage.removeItem('pwdHistory');
-    showToast('历史记录已清空');
-  }
-
-  function showToast(msg, type = 'info') {
-    toast.message = msg;
-    toast.type = type;
-    toast.show = true;
-    setTimeout(() => (toast.show = false), 2000);
+    ElMessage.success('历史记录已清空');
   }
 
   function goHome() {
@@ -1025,54 +1010,18 @@
     color: var(--text);
   }
 
-  .toast {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 0.75rem 1.5rem;
-    border-radius: 50px;
-    color: white;
-    font-size: 0.9rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    background: var(--text);
-    z-index: 200;
-  }
-
-  .toast.success {
-    background: var(--success);
-  }
-
-  .toast.error {
-    background: var(--danger);
-  }
-
-  .toast.info {
-    background: var(--text);
-  }
-
   .modal-enter-active,
-  .modal-leave-active,
-  .toast-enter-active,
-  .toast-leave-active {
+  .modal-leave-active {
     transition: all 0.3s ease;
   }
 
   .modal-enter-from,
-  .modal-leave-to,
-  .toast-enter-from,
-  .toast-leave-to {
+  .modal-leave-to {
     opacity: 0;
-    transform: translateY(20px) translateX(-50%);
   }
 
   .modal-enter-from .modal-box,
   .modal-leave-to .modal-box {
     transform: scale(0.95);
-  }
-
-  .toast-enter-from,
-  .toast-leave-to {
-    transform: translateY(20px) translateX(-50%);
   }
 </style>

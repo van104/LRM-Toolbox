@@ -266,6 +266,10 @@
     calculating.value = false;
   }
 
+  import { useCopy } from '@/composables/useCopy';
+
+  const { copyToClipboard } = useCopy();
+
   async function pasteFromClipboard() {
     try {
       const text = await navigator.clipboard.readText();
@@ -274,16 +278,6 @@
       ElMessage.success('已粘贴');
     } catch {
       ElMessage.error('无法读取剪贴板');
-    }
-  }
-
-  async function copyToClipboard(text) {
-    if (!text) return;
-    try {
-      await navigator.clipboard.writeText(text);
-      ElMessage.success('已复制');
-    } catch {
-      ElMessage.error('复制失败');
     }
   }
 
