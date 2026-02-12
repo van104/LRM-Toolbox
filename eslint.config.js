@@ -41,6 +41,6 @@ export default [
     }
   },
   {
-    ignores: ['dist/*', 'node_modules/', 'public/', '*.d.ts']
+    ignores: ['dist/*', 'dev-dist/*', 'node_modules/', 'public/', '*.d.ts']
   }
 ];
