@@ -68,6 +68,8 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        // 导航回退黑名单：防止 Service Worker 拦截反向代理的路径
+        navigateFallbackDenylist: [/^\/tools\/audio/],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

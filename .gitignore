@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -45,3 +46,6 @@ docs/modifications.md
 
 # Data
 src/data/成语.txt
+
+# 配置文件
+配置文件.txt
