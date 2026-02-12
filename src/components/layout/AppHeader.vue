@@ -2,13 +2,13 @@
 <template>
   <header class="app-header glass">
     <div class="header-content">
-      <router-link to="/" class="logo" title="返回首页">
+      <router-link to="/" class="logo" :title="t('nav.backToHome')">
         <LrmLogo :size="32" />
-        <span class="logo-text font-display">LRM工具箱</span>
+        <span class="logo-text font-display">{{ t('app.title') }}</span>
       </router-link>
 
       <el-tooltip
-        content="按住鼠标左键可左右拖动"
+        :content="t('nav.dragTip')"
         placement="bottom"
         :effect="themeStore.theme === 'dark' ? 'dark' : 'light'"
       >
@@ -34,7 +34,7 @@
             <el-icon :size="18">
               <component :is="iconMap[cat.icon]" />
             </el-icon>
-            <span>{{ cat.name }}</span>
+            <span>{{ t('category.' + cat.id) }}</span>
             <span class="count-badge">{{ getCategoryCount(cat.id) }}</span>
           </button>
           <div ref="indicatorRef" class="nav-indicator"></div>
@@ -49,12 +49,12 @@
           <input
             v-model="searchKeyword"
             type="text"
-            placeholder="搜索工具..."
+            :placeholder="t('nav.search')"
             @input="$emit('search', searchKeyword)"
           />
         </div>
 
-        <button class="icon-btn" title="我的收藏" @click="$router.push('/favorites')">
+        <button class="icon-btn" :title="t('nav.favorites')" @click="$router.push('/favorites')">
           <el-badge
             :value="userStore.favoritesCount"
             :hidden="userStore.favoritesCount === 0"
@@ -67,7 +67,7 @@
           </el-badge>
         </button>
 
-        <button class="icon-btn" title="历史记录" @click="$router.push('/history')">
+        <button class="icon-btn" :title="t('nav.history')" @click="$router.push('/history')">
           <el-badge
             :value="userStore.historyCount"
             :hidden="userStore.historyCount === 0"
@@ -78,6 +78,14 @@
               <Clock />
             </el-icon>
           </el-badge>
+        </button>
+
+        <button
+          class="icon-btn"
+          :title="locale === 'zh-CN' ? 'Switch to English' : '切换为中文'"
+          @click="toggleLanguage"
+        >
+          <span class="text-xs font-bold">{{ locale === 'zh-CN' ? 'En' : '中' }}</span>
         </button>
 
         <button ref="themeBtnRef" class="icon-btn" @click="toggleTheme">
@@ -106,7 +114,7 @@
           <el-icon :size="24">
             <component :is="iconMap[cat.icon]" />
           </el-icon>
-          <span>{{ cat.name }}</span>
+          <span>{{ t('category.' + cat.id) }}</span>
           <span class="count-badge mobile">{{ getCategoryCount(cat.id) }}</span>
         </button>
       </div>
@@ -116,6 +124,7 @@
 
 <script setup>
   import { ref, onMounted, watch, nextTick } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import LrmLogo from '@/components/icons/LrmLogo.vue';
   import { useThemeStore } from '@/stores/theme';
   import { useUserStore } from '@/stores/user';
@@ -165,10 +174,16 @@
 
   const emit = defineEmits(['category-change', 'search']);
 
+  const { t, locale } = useI18n();
   const themeStore = useThemeStore();
   const userStore = useUserStore();
   const searchKeyword = ref('');
   const mobileMenuOpen = ref(false);
+
+  const toggleLanguage = () => {
+    locale.value = locale.value === 'zh-CN' ? 'en' : 'zh-CN';
+    localStorage.setItem('locale', locale.value);
+  };
 
   const navMenuRef = ref(null);
   const indicatorRef = ref(null);

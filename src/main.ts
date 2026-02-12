@@ -17,6 +17,7 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 
 import { useThemeStore } from './stores/theme';
 import { printWelcomeLog } from './utils/welcomeLog';
+import i18n from './i18n';
 
 const app = createApp(App);
 
@@ -28,6 +29,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 
 app.use(createPinia());
 app.use(router);
+app.use(i18n);
 app.use(ElementPlus, {
   locale: zhCn
 });

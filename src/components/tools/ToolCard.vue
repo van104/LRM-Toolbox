@@ -12,7 +12,7 @@
         <div class="card-actions">
           <button
             class="action-btn detail-btn"
-            title="查看详情"
+            :title="t('toolCard.viewDetail')"
             @click.stop="$emit('view-detail', tool)"
           >
             <el-icon :size="16">
@@ -23,7 +23,7 @@
           <button
             class="action-btn favorite-btn"
             :class="{ active: isFavorite }"
-            :title="isFavorite ? '取消收藏' : '添加收藏'"
+            :title="isFavorite ? t('toolCard.removeFavorite') : t('toolCard.addFavorite')"
             @click.stop="$emit('toggle-favorite', tool.id)"
           >
             <el-icon :size="16">
@@ -52,10 +52,10 @@
             <el-icon class="opt-icon">
               <component :is="category.icon" />
             </el-icon>
-            {{ category.name }}
+            {{ t('category.' + category.id) }}
           </span>
 
-          <span v-if="tool.isAi" class="ai-tag">AI</span>
+          <span v-if="tool.isAi" class="ai-tag">{{ t('toolCard.aiTag') }}</span>
           <span v-for="tag in tool.tags.slice(0, 3)" :key="tag" class="tag">
             {{ tag }}
           </span>
@@ -73,9 +73,12 @@
 
 <script setup>
   import { computed } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import { ArrowRight, Star, StarFilled, InfoFilled } from '@element-plus/icons-vue';
   import TiltedCard from '@/components/common/TiltedCard.vue';
   import { categories } from '@/data/tools';
+
+  const { t } = useI18n();
 
   const props = defineProps({
     tool: {

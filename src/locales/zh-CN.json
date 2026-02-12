@@ -1,0 +1,92 @@
+{
+  "app": {
+    "title": "LRM工具箱",
+    "desc": "高效便捷的开发者工具集合"
+  },
+  "home": {
+    "subtitle": "高效便捷的开发者工具集合，让工作更轻松",
+    "updating": "工具持续更新中...",
+    "searchPlaceholder": "搜索 {count}+ 个实用工具 (Ctrl + K)...",
+    "viewAll": "查看全部工具 ({count})",
+    "noResults": "未找到相关工具"
+  },
+  "nav": {
+    "home": "首页",
+    "backToHome": "返回首页",
+    "favorites": "我的收藏",
+    "history": "历史记录",
+    "search": "搜索工具...",
+    "dragTip": "按住鼠标左键可左右拖动"
+  },
+  "category": {
+    "all": "全部工具",
+    "dev": "开发运维",
+    "text": "文本处理",
+    "image": "图片视频",
+    "pdf": "PDF 处理",
+    "design": "设计辅助",
+    "finance": "金融理财",
+    "health": "健康运动",
+    "life": "生活常用",
+    "edu": "教育学习",
+    "fun": "趣味玩法"
+  },
+  "pwa": {
+    "offlineReady": "应用已准备好离线使用",
+    "needRefresh": "有新内容可用，请点击刷新更新",
+    "reload": "刷新",
+    "close": "关闭"
+  },
+  "footer": {
+    "slogan": "探索极致的高效工具，为开发者而生。\n纯净、安全、全开源，让灵感即刻落地。",
+    "status": "系统运行正常 | 已上线 {count}+ 工具",
+    "coreResources": "核心资源",
+    "allTools": "全部工具库",
+    "myFavorites": "我的收藏",
+    "recentHistory": "最近记录",
+    "aboutSupport": "关于与支持",
+    "aboutUs": "关于本站",
+    "changelog": "更新日志",
+    "feedback": "意见反馈",
+    "legal": "法律合规",
+    "privacyPolicy": "隐私政策",
+    "termsOfService": "服务条款",
+    "disclaimer": "免责声明",
+    "copyright": "© {year} LRM Toolbox",
+    "craftedBy": "Crafted with ❤️ by LRM",
+    "feedbackTitle": "意见反馈",
+    "feedbackType": "反馈类型",
+    "feedbackTypePlaceholder": "请选择",
+    "featureRequest": "功能建议",
+    "bugReport": "Bug 反馈",
+    "otherIssue": "其他问题",
+    "feedbackContent": "反馈内容",
+    "feedbackPlaceholder": "请详细描述您的问题或建议...",
+    "contact": "联系方式（可选）",
+    "contactPlaceholder": "邮箱或其他联系方式",
+    "submit": "提交反馈",
+    "cancel": "取消",
+    "feedbackSuccess": "反馈提交成功，感谢您的支持！",
+    "feedbackError": "提交失败，请稍后重试",
+    "disclaimerTitle": "免责声明",
+    "disclaimerContent": "<p>1. 本站工具仅供学习和参考使用，不保证结果的准确性和完整性。</p><p>2. 用户使用本站工具产生的任何后果，本站不承担任何责任。</p><p>3. 本站不对因网络传输、系统故障等原因导致的数据丢失负责。</p><p>4. 本站保留对服务内容进行修改、中断的权利。</p><p>5. 如有任何问题，请联系 powelabraham67@gmail.com</p>",
+    "understood": "我已了解"
+  },
+  "toolCard": {
+    "viewDetail": "查看详情",
+    "addFavorite": "添加收藏",
+    "removeFavorite": "取消收藏",
+    "aiTag": "AI"
+  },
+  "notFound": {
+    "title": "页面未找到",
+    "desc": "抱歉，您访问的页面不存在或已被移除。",
+    "backHome": "返回首页"
+  },
+  "toolModal": {
+    "intro": "工具介绍",
+    "usage": "使用方法",
+    "close": "关闭",
+    "use": "使用工具"
+  }
+}

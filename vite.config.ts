@@ -44,24 +44,20 @@ export default defineConfig({
         display: 'standalone',
         icons: [
           {
-            src: 'logo.svg',
+            src: '/logo.svg',
             sizes: 'any',
             type: 'image/svg+xml'
           },
           {
-            src: '/icons/pwa-192x192.png',
+            src: '/logo.svg',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/svg+xml',
+            purpose: 'any maskable'
           },
           {
-            src: '/icons/pwa-512x512.png',
+            src: '/logo.svg',
             sizes: '512x512',
-            type: 'image/png'
-          },
-          {
-            src: '/icons/pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
+            type: 'image/svg+xml',
             purpose: 'any maskable'
           }
         ]

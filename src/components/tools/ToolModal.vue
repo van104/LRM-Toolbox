@@ -23,7 +23,7 @@
             <section class="modal-section">
               <h3 class="section-title">
                 <el-icon><InfoFilled /></el-icon>
-                <span>工具介绍</span>
+                <span>{{ t('toolModal.intro') }}</span>
               </h3>
               <p class="section-content">{{ tool.description }}</p>
             </section>
@@ -31,7 +31,7 @@
             <section class="modal-section">
               <h3 class="section-title">
                 <el-icon><Guide /></el-icon>
-                <span>使用方法</span>
+                <span>{{ t('toolModal.usage') }}</span>
               </h3>
               <div class="usage-steps">
                 <div v-for="(step, index) in usageSteps" :key="index" class="usage-step">
@@ -43,10 +43,10 @@
           </div>
 
           <div class="modal-footer">
-            <el-button @click="$emit('close')">关闭</el-button>
+            <el-button @click="$emit('close')">{{ t('toolModal.close') }}</el-button>
             <el-button type="primary" @click="handleUseTool">
               <el-icon><Position /></el-icon>
-              <span>使用工具</span>
+              <span>{{ t('toolModal.use') }}</span>
             </el-button>
           </div>
         </div>
@@ -58,6 +58,7 @@
 <script setup>
   import { computed } from 'vue';
   import { useRouter } from 'vue-router';
+  import { useI18n } from 'vue-i18n';
   import { useUserStore } from '@/stores/user';
   import { Close, InfoFilled, Guide, Position } from '@element-plus/icons-vue';
 
@@ -75,6 +76,7 @@
   const emit = defineEmits(['close']);
   const router = useRouter();
   const userStore = useUserStore();
+  const { t } = useI18n();
 
   const usageSteps = computed(() => {
     if (!props.tool.usage) return [];

@@ -6,15 +6,12 @@
         <div class="brand-section">
           <div class="footer-brand-logo">
             <LrmLogo :size="40" />
-            <h3 class="brand-name font-display">LRM工具箱</h3>
+            <h3 class="brand-name font-display">{{ t('app.title') }}</h3>
           </div>
-          <p class="brand-slogan">
-            探索极致的高效工具，为开发者而生。<br />
-            纯净、安全、全开源，让灵感即刻落地。
-          </p>
+          <p class="brand-slogan whitespace-pre-line">{{ t('footer.slogan') }}</p>
           <div class="status-indicator">
             <span class="status-dot"></span>
-            <span class="status-text">系统运行正常 | 已上线 {{ totalTools }}+ 工具</span>
+            <span class="status-text">{{ t('footer.status', { count: totalTools }) }}</span>
           </div>
           <div class="footer-social">
             <a
@@ -28,7 +25,7 @@
             <a
               href="mailto:powelabraham67@gmail.com"
               class="social-link-item email"
-              title="联系我们"
+              title="Email"
               @click.prevent="handleEmailClick"
             >
               <i class="fa-solid fa-envelope"></i>
@@ -39,29 +36,47 @@
         <!-- Links Grid -->
         <div class="nav-sections">
           <div class="nav-column">
-            <h4 class="nav-title">核心资源</h4>
+            <h4 class="nav-title">{{ t('footer.coreResources') }}</h4>
             <ul class="nav-list">
-              <li><router-link to="/">全部工具库</router-link></li>
-              <li><router-link to="/favorites">我的收藏</router-link></li>
-              <li><router-link to="/history">最近记录</router-link></li>
+              <li>
+                <router-link to="/">{{ t('footer.allTools') }}</router-link>
+              </li>
+              <li>
+                <router-link to="/favorites">{{ t('footer.myFavorites') }}</router-link>
+              </li>
+              <li>
+                <router-link to="/history">{{ t('footer.recentHistory') }}</router-link>
+              </li>
             </ul>
           </div>
 
           <div class="nav-column">
-            <h4 class="nav-title">关于与支持</h4>
+            <h4 class="nav-title">{{ t('footer.aboutSupport') }}</h4>
             <ul class="nav-list">
-              <li><router-link to="/about">关于本站</router-link></li>
-              <li><router-link to="/changelog">更新日志</router-link></li>
-              <li><a href="#" @click.prevent="showFeedback = true">意见反馈</a></li>
+              <li>
+                <router-link to="/about">{{ t('footer.aboutUs') }}</router-link>
+              </li>
+              <li>
+                <router-link to="/changelog">{{ t('footer.changelog') }}</router-link>
+              </li>
+              <li>
+                <a href="#" @click.prevent="showFeedback = true">{{ t('footer.feedback') }}</a>
+              </li>
             </ul>
           </div>
 
           <div class="nav-column">
-            <h4 class="nav-title">法律合规</h4>
+            <h4 class="nav-title">{{ t('footer.legal') }}</h4>
             <ul class="nav-list">
-              <li><router-link to="/privacy">隐私政策</router-link></li>
-              <li><router-link to="/terms">服务条款</router-link></li>
-              <li><a href="#" @click.prevent="showDisclaimer = true">免责声明</a></li>
+              <li>
+                <router-link to="/privacy">{{ t('footer.privacyPolicy') }}</router-link>
+              </li>
+              <li>
+                <router-link to="/terms">{{ t('footer.termsOfService') }}</router-link>
+              </li>
+              <li>
+                <a href="#" @click.prevent="showDisclaimer = true">{{ t('footer.disclaimer') }}</a>
+              </li>
             </ul>
           </div>
         </div>
@@ -71,12 +86,9 @@
 
       <div class="footer-legal">
         <div class="copyright-info">
-          <span
-            >© {{ currentYear }}
-            <a href="https://www.lrm123.site" class="copyright-link">LRM Toolbox</a></span
-          >
+          <span>{{ t('footer.copyright', { year: currentYear }) }}</span>
           <span class="dot-separator">•</span>
-          <span>Crafted with ❤️ by LRM</span>
+          <span>{{ t('footer.craftedBy') }}</span>
         </div>
         <div class="beian-info">
           <a href="https://beian.miit.gov.cn/" target="_blank">桂ICP备2025070985号-1</a>
@@ -84,38 +96,42 @@
       </div>
     </div>
 
-    <el-dialog v-model="showFeedback" title="意见反馈" width="500px">
+    <el-dialog v-model="showFeedback" :title="t('footer.feedbackTitle')" width="500px">
       <el-form :model="feedbackForm" label-position="top">
-        <el-form-item label="反馈类型">
-          <el-select v-model="feedbackForm.type" placeholder="请选择" style="width: 100%">
-            <el-option label="功能建议" value="feature" />
-            <el-option label="Bug 反馈" value="bug" />
-            <el-option label="其他问题" value="other" />
+        <el-form-item :label="t('footer.feedbackType')">
+          <el-select
+            v-model="feedbackForm.type"
+            :placeholder="t('footer.feedbackTypePlaceholder')"
+            style="width: 100%"
+          >
+            <el-option :label="t('footer.featureRequest')" value="feature" />
+            <el-option :label="t('footer.bugReport')" value="bug" />
+            <el-option :label="t('footer.otherIssue')" value="other" />
           </el-select>
         </el-form-item>
-        <el-form-item label="反馈内容">
+        <el-form-item :label="t('footer.feedbackContent')">
           <el-input
             v-model="feedbackForm.content"
             type="textarea"
             :rows="4"
-            placeholder="请详细描述您的问题或建议..."
+            :placeholder="t('footer.feedbackPlaceholder')"
           />
         </el-form-item>
-        <el-form-item label="联系方式（可选）">
-          <el-input v-model="feedbackForm.contact" placeholder="邮箱或其他联系方式" />
+        <el-form-item :label="t('footer.contact')">
+          <el-input v-model="feedbackForm.contact" :placeholder="t('footer.contactPlaceholder')" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showFeedback = false">取消</el-button>
-        <el-button type="primary" :loading="isSubmitting" @click="submitFeedback"
-          >提交反馈</el-button
-        >
+        <el-button @click="showFeedback = false">{{ t('footer.cancel') }}</el-button>
+        <el-button type="primary" :loading="isSubmitting" @click="submitFeedback">{{
+          t('footer.submit')
+        }}</el-button>
       </template>
     </el-dialog>
 
     <el-dialog
       v-model="showChangelog"
-      title="🚀 更新日志"
+      :title="t('footer.changelog')"
       width="600px"
       custom-class="changelog-dialog"
     >
@@ -167,20 +183,17 @@
         </div>
       </div>
       <template #footer>
-        <el-button class="close-btn" @click="showChangelog = false">我知道了</el-button>
+        <el-button class="close-btn" @click="showChangelog = false">{{ t('pwa.close') }}</el-button>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="showDisclaimer" title="免责声明" width="500px">
-      <div class="disclaimer-content">
-        <p>1. 本站工具仅供学习和参考使用，不保证结果的准确性和完整性。</p>
-        <p>2. 用户使用本站工具产生的任何后果，本站不承担任何责任。</p>
-        <p>3. 本站不对因网络传输、系统故障等原因导致的数据丢失负责。</p>
-        <p>4. 本站保留对服务内容进行修改、中断的权利。</p>
-        <p>5. 如有任何问题，请联系 powelabraham67@gmail.com</p>
-      </div>
+    <el-dialog v-model="showDisclaimer" :title="t('footer.disclaimerTitle')" width="500px">
+      <!-- eslint-disable-next-line vue/no-v-html -->
+      <div class="disclaimer-content" v-html="t('footer.disclaimerContent')"></div>
       <template #footer>
-        <el-button type="primary" @click="showDisclaimer = false">我已了解</el-button>
+        <el-button type="primary" @click="showDisclaimer = false">{{
+          t('footer.understood')
+        }}</el-button>
       </template>
     </el-dialog>
   </footer>
@@ -188,12 +201,14 @@
 
 <script setup>
   import { ref, computed, onMounted } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import { ElMessage } from 'element-plus';
   import LrmLogo from '@/components/icons/LrmLogo.vue';
   import { loadAllTools } from '@/data/tools';
 
   import { submitFeedbackToBackend } from '@/api/feedback';
 
+  const { t } = useI18n();
   const showFeedback = ref(false);
   const showChangelog = ref(false);
   const showDisclaimer = ref(false);
@@ -217,26 +232,29 @@
     contact: ''
   });
 
-  async function submitFeedback() {
-    if (!feedbackForm.value.type || !feedbackForm.value.content) {
-      ElMessage.warning('请填写反馈类型和内容');
+  const submitFeedback = async () => {
+    if (!feedbackForm.value.content) {
+      ElMessage.warning(t('footer.feedbackPlaceholder'));
       return;
     }
 
     isSubmitting.value = true;
     try {
-      // 调用后端 API 提交
       await submitFeedbackToBackend(feedbackForm.value);
-
-      ElMessage.success('感谢您的反馈！我们会尽快处理。');
+      ElMessage.success(t('footer.feedbackSuccess'));
       showFeedback.value = false;
-      feedbackForm.value = { type: '', content: '', contact: '' };
-    } catch {
-      ElMessage.error('提交失败，请稍后重试或通过邮件联系我们');
+      feedbackForm.value = {
+        type: 'feature',
+        content: '',
+        contact: ''
+      };
+    } catch (error) {
+      ElMessage.error(t('footer.feedbackError'));
+      console.error(error);
     } finally {
       isSubmitting.value = false;
     }
-  }
+  };
 
   function handleEmailClick() {
     const email = 'powelabraham67@gmail.com';

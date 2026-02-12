@@ -2,20 +2,23 @@
   <div class="not-found-page">
     <div class="content">
       <div class="error-code">404</div>
-      <h1 class="error-title">页面未找到</h1>
-      <p class="error-desc">抱歉，您访问的页面不存在或已被移除。</p>
+      <h1 class="error-title">{{ t('notFound.title') }}</h1>
+      <p class="error-desc">{{ t('notFound.desc') }}</p>
       <el-button type="primary" size="large" @click="$router.push('/')">
         <el-icon>
           <HomeFilled />
         </el-icon>
-        返回首页
+        {{ t('notFound.backHome') }}
       </el-button>
     </div>
   </div>
 </template>
 
 <script setup>
+  import { useI18n } from 'vue-i18n';
   import { HomeFilled } from '@element-plus/icons-vue';
+
+  const { t } = useI18n();
 </script>
 
 <style scoped>

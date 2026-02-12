@@ -1,0 +1,92 @@
+{
+  "app": {
+    "title": "LRM Toolbox",
+    "desc": "Efficient and convenient developer toolbox collection"
+  },
+  "home": {
+    "subtitle": "Efficient and convenient developer tools collection, making work easier",
+    "updating": "Tools are continuously updating...",
+    "searchPlaceholder": "Search {count}+ tools (Ctrl + K)...",
+    "viewAll": "View all tools ({count})",
+    "noResults": "No tools found"
+  },
+  "nav": {
+    "home": "Home",
+    "backToHome": "Back to Home",
+    "favorites": "Favorites",
+    "history": "History",
+    "search": "Search tools...",
+    "dragTip": "Hold left click to drag"
+  },
+  "category": {
+    "all": "All Tools",
+    "dev": "Dev & Ops",
+    "text": "Text",
+    "image": "Image & Video",
+    "pdf": "PDF",
+    "design": "Design",
+    "finance": "Finance",
+    "health": "Health",
+    "life": "Life",
+    "edu": "Education",
+    "fun": "Fun"
+  },
+  "pwa": {
+    "offlineReady": "App ready to work offline",
+    "needRefresh": "New content available, click on reload button to update",
+    "reload": "Reload",
+    "close": "Close"
+  },
+  "footer": {
+    "slogan": "Explore ultimate efficient tools, born for developers.\nPure, safe, open source, letting inspiration land instantly.",
+    "status": "System Normal | {count}+ tools online",
+    "coreResources": "Core Resources",
+    "allTools": "All Tools",
+    "myFavorites": "Favorites",
+    "recentHistory": "History",
+    "aboutSupport": "About & Support",
+    "aboutUs": "About Us",
+    "changelog": "Changelog",
+    "feedback": "Feedback",
+    "legal": "Legal",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "disclaimer": "Disclaimer",
+    "copyright": "© {year} LRM Toolbox",
+    "craftedBy": "Crafted with ❤️ by LRM",
+    "feedbackTitle": "Feedback",
+    "feedbackType": "Feedback Type",
+    "feedbackTypePlaceholder": "Please select",
+    "featureRequest": "Feature Request",
+    "bugReport": "Bug Report",
+    "otherIssue": "Other Issue",
+    "feedbackContent": "Content",
+    "feedbackPlaceholder": "Please describe your question or suggestion...",
+    "contact": "Contact (Optional)",
+    "contactPlaceholder": "Email or other contact info",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "feedbackSuccess": "Feedback submitted successfully, thank you!",
+    "feedbackError": "Failed to submit, please try again later",
+    "disclaimerTitle": "Disclaimer",
+    "disclaimerContent": "<p>1. Tools on this site are for learning and reference only, no guarantee of accuracy or completeness.</p><p>2. The site assumes no responsibility for any consequences of using these tools.</p><p>3. The site is not responsible for data loss due to network or system failures.</p><p>4. The site reserves the right to modify or discontinue services.</p><p>5. Contact powelabraham67@gmail.com for any issues.</p>",
+    "understood": "I Understand"
+  },
+  "toolCard": {
+    "viewDetail": "View Details",
+    "addFavorite": "Add to Favorites",
+    "removeFavorite": "Remove from Favorites",
+    "aiTag": "AI"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "desc": "Sorry, the page you are looking for does not exist or has been removed.",
+    "backHome": "Back to Home"
+  },
+  "toolModal": {
+    "intro": "Introduction",
+    "usage": "Usage",
+    "close": "Close",
+    "use": "Launch Tool"
+  }
+}

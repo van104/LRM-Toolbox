@@ -26,20 +26,20 @@
       <section class="page-hero">
         <h1 class="hero-title font-display">
           <DecryptedText
-            text="LRM工具箱"
+            :text="t('app.title')"
             animate-on="view"
             reveal-direction="center"
             class="gradient-text"
           />
         </h1>
-        <p class="hero-subtitle">高效便捷的开发者工具集合，让工作更轻松</p>
+        <p class="hero-subtitle">{{ t('home.subtitle') }}</p>
         <div class="update-badge-wrapper">
-          <span class="update-badge">工具持续更新中...</span>
+          <span class="update-badge">{{ t('home.updating') }}</span>
         </div>
         <div class="hero-search-wrapper">
           <el-input
             v-model="searchKeyword"
-            :placeholder="`搜索 ${allTools.length}+ 个实用工具 (Ctrl + K)...`"
+            :placeholder="t('home.searchPlaceholder', { count: allTools.length })"
             size="large"
             class="hero-search-input"
             :prefix-icon="Search"
@@ -60,7 +60,7 @@
           <el-icon>
             <component :is="iconMap[currentCategoryInfo?.icon] || Grid" />
           </el-icon>
-          {{ currentCategoryInfo?.name || '全部工具' }}
+          {{ t('category.' + (currentCategoryInfo?.id || 'all')) }}
         </h2>
       </div>
 
@@ -90,7 +90,7 @@
           </div>
           <div v-if="hasMoreTools && !isShowAll" class="show-more-wrapper">
             <el-button class="show-more-btn" @click="handleShowAll">
-              <span>查看全部工具 ({{ filteredTools.length }})</span>
+              <span>{{ t('home.viewAll', { count: filteredTools.length }) }}</span>
               <el-icon class="el-icon--right"><ArrowDown /></el-icon>
             </el-button>
           </div>
@@ -101,7 +101,7 @@
         <el-icon :size="48">
           <Search />
         </el-icon>
-        <p>没有找到匹配的工具</p>
+        <p>{{ t('home.noResults') }}</p>
       </div>
     </main>
 
@@ -116,6 +116,7 @@
 <script setup>
   import { ref, computed, onMounted, onUnmounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+  import { useI18n } from 'vue-i18n';
 
   defineOptions({
     name: 'Home'
@@ -149,6 +150,7 @@
   const router = useRouter();
   const route = useRoute();
   const userStore = useUserStore();
+  const { t } = useI18n();
 
   const activeCategory = ref(route.query.category || 'all');
   const searchKeyword = ref('');
