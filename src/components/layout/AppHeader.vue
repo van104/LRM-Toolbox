@@ -115,7 +115,7 @@
 </template>
 
 <script setup>
-  import { ref, onMounted, watch } from 'vue';
+  import { ref, onMounted, watch, nextTick } from 'vue';
   import LrmLogo from '@/components/icons/LrmLogo.vue';
   import { useThemeStore } from '@/stores/theme';
   import { useUserStore } from '@/stores/user';
@@ -266,33 +266,34 @@
     const x = rect ? rect.left + rect.width / 2 : event.clientX;
     const y = rect ? rect.top + rect.height / 2 : event.clientY;
 
-    const endRadius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
 
-    const transition = document.startViewTransition(() => {
-      themeStore.setMode(isDark ? 'light' : 'dark');
-      // 给 html 加上标记类，方便 CSS 控制层级
-      if (isDark) {
-        document.documentElement.classList.add('theme-transition-recede');
-      }
+    // 注入 CSS 变量以控制动画的原点和半径
+    document.documentElement.style.setProperty('--x', `${x}px`);
+    document.documentElement.style.setProperty('--y', `${y}px`);
+    document.documentElement.style.setProperty('--r', `${endRadius}px`);
+
+    // 如果是暗切亮，添加 shrink-dark 类来反转动画逻辑
+    if (isDark) {
+      document.documentElement.classList.add('shrink-dark');
+    } else {
+      document.documentElement.classList.remove('shrink-dark');
+    }
+
+    const transition = document.startViewTransition(async () => {
+      themeStore.toggleTheme();
+      await nextTick();
     });
 
+    // 动画结束后清理
     transition.finished.finally(() => {
-      document.documentElement.classList.remove('theme-transition-recede');
-    });
-
-    transition.ready.then(() => {
-      const clipPath = [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`];
-
-      document.documentElement.animate(
-        {
-          clipPath: isDark ? [...clipPath].reverse() : clipPath
-        },
-        {
-          duration: 600,
-          easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
-          pseudoElement: isDark ? '::view-transition-old(root)' : '::view-transition-new(root)'
-        }
-      );
+      document.documentElement.classList.remove('shrink-dark');
+      document.documentElement.style.removeProperty('--x');
+      document.documentElement.style.removeProperty('--y');
+      document.documentElement.style.removeProperty('--r');
     });
   }
 

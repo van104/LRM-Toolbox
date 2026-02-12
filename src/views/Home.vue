@@ -89,7 +89,7 @@
             />
           </div>
           <div v-if="hasMoreTools && !isShowAll" class="show-more-wrapper">
-            <el-button class="show-more-btn" @click="isShowAll = true">
+            <el-button class="show-more-btn" @click="handleShowAll">
               <span>查看全部工具 ({{ filteredTools.length }})</span>
               <el-icon class="el-icon--right"><ArrowDown /></el-icon>
             </el-button>
@@ -159,7 +159,27 @@
   const allTools = ref([]);
   const displayedTools = ref([]);
 
-  const isShowAll = ref(false);
+  // 获取已展开的分类集合
+  const getExpandedCategories = () => {
+    try {
+      return JSON.parse(sessionStorage.getItem('lrm-expanded-categories') || '[]');
+    } catch (e) {
+      console.warn('Failed to parse lrm-expanded-categories:', e);
+      return [];
+    }
+  };
+  const expandedCategories = ref(getExpandedCategories());
+
+  const isShowAll = computed({
+    get: () => expandedCategories.value.includes(activeCategory.value) || !!searchKeyword.value,
+    set: val => {
+      if (val && !expandedCategories.value.includes(activeCategory.value)) {
+        expandedCategories.value.push(activeCategory.value);
+        sessionStorage.setItem('lrm-expanded-categories', JSON.stringify(expandedCategories.value));
+      }
+    }
+  });
+
   const DISPLAY_LIMIT = 12;
 
   const iconMap = {
@@ -198,7 +218,7 @@
   });
 
   const visibleTools = computed(() => {
-    if (isShowAll.value || searchKeyword.value) {
+    if (isShowAll.value) {
       return filteredTools.value;
     }
     return filteredTools.value.slice(0, DISPLAY_LIMIT);
@@ -210,7 +230,6 @@
 
   async function fetchTools(category, keyword = '') {
     loading.value = true;
-    isShowAll.value = false; // 切换分类或搜索时重置展示状态
     if (keyword) {
       displayedTools.value = await searchToolsAsync(keyword);
     } else {
@@ -274,6 +293,10 @@
     } else {
       openToolModal(tool);
     }
+  }
+
+  function handleShowAll() {
+    isShowAll.value = true;
   }
 </script>
 

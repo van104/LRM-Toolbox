@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@custom-variant dark (&:where(.dark, .dark *));
+/* @variant dark (&:where(.dark, .dark *)); */
 
 /* 实用工具箱 - 全局样式 */
 
@@ -6,6 +8,7 @@
 
 /* ============ CSS Variables ============ */
 :root {
+  color-scheme: light;
   --bg-primary: #f1f5f9;
   --bg-secondary: #ffffff;
   --bg-card: #ffffff;
@@ -39,6 +42,7 @@
 }
 
 :root[data-theme='dark'] {
+  color-scheme: dark;
   --bg-primary: #0f172a;
   --bg-secondary: #1e293b;
   --bg-card: #1e293b;
@@ -232,20 +236,33 @@ h3 {
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
+  display: block;
 }
 
-/* 默认：新层在上方辐射 (适用于 Light -> Dark) */
+/* 默认：亮切暗（新视图扩张） */
+::view-transition-old(root) { z-index: 1; }
 ::view-transition-new(root) {
   z-index: 999;
-}
-::view-transition-old(root) {
-  z-index: 1;
+  animation: clip-expand 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-/* 收缩模式：旧层在上方收缩 (适用于 Dark -> Light) */
-.theme-transition-recede::view-transition-old(root) {
+/* 反向：暗切亮（旧视图收缩） */
+/* 我们在 JS 中给 html 加 shrink-dark 类来触发这个模式 */
+.shrink-dark::view-transition-old(root) {
   z-index: 999;
+  animation: clip-shrink 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
-.theme-transition-recede::view-transition-new(root) {
+.shrink-dark::view-transition-new(root) {
   z-index: 1;
+  animation: none; /* 必须覆盖，防止应用默认的新视图扩张动画 */
+}
+
+@keyframes clip-expand {
+  0% { clip-path: circle(0px at var(--x, 50%) var(--y, 50%)); }
+  100% { clip-path: circle(var(--r, 2000px) at var(--x, 50%) var(--y, 50%)); }
+}
+
+@keyframes clip-shrink {
+  0% { clip-path: circle(var(--r, 2000px) at var(--x, 50%) var(--y, 50%)); }
+  100% { clip-path: circle(0px at var(--x, 50%) var(--y, 50%)); }
 }
