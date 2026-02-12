@@ -35,8 +35,9 @@
             v-if="!images.length"
             class="upload-placeholder"
             @click="triggerUpload"
-            @dragover.prevent
-            @drop.prevent="handleDrop"
+            @dragover.prevent="dragOver"
+            @dragleave.prevent="dragLeave"
+            @drop.prevent="handleFileDrop"
           >
             <div class="upload-icon">
               <el-icon>
@@ -46,12 +47,12 @@
             <h3>点击或拖拽上传图片</h3>
             <p>支持 JPG、PNG、WebP 等格式，可多选</p>
             <input
-              ref="fileRef"
+              ref="fileInput"
               type="file"
               multiple
               hidden
               accept="image/*"
-              @change="handleUpload"
+              @change="handleFileSelect"
             />
           </div>
 
@@ -64,12 +65,12 @@
                 添加图片</el-button
               >
               <input
-                ref="fileRef"
+                ref="fileInput"
                 type="file"
                 multiple
                 hidden
                 accept="image/*"
-                @change="handleUpload"
+                @change="handleFileSelect"
               />
               <span class="count-badge">共 {{ images.length }} 张</span>
             </div>
@@ -159,11 +160,23 @@
   import { ArrowLeft, Delete, Download, PictureFilled, Plus, Rank } from '@element-plus/icons-vue';
   import { jsPDF } from 'jspdf';
   import draggable from 'vuedraggable';
+  import { useFileHandler } from '@/composables';
 
   const router = useRouter();
-  const goBack = () => router.back();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
-  const fileRef = ref(null);
+  const { fileInput, triggerFileInput, handleFileSelect, handleFileDrop, dragOver, dragLeave } =
+    useFileHandler({
+      accept: 'image/*',
+      readMode: 'none',
+      multiple: true,
+      onSuccess: result => {
+        addImages([result.file]);
+      }
+    });
   const images = ref([]);
   const generating = ref(false);
   let imageId = 0;
@@ -171,13 +184,7 @@
   const config = reactive({ pageSize: 'a4', orientation: 'portrait', filename: 'merged' });
   const pageSizes = { a4: [210, 297], a3: [297, 420], letter: [216, 279] };
 
-  const triggerUpload = () => fileRef.value?.click();
-  const handleDrop = e =>
-    addImages(Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')));
-  const handleUpload = e => {
-    addImages(Array.from(e.target.files));
-    e.target.value = '';
-  };
+  const triggerUpload = () => triggerFileInput();
   const addImages = files =>
     files.forEach(f =>
       images.value.push({

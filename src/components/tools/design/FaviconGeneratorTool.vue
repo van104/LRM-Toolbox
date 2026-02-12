@@ -26,8 +26,10 @@
           <div
             v-if="!sourceImage"
             class="upload-placeholder"
+            :class="{ dragover: isDragOver }"
             @click="triggerUpload"
-            @dragover.prevent
+            @dragover.prevent="isDragOver = true"
+            @dragleave.prevent="isDragOver = false"
             @drop.prevent="handleDrop"
           >
             <div class="upload-icon">
@@ -37,7 +39,7 @@
             </div>
             <h3>上传原始图片</h3>
             <p>推荐 512×512 像素正方形图片</p>
-            <input ref="fileRef" type="file" hidden accept="image/*" @change="handleUpload" />
+            <input ref="fileInput" type="file" hidden accept="image/*" @change="handleUpload" />
           </div>
           <div v-else class="source-preview">
             <img :src="sourceImage" alt="Source" />
@@ -76,38 +78,40 @@
   import { ElMessage } from 'element-plus';
   import { ArrowLeft, UploadFilled, Download } from '@element-plus/icons-vue';
 
+  import { useFileHandler } from '@/composables/useFileHandler';
+
   const router = useRouter();
   const goBack = () => router.back();
-  const fileRef = ref(null);
+
+  const { isDragOver, fileInput, onFileSelect, onDrop, triggerUpload } = useFileHandler({
+    accept: 'image/*',
+    readMode: 'dataURL'
+  });
+
   const sourceImage = ref('');
   const sourceInfo = reactive({ width: 0, height: 0 });
   const canvasRefs = reactive({});
   const allSizes = [16, 32, 48, 64, 128, 180, 192, 512];
   const selectedSizes = ref([16, 32, 180, 192]);
 
-  const triggerUpload = () => fileRef.value?.click();
-  const handleDrop = e => {
-    const f = e.dataTransfer.files[0];
-    if (f?.type.startsWith('image/')) processFile(f);
+  const handleDrop = async e => {
+    const results = await onDrop(e);
+    if (results.length > 0) processFileResult(results[0]);
   };
-  const handleUpload = e => {
-    if (e.target.files[0]) processFile(e.target.files[0]);
-    e.target.value = '';
+  const handleUpload = async e => {
+    const results = await onFileSelect(e);
+    if (results.length > 0) processFileResult(results[0]);
   };
 
-  const processFile = file => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      const img = new Image();
-      img.onload = () => {
-        sourceInfo.width = img.width;
-        sourceInfo.height = img.height;
-        sourceImage.value = e.target.result;
-        nextTick(renderPreviews);
-      };
-      img.src = e.target.result;
+  const processFileResult = ({ content }) => {
+    const img = new Image();
+    img.onload = () => {
+      sourceInfo.width = img.width;
+      sourceInfo.height = img.height;
+      sourceImage.value = content;
+      nextTick(renderPreviews);
     };
-    reader.readAsDataURL(file);
+    img.src = content;
   };
 
   const clearSource = () => {

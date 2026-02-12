@@ -2,9 +2,12 @@
   <div class="tool-page">
     <header class="tool-header">
       <div class="header-left">
-        <el-button text @click="goBack"
-          ><el-icon> <ArrowLeft /> </el-icon><span>返回</span></el-button
-        >
+        <el-button text @click="goBack">
+          <el-icon>
+            <ArrowLeft />
+          </el-icon>
+          <span>返回</span>
+        </el-button>
       </div>
       <div class="header-center">
         <h1 class="tool-title">PDF 电子签名</h1>
@@ -95,11 +98,11 @@
                       </el-icon>
                       <span>点击上传签名图片</span>
                       <input
-                        ref="signatureFileRef"
+                        ref="signatureFileInput"
                         type="file"
                         hidden
                         accept="image/*"
-                        @change="handleSignatureUpload"
+                        @change="handleSignatureSelect"
                       />
                     </div>
                   </el-tab-pane>
@@ -125,7 +128,7 @@
             </el-button>
           </div>
 
-          <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
+          <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
         </div>
       </div>
     </main>
@@ -140,13 +143,36 @@
   import { ElMessage } from 'element-plus';
   import pdfjsLib from '@/utils/pdf';
   import { PDFDocument } from 'pdf-lib';
+  import { useFileHandler } from '@/composables';
 
   const router = useRouter();
-  const goBack = () => router.back();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
-  const fileRef = ref(null);
-  const signatureFileRef = ref(null);
-  const pdfFile = ref(null);
+  const { fileInput, triggerFileInput, handleFileSelect } = useFileHandler({
+    accept: '.pdf',
+    readMode: 'none',
+    onSuccess: result => {
+      pdfFile.value = result.file;
+      loadPdf(result.file);
+    }
+  });
+
+  const {
+    fileInput: signatureFileInput,
+    triggerFileInput: triggerSignatureUpload,
+    handleFileSelect: handleSignatureSelect
+  } = useFileHandler({
+    accept: 'image/*',
+    readMode: 'dataURL',
+    onSuccess: result => {
+      signatureDataUrl.value = result.data;
+      ElMessage.success('签名图片已加载，请在 PDF 上点击放置位置');
+    }
+  });
+
   const pdfBytes = ref(null);
   const pdfDocProxy = shallowRef(null);
   const totalPages = ref(0);
@@ -165,13 +191,9 @@
   let drawCtx = null;
   let canvasScale = 1;
 
-  const triggerUpload = () => fileRef.value?.click();
-  const triggerSignatureUpload = () => signatureFileRef.value?.click();
+  const triggerUpload = () => triggerFileInput();
 
-  const handleUpload = async e => {
-    const file = e.target.files[0];
-    if (file) await loadPdf(file);
-  };
+  const pdfFile = ref(null);
 
   const clearFile = () => {
     pdfFile.value = null;
@@ -298,18 +320,6 @@
     if (!drawCanvas.value) return;
     signatureDataUrl.value = drawCanvas.value.toDataURL('image/png');
     ElMessage.success('签名已确认，请在 PDF 上点击放置位置');
-  };
-
-  const handleSignatureUpload = e => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = evt => {
-      signatureDataUrl.value = evt.target.result;
-      ElMessage.success('签名图片已加载，请在 PDF 上点击放置位置');
-    };
-    reader.readAsDataURL(file);
   };
 
   const handlePreviewClick = e => {

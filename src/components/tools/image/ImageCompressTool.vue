@@ -22,25 +22,24 @@
 
     <div class="tool-content">
       <div v-if="!originalImage" class="upload-container">
-        <el-upload
-          class="image-uploader"
-          drag
-          action="#"
-          :auto-upload="false"
-          :show-file-list="false"
-          :on-change="handleFileChange"
-          accept="image/*"
-        >
-          <el-icon class="el-icon--upload">
-            <UploadFilled />
-          </el-icon>
-          <div class="el-upload__text">拖拽图片到此处或 <em>点击上传</em></div>
-          <template #tip>
+        <div class="image-uploader-wrapper" @click="triggerFileInput">
+          <div
+            class="uploader-dragger"
+            :class="{ 'is-dragover': isDragOver }"
+            @dragover.prevent="dragOver"
+            @dragleave.prevent="dragLeave"
+            @drop.prevent="handleFileDrop"
+          >
+            <el-icon class="el-icon--upload">
+              <UploadFilled />
+            </el-icon>
+            <div class="el-upload__text">拖拽图片到此处或 <em>点击上传</em></div>
             <div class="el-upload__tip">
               支持 JPG, PNG, WebP 等常见格式，浏览器本地压缩，保护隐私
             </div>
-          </template>
-        </el-upload>
+          </div>
+          <input ref="fileInput" type="file" accept="image/*" hidden @change="handleFileSelect" />
+        </div>
       </div>
 
       <div v-else class="workspace">
@@ -164,8 +163,13 @@
     Loading
   } from '@element-plus/icons-vue';
   import imageCompression from 'browser-image-compression';
+  import { useFileHandler } from '@/composables';
 
   const router = useRouter();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
   const originalImage = ref(null);
   const compressedImage = ref(null);
@@ -192,20 +196,29 @@
     return rate.toFixed(1);
   });
 
-  function handleFileChange(file) {
-    const rawFile = file.raw;
-    if (!rawFile) return;
-
-    if (!rawFile.type.startsWith('image/')) {
-      ElMessage.error('请上传图片文件');
-      return;
+  const {
+    fileInput,
+    isDragOver,
+    triggerFileInput,
+    handleFileSelect,
+    handleFileDrop,
+    dragOver,
+    dragLeave,
+    formatSize
+  } = useFileHandler({
+    accept: 'image/*',
+    readMode: 'none',
+    onSuccess: result => {
+      handleFile(result.file);
     }
+  });
 
-    originalImage.value = rawFile;
+  function handleFile(file) {
+    originalImage.value = file;
     originalInfo.value = {
-      name: rawFile.name,
-      size: rawFile.size,
-      url: URL.createObjectURL(rawFile)
+      name: file.name,
+      size: file.size,
+      url: URL.createObjectURL(file)
     };
 
     compressImage();
@@ -255,14 +268,6 @@
     ElMessage.success('开始下载');
   }
 
-  function goBack() {
-    if (window.history.length > 1) {
-      router.back();
-    } else {
-      router.push('/');
-    }
-  }
-
   function clearAll() {
     if (originalInfo.value.url) URL.revokeObjectURL(originalInfo.value.url);
     if (compressedInfo.value.url) URL.revokeObjectURL(compressedInfo.value.url);
@@ -272,14 +277,6 @@
     originalInfo.value = { name: '', size: 0, url: '' };
     compressedInfo.value = { name: '', size: 0, url: '' };
     options.value.quality = 0.8;
-  }
-
-  function formatSize(bytes) {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 </script>
 
@@ -331,7 +328,7 @@
     min-height: 400px;
   }
 
-  .image-uploader :deep(.el-upload-dragger) {
+  .uploader-dragger {
     width: 500px;
     height: 300px;
     display: flex;
@@ -341,9 +338,11 @@
     border: 2px dashed #e2e8f0;
     border-radius: 16px;
     transition: all 0.3s;
+    cursor: pointer;
   }
 
-  .image-uploader :deep(.el-upload-dragger:hover) {
+  .uploader-dragger:hover,
+  .uploader-dragger.is-dragover {
     border-color: var(--accent-cyan);
     background: rgba(6, 182, 212, 0.05);
   }
@@ -526,7 +525,7 @@
     background: var(--bg-secondary);
   }
 
-  [data-theme='dark'] .image-uploader :deep(.el-upload-dragger) {
+  [data-theme='dark'] .uploader-dragger {
     background: transparent;
     border-color: var(--border-color);
   }

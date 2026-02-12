@@ -2,9 +2,12 @@
   <div class="tool-page">
     <header class="tool-header">
       <div class="header-left">
-        <el-button text @click="goBack"
-          ><el-icon> <ArrowLeft /> </el-icon><span>返回</span></el-button
-        >
+        <el-button text @click="goBack">
+          <el-icon>
+            <ArrowLeft />
+          </el-icon>
+          <span>返回</span>
+        </el-button>
       </div>
       <div class="header-center">
         <h1 class="tool-title">PDF 叠加覆盖</h1>
@@ -93,13 +96,13 @@
             合并并下载
           </el-button>
 
-          <input ref="baseFileRef" type="file" hidden accept=".pdf" @change="handleBaseUpload" />
+          <input ref="baseFileInput" type="file" hidden accept=".pdf" @change="handleBaseSelect" />
           <input
-            ref="overlayFileRef"
+            ref="overlayFileInput"
             type="file"
             hidden
             accept=".pdf"
-            @change="handleOverlayUpload"
+            @change="handleOverlaySelect"
           />
         </div>
       </div>
@@ -114,12 +117,39 @@
   import { ArrowLeft, Document, CopyDocument, Plus } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
   import { PDFDocument } from 'pdf-lib';
+  import { useFileHandler } from '@/composables';
 
   const router = useRouter();
-  const goBack = () => router.back();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
-  const baseFileRef = ref(null);
-  const overlayFileRef = ref(null);
+  const {
+    fileInput: baseFileInput,
+    triggerFileInput: triggerBaseUploadRaw,
+    handleFileSelect: handleBaseSelect
+  } = useFileHandler({
+    accept: '.pdf',
+    readMode: 'none',
+    onSuccess: result => {
+      basePdf.value = result.file;
+      loadBasePdf(result.file);
+    }
+  });
+
+  const {
+    fileInput: overlayFileInput,
+    triggerFileInput: triggerOverlayUploadRaw,
+    handleFileSelect: handleOverlaySelect
+  } = useFileHandler({
+    accept: '.pdf',
+    readMode: 'none',
+    onSuccess: result => {
+      overlayPdf.value = result.file;
+      loadOverlayPdf(result.file);
+    }
+  });
   const basePdf = ref(null);
   const overlayPdf = ref(null);
   const basePdfBytes = ref(null);
@@ -132,27 +162,19 @@
   const opacity = ref(100);
 
   const triggerBaseUpload = () => {
-    if (!basePdf.value) baseFileRef.value?.click();
+    if (!basePdf.value) triggerBaseUploadRaw();
   };
 
   const triggerOverlayUpload = () => {
-    if (!overlayPdf.value) overlayFileRef.value?.click();
+    if (!overlayPdf.value) triggerOverlayUploadRaw();
   };
 
-  const handleBaseUpload = async e => {
-    const file = e.target.files[0];
-    if (file) {
-      basePdf.value = file;
-      basePdfBytes.value = new Uint8Array(await file.arrayBuffer());
-    }
+  const loadBasePdf = async file => {
+    basePdfBytes.value = new Uint8Array(await file.arrayBuffer());
   };
 
-  const handleOverlayUpload = async e => {
-    const file = e.target.files[0];
-    if (file) {
-      overlayPdf.value = file;
-      overlayPdfBytes.value = new Uint8Array(await file.arrayBuffer());
-    }
+  const loadOverlayPdf = async file => {
+    overlayPdfBytes.value = new Uint8Array(await file.arrayBuffer());
   };
 
   const clearBase = () => {

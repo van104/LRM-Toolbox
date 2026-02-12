@@ -146,6 +146,7 @@
     CopyDocument,
     UploadFilled
   } from '@element-plus/icons-vue';
+  import { useCopy, useFileHandler } from '@/composables';
 
   const router = useRouter();
 
@@ -154,6 +155,12 @@
   const outputText = ref('');
   const imgBase64 = ref('');
   const imgSize = ref('');
+
+  const { copyToClipboard } = useCopy();
+  const { validateFile, formatSize, readFile } = useFileHandler({
+    accept: 'image/*',
+    maxSize: 5 * 1024 * 1024 // 5MB limit
+  });
 
   function goBack() {
     if (window.history.length > 1) {
@@ -202,27 +209,19 @@
     }
   }
 
-  function handleFileChange(file) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      imgBase64.value = e.target.result;
-      imgSize.value = formatSize(file.raw.size);
+  async function handleFileChange(file) {
+    const rawFile = file.raw;
+    if (!validateFile(rawFile)) return;
+
+    try {
+      const result = await readFile(rawFile, 'dataURL');
+      imgBase64.value = result.content;
+      imgSize.value = formatSize(rawFile.size);
       ElMessage.success('图片转换成功');
-    };
-    reader.readAsDataURL(file.raw);
+    } catch (error) {
+      console.error('File read error:', error);
+    }
   }
-
-  function formatSize(bytes) {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  }
-
-  import { useCopy } from '@/composables/useCopy';
-
-  const { copyToClipboard } = useCopy();
 
   function copyImgTag() {
     if (!imgBase64.value) return;
@@ -230,16 +229,14 @@
     copyToClipboard(tag);
   }
 
-  function pasteFromClipboard() {
-    navigator.clipboard
-      .readText()
-      .then(text => {
-        inputText.value = text;
-        ElMessage.success('已粘贴');
-      })
-      .catch(() => {
-        ElMessage.error('无法读取剪贴板');
-      });
+  async function pasteFromClipboard() {
+    try {
+      const text = await navigator.clipboard.readText();
+      inputText.value = text;
+      ElMessage.success('已粘贴');
+    } catch {
+      ElMessage.error('无法读取剪贴板');
+    }
   }
 
   function downloadBase64Image() {

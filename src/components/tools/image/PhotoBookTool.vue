@@ -31,18 +31,18 @@
           <el-tabs v-model="activeTab">
             <el-tab-pane label="图片" name="photos">
               <div class="scroll-container">
-                <div class="upload-zone" @click="triggerUpload">
+                <div class="upload-zone" @click="triggerFileInput">
                   <el-icon :size="24">
                     <Plus />
                   </el-icon>
                   <span>添加照片</span>
                   <input
-                    ref="fileRef"
+                    ref="fileInput"
                     type="file"
                     hidden
                     multiple
                     accept="image/*"
-                    @change="handleUpload"
+                    @change="handleFileSelect"
                   />
                 </div>
                 <div class="asset-grid">
@@ -280,6 +280,7 @@
     Trophy
   } from '@element-plus/icons-vue';
   import html2canvas from 'html2canvas';
+  import { useFileHandler } from '@/composables';
 
   const IconMap = {
     Star,
@@ -295,10 +296,16 @@
   };
 
   const router = useRouter();
-  const goBack = () => router.back();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
   const activeTab = ref('photos');
-  const fileRef = ref(null);
+  const { fileInput, triggerFileInput } = useFileHandler({
+    accept: 'image/*',
+    readMode: 'none'
+  });
   const exporting = ref(false);
 
   const userPhotos = ref([]);
@@ -397,14 +404,13 @@
     };
   });
 
-  const triggerUpload = () => fileRef.value.click();
-
-  const handleUpload = e => {
-    const files = e.target.files;
+  const handleFileSelect = event => {
+    const files = Array.from(event.target.files);
     for (let file of files) {
       const url = URL.createObjectURL(file);
       userPhotos.value.push(url);
     }
+    event.target.value = '';
   };
 
   const selectItem = (item, e) => {

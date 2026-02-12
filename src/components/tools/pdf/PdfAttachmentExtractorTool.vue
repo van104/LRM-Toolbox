@@ -2,9 +2,12 @@
   <div class="tool-page">
     <header class="tool-header">
       <div class="header-left">
-        <el-button text @click="goBack"
-          ><el-icon> <ArrowLeft /> </el-icon><span>返回</span></el-button
-        >
+        <el-button text @click="goBack">
+          <el-icon>
+            <ArrowLeft />
+          </el-icon>
+          <span>返回</span>
+        </el-button>
       </div>
       <div class="header-center">
         <h1 class="tool-title">PDF 附件提取</h1>
@@ -72,7 +75,7 @@
             </div>
           </div>
 
-          <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
+          <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
         </div>
       </div>
     </main>
@@ -96,35 +99,32 @@
 
   import JSZip from 'jszip';
   import { saveAs } from 'file-saver';
+  import { useFileHandler } from '@/composables';
 
   const router = useRouter();
-  const goBack = () => router.back();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
-  const fileRef = ref(null);
+  const { fileInput, triggerFileInput, handleFileSelect, formatSize } = useFileHandler({
+    accept: '.pdf',
+    readMode: 'none',
+    onSuccess: result => {
+      pdfFile.value = result.file;
+      attachments.value = [];
+      scanAttachments(result.file);
+    }
+  });
   const pdfFile = ref(null);
   const analyzing = ref(false);
   const attachments = ref([]);
 
-  const triggerUpload = () => fileRef.value?.click();
-
-  const handleUpload = async e => {
-    const file = e.target.files[0];
-    if (file) {
-      pdfFile.value = file;
-      attachments.value = [];
-      await scanAttachments(file);
-    }
-  };
+  const triggerUpload = () => triggerFileInput();
 
   const clearFile = () => {
     pdfFile.value = null;
     attachments.value = [];
-  };
-
-  const formatSize = bytes => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   };
 
   const scanAttachments = async file => {

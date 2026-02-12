@@ -33,11 +33,15 @@
   - 在 `src/` 下创建 `composables` 目录。
 - [x] **提取通用逻辑**:
   - [x] `useCopy`: 封装剪贴板逻辑，已在 `Md5Tool` 和 `PasswordGenerator` 中应用。
-  - [ ] `useFileHandler`: 封装文件上传、读取、校验逻辑。
+  - [x] `useFileHandler`: 封装文件上传、读取、校验逻辑。
   - [ ] `useFullscreen`: 封装全屏切换逻辑。
   - [ ] `useLocalStorage`: 封装本地存储读写逻辑（替代直接操作 localStorage）。
 - [x] **重构现有组件**:
   - 挑选了 `Md5Tool` (refactored) 和 `PasswordGenerator` (refactored + standard UI feedback)。
+  - 重构了文本系列工具（`TextSplitter`, `TextSecurity`, `TextCounter` 等）使用 `useCopy` 和标准 `ElMessage`。
+  - 重构了设计系列工具（`DataVisualizer`, `FaviconGeneratorTool`）使用 `useFileHandler`。
+  - 重构了开发系列工具（`Base64Tool`, `ApiTesterTool`, `UserAgentParserTool`, `Md5Tool`）使用 `useCopy`, `useFileHandler` 和标准 `ElMessage`。
+  - 重构了趣味系列工具（`AsciiArtTool`, `SocialMediaMockupTool`, `JigsawPuzzleTool`, `BloodTypeCalculatorTool`）集成 `useFileHandler` 和 `useCopy`。
 
 **预计收益**:
 

@@ -1,7 +1,7 @@
 <template>
   <div class="barcode-generator-tool">
     <div class="nav-header">
-      <button class="back-btn" @click="$router.back()">
+      <button class="back-btn" @click="goBack">
         <el-icon>
           <Back />
         </el-icon>
@@ -108,8 +108,11 @@
 
 <script setup>
   import { ref, watch, onMounted } from 'vue';
+  import { useRouter } from 'vue-router';
   import { Back, Download } from '@element-plus/icons-vue';
   import JsBarcode from 'jsbarcode';
+
+  const router = useRouter();
 
   const barcodeValue = ref('1234567890');
   const barcodeFormat = ref('CODE128');
@@ -183,6 +186,11 @@
       URL.revokeObjectURL(url);
     };
     img.src = url;
+  };
+
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
   };
 </script>
 

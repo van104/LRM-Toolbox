@@ -1,7 +1,7 @@
 <template>
   <div class="social-mockup-tool">
     <nav class="nav-bar">
-      <button class="nav-back" @click="$router.back()">
+      <button class="nav-back" @click="goBack">
         <el-icon>
           <Back />
         </el-icon>
@@ -31,9 +31,9 @@
           <div class="form-content">
             <div class="form-group">
               <label>头像</label>
-              <div class="avatar-upload">
+              <div class="avatar-upload" @click="triggerAvatarUpload">
                 <img v-if="config.avatar" :src="config.avatar" class="preview-avatar" />
-                <input type="file" accept="image/*" @change="handleAvatarUpload" />
+                <el-button v-else size="small">上传头像</el-button>
               </div>
             </div>
 
@@ -54,10 +54,9 @@
                   <img :src="img" />
                   <button class="remove-img" @click="config.images.splice(idx, 1)">×</button>
                 </div>
-                <label v-if="config.images.length < 9" class="add-img">
+                <div class="add-img" @click="triggerImageUpload">
                   <span>+</span>
-                  <input type="file" accept="image/*" hidden @change="handleImageUpload" />
-                </label>
+                </div>
               </div>
             </div>
 
@@ -140,9 +139,13 @@
 
 <script setup>
   import { ref, reactive, computed } from 'vue';
+  import { useRouter } from 'vue-router';
   import { Back, Monitor } from '@element-plus/icons-vue';
   import html2canvas from 'html2canvas';
   import { ElMessage } from 'element-plus';
+  import { useFileHandler } from '@/composables';
+
+  const router = useRouter();
 
   const defaultAvatar = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix';
   const platforms = [
@@ -165,22 +168,32 @@
     likes: '路人甲, 鹿人乙, 陆人丙'
   });
 
-  const handleAvatarUpload = e => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = ev => (config.avatar = ev.target.result);
-      reader.readAsDataURL(file);
+  const { handleFileSelect: selectAvatar } = useFileHandler({
+    accept: 'image/*',
+    readMode: 'dataURL',
+    onSuccess: result => {
+      config.avatar = result.content;
     }
-  };
+  });
 
-  const handleImageUpload = e => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = ev => config.images.push(ev.target.result);
-      reader.readAsDataURL(file);
+  const { handleFileSelect: selectImage } = useFileHandler({
+    accept: 'image/*',
+    readMode: 'dataURL',
+    onSuccess: result => {
+      if (config.images.length < 9) {
+        config.images.push(result.content);
+      } else {
+        ElMessage.warning('最多上传9张图片');
+      }
     }
+  });
+
+  const triggerAvatarUpload = () => selectAvatar();
+  const triggerImageUpload = () => selectImage();
+
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
   };
 
   const resetConfig = () => {

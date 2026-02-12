@@ -1,7 +1,7 @@
 <template>
   <div class="jigsaw-tool">
     <nav class="nav-bar">
-      <button class="nav-back" @click="$router.back()">
+      <button class="nav-back" @click="goBack">
         <el-icon>
           <Back />
         </el-icon>
@@ -128,13 +128,6 @@
                   :class="{ active: customImage }"
                   @click="triggerUpload"
                 >
-                  <input
-                    ref="fileInput"
-                    type="file"
-                    accept="image/*"
-                    hidden
-                    @change="handleImageUpload"
-                  />
                   <el-icon>
                     <Plus />
                   </el-icon>
@@ -190,6 +183,7 @@
 
 <script setup>
   import { ref, reactive, computed, onMounted, onUnmounted } from 'vue';
+  import { useRouter } from 'vue-router';
   import {
     Back,
     RefreshRight,
@@ -201,6 +195,9 @@
     Plus
   } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
+  import { useFileHandler } from '@/composables';
+
+  const router = useRouter();
 
   const presetImages = [
     {
@@ -242,7 +239,6 @@
   ];
 
   const containerRef = ref(null);
-  const fileInput = ref(null);
   const loading = ref(false);
   const isPlaying = ref(false);
   const startTime = ref(0);
@@ -617,21 +613,23 @@
     initGame();
   };
 
-  const triggerUpload = () => {
-    fileInput.value.click();
-  };
-
-  const handleImageUpload = e => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = event => {
-      customImage.value = event.target.result;
+  const { handleFileSelect } = useFileHandler({
+    accept: 'image/*',
+    readMode: 'dataURL',
+    onSuccess: result => {
+      customImage.value = result.content;
       selectedImageIndex.value = -1;
       initGame();
-    };
-    reader.readAsDataURL(file);
+    }
+  });
+
+  const triggerUpload = () => {
+    handleFileSelect();
+  };
+
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
   };
 
   const selectPresetImage = idx => {

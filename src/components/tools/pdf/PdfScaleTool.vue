@@ -2,9 +2,12 @@
   <div class="tool-page">
     <header class="tool-header">
       <div class="header-left">
-        <el-button text @click="goBack"
-          ><el-icon> <ArrowLeft /> </el-icon><span>返回</span></el-button
-        >
+        <el-button text @click="goBack">
+          <el-icon>
+            <ArrowLeft />
+          </el-icon>
+          <span>返回</span>
+        </el-button>
       </div>
       <div class="header-center">
         <h1 class="tool-title">PDF 页面调整</h1>
@@ -75,7 +78,7 @@
             </el-button>
           </div>
 
-          <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
+          <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
         </div>
       </div>
     </main>
@@ -89,11 +92,22 @@
   import { ArrowLeft, FullScreen, Document } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
   import { PDFDocument, PageSizes } from 'pdf-lib';
+  import { useFileHandler } from '@/composables';
 
   const router = useRouter();
-  const goBack = () => router.back();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
-  const fileRef = ref(null);
+  const { fileInput, triggerFileInput, handleFileSelect } = useFileHandler({
+    accept: '.pdf',
+    readMode: 'none',
+    onSuccess: result => {
+      loadPdf(result.file);
+    }
+  });
+
   const pdfFile = ref(null);
   const pdfBytes = ref(null);
   const pageCount = ref(0);
@@ -111,22 +125,19 @@
     Legal: [612.0, 1008.0]
   };
 
-  const triggerUpload = () => fileRef.value?.click();
+  const triggerUpload = () => triggerFileInput();
 
-  const handleUpload = async e => {
-    const file = e.target.files[0];
-    if (file) {
-      try {
-        pdfFile.value = file;
-        const buffer = await file.arrayBuffer();
-        pdfBytes.value = new Uint8Array(buffer);
+  const loadPdf = async file => {
+    try {
+      pdfFile.value = file;
+      const buffer = await file.arrayBuffer();
+      pdfBytes.value = new Uint8Array(buffer);
 
-        const pdfDoc = await PDFDocument.load(pdfBytes.value);
-        pageCount.value = pdfDoc.getPageCount();
-      } catch (error) {
-        ElMessage.error('无法读取 PDF 文件');
-        console.error(error);
-      }
+      const pdfDoc = await PDFDocument.load(pdfBytes.value);
+      pageCount.value = pdfDoc.getPageCount();
+    } catch (error) {
+      ElMessage.error('无法读取 PDF 文件');
+      console.error(error);
     }
   };
 

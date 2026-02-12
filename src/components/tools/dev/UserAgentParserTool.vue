@@ -91,7 +91,12 @@
             </div>
 
             <div class="detail-table">
-              <h4>详细信息</h4>
+              <div class="table-header">
+                <h4>详细信息</h4>
+                <el-button link type="primary" :icon="CopyDocument" @click="copyResults"
+                  >复制解析结果</el-button
+                >
+              </div>
               <div v-for="(value, key) in flatResult" :key="key" class="table-row">
                 <span class="key">{{ key }}</span>
                 <span class="value">{{ value || '-' }}</span>
@@ -132,13 +137,31 @@
 <script setup>
   import { ref, computed, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
-  import { ArrowLeft, Monitor, Platform, Cellphone, Cpu } from '@element-plus/icons-vue';
+  import {
+    ArrowLeft,
+    Monitor,
+    Platform,
+    Cellphone,
+    Cpu,
+    CopyDocument
+  } from '@element-plus/icons-vue';
+  import { useCopy } from '@/composables';
 
   const router = useRouter();
   const goBack = () => router.back();
 
   const uaString = ref('');
   const result = ref(null);
+
+  const { copyToClipboard } = useCopy();
+
+  const copyResults = () => {
+    if (!flatResult.value) return;
+    const text = Object.entries(flatResult.value)
+      .map(([key, value]) => `${key}: ${value || '-'}`)
+      .join('\n');
+    copyToClipboard(text, { success: '解析结果已复制' });
+  };
 
   const uaExamples = [
     {
@@ -446,6 +469,13 @@
     background: #f8fafc;
     border-radius: 12px;
     padding: 1rem;
+  }
+
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
   }
 
   .detail-table h4 {

@@ -29,7 +29,7 @@
       <div class="layout-container">
         <div class="workspace glass-card">
           <div class="toolbar">
-            <el-button type="primary" @click="triggerUpload">
+            <el-button type="primary" @click="triggerFileInput">
               <el-icon>
                 <Plus />
               </el-icon>
@@ -43,21 +43,22 @@
             </el-button>
             <span v-if="images.length" class="count-badge">共 {{ images.length }} 帧</span>
             <input
-              ref="fileRef"
+              ref="fileInput"
               type="file"
               multiple
               hidden
               accept="image/*"
-              @change="handleUpload"
+              @change="handleFileSelect"
             />
           </div>
 
           <div
             v-if="images.length === 0"
             class="empty-state"
-            @click="triggerUpload"
-            @dragover.prevent
-            @drop.prevent="handleDrop"
+            @click="triggerFileInput"
+            @dragover.prevent="dragOver"
+            @dragleave.prevent="dragLeave"
+            @drop.prevent="handleFileDrop"
           >
             <el-icon class="empty-icon">
               <Picture />
@@ -138,11 +139,32 @@
   import { ElMessage } from 'element-plus';
   import { ArrowLeft, Plus, Delete, Picture, VideoPlay, Download } from '@element-plus/icons-vue';
   import draggable from 'vuedraggable';
+  import { useFileHandler } from '@/composables';
 
   const router = useRouter();
-  const goBack = () => router.back();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
-  const fileRef = ref(null);
+  const { fileInput, triggerFileInput, dragOver, dragLeave } = useFileHandler({
+    accept: 'image/*',
+    readMode: 'none'
+  });
+
+  const handleFileSelect = event => {
+    const inputFiles = Array.from(event.target.files);
+    addImages(inputFiles);
+    event.target.value = '';
+  };
+
+  const handleFileDrop = event => {
+    dragLeave();
+    const droppedFiles = Array.from(event.dataTransfer.files).filter(f =>
+      f.type.startsWith('image/')
+    );
+    addImages(droppedFiles);
+  };
   const images = ref([]);
   const generating = ref(false);
   const resultGif = ref(null);
@@ -155,16 +177,6 @@
     delay: 500,
     quality: 10
   });
-
-  const triggerUpload = () => fileRef.value?.click();
-  const handleDrop = e => {
-    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-    addImages(files);
-  };
-  const handleUpload = e => {
-    addImages(Array.from(e.target.files));
-    e.target.value = '';
-  };
 
   const addImages = files => {
     files.forEach(f => {

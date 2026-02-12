@@ -2,9 +2,12 @@
   <div class="tool-page">
     <header class="tool-header">
       <div class="header-left">
-        <el-button text @click="goBack"
-          ><el-icon> <ArrowLeft /> </el-icon><span>返回</span></el-button
-        >
+        <el-button text @click="goBack">
+          <el-icon>
+            <ArrowLeft />
+          </el-icon>
+          <span>返回</span>
+        </el-button>
       </div>
       <div class="header-center">
         <h1 class="tool-title">PDF 拆分与合并</h1>
@@ -33,11 +36,11 @@
                 <h3>上传需要拆分的 PDF</h3>
                 <p>选择要提取的页面范围</p>
                 <input
-                  ref="splitFileRef"
+                  ref="splitFileInput"
                   type="file"
                   hidden
                   accept=".pdf"
-                  @change="handleSplitUpload"
+                  @change="handleSplitSelect"
                 />
               </div>
               <div v-else class="file-loaded">
@@ -51,11 +54,11 @@
                   </div>
                   <el-button text type="primary" @click="triggerSplitUpload">重新选择</el-button>
                   <input
-                    ref="splitFileRef"
+                    ref="splitFileInput"
                     type="file"
                     hidden
                     accept=".pdf"
-                    @change="handleSplitUpload"
+                    @change="handleSplitSelect"
                   />
                 </div>
                 <div class="split-options">
@@ -106,12 +109,12 @@
                 <h3>上传多个 PDF 文件</h3>
                 <p>文件将按顺序合并为一个 PDF</p>
                 <input
-                  ref="mergeFileRef"
+                  ref="mergeFileInput"
                   type="file"
                   multiple
                   hidden
                   accept=".pdf"
-                  @change="handleMergeUpload"
+                  @change="handleMergeSelect"
                 />
               </div>
               <div v-else class="files-loaded">
@@ -123,12 +126,12 @@
                     添加更多</el-button
                   >
                   <input
-                    ref="mergeFileRef"
+                    ref="mergeFileInput"
                     type="file"
                     multiple
                     hidden
                     accept=".pdf"
-                    @change="handleMergeUpload"
+                    @change="handleMergeSelect"
                   />
                   <el-button type="danger" text @click="clearMergeFiles"
                     ><el-icon>
@@ -191,13 +194,16 @@
     Connection
   } from '@element-plus/icons-vue';
   import { PDFDocument } from 'pdf-lib';
+  import { useFileHandler } from '@/composables';
 
   const router = useRouter();
-  const goBack = () => router.back();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
   const activeTab = ref('split');
 
-  const splitFileRef = ref(null);
   const splitFile = ref(null);
   const splitPdfDoc = ref(null);
   const splitPageCount = ref(0);
@@ -205,21 +211,36 @@
   const splitRange = ref('');
   const splitLoading = ref(false);
 
-  const mergeFileRef = ref(null);
+  const {
+    fileInput: splitFileInput,
+    triggerFileInput: triggerSplitUpload,
+    handleFileSelect: handleSplitSelect,
+    handleFileDrop: handleSplitDrop
+  } = useFileHandler({
+    accept: '.pdf',
+    readMode: 'none',
+    onSuccess: result => {
+      loadSplitFile(result.file);
+    }
+  });
+
   const mergeFiles = ref([]);
   const mergeLoading = ref(false);
   let mergeId = 0;
 
-  const triggerSplitUpload = () => splitFileRef.value?.click();
-  const handleSplitDrop = e => {
-    const f = e.dataTransfer.files[0];
-    if (f?.type === 'application/pdf') loadSplitFile(f);
-  };
-  const handleSplitUpload = e => {
-    const f = e.target.files[0];
-    if (f) loadSplitFile(f);
-    e.target.value = '';
-  };
+  const {
+    fileInput: mergeFileInput,
+    triggerFileInput: triggerMergeUpload,
+    handleFileSelect: handleMergeSelect,
+    handleFileDrop: handleMergeDrop
+  } = useFileHandler({
+    accept: '.pdf',
+    readMode: 'none',
+    multiple: true,
+    onSuccess: result => {
+      addMergeFiles([result.file]);
+    }
+  });
 
   const loadSplitFile = async file => {
     splitFile.value = file;
@@ -288,13 +309,6 @@
     }
   };
 
-  const triggerMergeUpload = () => mergeFileRef.value?.click();
-  const handleMergeDrop = e =>
-    addMergeFiles(Array.from(e.dataTransfer.files).filter(f => f.type === 'application/pdf'));
-  const handleMergeUpload = e => {
-    addMergeFiles(Array.from(e.target.files));
-    e.target.value = '';
-  };
   const addMergeFiles = files =>
     files.forEach(f => mergeFiles.value.push({ id: ++mergeId, file: f, name: f.name }));
   const removeMergeFile = i => mergeFiles.value.splice(i, 1);

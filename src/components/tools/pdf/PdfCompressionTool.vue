@@ -2,9 +2,12 @@
   <div class="tool-page">
     <header class="tool-header">
       <div class="header-left">
-        <el-button text @click="goBack"
-          ><el-icon> <ArrowLeft /> </el-icon><span>返回</span></el-button
-        >
+        <el-button text @click="goBack">
+          <el-icon>
+            <ArrowLeft />
+          </el-icon>
+          <span>返回</span>
+        </el-button>
       </div>
       <div class="header-center">
         <h1 class="tool-title">PDF 压缩</h1>
@@ -20,15 +23,16 @@
             v-if="!pdfFile"
             class="upload-placeholder"
             @click="triggerUpload"
-            @dragover.prevent
-            @drop.prevent="handleDrop"
+            @dragover.prevent="dragOver"
+            @dragleave.prevent="dragLeave"
+            @drop.prevent="handleFileDrop"
           >
             <el-icon class="upload-icon">
               <Files />
             </el-icon>
             <h3>上传 PDF 文件</h3>
             <p>支持无损优化和强力压缩</p>
-            <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
+            <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
           </div>
 
           <div v-else class="workspace">
@@ -137,11 +141,32 @@
   import pdfjsLib from '@/utils/pdf';
 
   import { PDFDocument } from 'pdf-lib';
+  import { useFileHandler } from '@/composables';
 
   const router = useRouter();
-  const goBack = () => router.back();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
-  const fileRef = ref(null);
+  const {
+    fileInput,
+    triggerFileInput,
+    handleFileSelect,
+    handleFileDrop,
+    dragOver,
+    dragLeave,
+    formatSize
+  } = useFileHandler({
+    accept: '.pdf',
+    readMode: 'none',
+    onSuccess: result => {
+      pdfFile.value = result.file;
+      resultBlob.value = null;
+      resultSize.value = 0;
+    }
+  });
+
   const pdfFile = ref(null);
   const mode = ref('lossless');
   const quality = ref(60);
@@ -152,39 +177,12 @@
   const resultSize = ref(0);
   const canvasRef = ref(null);
 
-  const triggerUpload = () => fileRef.value?.click();
-
-  const handleUpload = e => {
-    const file = e.target.files[0];
-    if (file && file.type === 'application/pdf') {
-      pdfFile.value = file;
-      resultBlob.value = null;
-      resultSize.value = 0;
-    } else {
-      ElMessage.error('请上传 PDF 文件');
-    }
-  };
-
-  const handleDrop = e => {
-    const file = e.dataTransfer.files[0];
-    if (file && file.type === 'application/pdf') {
-      pdfFile.value = file;
-      resultBlob.value = null;
-      resultSize.value = 0;
-    }
-  };
+  const triggerUpload = () => triggerFileInput();
 
   const clearFile = () => {
     pdfFile.value = null;
     resultBlob.value = null;
-  };
-
-  const formatSize = bytes => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    resultSize.value = 0;
   };
 
   const compressionRatio = computed(() => {

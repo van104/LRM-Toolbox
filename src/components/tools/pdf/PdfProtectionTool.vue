@@ -2,9 +2,12 @@
   <div class="tool-page">
     <header class="tool-header">
       <div class="header-left">
-        <el-button text @click="goBack"
-          ><el-icon> <ArrowLeft /> </el-icon><span>返回</span></el-button
-        >
+        <el-button text @click="goBack">
+          <el-icon>
+            <ArrowLeft />
+          </el-icon>
+          <span>返回</span>
+        </el-button>
       </div>
       <div class="header-center">
         <h1 class="tool-title">PDF 密码保护与移除</h1>
@@ -146,7 +149,7 @@
               </div>
             </el-tab-pane>
           </el-tabs>
-          <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
+          <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
         </div>
       </div>
     </main>
@@ -161,12 +164,28 @@
   import { PDFDocument } from 'pdf-lib';
   import { encryptPDF } from '@pdfsmaller/pdf-encrypt-lite';
   import { ElMessage } from 'element-plus';
+  import { useFileHandler } from '@/composables';
 
   const router = useRouter();
-  const goBack = () => router.back();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
+
+  const { fileInput, triggerFileInput, handleFileSelect } = useFileHandler({
+    accept: '.pdf',
+    readMode: 'none',
+    onSuccess: result => {
+      // Manual check as handleUpload did
+      if (result.file.type !== 'application/pdf') {
+        return ElMessage.error('请上传 PDF 文件');
+      }
+      pdfFile.value = result.file;
+      loadPdf(result.file);
+    }
+  });
 
   const activeTab = ref('encrypt');
-  const fileRef = ref(null);
   const pdfFile = ref(null);
   const pdfBytes = ref(null);
   const processing = ref(false);
@@ -178,22 +197,16 @@
 
   const decryptPassword = ref('');
 
-  const triggerUpload = () => fileRef.value?.click();
+  const triggerUpload = () => triggerFileInput();
   const clearFile = () => {
     pdfFile.value = null;
     pdfBytes.value = null;
-    fileRef.value.value = '';
     decryptPassword.value = '';
     encryptConfig.userPassword = '';
     encryptConfig.ownerPassword = '';
   };
 
-  const handleUpload = async e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (file.type !== 'application/pdf') return ElMessage.error('请上传 PDF 文件');
-
-    pdfFile.value = file;
+  const loadPdf = async file => {
     const buffer = await file.arrayBuffer();
     pdfBytes.value = new Uint8Array(buffer);
   };

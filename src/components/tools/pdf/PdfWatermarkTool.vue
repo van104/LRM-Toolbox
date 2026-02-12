@@ -2,9 +2,12 @@
   <div class="tool-page">
     <header class="tool-header">
       <div class="header-left">
-        <el-button text @click="goBack"
-          ><el-icon> <ArrowLeft /> </el-icon><span>返回</span></el-button
-        >
+        <el-button text @click="goBack">
+          <el-icon>
+            <ArrowLeft />
+          </el-icon>
+          <span>返回</span>
+        </el-button>
       </div>
       <div class="header-center">
         <h1 class="tool-title">PDF 水印</h1>
@@ -32,8 +35,9 @@
             v-if="!pdfFile"
             class="upload-placeholder"
             @click="triggerUpload"
-            @dragover.prevent
-            @drop.prevent="handleDrop"
+            @dragover.prevent="dragOver"
+            @dragleave.prevent="dragLeave"
+            @drop.prevent="handleFileDrop"
           >
             <div class="upload-icon">
               <el-icon>
@@ -42,7 +46,7 @@
             </div>
             <h3>上传 PDF 文件</h3>
             <p>添加文字或图片水印</p>
-            <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
+            <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
           </div>
           <div v-else class="preview-area">
             <div class="file-info-bar">
@@ -54,7 +58,7 @@
                 <span class="file-meta">{{ pageCount }} 页</span>
               </div>
               <el-button text type="primary" @click="triggerUpload">重新选择</el-button>
-              <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
+              <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
             </div>
             <div class="preview-canvas-wrap">
               <canvas ref="previewCanvas"></canvas>
@@ -101,11 +105,11 @@
                     <el-icon> <Plus /> </el-icon><span>选择图片</span>
                   </div>
                   <input
-                    ref="logoRef"
+                    ref="logoFileInput"
                     type="file"
                     hidden
                     accept="image/*"
-                    @change="handleLogoUpload"
+                    @change="handleLogoSelect"
                   />
                 </div>
               </div>
@@ -175,12 +179,14 @@
   import { ArrowLeft, ArrowRight, Document, Download, Plus } from '@element-plus/icons-vue';
   import pdfjsLib from '@/utils/pdf';
   import { PDFDocument } from 'pdf-lib';
+  import { useFileHandler } from '@/composables';
 
   const router = useRouter();
-  const goBack = () => router.back();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
-  const fileRef = ref(null);
-  const logoRef = ref(null);
   const previewCanvas = ref(null);
   const pdfFile = ref(null);
   const pdfDoc = ref(null);
@@ -188,6 +194,32 @@
   const currentPage = ref(1);
   const processing = ref(false);
   const watermarkType = ref('text');
+
+  const { fileInput, triggerFileInput, handleFileSelect, handleFileDrop } = useFileHandler({
+    accept: '.pdf',
+    readMode: 'none',
+    onSuccess: result => {
+      loadPdf(result.file);
+    }
+  });
+
+  const {
+    fileInput: logoFileInput,
+    triggerFileInput: triggerLogoUpload,
+    handleFileSelect: handleLogoSelect
+  } = useFileHandler({
+    accept: 'image/*',
+    readMode: 'dataURL',
+    onSuccess: result => {
+      config.logoUrl = result.data;
+      const img = new Image();
+      img.onload = () => {
+        config.logoImg = img;
+        debouncedRender();
+      };
+      img.src = config.logoUrl;
+    }
+  });
 
   const positions = ['tl', 'tc', 'tr', 'ml', 'center', 'mr', 'bl', 'bc', 'br'];
 
@@ -204,17 +236,7 @@
     rotate: -30
   });
 
-  const triggerUpload = () => fileRef.value?.click();
-  const triggerLogoUpload = () => logoRef.value?.click();
-  const handleDrop = e => {
-    const f = e.dataTransfer.files[0];
-    if (f?.type === 'application/pdf') loadPdf(f);
-  };
-  const handleUpload = e => {
-    const f = e.target.files[0];
-    if (f) loadPdf(f);
-    e.target.value = '';
-  };
+  const triggerUpload = () => triggerFileInput();
 
   const pdfBytes = ref(null);
 
@@ -237,18 +259,6 @@
     pageCount.value = pdfDoc.value.numPages;
     currentPage.value = 1;
     debouncedRender();
-  };
-
-  const handleLogoUpload = e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    config.logoUrl = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => {
-      config.logoImg = img;
-      debouncedRender();
-    };
-    img.src = config.logoUrl;
   };
 
   renderPreview = async () => {

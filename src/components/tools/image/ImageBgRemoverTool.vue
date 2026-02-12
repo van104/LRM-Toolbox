@@ -26,7 +26,7 @@
     <main class="tool-content">
       <div class="layout-container">
         <div class="workbench glass-card">
-          <div v-show="!image" class="upload-placeholder" @click="triggerUpload">
+          <div v-show="!image" class="upload-placeholder" @click="triggerFileInput">
             <div class="upload-icon">
               <el-icon>
                 <PictureFilled />
@@ -34,7 +34,7 @@
             </div>
             <h3>选择图片开始去背景</h3>
             <p>支持人物、物品、动物等主体的智能识别</p>
-            <input ref="fileRef" type="file" hidden accept="image/*" @change="handleUpload" />
+            <input ref="fileInput" type="file" hidden accept="image/*" @change="handleFileSelect" />
           </div>
 
           <div v-show="image" class="remover-stage">
@@ -344,11 +344,14 @@
     DArrowRight,
     Edit
   } from '@element-plus/icons-vue';
+  import { useFileHandler } from '@/composables';
 
   const router = useRouter();
-  const goBack = () => router.back();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
-  const fileRef = ref(null);
   const image = ref(null);
   const imageUrl = ref('');
   const resultUrl = ref('');
@@ -356,6 +359,30 @@
   const sliderPos = ref(50);
   const compareBox = ref(null);
   const isSliding = ref(false);
+
+  const { fileInput, triggerFileInput, handleFileSelect } = useFileHandler({
+    accept: 'image/*',
+    readMode: 'none',
+    onSuccess: result => {
+      processFile(result.file);
+    }
+  });
+
+  const processFile = file => {
+    if (!file) return;
+    if (file.size > 12 * 1024 * 1024) {
+      ElMessage.warning('图片大小不能超过 12MB');
+      return;
+    }
+
+    reset();
+    image.value = file;
+    imageUrl.value = URL.createObjectURL(file);
+
+    const lastDotIndex = file.name.lastIndexOf('.');
+    outputConfig.filename =
+      lastDotIndex !== -1 ? file.name.substring(0, lastDotIndex) + '_no-bg' : file.name + '_no-bg';
+  };
 
   const editMode = ref('view');
   const editCanvas = ref(null);
@@ -400,25 +427,6 @@
     }
     return apiConfig.apiKey.length > 10;
   });
-
-  const triggerUpload = () => fileRef.value?.click();
-
-  const handleUpload = e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (file.size > 12 * 1024 * 1024) {
-      ElMessage.warning('图片大小不能超过 12MB');
-      return;
-    }
-
-    reset();
-    image.value = file;
-    imageUrl.value = URL.createObjectURL(file);
-
-    const lastDotIndex = file.name.lastIndexOf('.');
-    outputConfig.filename =
-      lastDotIndex !== -1 ? file.name.substring(0, lastDotIndex) + '_no-bg' : file.name + '_no-bg';
-  };
 
   const onProviderChange = () => {
     localStorage.setItem('bg_remover_provider', apiConfig.provider);

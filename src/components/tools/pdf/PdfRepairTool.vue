@@ -2,9 +2,12 @@
   <div class="tool-page">
     <header class="tool-header">
       <div class="header-left">
-        <el-button text @click="goBack"
-          ><el-icon> <ArrowLeft /> </el-icon><span>返回</span></el-button
-        >
+        <el-button text @click="goBack">
+          <el-icon>
+            <ArrowLeft />
+          </el-icon>
+          <span>返回</span>
+        </el-button>
       </div>
       <div class="header-center">
         <h1 class="tool-title">PDF 损坏修复</h1>
@@ -97,7 +100,7 @@
             </div>
           </div>
 
-          <input ref="fileRef" type="file" hidden accept=".pdf" @change="handleUpload" />
+          <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
         </div>
 
         <div class="info-card glass-card">
@@ -127,11 +130,22 @@
   import { ArrowLeft, FirstAidKit, Document, Download } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
   import { PDFDocument } from 'pdf-lib';
+  import { useFileHandler } from '@/composables';
 
   const router = useRouter();
-  const goBack = () => router.back();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
-  const fileRef = ref(null);
+  const { fileInput, triggerFileInput, handleFileSelect, formatSize } = useFileHandler({
+    accept: '.pdf',
+    readMode: 'none',
+    onSuccess: result => {
+      pdfFile.value = result.file;
+      loadPdf(result.file);
+    }
+  });
   const pdfFile = ref(null);
   const pdfBytes = ref(null);
   const repairedBytes = shallowRef(null);
@@ -204,23 +218,13 @@
     }
   };
 
-  const formatSize = bytes => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-  };
+  const triggerUpload = () => triggerFileInput();
 
-  const triggerUpload = () => fileRef.value?.click();
-
-  const handleUpload = async e => {
-    const file = e.target.files[0];
-    if (file) {
-      pdfFile.value = file;
-      pdfBytes.value = new Uint8Array(await file.arrayBuffer());
-      status.value = 'ready';
-      repairLog.value = [];
-      repairedBytes.value = null;
-    }
+  const loadPdf = async file => {
+    pdfBytes.value = new Uint8Array(await file.arrayBuffer());
+    status.value = 'ready';
+    repairLog.value = [];
+    repairedBytes.value = null;
   };
 
   const clearFile = () => {

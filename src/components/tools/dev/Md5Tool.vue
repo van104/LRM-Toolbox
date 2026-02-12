@@ -183,6 +183,7 @@
     UploadFilled
   } from '@element-plus/icons-vue';
   import SparkMD5 from 'spark-md5';
+  import { useCopy, useFileHandler } from '@/composables';
 
   const router = useRouter();
 
@@ -266,9 +267,8 @@
     calculating.value = false;
   }
 
-  import { useCopy } from '@/composables/useCopy';
-
   const { copyToClipboard } = useCopy();
+  const { formatSize } = useFileHandler();
 
   async function pasteFromClipboard() {
     try {
@@ -279,14 +279,6 @@
     } catch {
       ElMessage.error('无法读取剪贴板');
     }
-  }
-
-  function formatSize(bytes) {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
   function formatProgress(percentage) {

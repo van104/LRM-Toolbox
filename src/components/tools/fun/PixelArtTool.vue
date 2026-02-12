@@ -1,7 +1,7 @@
 <template>
   <div class="pixel-art-tool">
     <nav class="nav-bar">
-      <button class="nav-back" @click="$router.back()">
+      <button class="nav-back" @click="goBack">
         <el-icon>
           <Back />
         </el-icon>
@@ -56,8 +56,8 @@
           </div>
 
           <div class="actions">
-            <button class="clear-btn" @click="resetGrid">清空预览</button>
-            <button class="export-btn" @click="exportPNG">导出 PNG</button>
+            <el-button @click="resetGrid">清空预览</el-button>
+            <el-button type="primary" @click="exportPNG">导出 PNG</el-button>
           </div>
         </div>
 
@@ -92,8 +92,11 @@
 
 <script setup>
   import { ref, computed, onMounted } from 'vue';
+  import { useRouter } from 'vue-router';
   import { Back } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
+
+  const router = useRouter();
 
   const gridSize = ref(16);
   const grid = ref([]);
@@ -185,6 +188,11 @@
     link.href = canvas.toDataURL('image/png');
     link.click();
     ElMessage.success('导出成功 (支持红色背景透明)');
+  };
+
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
   };
 
   onMounted(() => {

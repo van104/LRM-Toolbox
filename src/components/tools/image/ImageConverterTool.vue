@@ -1,7 +1,7 @@
 <template>
   <div class="image-converter-tool">
     <div class="nav-header">
-      <button class="back-btn" @click="$router.back()">
+      <button class="back-btn" @click="goBack">
         <el-icon>
           <Back />
         </el-icon>
@@ -15,14 +15,21 @@
     </div>
 
     <div class="tool-content">
-      <div class="upload-section glass-card" @dragover.prevent @drop.prevent="handleDrop">
-        <div class="upload-area">
+      <div class="upload-section glass-card">
+        <div
+          class="upload-area"
+          :class="{ 'is-dragover': isDragOver }"
+          @click="triggerFileInput"
+          @dragover.prevent="dragOver"
+          @dragleave.prevent="dragLeave"
+          @drop.prevent="handleFileDrop"
+        >
           <el-icon class="upload-icon">
             <UploadFilled />
           </el-icon>
           <div class="upload-text">
             <h3>拖拽图片到这里</h3>
-            <p>或 <span class="browse-btn" @click="triggerFileInput">点击选择文件</span></p>
+            <p>或 <span class="browse-btn">点击选择文件</span></p>
           </div>
           <input
             ref="fileInput"
@@ -110,25 +117,39 @@
 
 <script setup>
   import { ref } from 'vue';
+  import { useRouter } from 'vue-router';
   import { Back, UploadFilled, Picture, Refresh, Loading, Download } from '@element-plus/icons-vue';
+  import { useFileHandler } from '@/composables';
 
-  const fileInput = ref(null);
+  const router = useRouter();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
+
   const fileList = ref([]);
   const targetFormat = ref('image/png');
   const quality = ref(0.9);
   const isConverting = ref(false);
 
-  const triggerFileInput = () => {
-    fileInput.value.click();
-  };
+  const { fileInput, isDragOver, triggerFileInput, dragOver, dragLeave, formatSize } =
+    useFileHandler({
+      accept: 'image/*',
+      readMode: 'none'
+    });
 
   const handleFileSelect = event => {
-    addFiles(event.target.files);
+    const inputFiles = Array.from(event.target.files);
+    addFiles(inputFiles);
     event.target.value = '';
   };
 
-  const handleDrop = event => {
-    addFiles(event.dataTransfer.files);
+  const handleFileDrop = event => {
+    dragLeave();
+    const droppedFiles = Array.from(event.dataTransfer.files).filter(f =>
+      f.type.startsWith('image/')
+    );
+    addFiles(droppedFiles);
   };
 
   const addFiles = files => {
@@ -149,14 +170,6 @@
       if (f.resultUrl) URL.revokeObjectURL(f.resultUrl);
     });
     fileList.value = [];
-  };
-
-  const formatSize = bytes => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   const getExtension = mimeType => {

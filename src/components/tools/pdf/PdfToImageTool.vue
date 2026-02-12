@@ -38,8 +38,9 @@
             v-if="!pdfFile"
             class="upload-placeholder"
             @click="triggerUpload"
-            @dragover.prevent
-            @drop.prevent="handleDrop"
+            @dragover.prevent="dragOver"
+            @dragleave.prevent="dragLeave"
+            @drop.prevent="handleFileDrop"
           >
             <div class="upload-icon">
               <el-icon>
@@ -49,11 +50,11 @@
             <h3>点击或拖拽上传 PDF 文件</h3>
             <p>文件将在本地处理，不会上传到服务器</p>
             <input
-              ref="fileRef"
+              ref="fileInput"
               type="file"
               hidden
               accept=".pdf,application/pdf"
-              @change="handleUpload"
+              @change="handleFileSelect"
             />
           </div>
 
@@ -75,11 +76,11 @@
                 重新选择
               </el-button>
               <input
-                ref="fileRef"
+                ref="fileInput"
                 type="file"
                 hidden
                 accept=".pdf,application/pdf"
-                @change="handleUpload"
+                @change="handleFileSelect"
               />
             </div>
 
@@ -187,11 +188,23 @@
   import { ElMessage, ElLoading } from 'element-plus';
   import { ArrowLeft, Delete, Download, Document, RefreshRight } from '@element-plus/icons-vue';
   import pdfjsLib from '@/utils/pdf';
+  import { useFileHandler } from '@/composables';
 
   const router = useRouter();
-  const goBack = () => router.back();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
-  const fileRef = ref(null);
+  const { fileInput, triggerFileInput, handleFileSelect, handleFileDrop, dragOver, dragLeave } =
+    useFileHandler({
+      accept: '.pdf,application/pdf',
+      readMode: 'none',
+      onSuccess: result => {
+        processFile(result.file);
+      }
+    });
+
   const pdfFile = ref(null);
   const pages = ref([]);
   const selectedPages = ref([]);
@@ -204,21 +217,7 @@
     scale: 2
   });
 
-  const triggerUpload = () => fileRef.value?.click();
-
-  const handleDrop = e => {
-    const files = e.dataTransfer.files;
-    if (files.length && files[0].type === 'application/pdf') {
-      processFile(files[0]);
-    }
-  };
-
-  const handleUpload = e => {
-    const file = e.target.files[0];
-    if (file) {
-      processFile(file);
-    }
-  };
+  const triggerUpload = () => triggerFileInput();
 
   const processFile = async file => {
     pdfFile.value = file;

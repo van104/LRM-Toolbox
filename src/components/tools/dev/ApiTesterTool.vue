@@ -119,6 +119,11 @@
 
           <el-tabs v-model="activeResponseTab">
             <el-tab-pane label="响应体 (Body)" name="resBody">
+              <div v-if="response && !resError" class="res-actions">
+                <el-button size="small" :icon="CopyDocument" @click="copyResponse"
+                  >复制内容</el-button
+                >
+              </div>
               <div class="res-body-container">
                 <pre
                   v-if="response && !resError"
@@ -179,8 +184,9 @@
 
 <script setup>
   import { ref, computed } from 'vue';
-  import { Back, Plus, Delete, Warning } from '@element-plus/icons-vue';
+  import { Back, Plus, Delete, Warning, CopyDocument } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
+  import { useCopy } from '@/composables';
 
   const url = ref('https://jsonplaceholder.typicode.com/posts/1');
   const method = ref('GET');
@@ -198,6 +204,14 @@
   const resError = ref('');
   const resHeadersData = ref([]);
   const corsDialogVisible = ref(false);
+
+  const { copyToClipboard } = useCopy();
+
+  const copyResponse = () => {
+    if (formattedRes.value) {
+      copyToClipboard(formattedRes.value, { success: '响应内容已复制' });
+    }
+  };
 
   const addHeader = () => headers.value.push({ key: '', value: '' });
   const removeHeader = i => headers.value.splice(i, 1);
@@ -529,6 +543,12 @@
   .text-warning {
     color: var(--warning);
     font-weight: 700;
+  }
+
+  .res-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
   }
 
   .res-body-container {

@@ -85,7 +85,10 @@
   import DOMPurify from 'dompurify';
 
   const router = useRouter();
-  const goBack = () => router.back();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
   const inputMode = ref('markdown');
   const inputContent = ref('');

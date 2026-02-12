@@ -15,14 +15,16 @@
 
     <main class="tool-content">
       <div class="layout-container">
-        <input ref="fileRef" type="file" hidden accept="image/*" @change="handleUpload" />
         <div class="main-section glass-card">
+          <input ref="fileInput" type="file" hidden accept="image/*" @change="handleFileSelect" />
           <div
             v-if="!imageUrl"
             class="upload-area"
-            @click="triggerUpload"
-            @dragover.prevent
-            @drop.prevent="handleDrop"
+            :class="{ 'is-dragover': isDragOver }"
+            @click="triggerFileInput"
+            @dragover.prevent="dragOver"
+            @dragleave.prevent="dragLeave"
+            @drop.prevent="handleFileDrop"
           >
             <el-icon class="upload-icon">
               <UploadFilled />
@@ -42,7 +44,7 @@
               />
             </div>
             <div class="actions">
-              <el-button @click="triggerUpload">更换图片</el-button>
+              <el-button @click="triggerFileInput">更换图片</el-button>
               <el-button type="primary" @click="extractColors">重新提取</el-button>
             </div>
           </div>
@@ -105,38 +107,35 @@
   import { ElMessage } from 'element-plus';
   import { ArrowLeft, UploadFilled, Loading } from '@element-plus/icons-vue';
 
-  import { useCopy } from '@/composables/useCopy';
+  import { useCopy, useFileHandler } from '@/composables';
 
   const { copyToClipboard } = useCopy();
   const router = useRouter();
-  const goBack = () => router.back();
-  const fileRef = ref(null);
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
   const imgRef = ref(null);
   const imageUrl = ref('');
   const palette = ref([]);
   const loading = ref(false);
 
-  const triggerUpload = () => fileRef.value?.click();
-
-  const handleDrop = e => {
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) processFile(file);
-  };
-
-  const handleUpload = e => {
-    const file = e.target.files[0];
-    if (file) processFile(file);
-    e.target.value = '';
-  };
-
-  const processFile = file => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      imageUrl.value = e.target.result;
+  const {
+    fileInput,
+    isDragOver,
+    triggerFileInput,
+    handleFileSelect,
+    handleFileDrop,
+    dragOver,
+    dragLeave
+  } = useFileHandler({
+    accept: 'image/*',
+    readMode: 'dataURL',
+    onSuccess: result => {
+      imageUrl.value = result.data;
       palette.value = [];
-    };
-    reader.readAsDataURL(file);
-  };
+    }
+  });
 
   const extractColors = () => {
     if (!imgRef.value || !window.ColorThief) return;

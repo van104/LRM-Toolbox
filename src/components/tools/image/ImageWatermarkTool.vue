@@ -34,7 +34,7 @@
     <main class="tool-content">
       <div class="layout-container">
         <div class="workbench glass-card">
-          <div v-if="!images.length" class="upload-placeholder" @click="triggerUpload">
+          <div v-if="!images.length" class="upload-placeholder" @click="triggerFileInput">
             <div class="upload-icon">
               <el-icon>
                 <PictureFilled />
@@ -43,12 +43,12 @@
             <h3>点击或拖拽上传图片</h3>
             <p>支持多选，所有处理均在本地进行，不上传服务器</p>
             <input
-              ref="fileRef"
+              ref="fileInput"
               type="file"
               multiple
               hidden
               accept="image/*"
-              @change="handleUpload"
+              @change="handleFileSelect"
             />
           </div>
 
@@ -133,11 +133,11 @@
                     <span>选择图片</span>
                   </div>
                   <input
-                    ref="logoRef"
+                    ref="logoFileInput"
                     type="file"
                     hidden
                     accept="image/*"
-                    @change="handleLogoUpload"
+                    @change="handleLogoSelect"
                   />
                 </div>
               </div>
@@ -255,17 +255,62 @@
     PictureFilled,
     Plus
   } from '@element-plus/icons-vue';
+  import { useFileHandler } from '@/composables';
 
   const router = useRouter();
-  const goBack = () => router.back();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
   const images = ref([]);
   const currentIndex = ref(0);
   const activeType = ref('text');
-  const fileRef = ref(null);
-  const logoRef = ref(null);
   const previewCanvas = ref(null);
   const stageContainer = ref(null);
+
+  const { fileInput, triggerFileInput } = useFileHandler({
+    accept: 'image/*',
+    readMode: 'none'
+  });
+
+  const {
+    fileInput: logoFileInput,
+    triggerFileInput: triggerLogoUpload,
+    handleFileSelect: handleLogoSelect
+  } = useFileHandler({
+    accept: 'image/*',
+    readMode: 'dataURL',
+    onSuccess: result => {
+      config.logoUrl = result.data;
+      const img = new Image();
+      img.onload = () => {
+        config.logoImg = img;
+        debouncedRender();
+      };
+      img.src = config.logoUrl;
+    }
+  });
+
+  // Re-define triggerUpload if used elsewhere
+  const handleUpload = files => {
+    if (!files.length) return;
+
+    const newImages = files.map(file => ({
+      file,
+      name: file.name,
+      url: URL.createObjectURL(file),
+      img: null
+    }));
+
+    images.value = [...images.value, ...newImages];
+    loadCurrentImage();
+  };
+
+  const handleFileSelect = event => {
+    handleUpload(Array.from(event.target.files));
+    event.target.value = '';
+  };
 
   const config = reactive({
     text: 'LRM工具箱 - 水印预览',
@@ -299,36 +344,6 @@
     { key: 'bc', label: '中下' },
     { key: 'br', label: '右下' }
   ];
-
-  const triggerUpload = () => fileRef.value?.click();
-  const triggerLogoUpload = () => logoRef.value?.click();
-
-  const handleUpload = e => {
-    const files = Array.from(e.target.files);
-    if (!files.length) return;
-
-    const newImages = files.map(file => ({
-      file,
-      name: file.name,
-      url: URL.createObjectURL(file),
-      img: null
-    }));
-
-    images.value = [...images.value, ...newImages];
-    loadCurrentImage();
-  };
-
-  const handleLogoUpload = e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    config.logoUrl = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => {
-      config.logoImg = img;
-      debouncedRender();
-    };
-    img.src = config.logoUrl;
-  };
 
   const loadCurrentImage = () => {
     if (!images.value.length) return;

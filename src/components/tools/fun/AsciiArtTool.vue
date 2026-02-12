@@ -95,13 +95,6 @@
 
             <div class="config-item">
               <el-button type="primary" class="full-btn" @click="triggerUpload">选择图片</el-button>
-              <input
-                ref="fileInput"
-                type="file"
-                accept="image/*"
-                class="hidden-input"
-                @change="handleFileChange"
-              />
             </div>
           </div>
         </aside>
@@ -165,6 +158,7 @@
   import { useRouter } from 'vue-router';
   import { ArrowLeft, CopyDocument, QuestionFilled } from '@element-plus/icons-vue';
   import figlet from 'figlet';
+  import { useCopy, useFileHandler } from '@/composables';
 
   import standard from 'figlet/importable-fonts/Standard.js';
   import ghost from 'figlet/importable-fonts/Ghost.js';
@@ -225,15 +219,17 @@
     inverted: false,
     uploadedImage: null
   });
-  const fileInput = ref(null);
+  const { copyToClipboard } = useCopy();
+  const { handleFileSelect } = useFileHandler({
+    accept: 'image/*',
+    readMode: 'none',
+    onSuccess: result => {
+      processImageFile(result.file);
+    }
+  });
 
   function triggerUpload() {
-    fileInput.value.click();
-  }
-
-  function handleFileChange(e) {
-    const file = e.target.files[0];
-    if (file) processImageFile(file);
+    handleFileSelect();
   }
 
   function processImageFile(file) {
@@ -299,9 +295,6 @@
       lineHeight: '1.2'
     };
   });
-
-  import { useCopy } from '@/composables/useCopy';
-  const { copyToClipboard } = useCopy();
 
   function copyResult() {
     if (!resultText.value) return;

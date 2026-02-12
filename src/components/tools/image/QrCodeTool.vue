@@ -137,17 +137,18 @@
       <div v-if="currentTab === 'scan'" class="layout-container vertical">
         <div
           class="upload-area"
-          @dragover.prevent
-          @drop.prevent="handleDrop"
+          @dragover.prevent="dragOver"
+          @dragleave.prevent="dragLeave"
+          @drop.prevent="handleFileDrop"
           @paste="handlePaste"
-          @click="triggerUpload"
+          @click="triggerFileInput"
         >
           <input
             ref="fileInput"
             type="file"
             accept="image/*"
             class="hidden-input"
-            @change="handleFileChange"
+            @change="handleFileSelect"
           />
           <div v-if="scan.imageUrl" class="preview-wrapper">
             <img :src="scan.imageUrl" class="scan-preview" />
@@ -200,7 +201,7 @@
   import QRCode from 'qrcode';
   import jsQR from 'jsqr';
   import tinycolor from 'tinycolor2';
-  import { useCopy } from '@/composables/useCopy';
+  import { useCopy, useFileHandler } from '@/composables';
 
   const { copyToClipboard } = useCopy();
 
@@ -262,21 +263,15 @@
     imageUrl: '',
     result: ''
   });
-  const fileInput = ref(null);
 
-  function triggerUpload() {
-    fileInput.value.click();
-  }
-
-  function handleFileChange(e) {
-    const file = e.target.files[0];
-    if (file) processImage(file);
-  }
-
-  function handleDrop(e) {
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) processImage(file);
-  }
+  const { fileInput, triggerFileInput, handleFileSelect, handleFileDrop, dragOver, dragLeave } =
+    useFileHandler({
+      accept: 'image/*',
+      readMode: 'none',
+      onSuccess: result => {
+        processImage(result.file);
+      }
+    });
 
   function handlePaste(e) {
     const items = e.clipboardData.items;

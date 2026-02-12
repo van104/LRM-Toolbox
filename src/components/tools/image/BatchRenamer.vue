@@ -1,7 +1,7 @@
 <template>
   <div class="batch-renamer">
     <nav class="nav-bar">
-      <button class="nav-back" @click="goHome">
+      <button class="nav-back" @click="goBack">
         <svg
           width="18"
           height="18"
@@ -27,9 +27,9 @@
           class="upload-card"
           :class="{ dragover: isDragOver }"
           @click="triggerFileInput"
-          @dragover.prevent="isDragOver = true"
-          @dragleave.prevent="isDragOver = false"
-          @drop.prevent="handleDrop"
+          @dragover.prevent="dragOver"
+          @dragleave.prevent="dragLeave"
+          @drop.prevent="handleFileDrop"
         >
           <input
             ref="fileInput"
@@ -236,13 +236,33 @@
 
 <script setup>
   import { ref, reactive, computed, onUnmounted } from 'vue';
+  import { useRouter } from 'vue-router';
   import { ElMessage } from 'element-plus';
+  import { useFileHandler } from '@/composables';
 
-  const fileInput = ref(null);
-  const isDragOver = ref(false);
+  const router = useRouter();
+
   const isDownloading = ref(false);
   const downloadProgress = ref(0);
   const files = ref([]);
+
+  const { fileInput, isDragOver, triggerFileInput, dragOver, dragLeave, formatSize } =
+    useFileHandler({
+      accept: 'image/*',
+      readMode: 'none'
+    });
+
+  const handleFileSelect = event => {
+    const inputFiles = Array.from(event.target.files);
+    addFiles(inputFiles);
+    event.target.value = '';
+  };
+
+  const handleFileDrop = event => {
+    dragLeave();
+    const droppedFiles = Array.from(event.dataTransfer.files);
+    addFiles(droppedFiles);
+  };
 
   const config = reactive({
     prefix: '',
@@ -266,11 +286,7 @@
 
   const totalSize = computed(() => {
     const bytes = files.value.reduce((sum, item) => sum + item.size, 0);
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return formatSize(bytes);
   });
 
   function generateBase(file) {
@@ -315,20 +331,6 @@
     suffix += `.${ext}`;
 
     return { base, suffix };
-  }
-
-  function triggerFileInput() {
-    fileInput.value.click();
-  }
-
-  function handleFileSelect(event) {
-    addFiles(Array.from(event.target.files));
-    event.target.value = '';
-  }
-
-  function handleDrop(event) {
-    isDragOver.value = false;
-    addFiles(Array.from(event.dataTransfer.files));
   }
 
   async function addFiles(newFiles) {
@@ -444,9 +446,10 @@
     });
   }
 
-  function goHome() {
-    if (window.history.length > 1) window.history.back();
-  }
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
   onUnmounted(() => {
     files.value.forEach(f => URL.revokeObjectURL(f.previewUrl));

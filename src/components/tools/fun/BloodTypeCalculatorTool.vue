@@ -1,7 +1,7 @@
 <template>
   <div class="blood-type-tool">
     <nav class="nav-bar">
-      <button class="nav-back" @click="$router.back()">
+      <button class="nav-back" @click="goBack">
         <el-icon>
           <Back />
         </el-icon>
@@ -52,6 +52,9 @@
           </div>
         </div>
 
+        <div v-show="result" class="result-actions">
+          <el-button size="small" :icon="CopyDocument" @click="copyResult">复制计算结果</el-button>
+        </div>
         <div v-if="result" class="result-section">
           <div class="result-box possible">
             <div class="box-header">
@@ -106,7 +109,12 @@
 
 <script setup>
   import { ref, computed } from 'vue';
-  import { Back, Plus, Check, Close, InfoFilled } from '@element-plus/icons-vue';
+  import { useRouter } from 'vue-router';
+  import { Back, Plus, Check, Close, InfoFilled, CopyDocument } from '@element-plus/icons-vue';
+  import { useCopy } from '@/composables';
+
+  const router = useRouter();
+  const { copyToClipboard } = useCopy();
 
   const bloodTypes = ['A', 'B', 'O', 'AB'];
   const fatherType = ref('A');
@@ -133,6 +141,17 @@
 
     return data;
   });
+
+  const copyResult = () => {
+    if (!result.value) return;
+    const text = `父亲血型: ${fatherType.value}, 母亲血型: ${motherType.value}\n子女可能血型: ${result.value.possible.map(t => t + '型').join(', ')}\n子女不可能血型: ${result.value.impossible.map(t => t + '型').join(', ')}`;
+    copyToClipboard(text, { success: '计算结果已复制' });
+  };
+
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 </script>
 
 <style scoped>
@@ -268,6 +287,12 @@
     height: 32px;
     background: #f3f4f6;
     border-radius: 50%;
+  }
+
+  .result-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
   }
 
   .result-section {

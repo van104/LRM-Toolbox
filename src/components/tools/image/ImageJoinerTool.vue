@@ -34,7 +34,7 @@
     <main class="tool-content">
       <div class="layout-container">
         <div class="workbench glass-card">
-          <div v-if="!images.length" class="upload-placeholder" @click="triggerUpload">
+          <div v-if="!images.length" class="upload-placeholder" @click="triggerFileInput">
             <div class="upload-icon">
               <el-icon>
                 <PictureFilled />
@@ -43,12 +43,12 @@
             <h3>点击或拖拽上传多张图片</h3>
             <p>支持横向、纵向及网格智能拼接，所有处理均在本地进行，不上传服务器</p>
             <input
-              ref="fileRef"
+              ref="fileInput"
               type="file"
               multiple
               hidden
               accept="image/*"
-              @change="handleUpload"
+              @change="handleFileSelect"
             />
           </div>
 
@@ -86,7 +86,7 @@
                   </el-button>
                 </div>
               </div>
-              <div class="add-more" @click="triggerUpload">
+              <div class="add-more" @click="triggerFileInput">
                 <el-icon>
                   <Plus />
                 </el-icon>
@@ -220,31 +220,27 @@
     Grid,
     Close
   } from '@element-plus/icons-vue';
+  import { useFileHandler } from '@/composables';
 
   const router = useRouter();
-  const goBack = () => router.back();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
   const images = ref([]);
-  const fileRef = ref(null);
   const resultCanvas = ref(null);
   const stageContainer = ref(null);
 
-  const config = reactive({
-    mode: 'vertical',
-    gridColumns: 2,
-    padding: 20,
-    spacing: 15,
-    borderRadius: 8,
-    backgroundColor: '#ffffff',
-    align: 'fill',
-    outputWidth: 1200,
-    filename: ''
+  const { fileInput, triggerFileInput } = useFileHandler({
+    accept: 'image/*',
+    readMode: 'none'
   });
 
-  const triggerUpload = () => fileRef.value?.click();
+  // Re-define triggerUpload if used elsewhere, or just use triggerFileInput
+  // Actually, I'll just use triggerFileInput in the template.
 
-  const handleUpload = e => {
-    const files = Array.from(e.target.files);
+  const handleUpload = files => {
     if (!files.length) return;
 
     const newImages = files.map((file, idx) => ({
@@ -257,6 +253,24 @@
     images.value = [...images.value, ...newImages];
     loadImages();
   };
+
+  // Re-wiring manual handlers
+  const handleFileSelect = event => {
+    handleUpload(Array.from(event.target.files));
+    event.target.value = '';
+  };
+
+  const config = reactive({
+    mode: 'vertical',
+    gridColumns: 2,
+    padding: 20,
+    spacing: 15,
+    borderRadius: 8,
+    backgroundColor: '#ffffff',
+    align: 'fill',
+    outputWidth: 1200,
+    filename: ''
+  });
 
   const dragSourceIdx = ref(null);
 

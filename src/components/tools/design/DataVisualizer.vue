@@ -362,8 +362,10 @@
   import Chart from 'chart.js/auto';
   import { ElMessage } from 'element-plus';
 
-  const fileInput = ref(null);
-  const isDragOver = ref(false);
+  import { useFileHandler } from '@/composables/useFileHandler';
+
+  const { isDragOver, fileInput, onFileSelect, onDrop, triggerUpload, formatSize, readFile } =
+    useFileHandler({ accept: '.xlsx,.xls,.csv' });
   const dataLoaded = ref(false);
   const chartCanvas = ref(null);
   let chartInstance = null;
@@ -439,82 +441,60 @@
   }
 
   function openUpload() {
-    triggerFileInput();
+    triggerUpload();
   }
 
-  function triggerFileInput() {
-    fileInput.value.click();
+  async function handleFileSelect(event) {
+    const results = await onFileSelect(event);
+    if (results.length > 0) processFile(results[0].file);
   }
 
-  function handleFileSelect(event) {
-    const file = event.target.files[0];
-    if (file) processFile(file);
-    event.target.value = '';
+  async function handleDrop(event) {
+    const results = await onDrop(event);
+    if (results.length > 0) processFile(results[0].file);
   }
 
-  function handleDrop(event) {
-    isDragOver.value = false;
-    const file = event.dataTransfer.files[0];
-    if (file) processFile(file);
-  }
-
-  function processFile(file) {
+  async function processFile(file) {
     const isExcel = file.name.endsWith('.xlsx') || file.name.endsWith('.xls');
-    const isCsv = file.name.endsWith('.csv');
-
-    if (!isExcel && !isCsv) {
-      showToast('不支持的文件格式', 'error');
-      return;
-    }
 
     fileInfo.name = file.name;
     fileInfo.size = formatSize(file.size);
 
-    const reader = new FileReader();
+    try {
+      const mode = isExcel ? 'binary' : 'text';
+      const { content: data } = await readFile(file, mode);
+      let jsonData = [];
 
-    reader.onload = e => {
-      try {
-        const data = e.target.result;
-        let jsonData = [];
-
-        if (isExcel) {
-          const workbook = XLSX.read(data, { type: 'binary' });
-          const firstSheet = workbook.SheetNames[0];
-          const worksheet = workbook.Sheets[firstSheet];
-          jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-        } else {
-          const lines = data.split('\n');
-          jsonData = lines.map(line => line.split(',').map(cell => cell.trim()));
-        }
-
-        rawData.value = jsonData.filter(row => row.length > 0 && row.some(cell => cell !== ''));
-
-        if (rawData.value.length < 2) {
-          showToast('数据太少，无法展示', 'error');
-          return;
-        }
-
-        dataLoaded.value = true;
-
-        config.xAxis = 0;
-        config.yAxis = rawData.value[0].length > 1 ? 1 : 0;
-        config.title = file.name.split('.')[0];
-
-        showToast('数据加载成功', 'success');
-
-        nextTick(() => {
-          generateChart();
-        });
-      } catch (err) {
-        console.error(err);
-        showToast('文件解析失败', 'error');
+      if (isExcel) {
+        const workbook = XLSX.read(data, { type: 'binary' });
+        const firstSheet = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheet];
+        jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      } else {
+        const lines = data.split('\n');
+        jsonData = lines.map(line => line.split(',').map(cell => cell.trim()));
       }
-    };
 
-    if (isExcel) {
-      reader.readAsBinaryString(file);
-    } else {
-      reader.readAsText(file);
+      rawData.value = jsonData.filter(row => row.length > 0 && row.some(cell => cell !== ''));
+
+      if (rawData.value.length < 2) {
+        ElMessage.error('数据太少，无法展示');
+        return;
+      }
+
+      dataLoaded.value = true;
+      config.xAxis = 0;
+      config.yAxis = rawData.value[0].length > 1 ? 1 : 0;
+      config.title = file.name.split('.')[0];
+
+      ElMessage.success('数据加载成功');
+
+      nextTick(() => {
+        generateChart();
+      });
+    } catch (err) {
+      console.error(err);
+      ElMessage.error('文件解析失败');
     }
   }
 
@@ -529,7 +509,7 @@
 
   function generateChart() {
     if (!dataLoaded.value || config.xAxis === '' || config.yAxis === '') {
-      showToast('请设置 X 轴和 Y 轴数据', 'error');
+      ElMessage.error('请设置 X 轴和 Y 轴数据');
       return;
     }
 
@@ -720,15 +700,7 @@
     link.click();
 
     exportChart.destroy();
-    showToast('高清图片已导出', 'success');
-  }
-
-  function formatSize(bytes) {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    ElMessage.success('高清图片已导出');
   }
 
   function handleDataChange() {
@@ -751,7 +723,7 @@
 
   function removeRow(idx) {
     if (rawData.value.length <= 2) {
-      showToast('至少保留一行数据', 'error');
+      ElMessage.error('至少保留一行数据');
       return;
     }
     rawData.value.splice(idx, 1);
@@ -771,7 +743,7 @@
 
   function removeColumn(cIdx) {
     if (rawData.value[0].length <= 2) {
-      showToast('至少保留两列数据', 'error');
+      ElMessage.error('至少保留两列数据');
       return;
     }
 
@@ -788,16 +760,6 @@
     if (typeof config.yAxis === 'number' && config.yAxis > cIdx) config.yAxis--;
 
     handleDataChange();
-  }
-
-  function showToast(msg, type = 'info') {
-    if (type === 'error') {
-      ElMessage.error(msg);
-    } else if (type === 'success') {
-      ElMessage.success(msg);
-    } else {
-      ElMessage.info(msg);
-    }
   }
 
   function openGeneratorModal() {
@@ -839,7 +801,7 @@
     config.yAxis = data[0].length > 4 ? 3 : 1;
     config.title = fileInfo.name.replace('.xlsx', '');
 
-    showToast('模拟数据已加载', 'success');
+    ElMessage.success('模拟数据已加载');
     nextTick(generateChart);
   }
 
@@ -853,7 +815,7 @@
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     XLSX.writeFile(wb, fileName);
 
-    showToast('文件已开始下载', 'success');
+    ElMessage.success('文件已开始下载');
   }
 
   function generateSalesData(rows) {
