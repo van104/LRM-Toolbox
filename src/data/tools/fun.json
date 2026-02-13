@@ -431,5 +431,53 @@
     "route": "/tools/spinner-wheel",
     "isLocal": true,
     "tags": ["决策", "选择", "大转盘", "抽取", "生活工具"]
+  },
+  {
+    "id": "book-of-answers",
+    "name": "答案之书",
+    "category": "fun",
+    "icon": "Notebook",
+    "summary": "翻开属于你的命运答案",
+    "description": "当你面对犹豫不决的选择时，闭上眼心想那个问题，翻开这本书，它会给你一个充满禅意或趣味的建议。解决你的选择困难症，给生活一点仪式感。",
+    "usage": "1. 闭上眼，在心中默念你的问题\n2. 点击“翻开答案”或者点击封面\n3. 得到你的命运指引",
+    "route": "/tools/book-of-answers",
+    "isLocal": true,
+    "tags": ["决策", "趣味", "占卜", "仪式感", "心理建议"]
+  },
+  {
+    "id": "cyber-muyu",
+    "name": "赛博木鱼",
+    "category": "fun",
+    "icon": "MagicStick",
+    "summary": "解压利器，敲击木鱼积攒功德",
+    "description": "赛博时代佛系减压。极简主义音画互动室，通过点击屏幕敲击木鱼，伴随空灵的音效与视觉文字回馈，助你平复心境，远离喧嚣。功德 +1。",
+    "usage": "1. 点击木鱼即可敲击\n2. 可设置自动敲击频率\n3. 自定义浮现文字（如：功德+1, 烦恼-1）",
+    "route": "/tools/cyber-muyu",
+    "isLocal": true,
+    "tags": ["解压", "佛系", "专注", "沉浸", "趣味"]
+  },
+  {
+    "id": "script-killer-helper",
+    "name": "剧本杀角色分配",
+    "category": "fun",
+    "icon": "User",
+    "summary": "主持人辅助：随机分配角色与剧本",
+    "description": "剧本杀主持人（DM）的得力助手。支持自定义玩家姓名、角色池导入，一键随机分配角色并私密展示。包含简单的剧本进度管理和线索下发提醒。",
+    "usage": "1. 输入参与玩家姓名列表\n2. 录入或选择预设剧本角色池\n3. 点击“一键分配”，将手机/平板递给每位玩家确定身份",
+    "route": "/tools/script-killer-helper",
+    "isLocal": true,
+    "tags": ["社交", "剧本杀", "桌游", "分配器", "娱乐"]
+  },
+  {
+    "id": "persona-generator",
+    "name": "随机身份生成器",
+    "category": "fun",
+    "icon": "MagicStick",
+    "summary": "为创作提供源源不断的人设灵感",
+    "description": "小说家、编剧或画师的灵感库。一键生成极其详尽的人物设定，包括姓名、年龄、MBTI 性格、核心动机、外貌特征、隐秘缺点等。摆脱创作枯竭。",
+    "usage": "1. 选择人物背景风格（现代、奇幻、赛博朋克等）\n2. 点击“生成设定”\n3. 锁定满意部分项，重新随机其余项",
+    "route": "/tools/persona-generator",
+    "isLocal": true,
+    "tags": ["创作", "人设", "灵感", "编剧", "文字", "RPG"]
   }
 ]

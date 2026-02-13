@@ -178,5 +178,53 @@
     "route": "/tools/heart-rate",
     "isLocal": true,
     "tags": ["心率", "运动", "燃脂", "健身", "健康"]
+  },
+  {
+    "id": "spine-exercises",
+    "name": "脊椎健康指南",
+    "category": "health",
+    "icon": "UserFilled",
+    "summary": "办公族脊椎拉伸指南",
+    "description": "针对久坐办公族设计的脊椎健康运动指南，包含颈椎、胸椎和腰椎的简单拉伸动作，配合动图与文字详解，助你远离职业病。",
+    "usage": "1. 选择需要拉伸的部位（颈/胸/腰）\n2. 跟随动图描述进行动作练习\n3. 定时开启拉伸提醒",
+    "route": "/tools/spine-exercises",
+    "isLocal": true,
+    "tags": ["脊椎", "拉伸", "健康", "办公族", "运动"]
+  },
+  {
+    "id": "allergen-table",
+    "name": "药物过敏原速查",
+    "category": "health",
+    "icon": "Search",
+    "summary": "常见药物成分过敏提示",
+    "description": "整理常见药物及其成分的过敏风险提示，提供分类速查功能。注：本工具仅供科普参考，用药决策请务必咨询专业医师。",
+    "usage": "1. 输入药物名称或成分进行搜索\n2. 查看相关的过敏风险提示信息\n3. 记录个人敏感药物清单",
+    "route": "/tools/allergen-table",
+    "isLocal": true,
+    "tags": ["药物", "过敏", "健康", "安全", "速查"]
+  },
+  {
+    "id": "stress-test",
+    "name": "情绪压力测试",
+    "category": "health",
+    "icon": "Watch",
+    "summary": "快速压力评估与情绪缓释",
+    "description": "内置专业的压力知觉量表（PSS-10），通过简单的自评问卷快速评估您的心理压力水平，并提供针对性的自我调节建议。",
+    "usage": "1. 依次回答问卷中的题目\n2. 提交后获取压力评估分数\n3. 查看对应的健康建议和缓释方法",
+    "route": "/tools/stress-test",
+    "isLocal": true,
+    "tags": ["心理", "压力", "情绪", "测评", "健康"]
+  },
+  {
+    "id": "eye-care-guide",
+    "name": "护眼调节建议",
+    "category": "health",
+    "icon": "Sunny",
+    "summary": "随时间变化的屏幕环境建议",
+    "description": "根据当前时间、环境光线强度，智能给出屏幕亮度、色温以及工作/休息节奏的设置建议，呵护您的用眼健康。",
+    "usage": "1. 允许工具获取当前时间（或手动输入）\n2. 查看系统给出的亮度与色温建议值\n3. 学习科学用眼小知识",
+    "route": "/tools/eye-care-guide",
+    "isLocal": true,
+    "tags": ["护眼", "色温", "视力", "健康", "小贴士"]
   }
 ]

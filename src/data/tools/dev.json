@@ -418,5 +418,53 @@
     "route": "/tools/dockerfile-generator",
     "isLocal": true,
     "tags": ["Docker", "容器化", "镜像"]
+  },
+  {
+    "id": "code-screenshot",
+    "name": "代码截图美化",
+    "category": "dev",
+    "icon": "Picture",
+    "summary": "将代码片段转换为高颜值分享图片",
+    "description": "类似 Carbon 的工具，支持多种编程语言语法高亮、多种外观主题、字体大小调节以及窗口样式定制。快速生成适合社交媒体分享的高清代码图片。",
+    "usage": "1. 粘贴或输入代码片段\n2. 选择编程语言和主题风格\n3. 调整背景颜色和内边距\n4. 点击导出下载图片",
+    "route": "/tools/code-screenshot",
+    "isLocal": true,
+    "tags": ["代码", "截图", "美化", "Carbon", "分享"]
+  },
+  {
+    "id": "regex-viz",
+    "name": "正则表达式解释器",
+    "category": "dev",
+    "icon": "Search",
+    "summary": "图形化展示正则表达式匹配逻辑",
+    "description": "可视化展示正则表达式的内部匹配流程和状态机，帮助开发者更直观地理解、调试和学习复杂的正则语法。支持常用正则语法高亮与解释。",
+    "usage": "1. 输入需要解析的正则表达式\n2. 查看生成的交互式逻辑图表\n3. 点击节点查看详细的语法解释",
+    "route": "/tools/regex-viz",
+    "isLocal": true,
+    "tags": ["正则", "可视化", "解释器", "调试", "学习"]
+  },
+  {
+    "id": "perf-checklist",
+    "name": "前端性能清单",
+    "category": "dev",
+    "icon": "Checked",
+    "summary": "全面优化前端性能的核查清单",
+    "description": "整理自业界最佳实践的性能优化清单，涵盖资源加载、网络传输、渲染性能、代码压缩、缓存策略等维度。支持进度保存，助你打造极致流畅的 Web 应用。",
+    "usage": "1. 浏览不同维度的性能优化建议\n2. 根据项目现状勾选已完成的项目\n3. 查看待优化的建议并阅读详细指南",
+    "route": "/tools/perf-checklist",
+    "isLocal": true,
+    "tags": ["性能", "优化", "前端", "最佳实践", "清单"]
+  },
+  {
+    "id": "env-editor",
+    "name": "环境变量模板编辑",
+    "category": "dev",
+    "icon": "Edit",
+    "summary": "方便管理与编辑 .env 模板文件",
+    "description": "可视化编辑环境变量文件，支持 Key-Value 快速增删改、注释添加、一键生成 .env.example 模板。内置敏感值一键脱敏功能，保障配置安全。",
+    "usage": "1. 输入或导入已有的 .env 内容\n2. 在表格中编辑变量名和值\n3. 点击“脱敏导出”生成模板文件",
+    "route": "/tools/env-editor",
+    "isLocal": true,
+    "tags": [".env", "环境变量", "模板", "脱敏", "安全"]
   }
 ]

@@ -181,6 +181,26 @@ const funRoutes: RouteRecordRaw[] = [
     path: '/tools/spinner-wheel',
     name: 'SpinnerWheelTool',
     component: () => import('@/components/tools/fun/SpinnerWheelTool.vue')
+  },
+  {
+    path: '/tools/book-of-answers',
+    name: 'BookOfAnswersTool',
+    component: () => import('@/components/tools/fun/BookOfAnswersTool.vue')
+  },
+  {
+    path: '/tools/cyber-muyu',
+    name: 'CyberMuyuTool',
+    component: () => import('@/components/tools/fun/CyberMuyuTool.vue')
+  },
+  {
+    path: '/tools/script-killer-helper',
+    name: 'ScriptKillerHelperTool',
+    component: () => import('@/components/tools/fun/ScriptKillerHelperTool.vue')
+  },
+  {
+    path: '/tools/persona-generator',
+    name: 'PersonaGeneratorTool',
+    component: () => import('@/components/tools/fun/PersonaGeneratorTool.vue')
   }
 ];
 

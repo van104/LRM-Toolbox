@@ -178,5 +178,29 @@
     "route": "/tools/svg-optimizer",
     "isLocal": true,
     "tags": ["SVG", "压缩", "精简", "设计", "图标"]
+  },
+  {
+    "id": "glassmorphism-generator",
+    "name": "玻璃拟态生成器",
+    "category": "design",
+    "icon": "IceCream",
+    "summary": "快速生成毛玻璃效果的 CSS 代码",
+    "description": "可视化调节背景模糊度、透明度、边框等，即时生成具有时尚毛玻璃（Glassmorphism）质感的高质量 CSS。支持一键复制，助力打造现代感 UI。",
+    "usage": "1. 调节背景颜色、模糊度和透明度\n2. 实时预览玻璃效果\n3. 复制生成的 CSS 代码并应用到项目中",
+    "route": "/tools/glassmorphism-generator",
+    "isLocal": true,
+    "tags": ["毛玻璃", "玻璃拟态", "Glass", "CSS"]
+  },
+  {
+    "id": "neumorphism-generator",
+    "name": "新拟态风格生成器",
+    "category": "design",
+    "icon": "Box",
+    "summary": "调整阴影和光照生成新拟态 UI",
+    "description": "通过精确控制阴影方向、距离、模糊度以及光源位置，快速生成流行的新拟态（Neumorphism）设计。提供深浅两色预览及完整的 CSS 代码导出。",
+    "usage": "1. 选择背景颜色和光照方向\n2. 调整阴影强度、距离和模糊度\n3. 选择不同的形状风格（凸起、凹陷、平坦）\n4. 复制生成的 CSS 代码",
+    "route": "/tools/neumorphism-generator",
+    "isLocal": true,
+    "tags": ["新拟态", "UI设计", "阴影", "CSS"]
   }
 ]

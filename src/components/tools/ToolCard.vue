@@ -223,12 +223,14 @@
   }
 
   .tag {
-    padding: 0.125rem 0.5rem;
+    padding: 0.125rem 0.6rem; /* 稍微增加一点左右内边距 */
     font-size: 0.75rem;
     border-radius: 999px;
     background: var(--bg-primary);
     color: var(--text-secondary);
     border: 1px solid var(--border-color);
+    white-space: nowrap; /* 禁止标签内容换行 */
+    flex-shrink: 0; /* 禁止标签缩小 */
   }
 
   .category-tag {
@@ -257,6 +259,8 @@
     color: white;
     letter-spacing: 0.05em;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .card-actions {

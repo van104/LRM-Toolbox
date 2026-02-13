@@ -76,6 +76,16 @@ const designRoutes: RouteRecordRaw[] = [
     path: '/tools/svg-optimizer',
     name: 'SvgOptimizerTool',
     component: () => import('@/components/tools/design/SvgOptimizerTool.vue')
+  },
+  {
+    path: '/tools/glassmorphism-generator',
+    name: 'GlassmorphismTool',
+    component: () => import('@/components/tools/design/GlassmorphismTool.vue')
+  },
+  {
+    path: '/tools/neumorphism-generator',
+    name: 'NeumorphismTool',
+    component: () => import('@/components/tools/design/NeumorphismTool.vue')
   }
 ];
 

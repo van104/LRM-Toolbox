@@ -116,6 +116,26 @@ const eduRoutes: RouteRecordRaw[] = [
     path: '/tools/roman-numeral',
     name: 'RomanNumeralTool',
     component: () => import('@/components/tools/edu/RomanNumeralTool.vue')
+  },
+  {
+    path: '/tools/cornell-note-gen',
+    name: 'CornellNoteGenTool',
+    component: () => import('@/components/tools/edu/CornellNoteGenTool.vue')
+  },
+  {
+    path: '/tools/truth-table-gen',
+    name: 'TruthTableGenTool',
+    component: () => import('@/components/tools/edu/TruthTableGenTool.vue')
+  },
+  {
+    path: '/tools/morse-trainer',
+    name: 'MorseTrainerTool',
+    component: () => import('@/components/tools/edu/MorseTrainerTool.vue')
+  },
+  {
+    path: '/tools/ebbinghaus-planner',
+    name: 'EbbinghausPlannerTool',
+    component: () => import('@/components/tools/edu/EbbinghausPlannerTool.vue')
   }
 ];
 

@@ -274,5 +274,53 @@
     "route": "/tools/roman-numeral",
     "isLocal": true,
     "tags": ["罗马数字", "转换", "历史", "数字"]
+  },
+  {
+    "id": "cornell-note-gen",
+    "name": "康奈尔笔记生成器",
+    "category": "edu",
+    "icon": "Document",
+    "summary": "在线生成标准康奈尔笔记模板",
+    "description": "康奈尔笔记法 (Cornell Note-Taking System) 模板生成工具。支持自定义标题、格线类型、右侧笔记区、左侧线索区及底部总结区。可导出为高清 PDF 或直接打印，助力高效学习与复习。",
+    "usage": "1. 设置页面标题和格线风格\n2. 调整线索区与笔记区的比例\n3. 点击打印或导出 PDF 即可使用",
+    "route": "/tools/cornell-note-gen",
+    "isLocal": true,
+    "tags": ["笔记", "康奈尔", "模板", "学习", "复习"]
+  },
+  {
+    "id": "truth-table-gen",
+    "name": "逻辑真值表生成器",
+    "category": "edu",
+    "icon": "Grid",
+    "summary": "逻辑表达式自动生成真值表",
+    "description": "输入复杂的逻辑表达式（支持 AND, OR, NOT, XOR, 蕴含等），自动生成完整的真值表。支持多变量运算，实时解析逻辑关系，适合计算机科学与离散数学学习。",
+    "usage": "1. 输入逻辑变量 (P, Q, R...)\n2. 输入逻辑运算表达式\n3. 点击生成查看完整真值表",
+    "route": "/tools/truth-table-gen",
+    "isLocal": true,
+    "tags": ["逻辑", "真值表", "数学", "离散数学", "计算机"]
+  },
+  {
+    "id": "morse-trainer",
+    "name": "摩斯密码练习器",
+    "category": "edu",
+    "icon": "Cpu",
+    "summary": "互动式摩斯电码听力与录入练习",
+    "description": "集学习、练习于一体的摩斯密码工具。支持文本转码、实时发声演示，并提供听力训练营和盲打录入模式，带你从零基础掌握 Morse Code。",
+    "usage": "1. 学习区查看编码对照表\n2. 听力训练：听音辩码\n3. 录入练习：按提示敲击电码块",
+    "route": "/tools/morse-trainer",
+    "isLocal": true,
+    "tags": ["摩斯密码", "练习", "电码", "互动", "编码"]
+  },
+  {
+    "id": "ebbinghaus-planner",
+    "name": "记忆曲线复习计划",
+    "category": "edu",
+    "icon": "Calendar",
+    "summary": "基于艾宾浩斯遗忘曲线生成计划",
+    "description": "科学规划复习时间。输入学习起始日期，自动基于艾宾浩斯遗忘曲线（1, 2, 4, 7, 15, 30天）生成全自动复习时间表。支持日历视图展示，确保知识长久留存。",
+    "usage": "1. 选择学习的主题和日期\n2. 一键点击“生成计划表”\n3. 查看每天需要复习的列表并导出",
+    "route": "/tools/ebbinghaus-planner",
+    "isLocal": true,
+    "tags": ["记忆曲线", "计划", "复习", "学习", "艾宾浩斯"]
   }
 ]

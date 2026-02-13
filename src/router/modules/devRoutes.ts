@@ -186,6 +186,26 @@ const devRoutes: RouteRecordRaw[] = [
     path: '/tools/dockerfile-generator',
     name: 'DockerfileGenerator',
     component: () => import('@/components/tools/dev/DockerfileGeneratorTool.vue')
+  },
+  {
+    path: '/tools/code-screenshot',
+    name: 'CodeScreenshotTool',
+    component: () => import('@/components/tools/dev/CodeScreenshotTool.vue')
+  },
+  {
+    path: '/tools/regex-viz',
+    name: 'RegexVizTool',
+    component: () => import('@/components/tools/dev/RegexVizTool.vue')
+  },
+  {
+    path: '/tools/perf-checklist',
+    name: 'PerfChecklistTool',
+    component: () => import('@/components/tools/dev/PerfChecklistTool.vue')
+  },
+  {
+    path: '/tools/env-editor',
+    name: 'EnvEditorTool',
+    component: () => import('@/components/tools/dev/EnvEditorTool.vue')
   }
 ];
 
