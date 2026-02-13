@@ -43,6 +43,9 @@ _redundant_backup
 
 # Internal Docs
 docs/modifications.md
+docs/待添加工具.txt
+docs/已经添加工具.txt
+docs/补充工具建议列表.md
 
 # Data
 src/data/成语.txt

@@ -17,7 +17,7 @@
     "category": "finance",
     "icon": "Wallet",
     "summary": "工资税后收入计算",
-    "description": "2024 最新个税计算规则。支持计算实发工资、个人所得税及五险一金明细。支持自定义社保公积金缴纳比例和专项附加扣除。",
+    "description": "2026 最新个税计算规则。支持计算实发工资、个人所得税及五险一金明细。支持自定义社保公积金缴纳比例和专项附加扣除。",
     "usage": "1. 输入税前月薪\n2. 填写专项附加扣除总额（可选）\n3. 调整五险一金缴纳基数与比例（可选）\n4. 点击计算查看实发工资分布",
     "route": "/tools/tax-calculator",
     "isLocal": true,
@@ -94,5 +94,53 @@
     "route": "/tools/profit-loss-calculator",
     "isLocal": true,
     "tags": ["成本计算", "补仓", "盈亏", "股票", "基金", "理财", "补仓计算"]
+  },
+  {
+    "id": "interest-free",
+    "name": "信用卡免息计算",
+    "category": "finance",
+    "icon": "CreditCard",
+    "summary": "计算信用卡最长免息期",
+    "description": "输入账单日、还款日与消费日期，自动计算本笔消费享有的免息天数，并给出最佳刷卡时机建议，助您最大化资金利用率。",
+    "usage": "1. 设置账单日与还款规则\n2. 选择消费日期\n3. 查看免息天数及对应的账单/还款日",
+    "route": "/tools/interest-free",
+    "isLocal": true,
+    "tags": ["信用卡", "免息期", "账单", "还款", "理财"]
+  },
+  {
+    "id": "sip-calculator",
+    "name": "定投收益估算",
+    "category": "finance",
+    "icon": "TrendCharts",
+    "summary": "基金定投复利增长预测",
+    "description": "简单易用的定投计算器。输入每月定投金额、预期年化收益率及定投年限，一键估算到期总资产与总收益，可视化展示本金与收益比例。",
+    "usage": "1. 输入每月定投金额\n2. 设定预期年化收益率\n3. 选择定投年限查看结果",
+    "route": "/tools/sip-calculator",
+    "isLocal": true,
+    "tags": ["定投", "基金", "收益", "复利", "理财"]
+  },
+  {
+    "id": "installment-calculator",
+    "name": "分期实际年化",
+    "category": "finance",
+    "icon": "Money",
+    "summary": "分期手续费转实际年化利率",
+    "description": "揭示分期付款背后的真实成本。输入分期金额、期数和每期手续费率，自动计算实际年化利率 (IRR)，让您看清“免息不免费”的真相。",
+    "usage": "1. 输入分期总额\n2. 选择期数和每期费率\n3. 查看实际年化利率与总费用",
+    "route": "/tools/installment-calculator",
+    "isLocal": true,
+    "tags": ["分期", "利率", "IRR", "年化", "信用卡", "贷款"]
+  },
+  {
+    "id": "red-packet",
+    "name": "红包平分助手",
+    "category": "finance",
+    "icon": "Present",
+    "summary": "拼手气红包模拟与分配",
+    "description": "模拟微信红包分配算法。支持“拼手气”随机分配和“普通”等额分配两种模式，适用于聚会 AA 制分摊或年会抽奖模拟。",
+    "usage": "1. 选择分配模式（随机/等额）\n2. 输入总金额和人数\n3. 生成红包列表并查看“手气最佳”",
+    "route": "/tools/red-packet",
+    "isLocal": true,
+    "tags": ["红包", "随机", "均分", "AA", "娱乐"]
   }
 ]

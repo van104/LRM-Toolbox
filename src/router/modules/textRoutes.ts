@@ -78,6 +78,26 @@ const textRoutes: RouteRecordRaw[] = [
   {
     path: '/tools/text-linebreak',
     component: () => import('@/components/tools/text/TextLineBreakTool.vue')
+  },
+  {
+    path: '/tools/lorem-ipsum',
+    component: () => import('@/components/tools/text/LoremIpsumTool.vue')
+  },
+  {
+    path: '/tools/slug-generator',
+    component: () => import('@/components/tools/text/SlugGeneratorTool.vue')
+  },
+  {
+    path: '/tools/variable-converter',
+    component: () => import('@/components/tools/text/VariableNameConverterTool.vue')
+  },
+  {
+    path: '/tools/braille-translator',
+    component: () => import('@/components/tools/text/BrailleTranslatorTool.vue')
+  },
+  {
+    path: '/tools/ascii-table',
+    component: () => import('@/components/tools/text/AsciiTableTool.vue')
   }
 ];
 

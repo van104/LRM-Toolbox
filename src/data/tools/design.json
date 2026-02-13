@@ -118,5 +118,65 @@
     "route": "/tools/favicon-generator",
     "isLocal": true,
     "tags": ["Favicon", "图标", "网站", "ICO", "PNG"]
+  },
+  {
+    "id": "gradient-generator",
+    "name": "渐变色生成器",
+    "category": "design",
+    "icon": "MagicStick",
+    "summary": "在线生成并预览 CSS 渐变色",
+    "description": "线性或径向渐变色生成器。支持多色值调节、角度旋转、透明度设置，实时生成 CSS 代码，并提供精选配色方案。支持一键复制 CSS 代码。",
+    "usage": "1. 选择渐变类型（线性/径向）\n2. 添加或移除色标点并选择颜色\n3. 调整角度或中心位置\n4. 预览后复制 CSS 代码",
+    "route": "/tools/gradient-generator",
+    "isLocal": true,
+    "tags": ["渐变", "CSS", "调色", "设计", "背景"]
+  },
+  {
+    "id": "contrast-checker",
+    "name": "色彩对比度检测",
+    "category": "design",
+    "icon": "Warning",
+    "summary": "检查文本与背景的无障碍对比度",
+    "description": "色彩对比度检查工具，确保您的设计符合 WCAG 标准。根据前景色和背景色自动计算对比度比率，并给出建议，保证网页的可访问性。",
+    "usage": "1. 输入或选择文本颜色（前景色）\n2. 输入或选择背景颜色\n3. 查看对比度比率及是否通过 WCAG 级别标准",
+    "route": "/tools/contrast-checker",
+    "isLocal": true,
+    "tags": ["对比度", "WCAG", "无障碍", "设计", "色彩"]
+  },
+  {
+    "id": "golden-ratio",
+    "name": "黄金比例计算器",
+    "category": "design",
+    "icon": "Crop",
+    "summary": "自动计算黄金分割比例尺寸",
+    "description": "设计排版助手。输入一个数值，自动计算其黄金分割比例（1.618）的对应值。支持向上反推或向下细分，帮助您构建完美的视觉平衡。",
+    "usage": "1. 输入起始数值（像素或百分比）\n2. 实时查看对应的黄金比例序列值",
+    "route": "/tools/golden-ratio",
+    "isLocal": true,
+    "tags": ["黄金比例", "设计", "排版", "计算器", "构图"]
+  },
+  {
+    "id": "social-media-sizes",
+    "name": "社交媒体图片尺寸",
+    "category": "design",
+    "icon": "Menu",
+    "summary": "主流社交平台常用设计尺寸指南",
+    "description": "收录微信公众号、微博、抖音、B站、Instagram、Twitter 等主流平台的头像、封面图、海报及视频封面等常用设计尺寸，提供高清模板参考。",
+    "usage": "1. 选择社交媒体平台\n2. 查看不同位置对应的推荐尺寸和比例",
+    "route": "/tools/social-media-sizes",
+    "isLocal": true,
+    "tags": ["社交媒体", "尺寸", "设计", "模板", "平台"]
+  },
+  {
+    "id": "svg-optimizer",
+    "name": "SVG 压缩工具",
+    "category": "design",
+    "icon": "Files",
+    "summary": "精简 SVG 代码，减小图标体积",
+    "description": "基于 SVGO 的在线压缩工具。移除多余的元数据、注释及冗余节点，精简 SVG 代码路径。支持实时预览压缩效果，体积缩减比例一目了然。",
+    "usage": "1. 上传 SVG 文件或粘贴 SVG 代码\n2. 调整优化选项（如小数点精度）\n3. 预览并下载优化后的 SVG 或复制其代码",
+    "route": "/tools/svg-optimizer",
+    "isLocal": true,
+    "tags": ["SVG", "压缩", "精简", "设计", "图标"]
   }
 ]

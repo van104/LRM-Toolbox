@@ -81,6 +81,41 @@ const lifeRoutes: RouteRecordRaw[] = [
     path: '/tools/timer',
     name: 'TimerTool',
     component: () => import('@/components/tools/life/TimerTool.vue')
+  },
+  {
+    path: '/tools/soup-timer',
+    name: 'SoupTimerTool',
+    component: () => import('@/components/tools/life/SoupTimerTool.vue')
+  },
+  {
+    path: '/tools/timezone-planner',
+    name: 'TimezonePlannerTool',
+    component: () => import('@/components/tools/life/TimezonePlannerTool.vue')
+  },
+  {
+    path: '/tools/age-calculator',
+    name: 'AgeCalculatorTool',
+    component: () => import('@/components/tools/life/AgeCalculatorTool.vue')
+  },
+  {
+    path: '/tools/fuel-cost',
+    name: 'FuelCostTool',
+    component: () => import('@/components/tools/life/FuelCostTool.vue')
+  },
+  {
+    path: '/tools/tip-splitter',
+    name: 'TipSplitterTool',
+    component: () => import('@/components/tools/life/TipSplitterTool.vue')
+  },
+  {
+    path: '/tools/car-loan',
+    name: 'CarLoanTool',
+    component: () => import('@/components/tools/life/CarLoanTool.vue')
+  },
+  {
+    path: '/tools/instrument-tuner',
+    name: 'InstrumentTunerTool',
+    component: () => import('@/components/tools/life/InstrumentTunerTool.vue')
   }
 ];
 

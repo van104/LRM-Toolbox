@@ -334,5 +334,89 @@
     "route": "/tools/yaml-converter",
     "isLocal": true,
     "tags": ["YAML", "JSON", "Properties", "转换", "配置"]
+  },
+  {
+    "id": "uuid-generator",
+    "name": "UUID 生成器",
+    "category": "dev",
+    "icon": "MagicStick",
+    "summary": "快速生成并配置随机 UUID/GUID",
+    "description": "专业的 UUID 生成工具。支持批量生成 v1 (基于时间) 和 v4 (基于随机) 版本的 UUID，可自定义大小写、连字符设置及输出格式（文本、JSON、数组等）。",
+    "usage": "1. 选择 UUID 版本和生成数量\n2. 设置格式化选项（大写/无连字符等）\n3. 点击生成并复制结果",
+    "route": "/tools/uuid-generator",
+    "isLocal": true,
+    "tags": ["UUID", "GUID", "随机", "生成", "ID"]
+  },
+  {
+    "id": "chmod-calculator",
+    "name": "Chmod 权限计算",
+    "category": "dev",
+    "icon": "Lock",
+    "summary": "Linux 文件权限可视化计算器",
+    "description": "通过复选框可视化设置 Linux 的所有者、用户组和其他用户的读、写、执行权限，实时生成对应的数字权限码（如 755）及符号权限码（如 rwxr-xr-x）。提供常用权限速查集。",
+    "usage": "1. 勾选对应的 Read/Write/Execute 权限框\n2. 查看生成的数字或指令结果\n3. 复制生成的 chmod 指令",
+    "route": "/tools/chmod-calculator",
+    "isLocal": true,
+    "tags": ["Linux", "Chmod", "权限", "命令", "服务器"]
+  },
+  {
+    "id": "meta-tag-generator",
+    "name": "Meta 标签生成器",
+    "category": "dev",
+    "icon": "Reading",
+    "summary": "SEO 优化 Meta 标签一键生成",
+    "description": "为您的网站生成标准的 SEO & 社交媒体 Meta 标签。支持网页标题、描述、关键词、Open Graph (Facebook)、Twitter Card 以及 Robots 指令配置，附带实时预览效果。",
+    "usage": "1. 填写网站的基础信息\n2. 配置社交媒体展示选项\n3. 复制生成的 HTML 代码并粘贴到网页 <head> 中",
+    "route": "/tools/meta-tag-generator",
+    "isLocal": true,
+    "tags": ["SEO", "Meta", "HTML", "前端", "标签"]
+  },
+  {
+    "id": "http-status-codes",
+    "name": "HTTP 状态码速查",
+    "category": "dev",
+    "icon": "CircleCheck",
+    "summary": "HTTP 协议响应状态码详解手册",
+    "description": "收录完整的 HTTP 状态码列表（1xx - 5xx）。提供每个状态码的正式定义、详细解释、常见场景以及相关的 RFC 标准引用。支持按数字或关键词快速检索。",
+    "usage": "1. 输入状态码数字（如 404）或描述信息（如 Not Found）进行搜索\n2. 点击状态码卡片查看详细解释和示例",
+    "route": "/tools/http-status-codes",
+    "isLocal": true,
+    "tags": ["HTTP", "状态码", "网络", "协议", "手册"]
+  },
+  {
+    "id": "curl-builder",
+    "name": "Curl 命令构建器",
+    "category": "dev",
+    "icon": "Connection",
+    "summary": "可视化构建标准的 Curl 请求命令",
+    "description": "提供图形化界面配置 URL、方法、Header、Body 等参数，自动生成标准的 Curl 命令行代码，支持多种高级选项。",
+    "usage": "1. 输入目标 URL 并选择请求方法\n2. 配置 Headers 和 Body 数据\n3. 实时获取生成的 Curl 命令并点击复制",
+    "route": "/tools/curl-builder",
+    "isLocal": true,
+    "tags": ["Curl", "HTTP", "请求"]
+  },
+  {
+    "id": "robots-generator",
+    "name": "Robots.txt 生成器",
+    "category": "dev",
+    "icon": "Document",
+    "summary": "可视化生成网站 Robots 协议文件",
+    "description": "通过表单配置搜索引擎爬虫的允许与禁止规则，支持常见的爬虫类型设置、Sitemap 路径配置及延迟设置。",
+    "usage": "1. 选择全局或特定爬虫的允许/禁止状态\n2. 添加具体的路径规则\n3. 填写 Sitemap 地址并点击生成",
+    "route": "/tools/robots-generator",
+    "isLocal": true,
+    "tags": ["SEO", "Robots", "爬虫"]
+  },
+  {
+    "id": "dockerfile-generator",
+    "name": "Dockerfile 模版生成",
+    "category": "dev",
+    "icon": "Files",
+    "summary": "快速生成多语言 Docker 构建模版",
+    "description": "内置 Node.js, Python, Go, Java 等多种语言的 Dockerfile 最佳实践模版。支持配置基础镜像、工作目录、端口暴露及构建步骤。",
+    "usage": "1. 选择目标开发语言或环境\n2. 修改基础镜像 and 关键路径参数\n3. 实时预览并复制生成的 Dockerfile 内容",
+    "route": "/tools/dockerfile-generator",
+    "isLocal": true,
+    "tags": ["Docker", "容器化", "镜像"]
   }
 ]

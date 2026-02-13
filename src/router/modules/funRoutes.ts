@@ -161,6 +161,26 @@ const funRoutes: RouteRecordRaw[] = [
     path: '/tools/world-timeline',
     name: 'WorldTimelineTool',
     component: () => import('@/components/tools/fun/WorldTimelineTool.vue')
+  },
+  {
+    path: '/tools/morse-code',
+    name: 'MorseCodeTool',
+    component: () => import('@/components/tools/fun/MorseCodeTool.vue')
+  },
+  {
+    path: '/tools/truth-dare',
+    name: 'TruthDareTool',
+    component: () => import('@/components/tools/fun/TruthDareTool.vue')
+  },
+  {
+    path: '/tools/white-noise',
+    name: 'WhiteNoiseTool',
+    component: () => import('@/components/tools/fun/WhiteNoiseTool.vue')
+  },
+  {
+    path: '/tools/spinner-wheel',
+    name: 'SpinnerWheelTool',
+    component: () => import('@/components/tools/fun/SpinnerWheelTool.vue')
   }
 ];
 

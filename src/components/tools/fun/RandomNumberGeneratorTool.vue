@@ -77,9 +77,9 @@
   import { ref } from 'vue';
   import { Back, Refresh } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
-  import useClipboard from 'vue-clipboard3';
+  import { useCopy } from '@/composables/useCopy';
 
-  const { toClipboard } = useClipboard();
+  const { copyToClipboard } = useCopy();
 
   const minVal = ref(1);
   const maxVal = ref(100);
@@ -134,12 +134,9 @@
   };
 
   const copyResults = async () => {
-    try {
-      await toClipboard(results.value.join(', '));
-      ElMessage.success('已复制到剪贴板');
-    } catch {
-      ElMessage.error('复制失败');
-    }
+    await copyToClipboard(results.value.join(', '), {
+      success: '已复制到剪贴板'
+    });
   };
 </script>
 

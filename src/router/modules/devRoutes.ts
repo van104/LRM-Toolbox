@@ -151,6 +151,41 @@ const devRoutes: RouteRecordRaw[] = [
     path: '/tools/network-info',
     name: 'MyNetworkInfo',
     component: () => import('@/components/tools/dev/MyNetworkInfoTool.vue')
+  },
+  {
+    path: '/tools/uuid-generator',
+    name: 'UuidGenerator',
+    component: () => import('@/components/tools/dev/UuidGeneratorTool.vue')
+  },
+  {
+    path: '/tools/chmod-calculator',
+    name: 'ChmodCalculator',
+    component: () => import('@/components/tools/dev/ChmodCalculatorTool.vue')
+  },
+  {
+    path: '/tools/meta-tag-generator',
+    name: 'MetaTagGenerator',
+    component: () => import('@/components/tools/dev/MetaTagGeneratorTool.vue')
+  },
+  {
+    path: '/tools/http-status-codes',
+    name: 'HttpStatusCodes',
+    component: () => import('@/components/tools/dev/HttpStatusCodesTool.vue')
+  },
+  {
+    path: '/tools/curl-builder',
+    name: 'CurlBuilder',
+    component: () => import('@/components/tools/dev/CurlBuilderTool.vue')
+  },
+  {
+    path: '/tools/robots-generator',
+    name: 'RobotsGenerator',
+    component: () => import('@/components/tools/dev/RobotsGeneratorTool.vue')
+  },
+  {
+    path: '/tools/dockerfile-generator',
+    name: 'DockerfileGenerator',
+    component: () => import('@/components/tools/dev/DockerfileGeneratorTool.vue')
   }
 ];
 

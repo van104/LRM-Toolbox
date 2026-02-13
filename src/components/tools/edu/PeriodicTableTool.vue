@@ -15,6 +15,16 @@
     </nav>
 
     <main class="main-content">
+      <div class="search-bar animate-fade-in">
+        <el-icon class="search-icon"><Search /></el-icon>
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="搜索元素名称、符号或原子序数..."
+          class="search-input"
+        />
+      </div>
+
       <div class="table-legend glass-card">
         <div
           v-for="(cat, name) in categories"
@@ -34,7 +44,7 @@
             v-for="el in elements"
             :key="el.number"
             class="element-cell"
-            :class="[el.category, { dimmed: hoverCategory && el.category !== hoverCategory }]"
+            :class="[el.category, { dimmed: isDimmed(el) }]"
             :style="getCellStyle(el)"
             @click="showDetail(el)"
           >
@@ -65,6 +75,9 @@
               <span>原子量</span> <b>{{ selectedElement.weight }}</b>
             </div>
             <div class="info-row">
+              <span>常见化合价</span> <b>{{ getElementValence(selectedElement.symbol) }}</b>
+            </div>
+            <div class="info-row">
               <span>电子排布</span> <b>{{ selectedElement.config }}</b>
             </div>
             <div class="info-row">
@@ -82,13 +95,45 @@
 
 <script setup>
   import { ref, onMounted } from 'vue';
-  import { Back } from '@element-plus/icons-vue';
+  import { Back, Search } from '@element-plus/icons-vue';
   import { loadPeriodicElements } from '@/data/periodic_table';
 
   const dialogVisible = ref(false);
   const selectedElement = ref(null);
   const hoverCategory = ref(null);
   const elements = ref([]);
+  const searchQuery = ref('');
+
+  const commonValences = {
+    H: '+1, -1',
+    He: '0',
+    Li: '+1',
+    Be: '+2',
+    B: '+3',
+    C: '+4, +2, -4',
+    N: '+5, +4, +3, +2, +1, -3',
+    O: '-2',
+    F: '-1',
+    Ne: '0',
+    Na: '+1',
+    Mg: '+2',
+    Al: '+3',
+    Si: '+4, -4',
+    P: '+5, -3',
+    S: '+6, +4, -2',
+    Cl: '+7, +5, +3, +1, -1',
+    Ar: '0',
+    K: '+1',
+    Ca: '+2',
+    Fe: '+2, +3',
+    Cu: '+1, +2',
+    Zn: '+2',
+    Ag: '+1',
+    Au: '+1, +3',
+    Hg: '+1, +2',
+    Mn: '+2, +4, +6, +7',
+    Pb: '+2, +4'
+  };
 
   const categories = {
     alkali: { label: '碱金属', color: '#ff8d8d' },
@@ -100,6 +145,21 @@
     noble: { label: '稀有气体', color: '#8db9ff' },
     lanthanide: { label: '镧系元素', color: '#b98dff' },
     actinide: { label: '锕系元素', color: '#ff8dff' }
+  };
+
+  const getElementValence = symbol => commonValences[symbol] || '需查询';
+
+  const isDimmed = el => {
+    if (hoverCategory.value && el.category !== hoverCategory.value) return true;
+    if (searchQuery.value) {
+      const q = searchQuery.value.toLowerCase();
+      const match =
+        el.name.includes(q) ||
+        el.symbol.toLowerCase().includes(q) ||
+        el.number.toString().includes(q);
+      return !match;
+    }
+    return false;
   };
 
   const getCellStyle = el => ({
@@ -392,5 +452,42 @@
     font-size: 0.85rem;
     border-top: 1px solid var(--border);
     margin-top: 2rem;
+  }
+
+  /* Search Styles */
+  .search-bar {
+    display: flex;
+    align-items: center;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0 1rem;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    backdrop-filter: blur(12px);
+  }
+
+  .search-icon {
+    font-size: 1.2rem;
+    color: var(--text-2);
+    margin-right: 0.5rem;
+  }
+
+  .search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 1rem;
+    padding: 1rem 0;
+    outline: none;
+    font-family: inherit;
+  }
+
+  .search-input::placeholder {
+    color: var(--text-2);
+    opacity: 0.7;
   }
 </style>

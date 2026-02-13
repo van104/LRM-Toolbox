@@ -214,5 +214,65 @@
     "route": "/tools/list-to-table",
     "isLocal": true,
     "tags": ["表格", "Markdown", "HTML", "转换", "文档"]
+  },
+  {
+    "id": "lorem-ipsum",
+    "name": "乱数假文生成器",
+    "category": "text",
+    "icon": "Edit",
+    "summary": "生成排版测试专用的填充文本",
+    "description": "提供多种风格（经典拉丁语、中文流行、极客）的占位文本生成。支持按段落、句子或单词数量自定义生成内容。",
+    "usage": "1. 选择文本风格\n2. 设置生成长度\n3. 点击生成并拷贝结果",
+    "route": "/tools/lorem-ipsum",
+    "isLocal": true,
+    "tags": ["Lorem", "占位文本", "排版", "测试", "设计"]
+  },
+  {
+    "id": "slug-generator",
+    "name": "URL Slug 生成器",
+    "category": "text",
+    "icon": "Link",
+    "summary": "将标题快速转换为 URL 友好格式",
+    "description": "将中英文标题转换为标准 URL Slug。支持智能拼音转换、特殊字符过滤及自定义连接符配置。",
+    "usage": "1. 输入原始标题\n2. 实时生成 Slug 路径\n3. 获取格式化后的 URL 片段",
+    "route": "/tools/slug-generator",
+    "isLocal": true,
+    "tags": ["URL", "Slug", "SEO", "转换", "链接"]
+  },
+  {
+    "id": "camel-snake-kebab",
+    "name": "变量命名转换",
+    "category": "text",
+    "icon": "CaretRight",
+    "summary": "代码变量命名格式一键互转",
+    "description": "支持驼峰命名 (camelCase)、蛇形命名 (snake_case)、短横线命名 (kebab-case) 及帕斯卡命名 (PascalCase) 之间的批量互转。",
+    "usage": "1. 输入变量名\n2. 选择目标格式或查看全格式预览\n3. 快速应用到代码中",
+    "route": "/tools/variable-converter",
+    "isLocal": true,
+    "tags": ["代码", "变量名", "驼峰", "格式转换", "开发"]
+  },
+  {
+    "id": "braille-translator",
+    "name": "盲文转换器",
+    "category": "text",
+    "icon": "Loading",
+    "summary": "中文/英文与盲文互转工具",
+    "description": "实现文字与六点盲文 (Braille) 之间的双向翻译。支持注音参考，方便盲文学习与特殊设计需求。",
+    "usage": "1. 输入文字或点击盲文符号\n2. 实时查看双向转换结果\n3. 适合特殊辅助与无障碍设计参考",
+    "route": "/tools/braille-translator",
+    "isLocal": true,
+    "tags": ["盲文", "Braille", "翻译", "无障碍", "教育"]
+  },
+  {
+    "id": "ascii-table",
+    "name": "ASCII 码对照表",
+    "category": "text",
+    "icon": "Collection",
+    "summary": "完整的 ASCII/扩展 ASCII 对照参考",
+    "description": "提供完整的 0-255 ASCII 字符对照表。支持二进制、八进制、十六进制、十进制与 HTML 实体编码的快速检索查询。",
+    "usage": "1. 在表格中查找目标字符\n2. 通过搜索框快速滤定位\n3. 点击编码一键复制",
+    "route": "/tools/ascii-table",
+    "isLocal": true,
+    "tags": ["ASCII", "对照表", "编码", "十六进制", "开发"]
   }
 ]

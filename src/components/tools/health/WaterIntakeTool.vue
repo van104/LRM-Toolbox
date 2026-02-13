@@ -29,6 +29,13 @@
                 <el-option label="高强度" value="high" />
               </el-select>
             </el-form-item>
+            <el-form-item label="当前季节">
+              <el-select v-model="config.season" style="width: 100%">
+                <el-option label="春 / 秋 (温暖)" value="normal" />
+                <el-option label="夏季 (炎热)" value="hot" />
+                <el-option label="冬季 (寒冷)" value="cold" />
+              </el-select>
+            </el-form-item>
             <el-divider />
             <div class="goal-info">
               <p class="label">每日建议饮水量</p>
@@ -141,7 +148,8 @@
 
   const config = reactive({
     weight: 65,
-    activityLevel: 'low'
+    activityLevel: 'low',
+    season: 'normal'
   });
 
   const todayTotal = ref(0);
@@ -155,6 +163,12 @@
     let base = config.weight * 35;
     if (config.activityLevel === 'med') base += 500;
     if (config.activityLevel === 'high') base += 1000;
+
+    // Season adjustment
+    if (config.season === 'hot') base += 500;
+    // Cold weather might increase need due to dry air or decrease, but generally we stick to base or slight increase for dry heat.
+    // Usually standard advice: Drink more in hot weather.
+
     return base;
   });
 
@@ -219,7 +233,7 @@
     }
   });
 
-  watch([() => config.weight, () => config.activityLevel], saveData);
+  watch([() => config.weight, () => config.activityLevel, () => config.season], saveData);
 </script>
 
 <style scoped>

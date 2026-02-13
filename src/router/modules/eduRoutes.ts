@@ -61,6 +61,61 @@ const eduRoutes: RouteRecordRaw[] = [
     path: '/tools/copybook-generator',
     name: 'CopybookGeneratorTool',
     component: () => import('@/components/tools/edu/CopybookGeneratorTool.vue')
+  },
+  {
+    path: '/tools/gcd-lcm',
+    name: 'GcdLcmTool',
+    component: () => import('@/components/tools/edu/GcdLcmTool.vue')
+  },
+  {
+    path: '/tools/root-calculator',
+    name: 'RootCalculatorTool',
+    component: () => import('@/components/tools/edu/RootCalculatorTool.vue')
+  },
+  {
+    path: '/tools/arithmetic-series',
+    name: 'ArithmeticSeriesTool',
+    component: () => import('@/components/tools/edu/ArithmeticSeriesTool.vue')
+  },
+  {
+    path: '/tools/unit-dimension',
+    name: 'UnitDimensionTool',
+    component: () => import('@/components/tools/edu/UnitDimensionTool.vue')
+  },
+  {
+    path: '/tools/resistor-color-code',
+    name: 'ResistorColorCodeTool',
+    component: () => import('@/components/tools/edu/ResistorColorCodeTool.vue')
+  },
+  {
+    path: '/tools/voltage-power',
+    name: 'VoltagePowerTool',
+    component: () => import('@/components/tools/edu/VoltagePowerTool.vue')
+  },
+  {
+    path: '/tools/concentration',
+    name: 'ConcentrationTool',
+    component: () => import('@/components/tools/edu/ConcentrationTool.vue')
+  },
+  {
+    path: '/tools/citation-generator',
+    name: 'CitationGeneratorTool',
+    component: () => import('@/components/tools/edu/CitationGeneratorTool.vue')
+  },
+  {
+    path: '/tools/function-grapher',
+    name: 'FunctionGrapherTool',
+    component: () => import('@/components/tools/edu/FunctionGrapherTool.vue')
+  },
+  {
+    path: '/tools/base-calculator',
+    name: 'BaseCalculatorTool',
+    component: () => import('@/components/tools/edu/BaseCalculatorTool.vue')
+  },
+  {
+    path: '/tools/roman-numeral',
+    name: 'RomanNumeralTool',
+    component: () => import('@/components/tools/edu/RomanNumeralTool.vue')
   }
 ];
 

@@ -383,5 +383,53 @@
     "route": "/tools/blood-type",
     "isLocal": true,
     "tags": ["血型", "遗传", "生物", "科普", "父母"]
+  },
+  {
+    "id": "morse-code",
+    "name": "摩斯密码翻译器",
+    "category": "fun",
+    "icon": "ChatLineRound",
+    "summary": "文字与摩斯密码互转",
+    "description": "提供文字与摩斯密码的双向转换，内置标准电码表，支持音频播放摩斯电码，可调节语速和音调。",
+    "usage": "1. 输入文字或摩斯电码\n2. 点击转换按钮查看结果\n3. 点击播放按钮听取电码声音",
+    "route": "/tools/morse-code",
+    "isLocal": true,
+    "tags": ["摩斯密码", "翻译", "加密", "电报", "电码"]
+  },
+  {
+    "id": "truth-dare",
+    "name": "真心话大冒险",
+    "category": "fun",
+    "icon": "Smoking",
+    "summary": "聚会必备真心话大冒险生成器",
+    "description": "海量真心话与大冒险题目库，支持按聚会场景（同学/情侣/同事）筛选，随机抽取，拒绝尴尬，活跃氛围。",
+    "usage": "1. 选择题目分类和场景\n2. 点击\"真心话\"或\"大冒险\"按钮随机抽取题目\n3. 按照抽中题目进行惩罚或回答",
+    "route": "/tools/truth-dare",
+    "isLocal": true,
+    "tags": ["社交", "聚会", "真心话", "大冒险", "娱乐"]
+  },
+  {
+    "id": "white-noise",
+    "name": "白噪音生成器",
+    "category": "fun",
+    "icon": "Headset",
+    "summary": "助眠、专注的背景音效",
+    "description": "内置雨声、森林、海浪、篝火、咖啡馆等多种高品质白噪音音效。支持多音效叠加混合，内置定时器功能，助力专注与睡眠。",
+    "usage": "1. 选择一个或多个音效滑块控制音量\n2. 调节音效混合比例\n3. 设置定时关闭时间（可选）",
+    "route": "/tools/white-noise",
+    "isLocal": true,
+    "tags": ["音频", "噪音", "白噪音", "专注", "助眠", "放松"]
+  },
+  {
+    "id": "spinner-wheel",
+    "name": "决策大转盘",
+    "category": "fun",
+    "icon": "ColdDrink",
+    "summary": "纠结症克星，快速决策小工具",
+    "description": "针对\"中午吃什么\"、\"谁去拿快递\"等生活小纠结。内置多种模板，支持一键切换选项，极速转出结果，让选择不再困难。",
+    "usage": "1. 选择一个预设模版（如餐饮、活动等）\n2. 如有需要可自定义修改选项列表\n3. 点击或滑动转盘获取决策结果",
+    "route": "/tools/spinner-wheel",
+    "isLocal": true,
+    "tags": ["决策", "选择", "大转盘", "抽取", "生活工具"]
   }
 ]

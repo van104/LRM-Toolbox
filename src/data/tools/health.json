@@ -118,5 +118,65 @@
     "route": "/tools/metronome",
     "isLocal": true,
     "tags": ["节拍器", "音乐", "BPM", "节奏", "乐器"]
+  },
+  {
+    "id": "food-gi",
+    "name": "食物升糖指数速查",
+    "category": "health",
+    "icon": "Apple",
+    "summary": "常见食物 GI 值查询与其他饮食参考",
+    "description": "提供常见主食、水果、蔬菜的升糖指数（GI）查询，帮助糖尿病人和控糖人群科学选择食物。",
+    "usage": "1. 输入食物名称进行搜索\n2. 点击筛选查看低/中/高 GI 食物\n3. 查看详细的升糖等级颜色标识",
+    "route": "/tools/food-gi",
+    "isLocal": true,
+    "tags": ["GI", "升糖", "饮食", "健康", "控糖"]
+  },
+  {
+    "id": "food-compatibility",
+    "name": "食材相克简易参考",
+    "category": "health",
+    "icon": "Search",
+    "summary": "食材搭配宜忌快速查询",
+    "description": "输入两种食材，快速查询民间流传的相克说法。科学辟谣，理性参考，助您吃得安心。",
+    "usage": "1. 输入食材 A 和食材 B\n2. 点击查询按钮\n3. 跳转搜索引擎查看相关说法",
+    "route": "/tools/food-compatibility",
+    "isLocal": true,
+    "tags": ["相克", "食材", "饮食", "百科"]
+  },
+  {
+    "id": "alcohol-metabolism",
+    "name": "酒精代谢时间估算",
+    "category": "health",
+    "icon": "Coffee",
+    "summary": "饮酒代谢时间与安全驾驶参考",
+    "description": "基于 Widmark 公式估算体内酒精含量及代谢所需时间。输入饮酒量和度数，了解身体代谢进度，拒绝酒驾，安全出行。",
+    "usage": "1. 输入您的体重和性别\n2. 添加饮酒记录（酒精度与饮用量）\n3. 查看预计代谢时长和 BAC 估算值",
+    "route": "/tools/alcohol-metabolism",
+    "isLocal": true,
+    "tags": ["酒精", "代驾", "安全", "代谢", "计算"]
+  },
+  {
+    "id": "sleep-cycle",
+    "name": "睡眠周期计算器",
+    "category": "health",
+    "icon": "Moon",
+    "summary": "科学睡眠时间规划",
+    "description": "基于 90 分钟睡眠周期理论，为您推荐最佳入睡或起床时间。避开深度睡眠期被唤醒的痛苦，醒来神清气爽。",
+    "usage": "1. 选择“我要按时起床”或“我现在要睡觉”模式\n2. 设定目标时间\n3. 获取多个推荐的时间点，选择最适合您的作息",
+    "route": "/tools/sleep-cycle",
+    "isLocal": true,
+    "tags": ["睡眠", "周期", "健康", "作息", "起床"]
+  },
+  {
+    "id": "heart-rate",
+    "name": "心率区间计算器",
+    "category": "health",
+    "icon": "Aim",
+    "summary": "运动强度与燃脂心率查询",
+    "description": "通过年龄估算最大心率，划分燃脂、有氧、无氧等 5 个心率区间。帮助您在运动中保持正确强度，科学训练。",
+    "usage": "1. 输入年龄\n2. 查看自动计算的各个心率区间范围\n3. 了解不同区间的训练效果",
+    "route": "/tools/heart-rate",
+    "isLocal": true,
+    "tags": ["心率", "运动", "燃脂", "健身", "健康"]
   }
 ]

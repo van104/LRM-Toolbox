@@ -51,6 +51,31 @@ const designRoutes: RouteRecordRaw[] = [
     path: '/tools/favicon-generator',
     name: 'FaviconGeneratorTool',
     component: () => import('@/components/tools/design/FaviconGeneratorTool.vue')
+  },
+  {
+    path: '/tools/gradient-generator',
+    name: 'GradientGeneratorTool',
+    component: () => import('@/components/tools/design/GradientGeneratorTool.vue')
+  },
+  {
+    path: '/tools/contrast-checker',
+    name: 'ContrastCheckerTool',
+    component: () => import('@/components/tools/design/ContrastCheckerTool.vue')
+  },
+  {
+    path: '/tools/golden-ratio',
+    name: 'GoldenRatioTool',
+    component: () => import('@/components/tools/design/GoldenRatioTool.vue')
+  },
+  {
+    path: '/tools/social-media-sizes',
+    name: 'SocialMediaSizesTool',
+    component: () => import('@/components/tools/design/SocialMediaSizesTool.vue')
+  },
+  {
+    path: '/tools/svg-optimizer',
+    name: 'SvgOptimizerTool',
+    component: () => import('@/components/tools/design/SvgOptimizerTool.vue')
   }
 ];
 

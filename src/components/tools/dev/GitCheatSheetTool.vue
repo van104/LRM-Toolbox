@@ -61,10 +61,9 @@
 <script setup>
   import { ref, computed } from 'vue';
   import { Back, CopyDocument, Collection, InfoFilled } from '@element-plus/icons-vue';
-  import { ElMessage } from 'element-plus';
-  import useClipboard from 'vue-clipboard3';
+  import { useCopy } from '@/composables/useCopy';
 
-  const { toClipboard } = useClipboard();
+  const { copyToClipboard } = useCopy();
   const searchQuery = ref('');
 
   const gitData = [
@@ -159,12 +158,9 @@
   });
 
   const copyCode = async code => {
-    try {
-      await toClipboard(code);
-      ElMessage.success({ message: '已复制: ' + code, duration: 2000 });
-    } catch {
-      ElMessage.error('复制失败');
-    }
+    await copyToClipboard(code, {
+      success: '已复制: ' + code
+    });
   };
 </script>
 

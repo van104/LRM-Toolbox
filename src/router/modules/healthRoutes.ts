@@ -51,6 +51,31 @@ const healthRoutes: RouteRecordRaw[] = [
     path: '/tools/calorie-calculator',
     name: 'CalorieCalculatorTool',
     component: () => import('@/components/tools/health/CalorieCalculatorTool.vue')
+  },
+  {
+    path: '/tools/food-gi',
+    name: 'FoodGITool',
+    component: () => import('@/components/tools/health/FoodGITool.vue')
+  },
+  {
+    path: '/tools/food-compatibility',
+    name: 'FoodCompatibilityTool',
+    component: () => import('@/components/tools/health/FoodCompatibilityTool.vue')
+  },
+  {
+    path: '/tools/alcohol-metabolism',
+    name: 'AlcoholMetabolismTool',
+    component: () => import('@/components/tools/health/AlcoholMetabolismTool.vue')
+  },
+  {
+    path: '/tools/sleep-cycle',
+    name: 'SleepCycleTool',
+    component: () => import('@/components/tools/health/SleepCycleTool.vue')
+  },
+  {
+    path: '/tools/heart-rate',
+    name: 'HeartRateZoneTool',
+    component: () => import('@/components/tools/health/HeartRateZoneTool.vue')
   }
 ];
 

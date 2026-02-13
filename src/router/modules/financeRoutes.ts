@@ -46,6 +46,26 @@ const financeRoutes: RouteRecordRaw[] = [
     path: '/tools/profit-loss-calculator',
     name: 'ProfitLossCalculatorTool',
     component: () => import('@/components/tools/finance/ProfitLossCalculatorTool.vue')
+  },
+  {
+    path: '/tools/interest-free',
+    name: 'InterestFreePeriodTool',
+    component: () => import('@/components/tools/finance/InterestFreePeriodTool.vue')
+  },
+  {
+    path: '/tools/sip-calculator',
+    name: 'SipCalculatorTool',
+    component: () => import('@/components/tools/finance/SipCalculatorTool.vue')
+  },
+  {
+    path: '/tools/installment-calculator',
+    name: 'InstallmentCalculatorTool',
+    component: () => import('@/components/tools/finance/InstallmentCalculatorTool.vue')
+  },
+  {
+    path: '/tools/red-packet',
+    name: 'RedPacketTool',
+    component: () => import('@/components/tools/finance/RedPacketTool.vue')
   }
 ];
 

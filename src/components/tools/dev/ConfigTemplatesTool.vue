@@ -78,10 +78,9 @@
 <script setup>
   import { ref, computed } from 'vue';
   import { Back, CopyDocument } from '@element-plus/icons-vue';
-  import { ElMessage } from 'element-plus';
-  import useClipboard from 'vue-clipboard3';
+  import { useCopy } from '@/composables/useCopy';
 
-  const { toClipboard } = useClipboard();
+  const { copyToClipboard } = useCopy();
 
   const selectedType = ref('nginx-proxy');
   const vars = ref({
@@ -178,12 +177,9 @@ volumes:
   });
 
   const copyCode = async () => {
-    try {
-      await toClipboard(generatedCode.value);
-      ElMessage.success('配置已复制到剪贴板');
-    } catch {
-      ElMessage.error('复制失败');
-    }
+    await copyToClipboard(generatedCode.value, {
+      success: '配置已复制到剪贴板'
+    });
   };
 </script>
 

@@ -136,7 +136,8 @@
 
   .card-tags-row {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* 强制不换行，防止撑高 */
+    overflow: hidden;
     gap: 0.3rem;
     margin-top: 1rem;
     position: relative;
@@ -189,8 +190,12 @@
     margin-bottom: 0.25rem;
     color: var(--text-primary);
     line-height: 1.4;
-    padding-right: 4.5rem;
+    padding-right: 3.5rem; /* 减小右侧间距，预留给按钮 */
     transform: translateZ(30px);
+    /* 强制标题单行，防止撑开卡片高度 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .card-summary {

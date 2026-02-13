@@ -52,6 +52,12 @@
               </div>
             </template>
           </el-input>
+
+          <div v-if="isDev" class="test-bench-entry">
+            <el-button type="primary" round :icon="Tools" @click="router.push('/test-bench')">
+              进入开发测试台 (Sandbox)
+            </el-button>
+          </div>
         </div>
       </section>
 
@@ -133,7 +139,8 @@
     Service,
     Coffee,
     Notebook,
-    IceTea
+    IceTea,
+    Tools
   } from '@element-plus/icons-vue';
   import AppHeader from '@/components/layout/AppHeader.vue';
   import AppFooter from '@/components/layout/AppFooter.vue';
@@ -152,6 +159,7 @@
   const userStore = useUserStore();
   const { t } = useI18n();
 
+  const isDev = import.meta.env.DEV;
   const activeCategory = ref(route.query.category || 'all');
   const searchKeyword = ref('');
   const modalVisible = ref(false);
@@ -350,6 +358,29 @@
     padding: 0 1rem;
     position: relative;
     z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .test-bench-entry {
+    margin-top: 0.5rem;
+  }
+
+  .test-bench-entry :deep(.el-button) {
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    border: none;
+    padding: 12px 24px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    transition: all 0.3s;
+  }
+
+  .test-bench-entry :deep(.el-button):hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+    opacity: 0.9;
   }
 
   .hero-search-input {

@@ -202,5 +202,89 @@
     "route": "/tools/timer",
     "isLocal": true,
     "tags": ["计时器", "倒计时", "秒表", "时间管理", "提醒"]
+  },
+  {
+    "id": "soup-timer",
+    "name": "煲汤时长计算器",
+    "category": "life",
+    "icon": "Timer",
+    "summary": "食材类型与烹饪时长推荐",
+    "description": "按肉类、骨类、菌菇、素菜等分类，提供最佳煲汤烹饪时长建议与小贴士，助您煲出营养美味好汤。",
+    "usage": "1. 选择食材类别（如“肉类”、“菌菇”）\n2. 查看对应食材的最佳煲煮时间\n3. 参考下方的烹饪小贴士",
+    "route": "/tools/soup-timer",
+    "isLocal": true,
+    "tags": ["煲汤", "烹饪", "时长", "厨房", "美食"]
+  },
+  {
+    "id": "timezone-planner",
+    "name": "世界时区会议规划",
+    "category": "life",
+    "icon": "Clock",
+    "summary": "多城时区对比与会议时间规划",
+    "description": "一目了然对比全球多个城市的本地时间，智能推荐最适合开启跨国会议的“绿色”时间段，避免在深夜打扰同事。",
+    "usage": "1. 添加需要对比的城市\n2. 拖动时间滑块同步查看各城时间\n3. 查看智能推荐的最佳会议时段",
+    "route": "/tools/timezone-planner",
+    "isLocal": true,
+    "tags": ["时区", "世界时间", "会议", "规划", "跨国"]
+  },
+  {
+    "id": "age-calculator",
+    "name": "精确年龄计算器",
+    "category": "life",
+    "icon": "User",
+    "summary": "精确到秒的周岁、虚岁与时间长度",
+    "description": "不仅能算出您的周岁和虚岁，还能精确展示您已经在地球上生活了多少年、月、日、小时甚至秒，并推算下一个生日的倒计时。",
+    "usage": "1. 输入您的出生日期和具体时间\n2. 查看多维度的年龄统计结果\n3. 了解您的生肖、星座及生日统计数据",
+    "route": "/tools/age-calculator",
+    "isLocal": true,
+    "tags": ["年龄", "生日", "时间计算", "周岁", "虚岁"]
+  },
+  {
+    "id": "fuel-cost",
+    "name": "燃油费用计算器",
+    "category": "life",
+    "icon": "Van",
+    "summary": "自驾出行油费估算与成本分析",
+    "description": "根据单价、油耗量和行驶路程，快速计算自驾出行的燃油成本。支持多线路成本对比，帮助您更好地规划出行预算。",
+    "usage": "1. 输入油价、平均油耗及拟行驶里程\n2. 实时获取预计总油费和每公里成本\n3. 支持分摊人头计算每人成本",
+    "route": "/tools/fuel-cost",
+    "isLocal": true,
+    "tags": ["油费", "自驾", "出行", "成本", "计算器"]
+  },
+  {
+    "id": "tip-splitter",
+    "name": "小费/分账计算器",
+    "category": "life",
+    "icon": "Money",
+    "summary": "聚餐买单、小费与分账快速计算",
+    "description": "快速计算餐后小费及多人分账报销。支持自定义小费比例，支持平均分摊或指定人数，让买单过程简单透明。",
+    "usage": "1. 输入账单总金额\n2. 选择或自定义小费百分比\n3. 输入用餐人数\n4. 查看总计及每人应付金额",
+    "route": "/tools/tip-splitter",
+    "isLocal": true,
+    "tags": ["分账", "小费", "聚餐", "账单", "买单"]
+  },
+  {
+    "id": "car-loan",
+    "name": "汽车贷款计算器",
+    "category": "life",
+    "icon": "CreditCard",
+    "summary": "车贷还款计划与月供精准计算",
+    "description": "支持等额本息、等额本金两种主流还款方式。计算购车总成本、首付、利息及每月具体的还款明细，助您理智选车。",
+    "usage": "1. 输入车辆总价、首比例及贷款利率\n2. 选择分期年限与还款方式\n3. 查看详细的月供金额及利息总支出",
+    "route": "/tools/car-loan",
+    "isLocal": true,
+    "tags": ["车贷", "贷款", "购车", "金融", "还款计划"]
+  },
+  {
+    "id": "instrument-tuner",
+    "name": "乐器调音器",
+    "category": "life",
+    "icon": "Bell",
+    "summary": "吉他、小提琴等多种乐器在线调音",
+    "description": "使用麦克风实时检测音高。提供高精度的频率识别，支持吉他标调、尤克里里、小提琴等多种预设，助力乐手精准调音。",
+    "usage": "1. 允许浏览器使用麦克风权限\n2. 拨动琴弦或发声\n3. 根据界面指示（偏高或偏低）调整音高",
+    "route": "/tools/instrument-tuner",
+    "isLocal": true,
+    "tags": ["调音器", "乐器", "音乐", "吉他", "频率检测"]
   }
 ]

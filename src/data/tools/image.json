@@ -155,5 +155,66 @@
     "route": "/tools/gif-maker",
     "isLocal": true,
     "tags": ["GIF", "动图", "合成", "制作", "动画"]
+  },
+  {
+    "id": "exif-viewer",
+    "name": "图片 EXIF 查看/移除",
+    "category": "image",
+    "icon": "InfoFilled",
+    "summary": "查看和清除图片 EXIF 元数据",
+    "description": "专业的图片元数据管理工具。可以读取图片的拍摄时间、相机型号、曝光参数、GPS 地理位置等 EXIF 信息，并支持一键擦除隐私元数据。",
+    "usage": "1. 上传图片\n2. 查看解析出的 EXIF 数据\n3. 点击“移除元数据”并保存图片",
+    "route": "/tools/exif-viewer",
+    "isLocal": true,
+    "tags": ["EXIF", "元数据", "隐私", "信息"]
+  },
+  {
+    "id": "ico-converter",
+    "name": "ICO 图标转换器",
+    "category": "image",
+    "icon": "Picture",
+    "summary": "生成各种尺寸的 Windows ICO 图标",
+    "description": "一键将图片转换为 ICO 格式图标。支持 16x16 到 256x256 多种常用规格，可合并多尺寸到一个文件，适合网站 Favicon 或软件图标制作。",
+    "usage": "1. 上传图片（推荐正方形）\n2. 选择需要的图标尺寸\n3. 点击“生成 ICO”并下载",
+    "route": "/tools/ico-converter",
+    "isLocal": true,
+    "tags": ["ICO", "图标", "Favicon", "格式转换"]
+  },
+  {
+    "id": "id-photo-maker",
+    "name": "证件照制作",
+    "category": "image",
+    "icon": "User",
+    "summary": "快速制作标准证件照、背景替换",
+    "description": "智能证件照处理工具。内置一寸、二寸、签证等多种标准规格，支持智能抠图替换背景色（红、蓝、白），导出高清电子版。",
+    "usage": "1. 上传人像照片\n2. 选择证件规格和背景颜色\n3. 调整位置并下载结果",
+    "route": "/tools/id-photo-maker",
+    "isLocal": true,
+    "tags": ["证件照", "裁剪", "背景", "照片"]
+  },
+  {
+    "id": "video-to-gif",
+    "name": "视频转 GIF",
+    "category": "image",
+    "icon": "VideoCamera",
+    "summary": "截取视频片段并转换为 GIF 动图",
+    "description": "支持将 MP4、WebM 视频片段制作成 GIF。可精确控制开始与结束时间、帧率和缩放尺寸，生成高质量的动态表情包或演示动图。",
+    "usage": "1. 上传视频文件\n2. 选取时间段和参数\n3. 点击“生成 GIF”并保存",
+    "route": "/tools/video-to-gif",
+    "isLocal": true,
+    "tags": ["视频", "GIF", "动图", "视频剪辑"]
+  },
+  {
+    "id": "image-grid-splitter",
+    "name": "图片九宫格切图",
+    "category": "image",
+    "icon": "Grid",
+    "summary": "将图片垂直水平切割为多块网格",
+    "description": "图片创意切割工具。支持 3x3 九宫格、2x2 四宫格或自定义行列切割。适用于朋友圈、小红书等社交平台的组合排版发布。",
+    "usage": "1. 上传一张大图\n2. 选择切割行列数量\n3. 点击“开始切图”并打包下载",
+    "route": "/tools/image-grid-splitter",
+    "isLocal": true,
+    "tags": ["切图", "九宫格", "网格", "排版", "社交媒体"]
   }
 ]
+

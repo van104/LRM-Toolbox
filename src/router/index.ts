@@ -53,6 +53,11 @@ const pageRoutes: RouteRecordRaw[] = [
     path: '/changelog',
     name: 'Changelog',
     component: () => import('@/views/pages/Changelog.vue')
+  },
+  {
+    path: '/test-bench',
+    name: 'TestBench',
+    component: () => import('@/views/ToolTestBench.vue')
   }
 ];
 

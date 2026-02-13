@@ -93,6 +93,41 @@
         </div>
       </section>
 
+      <section class="meal-plan-card glass-card">
+        <div class="section-title">
+          <el-icon><KnifeFork /></el-icon>
+          三餐热量分配建议
+        </div>
+
+        <div class="meal-config">
+          <div class="config-row">
+            <span class="label">分配比例:</span>
+            <div class="ratio-chips">
+              <button :class="{ active: mealRatio === '3:4:3' }" @click="mealRatio = '3:4:3'">
+                3:4:3 (均衡)
+              </button>
+              <button :class="{ active: mealRatio === '4:4:2' }" @click="mealRatio = '4:4:2'">
+                4:4:2 (早午丰盛)
+              </button>
+              <button :class="{ active: mealRatio === '3:3:3:1' }" @click="mealRatio = '3:3:3:1'">
+                3:3:3:1 (加餐)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="meal-grid">
+          <div v-for="(meal, idx) in currentMealPlan" :key="idx" class="meal-card">
+            <div class="m-header">
+              <span class="m-icon">{{ meal.icon }}</span>
+              <span class="m-name">{{ meal.name }}</span>
+            </div>
+            <div class="m-cal">{{ meal.cal }} kcal</div>
+            <div class="m-ratio">{{ meal.ratio }}%</div>
+          </div>
+        </div>
+      </section>
+
       <section class="food-card glass-card">
         <div class="section-title">
           <el-icon>
@@ -184,7 +219,16 @@
 
 <script setup>
   import { ref, computed } from 'vue';
-  import { Back, Odometer, Bowl, Search, Plus, Close, InfoFilled } from '@element-plus/icons-vue';
+  import {
+    Back,
+    Odometer,
+    Bowl,
+    Search,
+    Plus,
+    Close,
+    InfoFilled,
+    KnifeFork
+  } from '@element-plus/icons-vue';
 
   const gender = ref('male');
   const age = ref('');
@@ -208,6 +252,37 @@
   const tdee = computed(() => {
     if (!bmr.value) return 0;
     return Math.round(bmr.value * parseFloat(activity.value));
+  });
+
+  // Meal Splitter Logic
+  const mealRatio = ref('3:4:3');
+
+  const currentMealPlan = computed(() => {
+    const total = tdee.value || 2000; // Default to 2000 if no TDEE
+    let plan = [];
+
+    if (mealRatio.value === '3:4:3') {
+      plan = [
+        { name: '早餐', icon: '🍳', ratio: 30, cal: Math.round(total * 0.3) },
+        { name: '午餐', icon: '🍱', ratio: 40, cal: Math.round(total * 0.4) },
+        { name: '晚餐', icon: '🥗', ratio: 30, cal: Math.round(total * 0.3) }
+      ];
+    } else if (mealRatio.value === '4:4:2') {
+      plan = [
+        { name: '早餐', icon: '🍳', ratio: 40, cal: Math.round(total * 0.4) },
+        { name: '午餐', icon: '🍱', ratio: 40, cal: Math.round(total * 0.4) },
+        { name: '晚餐', icon: '🥗', ratio: 20, cal: Math.round(total * 0.2) }
+      ];
+    } else if (mealRatio.value === '3:3:3:1') {
+      plan = [
+        { name: '早餐', icon: '🍳', ratio: 30, cal: Math.round(total * 0.3) },
+        { name: '午餐', icon: '🍱', ratio: 30, cal: Math.round(total * 0.3) },
+        { name: '晚餐', icon: '🥗', ratio: 30, cal: Math.round(total * 0.3) },
+        { name: '加餐', icon: '🍎', ratio: 10, cal: Math.round(total * 0.1) }
+      ];
+    }
+
+    return plan;
   });
 
   const searchQuery = ref('');
@@ -418,6 +493,77 @@
     background: var(--text);
     color: white;
     border-color: var(--text);
+  }
+
+  /* Meal Plan Styles */
+  .meal-config {
+    margin-bottom: 1.5rem;
+  }
+
+  .config-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .ratio-chips {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .ratio-chips button {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--text-2);
+    transition: all 0.2s;
+  }
+
+  .ratio-chips button.active {
+    background: var(--text);
+    color: white;
+    border-color: var(--text);
+  }
+
+  .meal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+  }
+
+  .meal-card {
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .m-header {
+    font-size: 0.9rem;
+    color: var(--text-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+  }
+
+  .m-cal {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .m-ratio {
+    font-size: 0.75rem;
+    color: #aaa;
   }
 
   .tdee-result {

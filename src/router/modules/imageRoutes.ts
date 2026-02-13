@@ -54,6 +54,26 @@ const imageRoutes: RouteRecordRaw[] = [
   {
     path: '/tools/bg-remover',
     component: () => import('@/components/tools/image/ImageBgRemoverTool.vue')
+  },
+  {
+    path: '/tools/exif-viewer',
+    component: () => import('@/components/tools/image/ExifViewerTool.vue')
+  },
+  {
+    path: '/tools/ico-converter',
+    component: () => import('@/components/tools/image/IcoConverterTool.vue')
+  },
+  {
+    path: '/tools/id-photo-maker',
+    component: () => import('@/components/tools/image/IdPhotoMakerTool.vue')
+  },
+  {
+    path: '/tools/video-to-gif',
+    component: () => import('@/components/tools/image/VideoToGifTool.vue')
+  },
+  {
+    path: '/tools/image-grid-splitter',
+    component: () => import('@/components/tools/image/ImageGridSplitterTool.vue')
   }
 ];
 

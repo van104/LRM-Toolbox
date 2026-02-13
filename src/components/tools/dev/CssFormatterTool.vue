@@ -73,12 +73,12 @@
   import { ElMessage } from 'element-plus';
   import { ArrowLeft, Delete, MagicStick, Files, CopyDocument } from '@element-plus/icons-vue';
   import jsBeautify from 'js-beautify';
-  import useClipboard from 'vue-clipboard3';
+  import { useCopy } from '@/composables/useCopy';
 
   const cssBeautify = jsBeautify.css;
 
   const router = useRouter();
-  const { toClipboard } = useClipboard();
+  const { copyToClipboard } = useCopy();
 
   const cssContent = ref('');
   const indentSize = ref(2);
@@ -124,12 +124,9 @@
 
   async function copyResult() {
     if (!cssContent.value) return;
-    try {
-      await toClipboard(cssContent.value);
-      ElMessage.success('已复制');
-    } catch {
-      ElMessage.error('复制失败');
-    }
+    await copyToClipboard(cssContent.value, {
+      success: '已复制'
+    });
   }
 
   function goBack() {
