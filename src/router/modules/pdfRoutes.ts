@@ -96,6 +96,26 @@ const pdfRoutes: RouteRecordRaw[] = [
     path: '/tools/pdf-attachment-extractor',
     name: 'PdfAttachmentExtractor',
     component: () => import('@/components/tools/pdf/PdfAttachmentExtractorTool.vue')
+  },
+  {
+    path: '/tools/pdf-accessibility-check',
+    name: 'PdfAccessibilityCheck',
+    component: () => import('@/components/tools/pdf/PdfAccessibilityCheckTool.vue')
+  },
+  {
+    path: '/tools/pdf-to-epub',
+    name: 'PdfToEpub',
+    component: () => import('@/components/tools/pdf/PdfToEpubTool.vue')
+  },
+  {
+    path: '/tools/pdf-comparison',
+    name: 'PdfComparison',
+    component: () => import('@/components/tools/pdf/PdfComparisonTool.vue')
+  },
+  {
+    path: '/tools/web-to-pdf',
+    name: 'WebToPdf',
+    component: () => import('@/components/tools/pdf/WebToPdfTool.vue')
   }
 ];
 

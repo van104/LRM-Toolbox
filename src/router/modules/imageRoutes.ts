@@ -74,6 +74,22 @@ const imageRoutes: RouteRecordRaw[] = [
   {
     path: '/tools/image-grid-splitter',
     component: () => import('@/components/tools/image/ImageGridSplitterTool.vue')
+  },
+  {
+    path: '/tools/corner-clipper',
+    component: () => import('@/components/tools/image/CornerClipperTool.vue')
+  },
+  {
+    path: '/tools/svg-path-editor',
+    component: () => import('@/components/tools/image/SvgPathEditorTool.vue')
+  },
+  {
+    path: '/tools/metadata-cleaner',
+    component: () => import('@/components/tools/image/MetadataCleanerTool.vue')
+  },
+  {
+    path: '/tools/chromatic-aberration',
+    component: () => import('@/components/tools/image/ChromaticAberrationTool.vue')
   }
 ];
 

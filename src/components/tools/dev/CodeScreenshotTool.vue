@@ -129,9 +129,10 @@
 
                 <!-- 代码区域 -->
                 <div class="window-body">
-                  <pre
-                    :class="`language-${language.toLowerCase()}`"
-                  ><code v-html="highlightedCode"></code></pre>
+                  <pre :class="`language-${language.toLowerCase()}`">
+                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    <code v-html="highlightedCode"></code>
+                  </pre>
                 </div>
               </div>
             </div>
@@ -224,9 +225,11 @@ const getUser = (id: number): User => {
     message = "Hello, LRM Toolbox!"
     print(message)
     return True`,
-    Go: `package main
+    Go:
+      `package main
 
-import "fmt"
+` +
+      `import "fmt"
 
 func main() {
     fmt.Println("Hello, LRM Toolbox!")

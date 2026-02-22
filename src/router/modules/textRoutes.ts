@@ -98,6 +98,26 @@ const textRoutes: RouteRecordRaw[] = [
   {
     path: '/tools/ascii-table',
     component: () => import('@/components/tools/text/AsciiTableTool.vue')
+  },
+  {
+    path: '/tools/sensitive-word-check',
+    name: 'SensitiveWordCheckTool',
+    component: () => import('@/components/tools/text/SensitiveWordCheckTool.vue')
+  },
+  {
+    path: '/tools/text-polisher',
+    name: 'TextPolisherTool',
+    component: () => import('@/components/tools/text/TextPolisherTool.vue')
+  },
+  {
+    path: '/tools/copywriting-guide',
+    name: 'CopywritingGuideTool',
+    component: () => import('@/components/tools/text/CopywritingGuideTool.vue')
+  },
+  {
+    path: '/tools/md-table-converter',
+    name: 'MdTableConverterTool',
+    component: () => import('@/components/tools/text/MdTableConverterTool.vue')
   }
 ];
 

@@ -24,6 +24,54 @@
     "tags": ["汇率", "货币", "换算", "金融", "旅行"]
   },
   {
+    "id": "travel-checklist",
+    "name": "旅行打包清单",
+    "category": "life",
+    "icon": "Suitcase",
+    "summary": "不同目的地的行李核对单",
+    "description": "提供海边、登山、出国、商务等不同场景的打包清单模板。支持自定义添加物品，进度实时保存，确保出行无遗漏。",
+    "usage": "1. 选择旅行场景（海边/登山/出国等）\n2. 浏览预设清单，勾选已打包物品\n3. 可手动添加个性化物品\n4. 一键重置或复制清单",
+    "route": "/tools/travel-checklist",
+    "isLocal": true,
+    "tags": ["旅行", "清单", "打包", "出行", "整理"]
+  },
+  {
+    "id": "first-aid-manual",
+    "name": "家庭急救手册",
+    "category": "life",
+    "icon": "FirstAidKit",
+    "summary": "常见急救措施极简指南",
+    "description": "提供气管异物、烫伤、扭伤、心脏骤停等常见突发状况的急救指引。图文并茂，步骤清晰，关键时刻的救命助手。",
+    "usage": "1. 在首页快速搜索或选择急救场景\n2. 按照步骤图示进行处理\n3. 注意：仅供参考，紧急情况请务必拨打急救电话",
+    "route": "/tools/first-aid-manual",
+    "isLocal": true,
+    "tags": ["急救", "健康", "安全", "指南", "手册"]
+  },
+  {
+    "id": "anniversary-countdown",
+    "name": "纪念日倒计",
+    "category": "life",
+    "icon": "Timer",
+    "summary": "高颜值倒计时组件",
+    "description": "类似于 iOS 桌面组件风格的纪念日显示。支持正计时（已开始多少天）和倒计时（还有多少天），支持自定义背景图和颜色。",
+    "usage": "1. 添加新纪念日\n2. 设置日期、标题和样式\n3. 预览并保存\n4. 在列表中直观查看所有重要日子",
+    "route": "/tools/anniversary-countdown",
+    "isLocal": true,
+    "tags": ["纪念日", "倒计时", "提醒", "组件", "美化"]
+  },
+  {
+    "id": "zip-code-search",
+    "name": "邮编区号查询",
+    "category": "life",
+    "icon": "MapLocation",
+    "summary": "行政区划、邮编及区号检索",
+    "description": "支持按省市区级联查询全国各地的邮政编码和固定电话区号，也支持通过邮编或区号反查对应地区。",
+    "usage": "1. 输入城市名、邮编或区号进行搜索\n2. 或使用省市区级联选择器查找\n3. 复制查询结果",
+    "route": "/tools/zip-code-search",
+    "isLocal": true,
+    "tags": ["邮编", "区号", "查询", "地址", "行政区划"]
+  },
+  {
     "id": "clothing-size",
     "name": "服装尺码助手",
     "category": "life",

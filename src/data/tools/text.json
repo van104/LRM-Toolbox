@@ -274,5 +274,53 @@
     "route": "/tools/ascii-table",
     "isLocal": true,
     "tags": ["ASCII", "对照表", "编码", "十六进制", "开发"]
+  },
+  {
+    "id": "sensitive-word-check",
+    "name": "敏感词在线检测",
+    "category": "text",
+    "icon": "WarnTriangleFilled",
+    "summary": "违禁词/敏感词预检",
+    "description": "针对各大平台规则的违禁词及敏感词预检，支持自定义敏感词库。",
+    "usage": "1. 输入待检测文本\n2. 系统自动高亮敏感词\n3. 查看检测报告",
+    "route": "/tools/sensitive-word-check",
+    "isLocal": true,
+    "tags": ["敏感词", "违禁词", "检测", "审核"]
+  },
+  {
+    "id": "text-polisher",
+    "name": "文案美化润色助手",
+    "category": "text",
+    "icon": "MagicStick",
+    "summary": "多种风格文本重写建议",
+    "description": "提供商务、幽默、文艺等多种风格的文本重写建议，辅助文案创作。",
+    "usage": "1. 输入原始文案\n2. 选择目标风格\n3. 获取润色后的文案建议",
+    "route": "/tools/text-polisher",
+    "isLocal": true,
+    "tags": ["文案", "润色", "重写", "创作"]
+  },
+  {
+    "id": "copywriting-guide",
+    "name": "中英文排版美化",
+    "category": "text",
+    "icon": "Edit",
+    "summary": "中英文混排自动优化",
+    "description": "自动在中英文之间添加空格，修正全角/半角标点，规范排版格式。",
+    "usage": "1. 粘贴混乱排版的文本\n2. 一键执行美化\n3. 复制规范文本",
+    "route": "/tools/copywriting-guide",
+    "isLocal": true,
+    "tags": ["排版", "中英文", "空格", "标点"]
+  },
+  {
+    "id": "md-table-converter",
+    "name": "Markdown 表格转换",
+    "category": "text",
+    "icon": "Grid",
+    "summary": "MD 转 HTML 表格代码",
+    "description": "便于直接将 MD 源码转换为适合邮件或论坛的 HTML 代码，支持样式预览。",
+    "usage": "1. 输入 Markdown 表格\n2. 实时预览 HTML 效果\n3. 复制 HTML 代码",
+    "route": "/tools/md-table-converter",
+    "isLocal": true,
+    "tags": ["Markdown", "表格", "HTML", "转换"]
   }
 ]

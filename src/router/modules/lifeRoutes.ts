@@ -38,6 +38,26 @@ const lifeRoutes: RouteRecordRaw[] = [
     component: () => import('@/components/tools/life/LunarSolarConverterTool.vue')
   },
   {
+    path: '/tools/travel-checklist',
+    name: 'TravelChecklistTool',
+    component: () => import('@/components/tools/life/TravelChecklistTool.vue')
+  },
+  {
+    path: '/tools/first-aid-manual',
+    name: 'FirstAidManualTool',
+    component: () => import('@/components/tools/life/FirstAidManualTool.vue')
+  },
+  {
+    path: '/tools/anniversary-countdown',
+    name: 'AnniversaryCountdownTool',
+    component: () => import('@/components/tools/life/AnniversaryCountdownTool.vue')
+  },
+  {
+    path: '/tools/zip-code-search',
+    name: 'ZipCodeSearchTool',
+    component: () => import('@/components/tools/life/ZipCodeSearchTool.vue')
+  },
+  {
     path: '/tools/clothing-size',
     name: 'ClothingSizeTool',
     component: () => import('@/components/tools/life/ClothingSizeTool.vue')

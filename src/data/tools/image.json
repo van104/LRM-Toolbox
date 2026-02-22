@@ -215,6 +215,54 @@
     "route": "/tools/image-grid-splitter",
     "isLocal": true,
     "tags": ["切图", "九宫格", "网格", "排版", "社交媒体"]
+  },
+  {
+    "id": "corner-clipper",
+    "name": "图片圆角裁切",
+    "category": "image",
+    "icon": "Scissor",
+    "summary": "自定义图片圆角、描边与阴影",
+    "description": "简单好用的图片圆角处理工具。支持自定义四个角的圆角半径、添加边框描边、设置阴影效果，并支持透明背景导出。",
+    "usage": "1. 上传图片\n2. 拖动滑块调整圆角大小\n3. 设置边框颜色和宽度（可选）\n4. 调整阴影效果（可选）\n5. 下载处理后的图片",
+    "route": "/tools/corner-clipper",
+    "isLocal": true,
+    "tags": ["图片", "裁切", "圆角", "边框", "阴影"]
+  },
+  {
+    "id": "svg-path-editor",
+    "name": "SVG 路径编辑器",
+    "category": "image",
+    "icon": "EditPen",
+    "summary": "SVG Path 路径可视化编辑与预览",
+    "description": "专注于 SVG Path 路径数据的编辑工具。支持输入路径数据实时预览，提供常用转换（如绝对/相对坐标转换、缩放、平移），方便开发者微调图标或插画路径。",
+    "usage": "1. 粘贴 SVG Path 数据（d 属性）\n2. 在预览区查看形状\n3. 使用工具栏进行转换或手动微调代码\n4. 复制结果",
+    "route": "/tools/svg-path-editor",
+    "isLocal": true,
+    "tags": ["SVG", "Path", "编辑", "矢量图", "代码"]
+  },
+  {
+    "id": "metadata-cleaner",
+    "name": "图片隐私清理",
+    "category": "image",
+    "icon": "Delete",
+    "summary": "一键清除照片 Exif 等隐私信息",
+    "description": "批量移除照片中的敏感元数据，包括 GPS 地理位置、相机参数、拍摄时间、软件信息等，保护您的隐私安全。处理过程完全在本地进行。",
+    "usage": "1. 拖拽或选择多张图片\n2. 查看检测到的元数据概览\n3. 点击“一键清理”\n4. 下载纯净版图片",
+    "route": "/tools/metadata-cleaner",
+    "isLocal": true,
+    "tags": ["图片", "隐私", "Exif", "元数据", "清理"]
+  },
+  {
+    "id": "chromatic-aberration",
+    "name": "色散效果模拟",
+    "category": "image",
+    "icon": "MagicStick",
+    "summary": "为图片添加赛博朋克风格的色散特效",
+    "description": "通过 RGB 通道分离与位移，模拟镜头色散（Chromatic Aberration）效果，常用于赛博朋克、故障艺术（Glitch Art）风格的图片创作。",
+    "usage": "1. 上传图片\n2. 调整红/蓝/绿通道的位移距离与方向\n3. 设置模糊度与透明度\n4. 实时预览并下载",
+    "route": "/tools/chromatic-aberration",
+    "isLocal": true,
+    "tags": ["图片", "特效", "色散", "故障艺术", "滤镜"]
   }
 ]
 

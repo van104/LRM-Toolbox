@@ -225,6 +225,54 @@
     "usage": "1. 上传包含附件的 PDF 文件\n2. 扫描并预览附件列表\n3. 点击下载单个附件或全部",
     "route": "/tools/pdf-attachment-extractor",
     "isLocal": true,
-    "tags": ["PDF", "附件", "提取", "内嵌", "文件"]
+    "tags": ["PDF", "附件", "提取", "文件"]
+  },
+  {
+    "id": "pdf-accessibility-check",
+    "name": "PDF 合规性检查",
+    "category": "pdf",
+    "icon": "CircleCheck",
+    "summary": "检查 PDF 无障碍标准合规性",
+    "description": "分析 PDF 文件是否符合 PDF/UA 或 WCAG 等无障碍标准。检查项包括标签结构、替代文本、阅读顺序、字体嵌入等，确保文档对视障人士友好。",
+    "usage": "1. 上传 PDF 文件\n2. 系统自动扫描文档结构\n3. 查看合规性报告和问题列表\n4. 获取修复建议",
+    "route": "/tools/pdf-accessibility-check",
+    "isLocal": true,
+    "tags": ["PDF", "合规", "无障碍", "检查", "PDF/UA"]
+  },
+  {
+    "id": "pdf-to-epub",
+    "name": "PDF 转 EPUB",
+    "category": "pdf",
+    "icon": "Reading",
+    "summary": "将文档 PDF 转换为流式 EPUB 电子书",
+    "description": "智能识别 PDF 中的段落、标题和图片，将其重排为流式 EPUB 格式。特别适合将论文、技术文档转换为适合 Kindle 或手机阅读的电子书。",
+    "usage": "1. 上传文档类 PDF（扫描件效果不佳）\n2. 设置标题识别层级（可选）\n3. 转换并预览效果\n4. 下载 EPUB 文件",
+    "route": "/tools/pdf-to-epub",
+    "isLocal": true,
+    "tags": ["PDF", "EPUB", "电子书", "转换", "阅读"]
+  },
+  {
+    "id": "pdf-comparison",
+    "name": "PDF 文档对比",
+    "category": "pdf",
+    "icon": "Switch",
+    "summary": "可视化对比两个 PDF 的差异",
+    "description": "并排或叠加对比两个版本的 PDF 文件，高亮显示文本变化、图像差异和布局变动。适用于合同审核、设计稿校对。",
+    "usage": "1. 分别上传旧版和新版 PDF\n2. 选择对比模式（并排/叠加/差异图）\n3. 查看差异高亮区域\n4. 导出差异报告",
+    "route": "/tools/pdf-comparison",
+    "isLocal": true,
+    "tags": ["PDF", "对比", "差异", "校对", "Diff"]
+  },
+  {
+    "id": "web-to-pdf",
+    "name": "网页转 PDF",
+    "category": "pdf",
+    "icon": "Monitor",
+    "summary": "将 URL 网页保存为 PDF 文档",
+    "description": "输入任意公开网页地址，将其完整抓取并渲染为 PDF。支持去除广告、自定义页面尺寸（A4/长图）、保留链接跳转。",
+    "usage": "1. 输入目标网页 URL\n2. 设置页面参数（是否去广告、纸张大小）\n3. 预览生成效果\n4. 下载 PDF",
+    "route": "/tools/web-to-pdf",
+    "isLocal": true,
+    "tags": ["网页", "PDF", "转换", "抓取", "保存"]
   }
 ]
