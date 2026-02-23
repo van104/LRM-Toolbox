@@ -1,50 +1,40 @@
 <template>
-  <div class="page-container">
-    <div class="page-header">
+  <div class="brutal-page-container">
+    <div class="brutal-page-header">
       <div class="header-content">
-        <h1 class="page-title">
-          <el-icon class="icon-clock">
-            <Clock />
-          </el-icon>
-          最近使用
+        <h1 class="brutal-page-title">
+          <el-icon class="icon-clock"><Clock /></el-icon>
+          使用履历.LOG()
         </h1>
-        <p class="page-subtitle">您最近使用的工具记录</p>
+        <p class="brutal-page-subtitle">系统记录的历史活动时间轴</p>
       </div>
       <div class="header-actions">
-        <el-button v-if="userStore.history.length > 0" @click="confirmClear">
-          <el-icon>
-            <Delete />
-          </el-icon>
-          清空记录
-        </el-button>
-        <el-button text @click="$router.push('/')">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          返回首页
-        </el-button>
+        <button v-if="userStore.history.length > 0" class="brutal-btn-danger" @click="confirmClear">
+          <el-icon><Delete /></el-icon> 清除履历
+        </button>
+        <button class="brutal-btn-secondary" @click="$router.push('/')">
+          <el-icon><ArrowLeft /></el-icon> 返回主板
+        </button>
       </div>
     </div>
 
     <main class="page-main">
       <div class="search-section">
-        <div class="search-input-wrapper">
-          <el-icon class="search-icon">
-            <Search />
-          </el-icon>
+        <div class="brutal-search-wrapper">
+          <el-icon class="search-icon"><Search /></el-icon>
           <input
             v-model="searchKeyword"
             type="text"
-            placeholder="搜索历史记录..."
-            class="search-input"
+            placeholder="使用关键字检索履历..."
+            class="brutal-search-input"
           />
         </div>
       </div>
 
-      <div v-if="filteredHistory.length > 0" class="timeline-container">
+      <div v-if="filteredHistory.length > 0" class="brutal-timeline-container">
         <DynamicScroller
           :items="flatHistory"
-          :min-item-size="80"
+          :min-item-size="100"
           key-field="id"
           page-mode
           class="scroller"
@@ -56,27 +46,26 @@
               :size-dependencies="[item.type]"
               :data-index="index"
             >
-              <div v-if="item.type === 'header'" class="timeline-group">
-                <div class="timeline-title">{{ item.title }}</div>
+              <div v-if="item.type === 'header'" class="timeline-group-header">
+                <div class="brutal-timeline-title">{{ item.title }}</div>
               </div>
-              <div v-else class="timeline-list">
-                <div class="history-item" @click="goToTool(item.data)">
-                  <div class="item-time-badge">{{ formatTime(item.data.usedAt) }}</div>
-                  <div class="item-card">
-                    <div class="item-icon">
-                      <el-icon :size="20">
-                        <component :is="item.data.icon" />
-                      </el-icon>
-                    </div>
-                    <div class="item-content">
-                      <div class="item-name">{{ item.data.name }}</div>
-                      <div class="item-full-time">{{ formatDate(item.data.usedAt) }}</div>
-                    </div>
-                    <div class="item-arrow">
-                      <el-icon>
-                        <ArrowRight />
-                      </el-icon>
-                    </div>
+              <div v-else class="brutal-history-item" @click="goToTool(item.data)">
+                <div class="time-column">
+                  <div class="brutal-time-badge">{{ formatTime(item.data.usedAt) }}</div>
+                </div>
+
+                <div class="brutal-item-card" :class="getRandomColorBorderClass(item.data.id)">
+                  <div class="item-icon-box" :class="getRandomColorClass(item.data.id)">
+                    <el-icon :size="24"><component :is="item.data.icon" /></el-icon>
+                  </div>
+
+                  <div class="item-details">
+                    <div class="item-name">{{ item.data.name }}</div>
+                    <div class="item-date">{{ formatDate(item.data.usedAt) }}</div>
+                  </div>
+
+                  <div class="item-action-arrow">
+                    <el-icon :size="24"><ArrowRight /></el-icon>
                   </div>
                 </div>
               </div>
@@ -85,15 +74,17 @@
         </DynamicScroller>
       </div>
 
-      <div v-else class="empty-state">
-        <el-icon :size="64">
-          <Clock />
-        </el-icon>
-        <h2>{{ searchKeyword ? '未找到相关记录' : '暂无历史记录' }}</h2>
-        <p>{{ searchKeyword ? '换个关键词试试吧' : '您还没有使用过任何工具' }}</p>
-        <el-button v-if="!searchKeyword" type="primary" size="large" @click="$router.push('/')">
-          浏览工具
-        </el-button>
+      <div v-else class="brutal-empty-state">
+        <div class="empty-icon-box bg-blue">
+          <el-icon :size="48"><Clock /></el-icon>
+        </div>
+        <h2 class="empty-text">{{ searchKeyword ? '检索无匹配' : '暂无活动留存' }}</h2>
+        <p class="empty-sub">
+          {{ searchKeyword ? '尝试更换检索词汇' : '指令终端尚未记录过任何作业' }}
+        </p>
+        <button v-if="!searchKeyword" class="brutal-btn-primary" @click="$router.push('/')">
+          &lt; 开启作业
+        </button>
       </div>
     </main>
   </div>
@@ -120,10 +111,10 @@
 
   const groupedHistory = computed(() => {
     const groups = {
-      today: { title: '今天', items: [] },
-      yesterday: { title: '昨天', items: [] },
-      week: { title: '最近7天', items: [] },
-      older: { title: '更早', items: [] }
+      today: { title: 'T O D A Y //', items: [] },
+      yesterday: { title: 'Y E S T E R D A Y //', items: [] },
+      week: { title: 'L A S T   7   D A Y S //', items: [] },
+      older: { title: 'A R C H I V E D //', items: [] }
     };
 
     const today = dayjs().startOf('day');
@@ -163,7 +154,7 @@
   }
 
   function formatDate(isoString) {
-    return dayjs(isoString).format('YYYY-MM-DD HH:mm');
+    return dayjs(isoString).format('YYYY.MM.DD  HH:mm');
   }
 
   function goToTool(item) {
@@ -172,344 +163,620 @@
       if (tool) {
         userStore.addToHistory(tool);
       }
-      router.push(item.route);
+      if (item.isLocal === false || item.route.startsWith('http')) {
+        window.open(item.route, '_blank');
+      } else {
+        router.push(item.route);
+      }
     }
   }
 
   function confirmClear() {
-    ElMessageBox.confirm('确定要清空所有历史记录吗？此操作无法撤销。', '清空记录', {
-      confirmButtonText: '确定清空',
-      cancelButtonText: '取消',
+    ElMessageBox.confirm('这将会擦除系统内核遗留的所有时间线日志，是否继续？', '日志清除确认', {
+      confirmButtonText: '擦除日志',
+      cancelButtonText: '保持现状',
       type: 'warning'
     })
       .then(() => {
         userStore.clearHistory();
-        ElMessage.success('历史记录已清空');
+        ElMessage.success('系统回写：日志轨道清理完毕');
       })
       .catch(() => {});
+  }
+
+  function getRandomColorClass(str) {
+    if (!str) return 'bg-blue';
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const colors = ['bg-yellow', 'bg-blue', 'bg-pink', 'bg-green'];
+    return colors[Math.abs(hash) % colors.length];
+  }
+
+  function getRandomColorBorderClass(str) {
+    if (!str) return 'border-blue';
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const colors = ['border-yellow', 'border-blue', 'border-pink', 'border-green'];
+    return colors[Math.abs(hash) % colors.length];
   }
 </script>
 
 <style scoped>
-  .page-container {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-page-container {
     min-height: 100vh;
-    background: #f0f4f8;
-    padding-bottom: 2rem;
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    padding-bottom: 4rem;
+    color: #111;
   }
 
-  .page-header {
-    background: #ffffff;
-    padding: 2rem 1.5rem;
+  .brutal-page-header {
+    background: #fff;
+    padding: 2.5rem 2rem;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-    position: relative;
-    height: 100px;
+    justify-content: space-between;
+    border-bottom: 4px solid #111;
+    box-shadow: 0px 8px 0px #111;
+    margin-bottom: 3rem;
   }
 
   .header-content {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
-    pointer-events: none;
+    gap: 0.5rem;
   }
 
-  .header-content > * {
-    pointer-events: auto;
+  .brutal-page-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #111;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    text-shadow: 4px 4px 0px #4b7bff;
+  }
+
+  .icon-clock {
+    color: #ffd900;
+    filter: drop-shadow(3px 3px 0px #111);
+  }
+
+  .brutal-page-subtitle {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 0.25rem 0.75rem;
+    background: #111;
+    color: #fff;
+    display: table;
   }
 
   .header-actions {
     display: flex;
-    gap: 1rem;
+    gap: 1.5rem;
   }
 
-  .page-title {
+  .brutal-btn-secondary,
+  .brutal-btn-danger,
+  .brutal-btn-primary {
     display: flex;
     align-items: center;
-    justify-content: center;
-
-    gap: 0.75rem;
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 0.5rem;
+    gap: 0.5rem;
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 5px 5px 0px #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+    text-transform: uppercase;
   }
 
-  .icon-clock {
-    color: #06b6d4;
+  .brutal-btn-secondary:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0px #111;
+    background: #4b7bff;
+    color: #fff;
+  }
+  .brutal-btn-secondary:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
   }
 
-  .page-subtitle {
-    color: #64748b;
-    font-size: 1rem;
+  .brutal-btn-danger {
+    background: #ff4b4b;
+    color: #fff;
+  }
+  .brutal-btn-danger:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0px #111;
+    background: #e03131;
+  }
+  .brutal-btn-danger:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-btn-primary {
+    background: #00e572;
+    color: #111;
+    margin-top: 1.5rem;
+  }
+  .brutal-btn-primary:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0px #111;
+    background: #00c964;
+  }
+  .brutal-btn-primary:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
   }
 
   .page-main {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
+    padding: 0 2rem;
   }
 
   .search-section {
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
   }
 
-  .search-input-wrapper {
+  .brutal-search-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border: 4px solid #111;
+    background: #fff;
+    box-shadow: 8px 8px 0px #111;
+    transition: all 0.2s;
+    height: 70px;
     position: relative;
-    max-width: 400px;
-    margin: 0 auto;
+  }
+
+  .brutal-search-wrapper:focus-within {
+    transform: translate(-4px, -4px);
+    box-shadow: 12px 12px 0px #111;
   }
 
   .search-icon {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #94a3b8;
+    font-size: 1.8rem;
+    margin-left: 1.5rem;
+    color: #4b7bff;
+    font-weight: 800;
   }
 
-  .search-input {
-    width: 100%;
-    padding: 0.75rem 1rem 0.75rem 2.5rem;
-    border-radius: 99px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    background: #ffffff;
-    font-size: 0.95rem;
+  .brutal-search-input {
+    flex: 1;
+    height: 100%;
+    border: none;
+    background: transparent;
+    padding: 0 1.5rem;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #111;
     outline: none;
-    transition: all 0.2s;
   }
 
-  .search-input:focus {
-    border-color: #06b6d4;
-    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+  .brutal-search-input::placeholder {
+    color: #888;
+    font-style: italic;
   }
 
-  .timeline-container {
+  .brutal-timeline-container {
     position: relative;
+    padding-left: 20px;
   }
 
-  .timeline-group {
-    margin-bottom: 2.5rem;
-    position: relative;
-  }
-
-  .timeline-list {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .timeline-list::before {
+  .brutal-timeline-container::before {
     content: '';
     position: absolute;
-    left: 80px;
-
-    top: 10px;
-    bottom: -20px;
-    width: 2px;
-    background: rgba(0, 0, 0, 0.05);
-    z-index: 0;
-  }
-
-  .timeline-title {
-    position: relative;
-    display: inline-block;
-    margin-bottom: 1rem;
-    margin-left: 80px;
-
-    padding-left: 1rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #64748b;
-  }
-
-  .timeline-group:first-child .timeline-list::before {
+    left: 120px;
     top: 0;
-  }
-
-  .history-item {
-    display: flex;
-    align-items: center;
-    position: relative;
+    bottom: 0;
+    width: 6px;
+    background: #111;
     z-index: 1;
   }
 
-  .item-time-badge {
-    font-size: 0.875rem;
-    color: #94a3b8;
-    width: 60px;
-
-    text-align: right;
-    flex-shrink: 0;
-    margin-right: 40px;
-  }
-
-  .item-card {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    background: #ffffff;
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    cursor: pointer;
-    transition: all 0.2s ease;
+  .timeline-group-header {
+    margin: 2rem 0 1.5rem 150px;
     position: relative;
-  }
-
-  .item-card::before {
-    content: '';
-    position: absolute;
-
-    left: -21px;
-
-    top: 50%;
-    width: 10px;
-    height: 10px;
-    background: #ffffff;
-    border: 2px solid #cbd5e1;
-    border-radius: 50%;
-    transform: translateY(-50%);
-    transition: all 0.2s;
     z-index: 2;
   }
 
-  .item-card:hover {
-    transform: translateX(4px);
-    border-color: #06b6d4;
-    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.1);
+  .brutal-timeline-title {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    background: #111;
+    color: #fff;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    font-size: 1.15rem;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #ff4b4b;
+    letter-spacing: 2px;
   }
 
-  .item-card:hover::before {
-    border-color: #06b6d4;
-    background: #06b6d4;
+  .brutal-history-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+    cursor: pointer;
+    z-index: 2;
   }
 
-  .item-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    background: var(--accent-gradient);
-    color: white;
+  .time-column {
+    width: 130px;
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 30px;
+    position: relative;
+  }
+
+  /* Connecting pip to the timeline line */
+  .time-column::after {
+    content: '';
+    position: absolute;
+    right: 7px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border: 4px solid #111;
+    border-radius: 50%;
+    z-index: 3;
+  }
+
+  .brutal-time-badge {
+    padding: 0.35rem 0.75rem;
+    background: #fff;
+    border: 2px solid #111;
+    font-weight: 800;
+    font-size: 1rem;
+    box-shadow: 3px 3px 0px #111;
+  }
+
+  .brutal-item-card {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 4px solid #111;
+    padding: 1rem;
+    box-shadow: 6px 6px 0px #111;
+    transition:
+      transform 0.15s,
+      box-shadow 0.15s;
+    margin-left: 20px;
+  }
+
+  .brutal-item-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+
+  .brutal-item-card:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px #111;
+  }
+
+  .border-yellow:hover {
+    border-color: #ffd900;
+  }
+  .border-blue:hover {
+    border-color: #4b7bff;
+  }
+  .border-pink:hover {
+    border-color: #ff4b4b;
+  }
+  .border-green:hover {
+    border-color: #00e572;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+    color: #111;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .bg-pink {
+    background: #ff4b4b;
+    color: #fff;
+  }
+  .bg-green {
+    background: #00e572;
+    color: #111;
+  }
+
+  .item-icon-box {
+    width: 50px;
+    height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 1rem;
+    border: 3px solid #111;
+    margin-right: 1.5rem;
+    box-shadow: 3px 3px 0px #111;
   }
 
-  .item-content {
+  .item-details {
     flex: 1;
   }
 
   .item-name {
-    font-size: 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+  }
+
+  .item-date {
+    font-size: 0.85rem;
+    color: #444;
     font-weight: 600;
-    color: #1e293b;
   }
 
-  .item-full-time {
-    font-size: 0.75rem;
-    color: #94a3b8;
+  .item-action-arrow {
+    color: #111;
+    transition: transform 0.2s;
   }
 
-  .item-arrow {
-    color: #cbd5e1;
+  .brutal-history-item:hover .item-action-arrow {
+    transform: translateX(5px);
   }
 
-  .item-card:hover .item-arrow {
-    color: #06b6d4;
-  }
-
-  [data-theme='dark'] .page-container {
-    background: var(--bg-primary);
-  }
-
-  [data-theme='dark'] .page-header {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
-  }
-
-  [data-theme='dark'] .page-title,
-  [data-theme='dark'] .empty-state h2 {
-    color: var(--text-primary);
-  }
-
-  [data-theme='dark'] .page-subtitle,
-  [data-theme='dark'] .empty-state p {
-    color: var(--text-secondary);
-  }
-
-  [data-theme='dark'] .timeline-title {
-    color: var(--text-secondary);
-  }
-
-  [data-theme='dark'] .item-card {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
-  }
-
-  [data-theme='dark'] .el-button:not(.is-text) {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
-    color: var(--text-primary);
-  }
-
-  [data-theme='dark'] .el-button:not(.is-text):hover {
-    background: var(--bg-primary);
-    border-color: var(--accent-cyan);
-    color: var(--accent-cyan);
-  }
-
-  [data-theme='dark'] .item-card::before {
-    background: var(--bg-primary);
-    border-color: var(--text-muted);
-  }
-
-  [data-theme='dark'] .search-input {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
-    color: var(--text-primary);
-  }
-
-  [data-theme='dark'] .timeline-container {
-    border-color: var(--border-color);
-  }
-
-  [data-theme='dark'] .timeline-list::before {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .empty-state {
+  .brutal-empty-state {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 5rem 2rem;
+    padding: 6rem 2rem;
     text-align: center;
   }
 
-  .empty-state .el-icon {
-    margin-bottom: 1.5rem;
-    color: #cbd5e1;
-  }
-
-  .empty-state h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 0.5rem;
-  }
-
-  .empty-state p {
-    color: #64748b;
-    font-size: 1rem;
+  .empty-icon-box {
+    width: 100px;
+    height: 100px;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    transform: rotate(5deg);
     margin-bottom: 2rem;
+  }
+
+  .empty-text {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #111;
+    margin-bottom: 1rem;
+    background: #fff;
+    padding: 0.5rem 1.5rem;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+  }
+
+  .empty-sub {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #444;
+    background: #fdfae5;
+    padding: 4px 12px;
+    border: 2px dashed #111;
+  }
+
+  @media (max-width: 768px) {
+    .brutal-page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+    }
+    .brutal-page-title {
+      font-size: 2rem;
+    }
+    .header-actions {
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
+    .brutal-timeline-container::before {
+      left: 20px;
+    }
+    .timeline-group-header {
+      margin-left: 40px;
+    }
+    .time-column {
+      display: none;
+    }
+    .brutal-item-card {
+      margin-left: 40px;
+    }
+    .brutal-timeline-container::after {
+      content: '';
+      position: absolute;
+      left: 12px;
+      /* Simulate the pip dots for mobile next to cards */
+      border-color: #111;
+    }
+  }
+
+  /* --- Dark Mode Overrides --- */
+  [data-theme='dark'] .brutal-page-container {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-page-header {
+    background: #1a1a1a;
+    border-bottom-color: #eee;
+    box-shadow: 0px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-page-title {
+    color: #eee;
+    text-shadow: 4px 4px 0px #4b7bff;
+  }
+  [data-theme='dark'] .icon-clock {
+    filter: drop-shadow(3px 3px 0px #eee);
+  }
+  [data-theme='dark'] .brutal-page-subtitle {
+    background: #eee;
+    color: #111;
+  }
+
+  [data-theme='dark'] .brutal-btn-primary,
+  [data-theme='dark'] .brutal-btn-secondary,
+  [data-theme='dark'] .brutal-btn-danger {
+    border-color: #eee;
+    box-shadow: 5px 5px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn-primary:hover,
+  [data-theme='dark'] .brutal-btn-secondary:hover,
+  [data-theme='dark'] .brutal-btn-danger:hover {
+    box-shadow: 7px 7px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn-primary:active,
+  [data-theme='dark'] .brutal-btn-secondary:active,
+  [data-theme='dark'] .brutal-btn-danger:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn-secondary {
+    background: #222;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn-danger {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-btn-primary {
+    background: #00994c;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .brutal-search-wrapper {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-search-wrapper:focus-within {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-search-input {
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-timeline-container::before {
+    background: #eee;
+  }
+  [data-theme='dark'] .brutal-timeline-title {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #cc0000;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .time-column::after {
+    background: #111;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-time-badge {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-item-card {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-item-card:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-item-card:active {
+    box-shadow: 2px 2px 0px #eee;
+  }
+
+  [data-theme='dark'] .item-icon-box {
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .item-name {
+    color: #eee;
+  }
+  [data-theme='dark'] .item-date {
+    color: #aaa;
+  }
+  [data-theme='dark'] .item-action-arrow {
+    color: #eee;
+  }
+
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #00994c;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .empty-icon-box {
+    border-color: #eee;
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .empty-text {
+    background: #222;
+    color: #eee;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .empty-sub {
+    background: #1a1a1a;
+    color: #aaa;
+    border-color: #eee;
   }
 </style>

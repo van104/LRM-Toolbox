@@ -622,25 +622,10 @@
     ]
   },
   "categories": [
-    {
-      "id": "mood",
-      "name": "😀 心情"
-    },
-    {
-      "id": "festive",
-      "name": "🎉 节庆"
-    },
-    {
-      "id": "food",
-      "name": "🍔 食物"
-    },
-    {
-      "id": "animal",
-      "name": "🐶 动植"
-    },
-    {
-      "id": "object",
-      "name": "💡 物体"
-    }
+    { "id": "mood", "name": "😀 心情" },
+    { "id": "festive", "name": "🎉 节庆" },
+    { "id": "food", "name": "🍔 食物" },
+    { "id": "animal", "name": "🐶 动植" },
+    { "id": "object", "name": "💡 物体" }
   ]
 }

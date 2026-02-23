@@ -1,20 +1,39 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
 
   const { t } = useI18n();
 
   // 开发模式下禁用 PWA 注册，避免 Service Worker 干扰
-  let offlineReady = ref(false);
-  let needRefresh = ref(false);
-  let updateServiceWorker = () => {};
+  const offlineReady = ref(false);
+  const needRefresh = ref(false);
+  let _updateServiceWorker: (() => void) | undefined = undefined;
+
+  const updateServiceWorker = () => {
+    if (_updateServiceWorker) {
+      _updateServiceWorker();
+    }
+  };
 
   if (import.meta.env.PROD) {
-    const { useRegisterSW } = await import('virtual:pwa-register/vue');
-    const sw = useRegisterSW();
-    offlineReady.value = sw.offlineReady;
-    needRefresh.value = sw.needRefresh;
-    updateServiceWorker = sw.updateServiceWorker;
+    import('virtual:pwa-register/vue').then(({ useRegisterSW }) => {
+      const sw = useRegisterSW();
+      watch(
+        sw.offlineReady,
+        (val: boolean) => {
+          offlineReady.value = val;
+        },
+        { immediate: true }
+      );
+      watch(
+        sw.needRefresh,
+        (val: boolean) => {
+          needRefresh.value = val;
+        },
+        { immediate: true }
+      );
+      _updateServiceWorker = sw.updateServiceWorker;
+    });
   }
 
   const close = async () => {
