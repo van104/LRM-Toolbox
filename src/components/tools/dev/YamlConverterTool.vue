@@ -1,109 +1,110 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack"
-          ><el-icon> <ArrowLeft /> </el-icon><span>返回</span></el-button
-        >
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">YAML 转换器</h1>
-        <span class="tool-subtitle">YAML Converter</span>
-      </div>
-      <div class="header-right"></div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <!-- Header -->
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">YAML<span>.转换()</span></h1>
+        <div class="badge">🔄 YAML ⇄ JSON ⇄ Prop</div>
+      </header>
 
-    <main class="tool-content">
-      <div class="layout-container">
-        <div class="editor-panel glass-card">
-          <div class="panel-header">
-            <el-select v-model="inputFormat" size="small" style="width: 140px">
-              <el-option label="YAML" value="yaml" />
-              <el-option label="JSON" value="json" />
-              <el-option label="Properties" value="properties" />
-            </el-select>
-            <div class="panel-actions">
-              <el-button text size="small" @click="loadSample">示例</el-button>
-              <el-button text size="small" @click="clearInput">清空</el-button>
+      <!-- Main Layout -->
+      <div class="brutal-layout">
+        <!-- Input Pane -->
+        <div class="brutal-pane editor-pane">
+          <div class="pane-header bg-yellow">
+            <div class="format-switcher">
+              <button
+                v-for="f in formats"
+                :key="'in-' + f"
+                :class="['format-tab', { active: inputFormat === f }]"
+                @click="inputFormat = f"
+              >
+                {{ f.toUpperCase() }}
+              </button>
+            </div>
+            <div class="header-actions">
+              <button class="action-btn" @click="loadSample">📄 示例</button>
+              <button class="action-btn clear-btn" @click="clearInput">✕</button>
             </div>
           </div>
-          <el-input
+          <textarea
             v-model="inputText"
-            type="textarea"
-            :rows="18"
+            class="code-textarea"
             :placeholder="`输入 ${inputFormat.toUpperCase()} 内容...`"
-          />
+            spellcheck="false"
+          ></textarea>
         </div>
 
-        <div class="convert-center">
-          <el-button type="primary" circle size="large" :disabled="!inputText" @click="convert">
-            <el-icon>
-              <Right />
-            </el-icon>
-          </el-button>
-          <el-button type="primary" circle size="large" @click="swap">
-            <el-icon>
-              <Switch />
-            </el-icon>
-          </el-button>
+        <!-- Middle Controls -->
+        <div class="brutal-controls">
+          <button class="brutal-btn control-btn main-btn" :disabled="!inputText" @click="convert">
+            <span class="btn-icon">⚡</span>
+            <span class="btn-text">转换</span>
+          </button>
+          <button class="brutal-btn control-btn swap-btn" @click="swap">
+            <span class="btn-icon">⇄</span>
+            <span class="btn-text">调换</span>
+          </button>
         </div>
 
-        <div class="editor-panel glass-card">
-          <div class="panel-header">
-            <el-select v-model="outputFormat" size="small" style="width: 140px">
-              <el-option label="YAML" value="yaml" />
-              <el-option label="JSON" value="json" />
-              <el-option label="Properties" value="properties" />
-            </el-select>
-            <div class="panel-actions">
-              <el-button
-                text
-                size="small"
-                type="primary"
-                :disabled="!outputText"
-                @click="copyOutput"
-                >复制</el-button
+        <!-- Output Pane -->
+        <div class="brutal-pane editor-pane">
+          <div class="pane-header bg-green">
+            <div class="format-switcher">
+              <button
+                v-for="f in formats"
+                :key="'out-' + f"
+                :class="['format-tab', { active: outputFormat === f }]"
+                @click="outputFormat = f"
               >
-              <el-button text size="small" :disabled="!outputText" @click="downloadOutput"
-                >下载</el-button
-              >
+                {{ f.toUpperCase() }}
+              </button>
+            </div>
+            <div class="header-actions">
+              <button class="action-btn copy-btn" :disabled="!outputText" @click="copyOutput">
+                📋 复制
+              </button>
+              <button class="action-btn dll-btn" :disabled="!outputText" @click="downloadOutput">
+                💾
+              </button>
             </div>
           </div>
-          <el-input
+          <textarea
             v-model="outputText"
-            type="textarea"
-            :rows="18"
-            readonly
+            class="code-textarea output-area"
             placeholder="转换结果..."
-          />
+            readonly
+            spellcheck="false"
+          ></textarea>
         </div>
       </div>
 
-      <div v-if="error" class="error-message glass-card">
-        <el-icon>
-          <WarningFilled />
-        </el-icon>
-        <span>{{ error }}</span>
+      <!-- Error Message Area -->
+      <div v-if="error" class="brutal-error-box">
+        <span class="err-icon">⚠️</span>
+        <div class="err-content">
+          <div class="err-title">转换出错啦！</div>
+          <code class="err-msg">{{ error }}</code>
+        </div>
       </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - YAML 转换器</footer>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { ElMessage } from 'element-plus';
-  import { ArrowLeft, Right, Switch, WarningFilled } from '@element-plus/icons-vue';
+  import { useCopy } from '@/composables/useCopy';
 
-  const router = useRouter();
-  const goBack = () => router.back();
+  const { copyToClipboard } = useCopy();
 
   const inputText = ref('');
   const outputText = ref('');
   const inputFormat = ref('yaml');
   const outputFormat = ref('json');
   const error = ref('');
+
+  const formats = ['yaml', 'json', 'properties'];
 
   const samples = {
     yaml: `server:
@@ -192,7 +193,8 @@ database.password=secret`
       const parent = stack[stack.length - 1].obj;
 
       if (value === '') {
-        const nextLine = lines[lines.indexOf(line) + 1];
+        const nextLineIdx = lines.indexOf(line) + 1;
+        const nextLine = lines[nextLineIdx];
         if (nextLine && nextLine.trim().startsWith('-')) {
           parent[key] = [];
           currentArray = { indent: nextLine.search(/\S/), arr: parent[key] };
@@ -216,7 +218,6 @@ database.password=secret`
     return str.replace(/^["']|["']$/g, '');
   };
 
-  // 简单的 YAML 生成器
   const toYaml = (obj, indent = 0) => {
     const pad = '  '.repeat(indent);
     let result = '';
@@ -243,7 +244,6 @@ database.password=secret`
     return result;
   };
 
-  // Properties 解析
   const parseProperties = props => {
     const result = {};
     for (const line of props.split('\n')) {
@@ -263,7 +263,6 @@ database.password=secret`
     return result;
   };
 
-  // Properties 生成
   const toProperties = (obj, prefix = '') => {
     let result = '';
     for (const [key, value] of Object.entries(obj)) {
@@ -281,7 +280,6 @@ database.password=secret`
     error.value = '';
     try {
       let data;
-      // 解析输入
       if (inputFormat.value === 'yaml') {
         data = parseYaml(inputText.value);
       } else if (inputFormat.value === 'json') {
@@ -290,7 +288,6 @@ database.password=secret`
         data = parseProperties(inputText.value);
       }
 
-      // 生成输出
       if (outputFormat.value === 'yaml') {
         outputText.value = toYaml(data);
       } else if (outputFormat.value === 'json') {
@@ -298,10 +295,8 @@ database.password=secret`
       } else {
         outputText.value = toProperties(data);
       }
-      ElMessage.success('转换成功');
     } catch (e) {
       error.value = e.message;
-      ElMessage.error('转换失败');
     }
   };
 
@@ -313,141 +308,430 @@ database.password=secret`
     }
   };
 
-  import { useCopy } from '@/composables/useCopy';
-
-  const { copyToClipboard } = useCopy();
-
   const copyOutput = () => {
-    copyToClipboard(outputText.value, { success: '已复制到剪贴板' });
+    if (outputText.value) copyToClipboard(outputText.value, { success: '✔ 已复制内容' });
   };
 
   const downloadOutput = () => {
-    const ext = { yaml: 'yml', json: 'json', properties: 'properties' };
+    const extEnum = { yaml: 'yml', json: 'json', properties: 'properties' };
     const blob = new Blob([outputText.value], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `output.${ext[outputFormat.value]}`;
+    a.download = `output.${extEnum[outputFormat.value]}`;
     a.click();
     URL.revokeObjectURL(url);
   };
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800;900&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f1f5f9;
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .tool-header {
+  .brutal-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* Header */
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
 
-  .header-center {
-    text-align: center;
-    flex: 1;
-  }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
     margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #7c3aed;
   }
 
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
+  .brutal-title span {
+    color: #7c3aed;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .badge {
+    background: #7c3aed;
+    color: #fff;
+    padding: 0.5rem 1.2rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    border: 4px solid #111;
+    box-shadow: 5px 5px 0px #111;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
     text-transform: uppercase;
   }
 
-  .tool-content {
-    flex: 1;
-    padding: 1.5rem;
-    max-width: 1400px;
-    margin: 0 auto;
-    width: 100%;
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: translate(4px, 4px);
+    box-shadow: 2px 2px 0px #111;
   }
 
-  .layout-container {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
+  /* Layout */
+  .brutal-layout {
+    display: flex;
     gap: 1rem;
-    align-items: center;
+    align-items: stretch;
+    min-height: 550px;
   }
 
-  .editor-panel {
-    padding: 1rem;
+  .brutal-pane {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    border: 4px solid #111;
+    background: #fff;
+    box-shadow: 8px 8px 0px #111;
+    overflow: hidden;
   }
 
-  .panel-header {
+  .pane-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0.6rem 1rem;
+    border-bottom: 4px solid #111;
+    flex-shrink: 0;
   }
 
-  .panel-actions {
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-green {
+    background: #00e572;
+  }
+
+  /* Format Switcher */
+  .format-switcher {
+    display: flex;
+    gap: 4px;
+    background: #111;
+    padding: 3px;
+    border-radius: 2px;
+  }
+
+  .format-tab {
+    border: none;
+    background: transparent;
+    color: #fff;
+    padding: 0.3rem 0.6rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.1s;
+  }
+
+  .format-tab.active {
+    background: #fff;
+    color: #111;
+  }
+
+  .header-actions {
     display: flex;
     gap: 0.5rem;
   }
 
-  .convert-center {
+  .action-btn {
+    border: 3px solid #111;
+    background: #fff;
+    padding: 0.2rem 0.6rem;
+    font-family: 'IBM Plex Mono', sans-serif;
+    font-weight: 800;
+    font-size: 0.85rem;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px #111;
+    transition: all 0.1s;
+  }
+
+  .action-btn:hover:not(:disabled) {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px #111;
+  }
+  .action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .clear-btn {
+    background: #ff4b4b;
+    color: #fff;
+  }
+  .copy-btn {
+    background: #ffd900;
+  }
+  .dll-btn {
+    background: #06b6d4;
+  }
+
+  .code-textarea {
+    flex: 1;
+    width: 100%;
+    padding: 1.25rem;
+    font-family: 'IBM Plex Mono', 'Consolas', monospace;
+    font-size: 1rem;
+    line-height: 1.6;
+    border: none;
+    outline: none;
+    resize: none;
+    background: transparent;
+    color: #111;
+  }
+
+  .code-textarea:focus {
+    background: #fafafa;
+  }
+  .output-area {
+    background: #fdfae5;
+  }
+
+  /* Controls */
+  .brutal-controls {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    padding: 1rem;
+    justify-content: center;
+    gap: 1.5rem;
+    width: 140px;
+    flex-shrink: 0;
   }
 
-  .error-message {
+  .control-btn {
+    flex-direction: column;
+    padding: 1.25rem 0.5rem;
+    height: auto;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 1rem;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .main-btn {
+    background: #ffd900;
+    border-width: 4px;
+  }
+  .swap-btn {
+    background: #06b6d4;
+    border-width: 4px;
+  }
+
+  .btn-icon {
+    font-size: 1.8rem;
+  }
+  .btn-text {
+    font-size: 0.9rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  /* Error Box */
+  .brutal-error-box {
     margin-top: 1rem;
-    background: #fee2e2;
-    color: #dc2626;
+    border: 4px solid #111;
+    background: #ff4b4b;
+    color: #fff;
+    padding: 1rem 1.5rem;
+    display: flex;
+    gap: 1rem;
+    box-shadow: 8px 8px 0px #111;
+    animation: shake 0.5s;
   }
 
-  .glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  .err-icon {
+    font-size: 2rem;
+  }
+  .err-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+  }
+  .err-msg {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.25rem 0.5rem;
+    border-radius: 2px;
+    word-break: break-all;
   }
 
-  @media (max-width: 992px) {
-    .layout-container {
-      grid-template-columns: 1fr;
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
     }
+    25% {
+      transform: translateX(-5px);
+    }
+    75% {
+      transform: translateX(5px);
+    }
+  }
 
-    .convert-center {
+  @media (max-width: 1024px) {
+    .brutal-layout {
+      flex-direction: column;
+      height: auto;
+      align-items: stretch;
+    }
+    .brutal-controls {
       flex-direction: row;
-      justify-content: center;
+      width: 100%;
+      margin: 1rem 0;
+    }
+    .control-btn {
+      flex: 1;
+      flex-direction: row;
+      padding: 1rem;
+    }
+    .code-textarea {
+      min-height: 350px;
     }
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  /* Dark Mode */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
   }
 
-  :deep(.el-textarea__inner) {
-    font-family: 'Consolas', 'Monaco', monospace;
-    font-size: 0.85rem;
+  [data-theme='dark'] .brutal-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover:not(:disabled) {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:disabled {
+    box-shadow: 2px 2px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-pane {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #007a3d;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .format-switcher {
+    background: #eee;
+  }
+  [data-theme='dark'] .format-tab {
+    color: #111;
+  }
+  [data-theme='dark'] .format-tab.active {
+    background: #111;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .action-btn {
+    background: #222;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .clear-btn {
+    background: #991b1b;
+  }
+  [data-theme='dark'] .copy-btn {
+    background: #b28f00;
+    color: #111;
+  }
+  [data-theme='dark'] .dll-btn {
+    background: #0891b2;
+    color: #111;
+  }
+
+  [data-theme='dark'] .code-textarea {
+    color: #eee;
+  }
+  [data-theme='dark'] .code-textarea:focus {
+    background: #222;
+  }
+  [data-theme='dark'] .output-area {
+    background: #0f172a;
+  }
+
+  [data-theme='dark'] .main-btn {
+    background: #b28f00;
+    color: #eee;
+  }
+  [data-theme='dark'] .swap-btn {
+    background: #0891b2;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-error-box {
+    border-color: #eee;
+    box-shadow: 8px 8px 0px #eee;
+    background: #991b1b;
+  }
+
+  [data-theme='dark'] .badge {
+    border-color: #eee;
+    box-shadow: 5px 5px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
   }
 </style>

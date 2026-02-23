@@ -1,0 +1,4 @@
+src/components/tools/dev/CurlBuilderTool.vue(57,116): error TS1005: ':' expected.
+src/components/tools/dev/CurlBuilderTool.vue(57,157): error TS1005: ',' expected.
+src/components/tools/dev/CurlBuilderTool.vue(57,158): error TS1005: ':' expected.
+src/components/tools/dev/CurlBuilderTool.vue(57,164): error TS1005: ':' expected.
