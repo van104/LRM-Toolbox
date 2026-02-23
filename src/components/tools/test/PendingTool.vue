@@ -1,727 +1,276 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">PDF 水印</h1>
-        <span class="tool-subtitle">PDF Watermark Tool</span>
-      </div>
-      <div class="header-right">
-        <el-button
-          type="primary"
-          :disabled="!pdfFile"
-          :loading="processing"
-          @click="applyWatermark"
-        >
-          <el-icon>
-            <Download />
-          </el-icon>
-          添加水印并下载
-        </el-button>
-      </div>
-    </header>
+  <!-- 外层容器：确保居中且具备最小高度，适应各种嵌套环境 -->
+  <div
+    class="flex items-center justify-center min-h-[600px] h-full w-full bg-slate-100/50 p-4 font-sans select-none"
+  >
+    <!-- 计算器主体：设定安全宽度，增加精致的阴影和圆角 -->
+    <div
+      class="w-full max-w-[360px] min-w-[320px] bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/80 overflow-hidden border border-slate-100 flex flex-col relative"
+    >
+      <!-- 顶部屏幕区域 -->
+      <div
+        class="bg-gradient-to-b from-slate-50 to-white px-6 pt-8 pb-4 flex flex-col gap-6 relative"
+      >
+        <!-- 视角切换控制栏 -->
+        <div class="flex justify-between items-center w-full z-10">
+          <span class="text-xs font-bold text-slate-400 tracking-wider">我的性别</span>
+          <div class="flex bg-slate-100 p-1 rounded-xl shadow-inner border border-slate-200/50">
+            <button
+              :class="
+                myGender === 1
+                  ? 'bg-white text-blue-500 shadow'
+                  : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
+              "
+              class="px-4 py-1.5 rounded-lg text-sm font-bold transition-all duration-300"
+              @click="setGender(1)"
+            >
+              男
+            </button>
+            <button
+              :class="
+                myGender === 0
+                  ? 'bg-white text-rose-500 shadow'
+                  : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
+              "
+              class="px-4 py-1.5 rounded-lg text-sm font-bold transition-all duration-300"
+              @click="setGender(0)"
+            >
+              女
+            </button>
+          </div>
+        </div>
 
-    <main class="tool-content">
-      <div class="layout-container">
-        <div class="workbench glass-card">
+        <!-- 结果展示区 -->
+        <div class="flex flex-col items-end justify-end h-24 w-full">
+          <div class="text-right text-slate-400 text-sm h-6 w-full truncate mb-1">
+            {{ expressionText }}
+          </div>
           <div
-            v-if="!pdfFile"
-            class="upload-placeholder"
-            @click="triggerUpload"
-            @dragover.prevent="dragOver"
-            @dragleave.prevent="dragLeave"
-            @drop.prevent="handleFileDrop"
+            class="text-right font-black tracking-tight w-full truncate transition-all duration-300 flex items-end justify-end"
+            :class="
+              resultText === '未知亲戚' ? 'text-3xl text-slate-300' : 'text-5xl text-slate-800'
+            "
           >
-            <div class="upload-icon">
-              <el-icon>
-                <Document />
-              </el-icon>
-            </div>
-            <h3>上传 PDF 文件</h3>
-            <p>添加文字或图片水印</p>
-            <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
-          </div>
-          <div v-else class="preview-area">
-            <div class="file-info-bar">
-              <el-icon class="pdf-icon">
-                <Document />
-              </el-icon>
-              <div class="file-details">
-                <span class="file-name">{{ pdfFile.name }}</span>
-                <span class="file-meta">{{ pageCount }} 页</span>
-              </div>
-              <el-button text type="primary" @click="triggerUpload">重新选择</el-button>
-              <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
-            </div>
-            <div class="preview-canvas-wrap">
-              <canvas ref="previewCanvas"></canvas>
-              <div class="page-nav">
-                <el-button :disabled="currentPage <= 1" circle @click="currentPage--"
-                  ><el-icon> <ArrowLeft /> </el-icon
-                ></el-button>
-                <span>{{ currentPage }} / {{ pageCount }}</span>
-                <el-button :disabled="currentPage >= pageCount" circle @click="currentPage++"
-                  ><el-icon> <ArrowRight /> </el-icon
-                ></el-button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="settings-panel glass-card">
-          <h3 class="panel-title">水印设置</h3>
-          <el-tabs v-model="watermarkType">
-            <el-tab-pane label="文字水印" name="text">
-              <div class="settings-group">
-                <div class="label">水印文字</div>
-                <el-input
-                  v-model="config.text"
-                  placeholder="请输入水印文字"
-                  @input="renderPreview"
-                />
-              </div>
-              <div class="settings-group">
-                <div class="label">字体大小 ({{ config.fontSize }})</div>
-                <el-slider v-model="config.fontSize" :min="10" :max="100" @input="renderPreview" />
-              </div>
-              <div class="settings-group">
-                <div class="label">文字颜色</div>
-                <el-color-picker v-model="config.color" show-alpha @change="renderPreview" />
-              </div>
-            </el-tab-pane>
-            <el-tab-pane label="图片水印" name="image">
-              <div class="settings-group">
-                <div class="label">水印图片</div>
-                <div class="logo-upload" @click="triggerLogoUpload">
-                  <img v-if="config.logoUrl" :src="config.logoUrl" class="logo-preview" />
-                  <div v-else class="logo-placeholder">
-                    <el-icon> <Plus /> </el-icon><span>选择图片</span>
-                  </div>
-                  <input
-                    ref="logoFileInput"
-                    type="file"
-                    hidden
-                    accept="image/*"
-                    @change="handleLogoSelect"
-                  />
-                </div>
-              </div>
-              <div class="settings-group">
-                <div class="label">图片缩放 ({{ config.logoScale }}%)</div>
-                <el-slider v-model="config.logoScale" :min="5" :max="100" @input="renderPreview" />
-              </div>
-            </el-tab-pane>
-          </el-tabs>
-
-          <el-divider />
-          <div class="settings-group">
-            <div class="label">水印模式</div>
-            <el-radio-group v-model="config.mode" @change="renderPreview">
-              <el-radio-button value="single">单位置</el-radio-button>
-              <el-radio-button value="tile">平铺</el-radio-button>
-            </el-radio-group>
-          </div>
-          <div v-if="config.mode === 'single'" class="settings-group">
-            <div class="label">位置</div>
-            <div class="position-grid">
-              <div
-                v-for="p in positions"
-                :key="p"
-                class="pos-dot"
-                :class="{ active: config.position === p }"
-                @click="
-                  config.position = p;
-                  renderPreview();
-                "
-              ></div>
-            </div>
-          </div>
-          <div class="settings-group">
-            <div class="label">透明度 ({{ config.opacity }})</div>
-            <el-slider
-              v-model="config.opacity"
-              :min="0.1"
-              :max="1"
-              :step="0.1"
-              @input="renderPreview"
-            />
-          </div>
-          <div class="settings-group">
-            <div class="label">旋转角度 ({{ config.rotate }}°)</div>
-            <el-slider v-model="config.rotate" :min="-180" :max="180" @input="renderPreview" />
-          </div>
-
-          <div class="tips-section">
-            <h4>提示</h4>
-            <ul>
-              <li>预览仅供参考</li>
-              <li>本地处理，隐私安全</li>
-            </ul>
+            {{ resultText }}
           </div>
         </div>
       </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - PDF 水印</footer>
+
+      <!-- 分割线 -->
+      <div class="h-px w-full bg-gradient-to-r from-transparent via-slate-100 to-transparent"></div>
+
+      <!-- 键盘区域 -->
+      <div class="p-6 bg-white grid grid-cols-4 gap-3">
+        <button
+          v-for="btn in buttons"
+          :key="btn.label"
+          :disabled="btn.disabled"
+          :class="[
+            'h-16 flex items-center justify-center text-xl font-bold rounded-2xl transition-all duration-200',
+            btn.disabled
+              ? 'opacity-30 bg-slate-50 text-slate-400 cursor-not-allowed border border-transparent'
+              : btn.colorClass ||
+                'bg-slate-50 text-slate-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95 border border-slate-100 shadow-sm hover:shadow active:shadow-none'
+          ]"
+          @click="btn.action"
+        >
+          {{ btn.label }}
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-  import { ref, reactive, watch } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { ElMessage, ElLoading } from 'element-plus';
-  import { ArrowLeft, ArrowRight, Document, Download, Plus } from '@element-plus/icons-vue';
-  import pdfjsLib from '@/utils/pdf';
-  import { PDFDocument } from 'pdf-lib';
-  import { useFileHandler } from '@/composables';
+  import { ref, computed } from 'vue';
 
-  const router = useRouter();
-  const goBack = () => {
-    if (window.history.length > 1) router.back();
-    else router.push('/');
+  // 初始状态：1 为男，0 为女
+  const myGender = ref(1);
+  const chain = ref([]);
+
+  // 关系推导字典（覆盖主流场景）
+  const relationDict = {
+    // 1级关系
+    父: '爸爸',
+    母: '妈妈',
+    夫: '老公',
+    妻: '老婆',
+    兄: '哥哥',
+    弟: '弟弟',
+    姐: '姐姐',
+    妹: '妹妹',
+    子: '儿子',
+    女: '女儿',
+
+    // 2级 - 直系长辈
+    '父,父': '爷爷',
+    '父,母': '奶奶',
+    '母,父': '外公',
+    '母,母': '外婆',
+    '夫,父': '公公',
+    '夫,母': '婆婆',
+    '妻,父': '岳父',
+    '妻,母': '岳母',
+
+    // 2级 - 旁系长辈
+    '父,兄': '伯父',
+    '父,弟': '叔叔',
+    '父,姐': '姑妈',
+    '父,妹': '姑姑',
+    '母,兄': '舅舅',
+    '母,弟': '舅舅',
+    '母,姐': '大姨',
+    '母,妹': '小姨',
+
+    // 2级 - 平辈配偶与姻亲
+    '兄,妻': '嫂子',
+    '弟,妻': '弟妹',
+    '姐,夫': '姐夫',
+    '妹,夫': '妹夫',
+    '夫,兄': '大伯子',
+    '夫,弟': '小叔子',
+    '夫,姐': '大姑子',
+    '夫,妹': '小姑子',
+    '妻,兄': '大舅子',
+    '妻,弟': '小舅子',
+    '妻,姐': '大姨子',
+    '妻,妹': '小姨子',
+
+    // 2级 - 晚辈
+    '子,子': '孙子',
+    '子,女': '孙女',
+    '女,子': '外孙',
+    '女,女': '外孙女',
+    '兄,子': '侄子',
+    '弟,子': '侄子',
+    '兄,女': '侄女',
+    '弟,女': '侄女',
+    '姐,子': '外甥',
+    '妹,子': '外甥',
+    '姐,女': '外甥女',
+    '妹,女': '外甥女',
+
+    // 继子/继女 简化
+    '夫,子': '儿子',
+    '夫,女': '女儿',
+    '妻,子': '儿子',
+    '妻,女': '女儿',
+
+    // 逻辑闭环（父母的配偶、兄弟姐妹的父母）
+    '父,妻': '妈妈',
+    '母,夫': '爸爸',
+    '兄,父': '爸爸',
+    '弟,父': '爸爸',
+    '姐,父': '爸爸',
+    '妹,父': '爸爸',
+    '兄,母': '妈妈',
+    '弟,母': '妈妈',
+    '姐,母': '妈妈',
+    '妹,母': '妈妈',
+
+    // 3级 - 长辈的配偶
+    '父,兄,妻': '伯母',
+    '父,弟,妻': '婶婶',
+    '父,姐,夫': '姑父',
+    '父,妹,夫': '姑父',
+    '母,兄,妻': '舅妈',
+    '母,弟,妻': '舅妈',
+    '母,姐,夫': '姨父',
+    '母,妹,夫': '姨父',
+
+    // 3级 - 曾祖辈
+    '父,父,父': '太爷爷',
+    '父,父,母': '太奶奶',
+    '母,母,父': '太外公',
+    '母,母,母': '太外婆',
+    '父,母,父': '太外公',
+    '父,母,母': '太外婆',
+    '母,父,父': '太爷爷',
+    '母,父,母': '太奶奶',
+
+    // 3级 - 旁系长辈扩展 (伯祖父/舅公等)
+    '父,父,兄': '伯公',
+    '父,父,弟': '叔公',
+    '父,父,姐': '姑婆',
+    '父,父,妹': '姑婆',
+    '母,母,兄': '舅公',
+    '母,母,弟': '舅公',
+    '母,母,姐': '姨婆',
+    '母,母,妹': '姨婆',
+    '父,母,兄': '舅公',
+    '父,母,弟': '舅公',
+    '父,母,姐': '姨婆',
+    '父,母,妹': '姨婆',
+    '母,父,兄': '伯公',
+    '母,父,弟': '叔公',
+    '母,父,姐': '姑婆',
+    '母,父,妹': '姑婆'
   };
 
-  const previewCanvas = ref(null);
-  const pdfFile = ref(null);
-  const pdfDoc = ref(null);
-  const pageCount = ref(0);
-  const currentPage = ref(1);
-  const processing = ref(false);
-  const watermarkType = ref('text');
-
-  const { fileInput, triggerFileInput, handleFileSelect, handleFileDrop } = useFileHandler({
-    accept: '.pdf',
-    readMode: 'none',
-    onSuccess: result => {
-      loadPdf(result.file);
-    }
+  // 动态推断当前节点的性别（决定是否能点击“夫”或“妻”）
+  const currentGender = computed(() => {
+    if (chain.value.length === 0) return myGender.value;
+    const last = chain.value[chain.value.length - 1];
+    if (['父', '兄', '弟', '子', '夫'].includes(last)) return 1; // 链条末端是男性
+    if (['母', '姐', '妹', '女', '妻'].includes(last)) return 0; // 链条末端是女性
+    return -1;
   });
 
-  const {
-    fileInput: logoFileInput,
-    triggerFileInput: triggerLogoUpload,
-    handleFileSelect: handleLogoSelect
-  } = useFileHandler({
-    accept: 'image/*',
-    readMode: 'dataURL',
-    onSuccess: result => {
-      config.logoUrl = result.data;
-      const img = new Image();
-      img.onload = () => {
-        config.logoImg = img;
-        debouncedRender();
-      };
-      img.src = config.logoUrl;
+  // 计算键盘按钮属性
+  const buttons = computed(() => [
+    { label: '父', action: () => append('父') },
+    { label: '母', action: () => append('母') },
+    // 如果当前是男性，无法点击“夫”
+    { label: '夫', action: () => append('夫'), disabled: currentGender.value === 1 },
+    // 如果当前是女性，无法点击“妻”
+    { label: '妻', action: () => append('妻'), disabled: currentGender.value === 0 },
+    { label: '兄', action: () => append('兄') },
+    { label: '弟', action: () => append('弟') },
+    { label: '姐', action: () => append('姐') },
+    { label: '妹', action: () => append('妹') },
+    { label: '子', action: () => append('子') },
+    { label: '女', action: () => append('女') },
+    {
+      label: '退',
+      action: backspace,
+      colorClass:
+        'bg-orange-50 text-orange-500 hover:bg-orange-100 active:scale-95 border border-orange-100 shadow-sm hover:shadow'
+    },
+    {
+      label: 'C',
+      action: clear,
+      colorClass:
+        'bg-rose-50 text-rose-500 hover:bg-rose-100 active:scale-95 border border-rose-100 shadow-sm hover:shadow'
     }
+  ]);
+
+  // 操作逻辑
+  const setGender = gender => {
+    myGender.value = gender;
+    chain.value = [];
+  };
+
+  const append = relation => {
+    chain.value.push(relation);
+  };
+
+  const backspace = () => {
+    chain.value.pop();
+  };
+
+  const clear = () => {
+    chain.value = [];
+  };
+
+  // 显示格式化
+  const expressionText = computed(() => {
+    if (chain.value.length === 0) return '我';
+    return '我 的 ' + chain.value.join(' 的 ');
   });
 
-  const positions = ['tl', 'tc', 'tr', 'ml', 'center', 'mr', 'bl', 'bc', 'br'];
-
-  const config = reactive({
-    text: 'LRM工具箱',
-    fontSize: 40,
-    color: 'rgba(128, 128, 128, 0.5)',
-    logoUrl: '',
-    logoImg: null,
-    logoScale: 30,
-    mode: 'tile',
-    position: 'center',
-    opacity: 0.3,
-    rotate: -30
+  const resultText = computed(() => {
+    if (chain.value.length === 0) return '我';
+    const key = chain.value.join(',');
+    return relationDict[key] || '未知亲戚';
   });
-
-  const triggerUpload = () => triggerFileInput();
-
-  const pdfBytes = ref(null);
-
-  let isRendering = false;
-  let currentRenderTask = null;
-  let renderTimeout = null;
-
-  let renderPreview;
-
-  const debouncedRender = () => {
-    if (renderTimeout) clearTimeout(renderTimeout);
-    renderTimeout = setTimeout(() => renderPreview(), 100);
-  };
-
-  const loadPdf = async file => {
-    pdfFile.value = file;
-    pdfBytes.value = await file.arrayBuffer();
-    const loadingTask = pdfjsLib.getDocument({ data: pdfBytes.value.slice(0) });
-    pdfDoc.value = await loadingTask.promise;
-    pageCount.value = pdfDoc.value.numPages;
-    currentPage.value = 1;
-    debouncedRender();
-  };
-
-  renderPreview = async () => {
-    if (!pdfBytes.value || !previewCanvas.value) return;
-    if (isRendering) return;
-
-    isRendering = true;
-    try {
-      if (currentRenderTask) {
-        currentRenderTask.cancel();
-        currentRenderTask = null;
-      }
-
-      const loadingTask = pdfjsLib.getDocument({ data: pdfBytes.value.slice(0) });
-      const doc = await loadingTask.promise;
-      const page = await doc.getPage(currentPage.value);
-      const viewport = page.getViewport({ scale: 1.5 });
-      const canvas = previewCanvas.value;
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-      const ctx = canvas.getContext('2d');
-
-      currentRenderTask = page.render({ canvasContext: ctx, viewport });
-      await currentRenderTask.promise;
-      currentRenderTask = null;
-
-      drawWatermarkPreview(ctx, canvas.width, canvas.height);
-    } catch (e) {
-      if (e.name !== 'RenderingCancelledException') {
-        console.error('Preview error:', e);
-      }
-    } finally {
-      isRendering = false;
-    }
-  };
-
-  watch(currentPage, debouncedRender);
-  watch(watermarkType, debouncedRender);
-
-  const drawWatermarkPreview = (ctx, w, h) => {
-    ctx.save();
-    ctx.globalAlpha = config.opacity;
-    if (watermarkType.value === 'text') {
-      ctx.font = `${config.fontSize}px sans-serif`;
-      ctx.fillStyle = config.color;
-      ctx.textBaseline = 'middle';
-      ctx.textAlign = 'center';
-    }
-    if (config.mode === 'tile') {
-      const ww =
-        watermarkType.value === 'text'
-          ? ctx.measureText(config.text).width
-          : (config.logoImg?.width || 100) * (config.logoScale / 100);
-      const wh =
-        watermarkType.value === 'text'
-          ? config.fontSize
-          : (config.logoImg?.height || 100) * (config.logoScale / 100);
-      const stepX = ww + 80,
-        stepY = wh + 80;
-      for (let y = -h; y < h * 2; y += stepY) {
-        for (let x = -w; x < w * 2; x += stepX) {
-          ctx.save();
-          ctx.translate(x, y);
-          ctx.rotate((config.rotate * Math.PI) / 180);
-          if (watermarkType.value === 'text') ctx.fillText(config.text, 0, 0);
-          else if (config.logoImg) ctx.drawImage(config.logoImg, -ww / 2, -wh / 2, ww, wh);
-          ctx.restore();
-        }
-      }
-    } else {
-      let x = w / 2,
-        y = h / 2;
-      const p = config.position;
-      if (p.includes('l')) x = 50;
-      if (p.includes('r')) x = w - 50;
-      if (p.includes('t')) y = 50;
-      if (p.includes('b')) y = h - 50;
-      ctx.translate(x, y);
-      ctx.rotate((config.rotate * Math.PI) / 180);
-      if (watermarkType.value === 'text') ctx.fillText(config.text, 0, 0);
-      else if (config.logoImg) {
-        const ww = config.logoImg.width * (config.logoScale / 100);
-        const wh = config.logoImg.height * (config.logoScale / 100);
-        ctx.drawImage(config.logoImg, -ww / 2, -wh / 2, ww, wh);
-      }
-    }
-    ctx.restore();
-  };
-
-  const createTextWatermarkImage = () => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    ctx.font = `${config.fontSize}px sans-serif`;
-    const metrics = ctx.measureText(config.text);
-    const textWidth = metrics.width;
-    const textHeight = config.fontSize * 1.2;
-
-    const rad = Math.abs((config.rotate * Math.PI) / 180);
-    const rotatedWidth = Math.ceil(textWidth * Math.cos(rad) + textHeight * Math.sin(rad)) + 20;
-    const rotatedHeight = Math.ceil(textWidth * Math.sin(rad) + textHeight * Math.cos(rad)) + 20;
-
-    canvas.width = rotatedWidth;
-    canvas.height = rotatedHeight;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.translate(canvas.width / 2, canvas.height / 2);
-    ctx.rotate((config.rotate * Math.PI) / 180);
-    ctx.font = `${config.fontSize}px sans-serif`;
-    ctx.fillStyle = config.color;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(config.text, 0, 0);
-
-    return canvas.toDataURL('image/png');
-  };
-
-  const applyWatermark = async () => {
-    if (!pdfBytes.value) return;
-    processing.value = true;
-    const loading = ElLoading.service({ text: '正在添加水印...', background: 'rgba(0,0,0,0.7)' });
-    try {
-      const doc = await PDFDocument.load(pdfBytes.value.slice(0));
-      const pages = doc.getPages();
-
-      let watermarkImg;
-      let imgW, imgH;
-
-      if (watermarkType.value === 'text') {
-        const textImgDataUrl = createTextWatermarkImage();
-        const textImgBytes = await fetch(textImgDataUrl).then(r => r.arrayBuffer());
-        watermarkImg = await doc.embedPng(textImgBytes);
-        imgW = watermarkImg.width;
-        imgH = watermarkImg.height;
-      } else if (config.logoImg && config.logoUrl) {
-        const imgBytes = await fetch(config.logoUrl).then(res => res.arrayBuffer());
-        try {
-          watermarkImg = await doc.embedPng(imgBytes);
-        } catch {
-          watermarkImg = await doc.embedJpg(imgBytes);
-        }
-        imgW = watermarkImg.width * (config.logoScale / 100);
-        imgH = watermarkImg.height * (config.logoScale / 100);
-      }
-
-      if (!watermarkImg) {
-        throw new Error('无法创建水印');
-      }
-
-      for (const page of pages) {
-        const { width, height } = page.getSize();
-
-        if (config.mode === 'tile') {
-          const stepX = imgW + 60;
-          const stepY = imgH + 60;
-          for (let y = 0; y < height; y += stepY) {
-            for (let x = 0; x < width; x += stepX) {
-              page.drawImage(watermarkImg, {
-                x,
-                y,
-                width: imgW,
-                height: imgH,
-                opacity: config.opacity
-              });
-            }
-          }
-        } else {
-          let x = (width - imgW) / 2;
-          let y = (height - imgH) / 2;
-          const p = config.position;
-          if (p.includes('l')) x = 30;
-          if (p.includes('r')) x = width - imgW - 30;
-          if (p.includes('t')) y = height - imgH - 30;
-          if (p.includes('b')) y = 30;
-          page.drawImage(watermarkImg, {
-            x,
-            y,
-            width: imgW,
-            height: imgH,
-            opacity: config.opacity
-          });
-        }
-      }
-
-      const savedBytes = await doc.save();
-      const blob = new Blob([savedBytes], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `watermarked_${pdfFile.value?.name || 'document.pdf'}`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      ElMessage.success('水印添加成功');
-    } catch (e) {
-      console.error(e);
-      ElMessage.error('添加水印失败: ' + e.message);
-    } finally {
-      processing.value = false;
-      loading.close();
-    }
-  };
 </script>
-
-<style scoped>
-  .tool-page {
-    min-height: 100vh;
-    background: #f1f5f9;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .tool-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .header-center {
-    text-align: center;
-  }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0;
-  }
-
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
-    text-transform: uppercase;
-  }
-
-  .tool-content {
-    flex: 1;
-    padding: 1.5rem;
-    max-width: 1400px;
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  .layout-container {
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 1.5rem;
-    min-height: calc(100vh - 200px);
-  }
-
-  .workbench {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background: #f8fafc;
-    padding: 1rem;
-  }
-
-  .upload-placeholder {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s;
-    min-height: 400px;
-  }
-
-  .upload-placeholder:hover {
-    border-color: #3b82f6;
-    background: #eff6ff;
-  }
-
-  .upload-icon {
-    font-size: 4rem;
-    color: #ef4444;
-    margin-bottom: 1rem;
-  }
-
-  .preview-area {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .file-info-bar {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    background: #fff;
-    border-radius: 12px;
-    margin-bottom: 1rem;
-  }
-
-  .pdf-icon {
-    font-size: 2rem;
-    color: #ef4444;
-  }
-
-  .file-details {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .file-name {
-    font-weight: 600;
-    color: #1e293b;
-  }
-
-  .file-meta {
-    font-size: 0.85rem;
-    color: #64748b;
-  }
-
-  .preview-canvas-wrap {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: #e5e7eb;
-    border-radius: 8px;
-    padding: 1rem;
-    overflow: hidden;
-  }
-
-  .preview-canvas-wrap canvas {
-    max-width: 100%;
-    max-height: 500px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  }
-
-  .page-nav {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-
-  .settings-panel {
-    padding: 1.5rem;
-    overflow-y: auto;
-    background: #fff;
-  }
-
-  .panel-title {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0 0 1rem;
-  }
-
-  .settings-group {
-    margin-bottom: 1.25rem;
-  }
-
-  .label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #475569;
-    margin-bottom: 0.5rem;
-  }
-
-  .logo-upload {
-    height: 80px;
-    border: 1px dashed #cbd5e1;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    overflow: hidden;
-    background: #f8fafc;
-  }
-
-  .logo-preview {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-  }
-
-  .logo-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #94a3b8;
-    font-size: 0.8rem;
-  }
-
-  .position-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    width: 100px;
-    margin: 0 auto;
-  }
-
-  .pos-dot {
-    aspect-ratio: 1;
-    background: #e2e8f0;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .pos-dot:hover {
-    background: #cbd5e1;
-  }
-
-  .pos-dot.active {
-    background: #3b82f6;
-    transform: scale(1.1);
-  }
-
-  .tips-section {
-    margin-top: 2rem;
-    padding: 1rem;
-    background: #f8fafc;
-    border-radius: 8px;
-  }
-
-  .tips-section h4 {
-    font-size: 0.9rem;
-    margin: 0 0 0.5rem;
-    color: #475569;
-  }
-
-  .tips-section ul {
-    margin: 0;
-    padding-left: 1.25rem;
-    font-size: 0.8rem;
-    color: #64748b;
-    line-height: 1.8;
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  }
-
-  @media (max-width: 992px) {
-    .layout-container {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
-  }
-</style>

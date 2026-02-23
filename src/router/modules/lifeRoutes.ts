@@ -136,6 +136,11 @@ const lifeRoutes: RouteRecordRaw[] = [
     path: '/tools/instrument-tuner',
     name: 'InstrumentTunerTool',
     component: () => import('@/components/tools/life/InstrumentTunerTool.vue')
+  },
+  {
+    path: '/tools/family-relation',
+    name: 'FamilyRelationTool',
+    component: () => import('@/components/tools/life/FamilyRelationTool.vue')
   }
 ];
 

@@ -1,152 +1,177 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="$router.back()">
-          <el-icon><ArrowLeft /></el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">代码截图美化</h1>
-        <span class="tool-subtitle">Code Screenshot beautifier</span>
-      </div>
-      <div class="header-right">
-        <el-button :loading="exporting" type="primary" @click="exportImage">
-          <el-icon><Download /></el-icon> 导出图片
-        </el-button>
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">代码<span>截图()</span></h1>
+        <div class="badge">📸 Code Beautifier</div>
+      </header>
 
-    <main class="tool-content">
-      <div class="tool-layout">
-        <!-- 左侧配置 -->
-        <div class="tool-sidebar">
-          <div class="panel glass-card">
-            <h2 class="panel-title">
-              <el-icon><Setting /></el-icon> 外观设置
-            </h2>
-
-            <div class="config-item">
-              <label class="section-label">主题风格</label>
-              <el-select v-model="theme" class="w-full">
-                <el-option v-for="t in themes" :key="t.id" :label="t.name" :value="t.id" />
-              </el-select>
+      <main class="brutal-grid">
+        <!-- Configuration Sidebar -->
+        <aside class="config-sidebar">
+          <!-- Appearance -->
+          <div class="brutal-pane">
+            <div class="pane-header bg-yellow">
+              <span>🎨 外观设置 (THEME)</span>
             </div>
-
-            <div class="config-item">
-              <label class="section-label">背景颜色</label>
-              <div class="bg-presets">
-                <button
-                  v-for="bg in bgPresets"
-                  :key="bg"
-                  class="bg-dot"
-                  :style="{ background: bg }"
-                  :class="{ active: bgColor === bg }"
-                  @click="bgColor = bg"
-                ></button>
-                <el-color-picker v-model="bgColor" show-alpha size="small" />
+            <div class="pane-body">
+              <div class="config-group">
+                <label class="brutal-label">主题风格</label>
+                <select v-model="theme" class="brutal-select w-full">
+                  <option v-for="t in themes" :key="t.id" :value="t.id">{{ t.name }}</option>
+                </select>
               </div>
-            </div>
 
-            <div class="config-item">
-              <div class="label-row">
-                <label class="section-label">内边距 (Padding)</label>
-                <span class="value-display">{{ padding }}px</span>
+              <div class="config-group">
+                <label class="brutal-label">背景画板 (Background)</label>
+                <div class="bg-presets">
+                  <button
+                    v-for="(bg, idx) in bgPresets"
+                    :key="idx"
+                    class="bg-dot"
+                    :style="{ background: bg }"
+                    :class="{ active: bgColor === bg }"
+                    @click="bgColor = bg"
+                  ></button>
+                  <label class="custom-color-btn" title="自定义纯色">
+                    <input v-model="bgColor" type="color" class="color-picker-hidden" />
+                    +
+                  </label>
+                </div>
               </div>
-              <el-slider v-model="padding" :min="10" :max="100" />
-            </div>
 
-            <div class="config-item">
-              <label class="section-label">窗口控件</label>
-              <div class="option-row">
-                <span>显示关闭/最小化按钮</span>
-                <el-switch v-model="showDots" />
+              <div class="config-group">
+                <div class="slider-header">
+                  <label class="brutal-label">内边距 (Padding)</label>
+                  <span class="slider-val">{{ padding }}px</span>
+                </div>
+                <input
+                  v-model.number="padding"
+                  type="range"
+                  min="10"
+                  max="100"
+                  class="brutal-range"
+                />
               </div>
-            </div>
 
-            <div class="config-item">
-              <label class="section-label">阴影强度</label>
-              <el-slider v-model="shadowIntensity" :min="0" :max="1" :step="0.1" />
+              <div class="config-group">
+                <div class="slider-header">
+                  <label class="brutal-label">阴影强度 (Shadow)</label>
+                  <span class="slider-val">{{ shadowIntensity }}</span>
+                </div>
+                <input
+                  v-model.number="shadowIntensity"
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  class="brutal-range"
+                />
+              </div>
+
+              <div class="config-group">
+                <label class="brutal-switch-row">
+                  <span class="brutal-label mb-0">显示关闭/最小化按钮</span>
+                  <label class="brutal-switch">
+                    <input v-model="showDots" type="checkbox" />
+                    <span class="slider"></span>
+                  </label>
+                </label>
+              </div>
             </div>
           </div>
 
-          <div class="panel glass-card mt-6">
-            <h2 class="panel-title">
-              <el-icon><EditPen /></el-icon> 内容编辑
-            </h2>
-            <div class="config-item">
-              <label class="section-label">编程语言</label>
-              <el-select v-model="language" class="w-full">
-                <el-option v-for="l in languages" :key="l" :label="l" :value="l" />
-              </el-select>
+          <!-- Content Editor -->
+          <div class="brutal-pane mt-6">
+            <div class="pane-header bg-blue">
+              <span class="text-white">✍️ 内容编辑 (EDITOR)</span>
             </div>
-            <el-input
-              v-model="codeText"
-              type="textarea"
-              :rows="12"
-              placeholder="在此粘贴代码..."
-              class="code-input-area"
-            />
+            <div class="pane-body">
+              <div class="config-group">
+                <label class="brutal-label">编程语言</label>
+                <select v-model="language" class="brutal-select w-full">
+                  <option v-for="l in languages" :key="l" :value="l">{{ l }}</option>
+                </select>
+              </div>
+              <textarea
+                v-model="codeText"
+                class="brutal-editor code-input-area"
+                placeholder="在此粘贴代码..."
+                spellcheck="false"
+              ></textarea>
+            </div>
           </div>
-        </div>
+        </aside>
 
-        <!-- 右侧预览 -->
-        <div class="tool-main">
-          <div class="preview-stage">
-            <div
-              ref="captureRef"
-              class="screenshot-canvas"
-              :style="{
-                background: bgColor,
-                padding: `${padding}px`
-              }"
-            >
+        <!-- Preview Stage -->
+        <div class="preview-main">
+          <div class="brutal-pane preview-sticky-pane">
+            <div class="pane-header bg-pink">
+              <span class="text-white">👁️ 预览舞台 (STAGE)</span>
+              <button
+                class="brutal-action-btn small-btn"
+                :disabled="exporting"
+                @click="exportImage"
+              >
+                <span v-if="exporting">⚪ 导出中...</span>
+                <span v-else>💾 导出图片</span>
+              </button>
+            </div>
+
+            <div class="preview-stage-wrap">
               <div
-                class="code-window"
-                :class="theme"
+                ref="captureRef"
+                class="screenshot-canvas"
                 :style="{
-                  boxShadow: `0 20px 50px rgba(0,0,0, ${shadowIntensity * 0.3})`
+                  background: bgColor,
+                  padding: `${padding}px`
                 }"
               >
-                <!-- 窗口头部 -->
-                <div class="window-header">
-                  <div v-if="showDots" class="window-dots">
-                    <span class="dot red"></span>
-                    <span class="dot yellow"></span>
-                    <span class="dot green"></span>
+                <div
+                  class="code-window"
+                  :class="theme"
+                  :style="{
+                    boxShadow: `10px 10px 0px rgba(0,0,0, ${shadowIntensity}), 0 20px 50px rgba(0,0,0, ${shadowIntensity * 0.4})`
+                  }"
+                >
+                  <!-- 窗口头部 -->
+                  <div class="window-header">
+                    <div v-if="showDots" class="window-dots">
+                      <span class="dot red"></span>
+                      <span class="dot yellow"></span>
+                      <span class="dot green"></span>
+                    </div>
+                    <div class="window-title">
+                      <input
+                        v-model="fileName"
+                        type="text"
+                        placeholder="index.js"
+                        class="title-input-plain"
+                      />
+                    </div>
+                    <div v-if="showDots" class="window-spacer"></div>
                   </div>
-                  <div class="window-title">
-                    <el-input
-                      v-model="fileName"
-                      variant="plain"
-                      placeholder="index.js"
-                      class="title-input"
-                    />
-                  </div>
-                  <div class="window-spacer"></div>
-                </div>
 
-                <!-- 代码区域 -->
-                <div class="window-body">
-                  <pre :class="`language-${language.toLowerCase()}`">
-                    <!-- eslint-disable-next-line vue/no-v-html -->
-                    <code v-html="highlightedCode"></code>
-                  </pre>
+                  <!-- 代码区域 -->
+                  <div class="window-body">
+                    <pre :class="`language-${language.toLowerCase()}`">
+                      <!-- eslint-disable-next-line vue/no-v-html -->
+                      <code v-html="highlightedCode"></code>
+                    </pre>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - 代码截图美化</footer>
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, computed, watch } from 'vue';
-  import { ArrowLeft, Download, Setting, EditPen } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
   import html2canvas from 'html2canvas';
 
@@ -155,10 +180,10 @@
 
   const theme = ref('dracula');
   const themes = [
-    { id: 'dracula', name: 'Dracula (暗色)' },
-    { id: 'one-light', name: 'One Light (亮色)' },
-    { id: 'monokai', name: 'Monokai' },
-    { id: 'night-owl', name: 'Night Owl' }
+    { id: 'dracula', name: '🧛 Dracula (暗色)' },
+    { id: 'one-light', name: '☀️ One Light (亮色)' },
+    { id: 'monokai', name: '🎨 Monokai' },
+    { id: 'night-owl', name: '🦉 Night Owl' }
   ];
 
   const bgColor = ref('linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
@@ -168,7 +193,8 @@
     'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
     'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
     '#2d3436',
-    '#f8fafc'
+    '#f8fafc',
+    '#ffd900'
   ];
 
   const padding = ref(50);
@@ -225,11 +251,9 @@ const getUser = (id: number): User => {
     message = "Hello, LRM Toolbox!"
     print(message)
     return True`,
-    Go:
-      `package main
+    Go: `package main
 
-` +
-      `import "fmt"
+import "fmt"
 
 func main() {
     fmt.Println("Hello, LRM Toolbox!")
@@ -280,7 +304,7 @@ Efficient and convenient developer tools collection.
       link.download = `code-snippet-${Date.now()}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
-      ElMessage.success('导出成功');
+      ElMessage.success('成功保存精美截图！');
     } catch (err) {
       console.error(err);
       ElMessage.error('导出失败，请重试');
@@ -289,12 +313,10 @@ Efficient and convenient developer tools collection.
     }
   };
 
-  // 监听语言变化，切换对应的初始代码模版
   watch(language, newLang => {
     if (languageTemplates[newLang]) {
       codeText.value = languageTemplates[newLang];
 
-      // 自动更新文件名后缀
       const extMap: Record<string, string> = {
         JavaScript: 'js',
         TypeScript: 'ts',
@@ -309,14 +331,11 @@ Efficient and convenient developer tools collection.
       fileName.value = `${currentFileName}.${extMap[newLang] || 'txt'}`;
     }
   });
-
-  // 监听内容变化和主题变化，确保预览同步
-  watch([codeText, theme], () => {
-    // 基础同步
-  });
 </script>
 
 <style scoped>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800;900&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
   /* 基础 Token 配色 (Dracula 风格) */
   .dracula :deep(.token-keyword) {
     color: #ff79c6;
@@ -377,176 +396,376 @@ Efficient and convenient developer tools collection.
     color: #f78c6c;
   }
 
-  .tool-page {
+  /* Neobrutalism Global */
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f1f5f9;
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .tool-header {
+  .brutal-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* Header */
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
 
-  .header-left,
-  .header-right {
-    width: 140px;
-  }
-
-  .header-right {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .header-center {
-    text-align: center;
-    flex: 1;
-  }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
     margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff7be5;
+  }
+  .brutal-title span {
+    color: #ff7be5;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
   }
 
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
     text-transform: uppercase;
   }
-
-  .tool-content {
-    flex: 1;
-    padding: 1.5rem;
-    max-width: 1280px;
-    margin: 0 auto;
-    width: 100%;
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
   }
 
-  .tool-layout {
+  .badge {
+    background: #111;
+    color: #ff7be5;
+    padding: 0.5rem 1.2rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    border: 4px solid #ff7be5;
+    box-shadow: 5px 5px 0px #ff7be5;
+  }
+
+  /* Main Grid */
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .config-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .brutal-pane {
+    border: 4px solid #111;
+    background: #fff;
+    box-shadow: 10px 10px 0px #111;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .pane-header {
+    padding: 1rem 1.2rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #0ea5e9;
+  }
+  .bg-pink {
+    background: #ff7be5;
+  }
+  .text-white {
+    color: #fff;
+  }
+
+  .pane-body {
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
   }
 
-  @media (min-width: 1024px) {
-    .tool-layout {
-      display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 1.5rem;
-      align-items: start;
-    }
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    padding: 24px;
-  }
-
-  .panel-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 20px;
+  /* Controls */
+  .config-group {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    flex-direction: column;
+    gap: 0.5rem;
   }
-
-  .config-item {
-    margin-bottom: 20px;
-  }
-
-  .section-label {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #64748b;
+  .brutal-label {
+    font-weight: 800;
+    font-size: 0.95rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+  .mb-0 {
+    margin-bottom: 0;
+  }
+  .w-full {
+    width: 100%;
+    box-sizing: border-box;
   }
 
+  .brutal-select {
+    appearance: none;
+    border: 3px solid #111;
+    padding: 0.6rem 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    background: #fdfae5;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    outline: none;
+    transition: all 0.1s;
+  }
+  .brutal-select:focus {
+    background: #fff;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+
+  /* Range */
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .slider-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 800;
+    color: #ff4b4b;
+    background: #111;
+    padding: 2px 6px;
+  }
+
+  .brutal-range {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 10px;
+    background: #e0e0e0;
+    border: 2px solid #111;
+    outline: none;
+  }
+  .brutal-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    background: #0ea5e9;
+    border: 3px solid #111;
+    cursor: pointer;
+    border-radius: 0;
+  }
+
+  /* Colors */
   .bg-presets {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 12px;
   }
-
   .bg-dot {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: 2px solid white;
+    width: 30px;
+    height: 30px;
+    border: 3px solid #111;
     cursor: pointer;
-    box-shadow: 0 0 0 1px #e2e8f0;
-    padding: 0;
+    box-shadow: 2px 2px 0px #111;
   }
-
   .bg-dot.active {
-    box-shadow: 0 0 0 2px var(--el-color-primary);
+    box-shadow: 0 0 0 transparent;
+    transform: translate(2px, 2px);
+  }
+  .custom-color-btn {
+    width: 30px;
+    height: 30px;
+    border: 3px dashed #111;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    background: #fff;
+    position: relative;
+  }
+  .color-picker-hidden {
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
   }
 
-  .option-row {
+  /* Switch */
+  .brutal-switch-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    cursor: pointer;
+  }
+  .brutal-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+  }
+  .brutal-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #fff;
+    border: 3px solid #111;
+    transition: 0.2s;
+    box-shadow: 3px 3px 0px #111;
+  }
+  .slider:before {
+    position: absolute;
+    content: '';
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 3px;
+    background-color: #111;
+    transition: 0.2s;
+  }
+  input:checked + .slider {
+    background-color: #10b981;
+  }
+  input:checked + .slider:before {
+    transform: translateX(28px);
+    background-color: #fff;
+  }
+
+  /* Code Area */
+  .code-input-area {
+    width: 100%;
+    min-height: 250px;
+    border: 4px solid #111;
+    padding: 1rem;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 0.9rem;
-    color: #475569;
+    background: #111;
+    color: #fff;
+    resize: vertical;
+    outline: none;
+    box-shadow: inset 0 0 10px #000;
+    box-sizing: border-box;
+  }
+  .code-input-area:focus {
+    border-color: #0ea5e9;
+  }
+  .mt-6 {
+    margin-top: 2rem;
   }
 
-  .label-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .small-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.3rem 0.8rem;
+    font-weight: 800;
+    font-family: 'Syne', sans-serif;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #111;
+    text-transform: uppercase;
+  }
+  .small-btn:hover:not(:disabled) {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px #111;
+    background: #fffbee;
+  }
+  .small-btn:disabled {
+    opacity: 0.7;
   }
 
-  .value-display {
-    font-size: 0.85rem;
-    font-family: monospace;
-    color: var(--el-color-primary);
+  /* Canvas Stage */
+  .preview-sticky-pane {
+    position: sticky;
+    top: 2rem;
   }
-
-  .code-input-area :deep(.el-textarea__inner) {
-    font-family: 'Consolas', 'Monaco', monospace;
-    font-size: 0.85rem;
-    background: #f8fafc;
-    border-color: #e2e8f0;
-  }
-
-  /* 预览舞台 */
-  .preview-stage {
+  .preview-stage-wrap {
+    background: #fdfae5;
+    background-image:
+      linear-gradient(45deg, #ccc 25%, transparent 25%),
+      linear-gradient(-45deg, #ccc 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #ccc 75%),
+      linear-gradient(-45deg, transparent 75%, #ccc 75%);
+    background-size: 20px 20px;
+    background-position:
+      0 0,
+      0 10px,
+      10px -10px,
+      -10px 0px;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding-top: 2rem;
-    min-height: 600px;
+    align-items: center;
+    min-height: 500px;
+    padding: 2rem;
+    overflow: auto;
+    border-top: 4px solid #111;
   }
 
   .screenshot-canvas {
     transition: all 0.3s ease;
-    border-radius: 4px;
     height: auto;
     min-width: 400px;
     max-width: 100%;
   }
 
   .code-window {
-    border-radius: 12px;
-    overflow: hidden;
+    border: 3px solid #111;
     display: flex;
     flex-direction: column;
     transition: box-shadow 0.3s ease;
@@ -558,125 +777,206 @@ Efficient and convenient developer tools collection.
     align-items: center;
     padding: 0 16px;
     gap: 16px;
+    border-bottom: 3px solid #111;
   }
 
   .window-dots {
     display: flex;
     gap: 8px;
+    width: 60px;
   }
-
   .dot {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
+    border: 2px solid #111;
   }
-
   .dot.red {
-    background: #ff5f56;
+    background: #ff4b4b;
   }
   .dot.yellow {
-    background: #ffbd2e;
+    background: #ffd900;
   }
   .dot.green {
-    background: #27c93f;
+    background: #10b981;
   }
 
   .window-title {
     flex: 1;
     text-align: center;
   }
-
-  .title-input :deep(.el-input__wrapper) {
-    background: transparent !important;
-    box-shadow: none !important;
+  .title-input-plain {
+    background: transparent;
+    border: none;
     text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: 0.95rem;
+    outline: none;
+    width: 100%;
+    opacity: 0.9;
   }
 
-  .title-input :deep(.el-input__inner) {
-    text-align: center;
-    font-size: 0.85rem;
-    opacity: 0.6;
+  .window-spacer {
+    width: 60px;
   }
 
   .window-body {
     padding: 1.5rem;
-    font-family: 'Fira Code', 'Consolas', monospace;
-    font-size: 1rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.05rem;
     line-height: 1.6;
+    overflow: hidden;
   }
-
   .window-body pre {
     margin: 0;
     white-space: pre-wrap;
     word-wrap: break-word;
   }
 
-  /* 主题实现 */
+  /* Theme Implementations */
   .dracula {
     background: #282a36;
   }
   .dracula .window-header {
-    background: #343746;
+    background: #ff7be5;
+    border-bottom-color: #111;
   }
   .dracula .window-body {
     color: #f8f8f2;
   }
-  .dracula .title-input :deep(.el-input__inner) {
-    color: #f8f8f2;
+  .dracula .title-input-plain {
+    color: #111;
   }
 
   .one-light {
     background: #fafafa;
-    border: 1px solid #e0e0e0;
   }
   .one-light .window-header {
-    background: #f0f0f0;
-    border-bottom: 1px solid #e0e0e0;
+    background: #ffd900;
+    border-bottom-color: #111;
   }
   .one-light .window-body {
     color: #383a42;
   }
-  .one-light .title-input :deep(.el-input__inner) {
-    color: #383a42;
+  .one-light .title-input-plain {
+    color: #111;
   }
 
   .monokai {
     background: #272822;
   }
   .monokai .window-header {
-    background: #383933;
+    background: #0ea5e9;
+    border-bottom-color: #111;
   }
   .monokai .window-body {
     color: #f8f8f2;
   }
-  .monokai .title-input :deep(.el-input__inner) {
-    color: #f8f8f2;
+  .monokai .title-input-plain {
+    color: #111;
   }
 
   .night-owl {
     background: #011627;
   }
   .night-owl .window-header {
-    background: #0b2942;
+    background: #10b981;
+    border-bottom-color: #111;
   }
   .night-owl .window-body {
     color: #d6deeb;
   }
-  .night-owl .title-input :deep(.el-input__inner) {
-    color: #d6deeb;
+  .night-owl .title-input-plain {
+    color: #111;
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  @media (max-width: 1024px) {
+    .brutal-grid {
+      grid-template-columns: 1fr;
+    }
+    .preview-sticky-pane {
+      position: static;
+    }
   }
 
-  .mt-6 {
-    margin-top: 1.5rem;
+  /* Dark Mode */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
   }
-  .w-full {
-    width: 100%;
+
+  [data-theme='dark'] .brutal-pane {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 10px 10px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .badge {
+    border-color: #eee;
+    box-shadow: 5px 5px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-label {
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-select {
+    background: #222;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+
+  [data-theme='dark'] .slider-val {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .brutal-range {
+    border-color: #eee;
+    background: #333;
+  }
+  [data-theme='dark'] .brutal-range::-webkit-slider-thumb {
+    border-color: #eee;
+  }
+
+  [data-theme='dark'] .slider {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .slider:before {
+    background-color: #eee;
+  }
+
+  [data-theme='dark'] .code-input-area {
+    border-color: #eee;
+  }
+
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #075985;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #9d174d;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .preview-stage-wrap {
+    background-color: #222;
+    border-top-color: #eee;
   }
 </style>

@@ -1,137 +1,112 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="$router.back()">
-          <el-icon><ArrowLeft /></el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">前端性能清单</h1>
-        <span class="tool-subtitle">Front-end Performance Checklist</span>
-      </div>
-      <div class="header-right">
-        <div class="overall-progress">
-          <span class="progress-label">总进度</span>
-          <el-progress
-            type="circle"
-            :percentage="totalProgress"
-            :width="40"
-            :stroke-width="4"
-            color="var(--el-color-primary)"
-          />
-        </div>
-      </div>
-    </header>
-
-    <main class="tool-content">
-      <div class="checklist-layout">
-        <!-- 分类侧边栏 -->
-        <aside class="checklist-sidebar">
-          <div class="panel glass-card sticky-sidebar">
-            <h2 class="panel-title">
-              <el-icon><Filter /></el-icon> 优化维度
-            </h2>
-            <div class="category-list">
-              <button
-                v-for="cat in categories"
-                :key="cat.id"
-                class="category-btn"
-                :class="{ active: activeCategory === cat.id }"
-                @click="activeCategory = cat.id"
-              >
-                <div class="cat-info">
-                  <el-icon><component :is="cat.icon" /></el-icon>
-                  <span>{{ cat.name }}</span>
-                </div>
-                <span class="cat-count"
-                  >{{ getCategoryProgress(cat.id).completed }}/{{
-                    getCategoryProgress(cat.id).total
-                  }}</span
-                >
-              </button>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">性能<span>清单()</span></h1>
+        <div class="header-actions">
+          <div class="brutal-progress-badge">
+            <div class="progress-info">
+              <span class="p-label">总进度 (PROGRESS)</span>
+              <span class="p-val">{{ totalProgress }}%</span>
             </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-inner" :style="{ width: `${totalProgress}%` }"></div>
+            </div>
+          </div>
+        </div>
+      </header>
 
-            <div class="sidebar-footer mt-6">
-              <el-button type="danger" plain class="w-full" @click="resetProgress">
-                <el-icon><RefreshRight /></el-icon> 重置进度
-              </el-button>
+      <main class="brutal-grid">
+        <!-- Sidebar -->
+        <aside class="checklist-sidebar">
+          <div class="brutal-pane sticky-pane">
+            <div class="pane-header bg-yellow">
+              <span>🎯 优化维度 (CATEGORY)</span>
+            </div>
+            <div class="pane-body padding-sm">
+              <div class="category-list">
+                <button
+                  v-for="cat in categories"
+                  :key="cat.id"
+                  class="cat-btn"
+                  :class="{ active: activeCategory === cat.id }"
+                  @click="activeCategory = cat.id"
+                >
+                  <span class="cat-name">{{ cat.icon }} {{ cat.name }}</span>
+                  <span class="cat-count"
+                    >{{ getCategoryProgress(cat.id).completed }} /
+                    {{ getCategoryProgress(cat.id).total }}</span
+                  >
+                </button>
+              </div>
+
+              <div class="mt-4">
+                <button class="action-btn danger-btn w-full" @click="resetProgress">
+                  🔄 重置所有进度
+                </button>
+              </div>
             </div>
           </div>
         </aside>
 
-        <!-- 主内容区域 -->
+        <!-- Main Content -->
         <div class="checklist-main">
-          <section v-for="cat in filteredCategories" :key="cat.id" class="checklist-section">
-            <div class="section-header">
-              <h2 class="section-title">
-                <el-icon><component :is="cat.icon" /></el-icon>
-                {{ cat.name }}
-              </h2>
-              <p class="section-desc">{{ cat.description }}</p>
+          <section v-for="cat in filteredCategories" :key="cat.id" class="brutal-pane mb-6">
+            <div class="pane-header" :class="getCatBg(cat.id)">
+              <span class="text-white cat-sec-title">{{ cat.icon }} {{ cat.name }}</span>
+              <span class="cat-sec-desc">{{ cat.description }}</span>
             </div>
 
-            <div class="item-grid">
-              <div
-                v-for="item in cat.items"
-                :key="item.id"
-                class="checklist-item"
-                :class="{ checked: isChecked(item.id) }"
-                @click="toggleItem(item.id)"
-              >
-                <div class="item-checkbox">
-                  <div class="checkbox-inner">
-                    <el-icon v-if="isChecked(item.id)"><Check /></el-icon>
+            <div class="pane-body bg-pattern">
+              <div class="item-grid">
+                <div
+                  v-for="item in cat.items"
+                  :key="item.id"
+                  class="brutal-check-item"
+                  :class="{ checked: isChecked(item.id) }"
+                  @click="toggleItem(item.id)"
+                >
+                  <div class="check-box">
+                    <span v-if="isChecked(item.id)" class="check-mark">✖</span>
                   </div>
-                </div>
-                <div class="item-content">
-                  <h3 class="item-title">{{ item.title }}</h3>
-                  <p class="item-desc">{{ item.desc }}</p>
-                  <div class="item-tags">
-                    <el-tag
-                      v-for="tag in item.tags"
-                      :key="tag"
-                      size="small"
-                      effect="plain"
-                      :type="getTagType(tag)"
-                    >
-                      {{ tag }}
-                    </el-tag>
+
+                  <div class="item-content">
+                    <h3 class="item-title">{{ item.title }}</h3>
+                    <p class="item-desc">{{ item.desc }}</p>
+                    <div class="item-tags">
+                      <span
+                        v-for="tag in item.tags"
+                        :key="tag"
+                        class="brutal-tag"
+                        :class="getTagColorClass(tag)"
+                      >
+                        {{ tag }}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div class="item-priority" :class="item.priority">
-                  {{
-                    item.priority === 'high'
-                      ? '高优先级'
-                      : item.priority === 'medium'
-                        ? '中优先级'
-                        : '低优先级'
-                  }}
+
+                  <div class="priority-ribbon" :class="item.priority">
+                    {{
+                      item.priority === 'high'
+                        ? '高优先级'
+                        : item.priority === 'medium'
+                          ? '中优先级'
+                          : '低优先级'
+                    }}
+                  </div>
                 </div>
               </div>
             </div>
           </section>
         </div>
-      </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - 前端性能清单</footer>
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue';
-  import {
-    ArrowLeft,
-    Filter,
-    Check,
-    RefreshRight,
-    Files,
-    Connection,
-    Monitor,
-    Cpu
-  } from '@element-plus/icons-vue';
-  import { ElMessageBox, ElMessage } from 'element-plus';
 
   interface ChecklistItem {
     id: string;
@@ -144,7 +119,7 @@
   interface Category {
     id: string;
     name: string;
-    icon: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    icon: string;
     description: string;
     items: ChecklistItem[];
   }
@@ -153,7 +128,7 @@
     {
       id: 'loading',
       name: '资源加载',
-      icon: Files,
+      icon: '📦',
       description: '优化静态资源的体积与加载顺序，实现更快的首屏呈现。',
       items: [
         {
@@ -189,7 +164,7 @@
     {
       id: 'network',
       name: '网络传输',
-      icon: Connection,
+      icon: '📡',
       description: '通过协议优化与缓存策略减少请求耗时与数据量。',
       items: [
         {
@@ -202,7 +177,7 @@
         {
           id: 'cdn',
           title: '使用 CDN 加速',
-          desc: '将静态资源部署在全球加速节点，减少网络往返延迟。',
+          desc: '将静态资源部署在全球加速节点，减少延迟。',
           priority: 'high',
           tags: ['传输', '延迟']
         },
@@ -225,7 +200,7 @@
     {
       id: 'rendering',
       name: '渲染性能',
-      icon: Monitor,
+      icon: '🖥️',
       description: '减少主线程阻塞，优化关键渲染路径。',
       items: [
         {
@@ -261,7 +236,7 @@
     {
       id: 'code',
       name: '代码实践',
-      icon: Cpu,
+      icon: '💻',
       description: '编写更高效的代码，减少运行时的性能开销。',
       items: [
         {
@@ -314,6 +289,9 @@
   });
 
   const getCategoryProgress = (catId: string) => {
+    if (catId === 'all') {
+      return { completed: checkedItems.value.size, total: totalItemsCount.value };
+    }
     const cat = categories.value.find(c => c.id === catId);
     if (!cat) return { completed: 0, total: 0 };
     const completed = cat.items.filter(item => checkedItems.value.has(item.id)).length;
@@ -331,34 +309,49 @@
     saveToLocal();
   };
 
-  const getTagType = (tag: string) => {
-    const types: Record<string, string> = {
-      图片: 'warning',
-      JS: 'primary',
-      HTML: 'danger',
-      CSS: 'info',
-      首屏: 'success'
-    };
-    return types[tag] || 'info';
-  };
-
   const resetProgress = () => {
-    ElMessageBox.confirm('确定要重置所有进度吗？', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    }).then(() => {
+    if (confirm('🚨 警告：确定要重置所有进度吗？此操作不可逆！')) {
       checkedItems.value.clear();
       saveToLocal();
-      ElMessage.success('已重置');
-    });
+    }
   };
 
   const saveToLocal = () => {
     localStorage.setItem('lrm_perf_checklist', JSON.stringify(Array.from(checkedItems.value)));
   };
 
+  const getCatBg = (id: string) => {
+    const bgs: Record<string, string> = {
+      loading: 'bg-blue',
+      network: 'bg-green',
+      rendering: 'bg-pink',
+      code: 'bg-orange'
+    };
+    return bgs[id] || 'bg-blue';
+  };
+
+  const getTagColorClass = (tag: string) => {
+    const list = ['tag-green', 'tag-blue', 'tag-pink', 'tag-yellow', 'tag-orange'];
+    // 简单的按长度或字符 hash
+    let num = 0;
+    for (let i = 0; i < tag.length; i++) {
+      num += tag.charCodeAt(i);
+    }
+    return list[num % list.length];
+  };
+
   onMounted(() => {
+    // 默认加入一个 'all' 类别以便显示全体进度
+    if (!categories.value.find(c => c.id === 'all')) {
+      categories.value.unshift({
+        id: 'all',
+        name: '全部清单',
+        icon: '📋',
+        description: '查看所有性能优化清单',
+        items: []
+      } as unknown as Category);
+    }
+
     const saved = localStorage.getItem('lrm_perf_checklist');
     if (saved) {
       try {
@@ -371,311 +364,555 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800;900&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f1f5f9;
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .tool-header {
+  .brutal-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* Header */
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
 
-  .header-left,
-  .header-right {
-    width: 160px;
-  }
-
-  .header-right {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-  }
-
-  .overall-progress {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .progress-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #64748b;
-    text-transform: uppercase;
-  }
-
-  .header-center {
-    text-align: center;
-    flex: 1;
-  }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
     margin: 0;
-  }
-
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
     text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #f59e0b;
+  }
+  .brutal-title span {
+    color: #f59e0b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
   }
 
-  .tool-content {
-    flex: 1;
-    padding: 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
 
-  .checklist-layout {
+  .brutal-progress-badge {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.5rem 1rem;
+    box-shadow: 6px 6px 0px #111;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 0.5rem;
+    min-width: 200px;
   }
-
-  @media (min-width: 1024px) {
-    .checklist-layout {
-      display: grid;
-      grid-template-columns: 280px 1fr;
-      gap: 1.5rem;
-      align-items: start;
-    }
-  }
-
-  .sticky-sidebar {
-    position: sticky;
-    top: 5rem;
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    padding: 24px;
-  }
-
-  .panel-title {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 20px;
+  .progress-info {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 8px;
+  }
+  .p-label {
+    font-family: 'Syne', sans-serif;
+    font-weight: 900;
+    font-size: 0.9rem;
+  }
+  .p-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 900;
+    font-size: 1.2rem;
+  }
+  .progress-bar-wrap {
+    width: 100%;
+    height: 12px;
+    border: 2px solid #111;
+    background: #eee;
+  }
+  .progress-bar-inner {
+    height: 100%;
+    background: #10b981;
+    transition: width 0.3s ease;
+    border-right: 2px solid #111;
   }
 
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  /* Main Grid */
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .checklist-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .sticky-pane {
+    position: sticky;
+    top: 2rem;
+  }
+
+  .brutal-pane {
+    border: 4px solid #111;
+    background: #fff;
+    box-shadow: 10px 10px 0px #111;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .pane-header {
+    padding: 1rem 1.2rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #0ea5e9;
+  }
+  .bg-pink {
+    background: #ff7be5;
+  }
+  .bg-green {
+    background: #10b981;
+  }
+  .bg-orange {
+    background: #f59e0b;
+  }
+  .text-white {
+    color: #fff;
+  }
+
+  .cat-sec-title {
+    font-size: 1.4rem;
+  }
+  .cat-sec-desc {
+    font-size: 0.85rem;
+    font-weight: 700;
+    opacity: 0.9;
+    margin-left: 1rem;
+  }
+
+  .pane-body {
+    display: flex;
+    flex-direction: column;
+  }
+  .padding-sm {
+    padding: 1.5rem;
+  }
+
+  .bg-pattern {
+    background-image: radial-gradient(#aaa 1px, transparent 0);
+    background-size: 20px 20px;
+    padding: 1.5rem;
+  }
+
+  /* Category List */
   .category-list {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 0.8rem;
   }
-
-  .category-btn {
+  .cat-btn {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    padding: 10px 12px;
-    background: transparent;
-    border: none;
-    border-radius: 8px;
-    color: #64748b;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    background: #fff;
+    border: 3px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
     cursor: pointer;
-    transition: all 0.2s;
-    text-align: left;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.1s;
+  }
+  .cat-btn:hover:not(.active) {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+    background: #fdfae5;
+  }
+  .cat-btn.active {
+    background: #111;
+    color: #fff;
+    transform: translate(3px, 3px);
+    box-shadow: 0 0 0 transparent;
   }
 
-  .category-btn:hover {
-    background: #f1f5f9;
-    color: #1e293b;
+  .action-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.8rem;
+    font-weight: 800;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+  }
+  .action-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+  .action-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px transparent;
+  }
+  .danger-btn {
+    background: #ff4b4b;
+    color: #fff;
+    text-transform: uppercase;
+  }
+  .w-full {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .mt-4 {
+    margin-top: 1.5rem;
+  }
+  .mb-6 {
+    margin-bottom: 2.5rem;
   }
 
-  .category-btn.active {
-    background: #e0f2fe;
-    color: #0284c7;
-    font-weight: 600;
-  }
-
-  .cat-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .cat-count {
-    font-size: 0.75rem;
-    font-family: monospace;
-    opacity: 0.8;
-  }
-
-  .checklist-main {
-    display: flex;
-    flex-direction: column;
-    gap: 2.5rem;
-  }
-
-  .section-header {
-    margin-bottom: 20px;
-  }
-
-  .section-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #1e293b;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 6px;
-  }
-
-  .section-desc {
-    font-size: 0.875rem;
-    color: #64748b;
-  }
-
+  /* Item Grid */
   .item-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 1.5rem;
   }
 
-  @media (min-width: 768px) {
-    .item-grid {
-      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    }
-  }
-
-  .checklist-item {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 16px;
+  .brutal-check-item {
+    background: #fff;
+    border: 4px solid #111;
     display: flex;
-    gap: 16px;
+    padding: 0;
     cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
     transition: all 0.2s;
     position: relative;
     overflow: hidden;
   }
-
-  .checklist-item:hover {
-    border-color: #cbd5e1;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  .brutal-check-item:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
   }
 
-  .checklist-item.checked {
-    background: #f0fdf4;
-    border-color: #86efac;
-  }
-
-  .item-checkbox {
-    flex-shrink: 0;
-    margin-top: 4px;
-  }
-
-  .checkbox-inner {
-    width: 22px;
-    height: 22px;
-    border: 2px solid #cbd5e1;
-    border-radius: 6px;
+  .check-box {
+    width: 60px;
+    border-right: 4px solid #111;
     display: flex;
-    align-items: center;
     justify-content: center;
-    transition: all 0.2s;
-    background: #fff;
+    align-items: center;
+    background: #eee;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #111;
+    transition: background 0.3s;
   }
 
-  .checked .checkbox-inner {
-    background: #22c55e;
-    border-color: #22c55e;
-    color: white;
+  .brutal-check-item.checked .check-box {
+    background: #ffd900;
   }
 
   .item-content {
     flex: 1;
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
-
   .item-title {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin: 0 0 4px 0;
+    font-size: 1.1rem;
+    font-weight: 900;
+    margin: 0;
+    color: #111;
+    transition: opacity 0.3s;
   }
-
-  .checked .item-title {
-    color: #166534;
-    text-decoration: line-through;
-    opacity: 0.7;
-  }
-
   .item-desc {
-    font-size: 0.85rem;
-    color: #64748b;
-    margin-bottom: 12px;
-    line-height: 1.4;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #555;
+    margin: 0;
+    line-height: 1.5;
+    transition: opacity 0.3s;
   }
 
-  .checked .item-desc {
-    opacity: 0.6;
+  .brutal-check-item.checked .item-title,
+  .brutal-check-item.checked .item-desc {
+    opacity: 0.4;
+    text-decoration: line-through;
   }
 
   .item-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .brutal-tag {
+    font-size: 0.75rem;
+    font-weight: 800;
+    border: 2px solid #111;
+    padding: 2px 6px;
+    box-shadow: 2px 2px 0px #111;
+    background: #fff;
+    color: #111;
   }
 
-  .item-priority {
+  .tag-green {
+    background: #eaffed;
+  }
+  .tag-blue {
+    background: #e0f2fe;
+  }
+  .tag-pink {
+    background: #fce7f3;
+  }
+  .tag-yellow {
+    background: #fef08a;
+  }
+  .tag-orange {
+    background: #ffedd5;
+  }
+
+  .brutal-check-item.checked .brutal-tag {
+    opacity: 0.4;
+    box-shadow: 0 0 0 transparent;
+    transform: translate(2px, 2px);
+  }
+
+  /* Ribbon */
+  .priority-ribbon {
     position: absolute;
-    top: 12px;
-    right: -24px;
-    padding: 2px 28px;
-    font-size: 0.65rem;
-    font-weight: 700;
+    top: 16px;
+    right: -32px;
+    padding: 4px 34px;
+    font-size: 0.7rem;
+    font-weight: 900;
     text-transform: uppercase;
     transform: rotate(45deg);
-    background: #f1f5f9;
-    color: #64748b;
+    border: 2px solid #111;
+    box-shadow: 2px 2px 0px #111;
+    background: #fff;
+    z-index: 10;
+  }
+  .priority-ribbon.high {
+    background: #ff4b4b;
+    color: #fff;
+  }
+  .priority-ribbon.medium {
+    background: #f59e0b;
+    color: #111;
+  }
+  .priority-ribbon.low {
+    background: #10b981;
+    color: #fff;
+    border-color: #111;
   }
 
-  .item-priority.high {
-    background: #fee2e2;
-    color: #ef4444;
-  }
-  .item-priority.medium {
-    background: #fef3c7;
-    color: #d97706;
-  }
-  .item-priority.low {
-    background: #ecfdf5;
-    color: #10b981;
-  }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  @media (max-width: 1024px) {
+    .brutal-grid {
+      grid-template-columns: 1fr;
+    }
+    .sticky-pane {
+      position: static;
+    }
+    .pane-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .cat-sec-desc {
+      margin-left: 0;
+    }
   }
 
-  .mt-6 {
-    margin-top: 1.5rem;
+  /* Dark Mode */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
   }
-  .w-full {
-    width: 100%;
+
+  [data-theme='dark'] .brutal-pane {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 10px 10px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-progress-badge {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .progress-bar-wrap {
+    border-color: #eee;
+    background: #333;
+  }
+  [data-theme='dark'] .progress-bar-inner {
+    border-color: #eee;
+  }
+
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #075985;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #9d174d;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #064e3b;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-orange {
+    background: #7c2d12;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .cat-btn {
+    background: #222;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .cat-btn:hover:not(.active) {
+    background: #333;
+  }
+  [data-theme='dark'] .cat-btn.active {
+    background: #eee;
+    color: #111;
+  }
+
+  [data-theme='dark'] .action-btn {
+    background: #222;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .danger-btn {
+    background: #991b1b;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .brutal-check-item {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .check-box {
+    background: #111;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-check-item.checked .check-box {
+    background: #b28f00;
+    color: #111;
+  }
+
+  [data-theme='dark'] .item-title {
+    color: #eee;
+  }
+  [data-theme='dark'] .item-desc {
+    color: #aaa;
+  }
+
+  [data-theme='dark'] .brutal-tag {
+    background: #111;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .tag-green {
+    background: #064e3b;
+  }
+  [data-theme='dark'] .tag-blue {
+    background: #075985;
+  }
+  [data-theme='dark'] .tag-pink {
+    background: #831843;
+  }
+  [data-theme='dark'] .tag-yellow {
+    background: #713f12;
+  }
+  [data-theme='dark'] .tag-orange {
+    background: #7c2d12;
+  }
+
+  [data-theme='dark'] .priority-ribbon {
+    background: #111;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .priority-ribbon.high {
+    background: #991b1b;
+  }
+  [data-theme='dark'] .priority-ribbon.low {
+    background: #064e3b;
   }
 </style>

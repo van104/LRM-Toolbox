@@ -334,5 +334,17 @@
     "route": "/tools/instrument-tuner",
     "isLocal": true,
     "tags": ["调音器", "乐器", "音乐", "吉他", "频率检测"]
+  },
+  {
+    "id": "family-relation",
+    "name": "亲戚称呼计算器",
+    "category": "life",
+    "icon": "User",
+    "summary": "过年不尬聊，一键推算亲戚称呼",
+    "description": "通过逐步点击关系按钮（父、母、兄、弟等），自动推算出对应的亲戚称谓。覆盖直系、旁系、姻亲、曾祖辈等主流亲属关系链条，让复杂的家庭关系一目了然。",
+    "usage": "1. 选择自己的性别\n2. 按照关系链依次点击（如 父→兄→妻）\n3. 屏幕显示推算结果（如 伯母）\n4. 点击「退」撤销或「C」清空",
+    "route": "/tools/family-relation",
+    "isLocal": true,
+    "tags": ["亲戚", "称呼", "家庭", "过年", "称谓", "计算器"]
   }
 ]

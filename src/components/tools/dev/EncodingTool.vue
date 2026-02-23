@@ -1,93 +1,102 @@
 <template>
-  <div class="encoding-tool">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="$router.back()">
-        <el-icon>
-          <Back />
-        </el-icon>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>编码格式查看器</h1>
-        <span class="nav-subtitle">Text Encoding Viewer</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <!-- Header -->
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">Encoding<span>.查看()</span></h1>
+        <div class="badge">🔢 Text Byte Analyzer</div>
+      </header>
 
-    <main class="main-content">
-      <div class="tool-card glass-card">
-        <div class="input-group">
-          <label>输入文本</label>
-          <textarea
-            v-model="encodingText"
-            placeholder="在此输入文字，实时分析 UTF-8、GBK、ASCII 编码长度..."
-            rows="6"
-          ></textarea>
-        </div>
-
-        <div class="result-grid">
-          <div class="result-item">
-            <span class="label">字符数 (Char Count)</span>
-            <span class="value">{{ encodingText.length }}</span>
+      <main class="brutal-grid">
+        <!-- Input Section -->
+        <section class="brutal-pane input-pane">
+          <div class="pane-header bg-yellow">
+            <span>📝 输入内容 (INPUT)</span>
           </div>
-          <div class="result-item highlight">
-            <span class="label">UTF-8 字节数</span>
-            <span class="value">{{ getByteLen(encodingText, 'utf8') }}</span>
-
-            <div class="visual-bytes">
-              <span
-                v-for="(b, i) in getBytes(encodingText).slice(0, 12)"
-                :key="i"
-                class="byte-box"
-                >{{ b }}</span
-              >
-              <span v-if="encodingText && getByteLen(encodingText, 'utf8') > 12" class="more-dots"
-                >...</span
-              >
+          <div class="pane-body">
+            <textarea
+              v-model="encodingText"
+              class="brutal-textarea"
+              placeholder="在此输入文字，实时分析 UTF-8、GBK、ASCII 编码长度..."
+              rows="8"
+            ></textarea>
+            <div class="char-count">
+              <span class="count-val">{{ encodingText.length }}</span>
+              <span class="count-label">字符数</span>
             </div>
           </div>
-          <div class="result-item">
-            <span class="label">GBK/GB2312 字节数 (估算)</span>
-            <span class="value">{{ getByteLen(encodingText, 'gbk') }}</span>
-            <span class="desc">中文通常占 2 字节，英文 1 字节</span>
+        </section>
+
+        <!-- Stats Section -->
+        <div class="stats-column">
+          <!-- Byte Counts -->
+          <div class="brutal-pane stats-pane">
+            <div class="pane-header bg-pink">
+              <span>📊 编码统计 (BYTE STATS)</span>
+            </div>
+            <div class="pane-body stats-grid">
+              <div class="stat-card bg-white">
+                <label>UTF-8 字节数</label>
+                <div class="value">{{ getByteLen(encodingText, 'utf8') }}</div>
+                <div class="visual-bytes">
+                  <span
+                    v-for="(b, i) in getBytes(encodingText).slice(0, 16)"
+                    :key="i"
+                    class="byte-pill"
+                    >{{ b }}</span
+                  >
+                  <span v-if="getByteLen(encodingText, 'utf8') > 16" class="more-indicator"
+                    >...</span
+                  >
+                </div>
+              </div>
+
+              <div class="stat-card bg-white">
+                <label>GBK/GB2312 字节数</label>
+                <div class="value">{{ getByteLen(encodingText, 'gbk') }}</div>
+                <div class="hint">中文: 2字节 | 英文: 1字节</div>
+              </div>
+
+              <div class="stat-card bg-white">
+                <label>ASCII 兼容性</label>
+                <div :class="['status-box', isAscii ? 'status-ok' : 'status-warn']">
+                  {{ isAscii ? '✓ 纯 ASCII' : '⚠ 包含非 ASCII' }}
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="result-item">
-            <span class="label">ASCII 兼容性</span>
-            <span class="value status" :class="isAscii ? 'ok' : 'warn'">
-              {{ isAscii ? '纯 ASCII' : '包含非 ASCII 字符' }}
-            </span>
+
+          <!-- Documentation / Tips -->
+          <div class="brutal-pane info-pane">
+            <div class="pane-header bg-blue">
+              <span>💡 编码常识 (KNOWLEDGE)</span>
+            </div>
+            <div class="pane-body">
+              <ul class="brutal-list">
+                <li><strong>UTF-8</strong>: 变长编码，汉字通常占 3 字节，表情符号 4 字节。</li>
+                <li><strong>GBK</strong>: 中文国标扩充，汉字固定占 2 字节（老系统常用）。</li>
+                <li>
+                  <strong>乱码提示</strong>: 当你看到 "锟斤拷" 或 "烫烫烫" 时，通常是编码转换错误。
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div class="tips-card">
-        <el-icon>
-          <InfoFilled />
-        </el-icon>
-        <div class="tip-content">
-          <p>
-            常见乱码原因：<br />
-            1. UTF-8 网页显示 GBK 文本：中文会变成 "" 或古怪汉字<br />
-            2. 数据库字段长度限制：通常指字节数而非字符数 (如 varchar(50))
-          </p>
-        </div>
-      </div>
-    </main>
-
-    <footer class="footer">© 2026 LRM工具箱 - 编码格式查看器</footer>
+      </main>
+    </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { ref, computed } from 'vue';
-  import { Back, InfoFilled } from '@element-plus/icons-vue';
 
-  const encodingText = ref('你好 World');
+  const encodingText = ref('你好 LRM-Toolbox 🚀');
 
   // eslint-disable-next-line no-control-regex
   const isAscii = computed(() => /^[\u0000-\u007F]*$/.test(encodingText.value));
 
-  const getByteLen = (str, charset) => {
+  const getByteLen = (str: string, charset: string) => {
     if (!str) return 0;
     if (charset === 'gbk') {
       let len = 0;
@@ -99,213 +108,346 @@
     return new Blob([str]).size;
   };
 
-  const getBytes = str => {
+  const getBytes = (str: string) => {
     if (!str) return [];
-    const encoder = new TextEncoder();
-    const arr = encoder.encode(str);
-    return Array.from(arr).map(b => '0x' + b.toString(16).toUpperCase().padStart(2, '0'));
+    try {
+      const encoder = new TextEncoder();
+      const arr = encoder.encode(str);
+      return Array.from(arr).map(b => b.toString(16).toUpperCase().padStart(2, '0'));
+    } catch {
+      return [];
+    }
   };
 </script>
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800;900&family=Noto+Sans+SC:wght@400;700;900&display=swap');
 
-  .encoding-tool {
-    --bg: #faf9f7;
-    --card: #ffffff;
-    --border: #e8e6e3;
-    --text: #1a1a1a;
-    --text-2: #6b6b6b;
-    --accent: #d946ef;
-
-    font-family: 'Noto Sans SC', sans-serif;
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-back,
-  .nav-spacer {
-    width: 80px;
-  }
-
-  .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--text-2);
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
-
-  .nav-center h1 {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-
-  .nav-subtitle {
-    font-size: 0.7rem;
-    color: var(--text-2);
-    text-transform: uppercase;
-    display: block;
-    text-align: center;
-  }
-
-  .main-content {
-    max-width: 800px;
+  .brutal-container {
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* Header */
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #d946ef;
+  }
+
+  .brutal-title span {
+    color: #d946ef;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .badge {
+    background: #d946ef;
+    color: #fff;
+    padding: 0.5rem 1.2rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    border: 4px solid #111;
+    box-shadow: 5px 5px 0px #111;
+  }
+
+  /* Layout */
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .stats-column {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .brutal-pane {
+    border: 4px solid #111;
+    background: #fff;
+    box-shadow: 10px 10px 0px #111;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .pane-header {
+    padding: 0.8rem 1.2rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-pink {
+    background: #ff7be5;
+  }
+  .bg-blue {
+    background: #3b82f6;
+    color: #fff;
+  }
+
+  .pane-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Input Area */
+  .brutal-textarea {
+    width: 100%;
+    border: 4px solid #111;
+    padding: 1.2rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    background: #fff;
+    box-shadow: 6px 6px 0px #111;
+    outline: none;
+    resize: vertical;
+    box-sizing: border-box;
+  }
+
+  .char-count {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .count-val {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #111;
+  }
+
+  .count-label {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: #888;
+  }
+
+  /* Stats Grid */
+  .stats-grid {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
   }
 
-  .glass-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  }
-
-  .input-group label {
-    display: block;
-    margin-bottom: 0.8rem;
-    color: var(--text-2);
-    font-weight: 500;
-  }
-
-  .input-group textarea {
-    width: 100%;
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    font-size: 1.1rem;
-    outline: none;
-    resize: vertical;
-    background: #fdfdfd;
-    font-family: monospace;
-    transition: border-color 0.2s;
-  }
-
-  .input-group textarea:focus {
-    border-color: var(--accent);
-  }
-
-  .result-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
-  }
-
-  .result-item {
-    background: #f9fafb;
+  .stat-card {
+    border: 3px solid #111;
     padding: 1.25rem;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    position: relative;
+    box-shadow: 5px 5px 0px #111;
   }
 
-  .result-item.highlight {
-    background: #fdf4ff;
-
-    border-color: #f0abfc;
-  }
-
-  .result-item .label {
-    display: block;
-    font-size: 0.85rem;
-    color: var(--text-2);
-    margin-bottom: 0.5rem;
-  }
-
-  .result-item .value {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--text);
-  }
-
-  .result-item.highlight .value {
-    color: var(--accent);
-  }
-
-  .result-item .desc {
+  .stat-card label {
     display: block;
     font-size: 0.75rem;
-    color: var(--text-2);
-    margin-top: 0.5rem;
+    font-weight: 900;
+    color: #888;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
   }
 
-  .status {
-    font-size: 1rem;
-    font-weight: 600;
+  .stat-card .value {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #111;
+    line-height: 1;
   }
 
-  .status.ok {
-    color: #16a34a;
-  }
-
-  .status.warn {
-    color: #ca8a04;
+  .stat-card .hint {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #aaa;
+    margin-top: 0.4rem;
   }
 
   .visual-bytes {
     display: flex;
-    gap: 6px;
-    margin-top: 0.8rem;
     flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1rem;
   }
 
-  .byte-box {
-    background: white;
-    color: var(--accent);
-    font-size: 0.75rem;
-    padding: 2px 6px;
+  .byte-pill {
+    background: #111;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
     border-radius: 4px;
-    border: 1px solid #f0abfc;
-    font-family: monospace;
   }
 
-  .more-dots {
-    color: var(--text-2);
-    align-self: center;
-    font-size: 1.2rem;
-    line-height: 0.5;
+  .more-indicator {
+    color: #888;
+    font-weight: 900;
+    font-size: 1rem;
   }
 
-  .tips-card {
+  .status-box {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font-weight: 800;
+    border: 3px solid #111;
+  }
+
+  .status-ok {
+    background: #00e572;
+    color: #111;
+  }
+  .status-warn {
+    background: #ffd900;
+    color: #111;
+  }
+
+  /* Info List */
+  .brutal-list {
+    margin: 0;
+    padding-left: 1.5rem;
     display: flex;
-    gap: 1rem;
-    padding: 1rem;
-    background: rgba(217, 70, 239, 0.05);
-    color: #a21caf;
-    border-radius: 12px;
-    font-size: 0.85rem;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .brutal-list li {
+    font-size: 0.95rem;
+    font-weight: 600;
     line-height: 1.6;
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-2);
-    border-top: 1px solid var(--border);
-    margin-top: 2rem;
-    font-size: 0.85rem;
+  @media (max-width: 1024px) {
+    .brutal-grid {
+      grid-template-columns: 1fr;
+    }
+    .brutal-title {
+      font-size: 2.5rem;
+    }
+  }
+
+  /* Dark Mode */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 10px 10px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #9b2d87;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #1e3a8a;
+  }
+
+  [data-theme='dark'] .brutal-textarea {
+    background: #222;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .stat-card {
+    border-color: #eee;
+    background: #1a1a1a;
+    box-shadow: 5px 5px 0px #eee;
+  }
+  [data-theme='dark'] .stat-card .value {
+    color: #eee;
+  }
+  [data-theme='dark'] .count-val {
+    color: #eee;
+  }
+  [data-theme='dark'] .byte-pill {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .status-box {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .badge {
+    border-color: #eee;
+    box-shadow: 5px 5px 0px #eee;
   }
 </style>
