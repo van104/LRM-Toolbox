@@ -673,6 +673,7 @@
   .brutal-slider {
     width: 100%;
     -webkit-appearance: none;
+    appearance: none;
     height: 12px;
     background: #fff;
     border: 2px solid #111;
