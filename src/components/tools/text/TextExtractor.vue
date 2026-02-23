@@ -1,187 +1,181 @@
 <template>
-  <div class="text-extractor">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="goHome">
-        <el-icon>
-          <ArrowLeft />
-        </el-icon>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>文本提取器</h1>
-        <span class="nav-subtitle">Text Extractor</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goHome">← 返回</button>
+        <h1 class="brutal-title">文本<span>提取()</span></h1>
+        <div class="badge">🔍 Text Extractor</div>
+      </header>
 
-    <main class="main-content">
-      <div class="extractor-layout">
-        <section class="panel input-panel">
-          <div class="panel-header">
-            <span class="panel-title">源文本</span>
-            <div class="panel-actions">
-              <span v-if="inputText" class="stats-info"
-                >{{ inputText.length }} 字符 | {{ inputLines }} 行</span
-              >
-              <button class="icon-btn" title="生成示例数据" @click="fillDemoData">
-                <span style="font-size: 14px; font-weight: bold">示例数据</span>
-              </button>
-              <button class="icon-btn" title="粘贴" @click="pasteText">
-                <el-icon>
-                  <CopyDocument />
-                </el-icon>
-              </button>
-              <button class="icon-btn" title="清空" @click="clearInput">
-                <el-icon>
-                  <Delete />
-                </el-icon>
-              </button>
-            </div>
-          </div>
-          <div class="editor-wrapper">
-            <textarea
-              v-model="inputText"
-              class="text-editor"
-              placeholder="在此输入或粘贴包含目标信息的文本..."
-              spellcheck="false"
-            ></textarea>
-          </div>
-        </section>
-
-        <section class="tools-panel">
-          <div class="panel-header" style="justify-content: center">
-            <span class="panel-title">提取工具</span>
-          </div>
-
-          <div class="tools-scroll-area">
-            <div class="options-bar">
-              <label class="checkbox-label">
-                <input v-model="options.append" type="checkbox" /> 追加模式
-              </label>
-              <label class="checkbox-label">
-                <input v-model="options.unique" type="checkbox" /> 去重
-              </label>
-              <label class="checkbox-label">
-                <input v-model="options.sort" type="checkbox" /> 排序
-              </label>
-              <label class="checkbox-label">
-                <input v-model="options.trim" type="checkbox" /> 去空字符
-              </label>
-            </div>
-
-            <div class="tool-group">
-              <div class="group-title">常用信息提取</div>
-              <div class="group-content">
-                <button class="tool-btn" @click="extract('email')">📧 邮箱</button>
-                <button class="tool-btn" @click="extract('url')">🔗 网址 URL</button>
-                <button class="tool-btn" @click="extract('phone')">📱 手机号</button>
-                <button class="tool-btn" @click="extract('ipv4')">🌐 IPv4</button>
-                <button class="tool-btn" @click="extract('idcard')">💳 身份证号</button>
-                <button class="tool-btn" @click="extract('date')">📅 日期</button>
-                <button class="tool-btn" @click="extract('time')">🕒 时间</button>
-                <button class="tool-btn" @click="extract('mac')">🖥️ MAC 地址</button>
-                <button class="tool-btn" @click="extract('color')">🎨 Hex 颜色</button>
-                <button class="tool-btn" @click="extract('plate')">🚗 车牌号</button>
-                <button class="tool-btn" @click="extract('passport')">🛂 护照号</button>
-                <button class="tool-btn" @click="extract('uuid')">🆔 UUID</button>
-                <button class="tool-btn" @click="extract('md5')">🔐 MD5</button>
-                <button class="tool-btn" @click="extract('magnet')">🧲 磁力链</button>
-                <button class="tool-btn" @click="extract('postcode')">📮 邮政编码</button>
+      <main class="brutal-main">
+        <div class="layout-grid">
+          <!-- 1. 输入 -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-yellow">
+              <span class="panel-title">1. 源文本 (INPUT)</span>
+              <div class="panel-actions">
+                <span v-if="inputText" class="stats-info"
+                  >{{ inputText.length }} 字符 | {{ inputLines }} 行</span
+                >
+                <button class="brutal-btn icon-btn" title="示例" @click="fillDemoData">
+                  ✨ 示例
+                </button>
+                <button class="brutal-btn icon-btn" title="粘贴" @click="pasteText">📋 粘贴</button>
+                <button class="brutal-btn icon-btn" title="清空" @click="clearInput">
+                  🗑️ 清空
+                </button>
               </div>
             </div>
+            <div class="editor-wrapper">
+              <textarea
+                v-model="inputText"
+                class="code-editor"
+                placeholder="在此输入或粘贴包含目标信息的文本..."
+                spellcheck="false"
+              ></textarea>
+            </div>
+          </section>
 
-            <div class="tool-group">
-              <div class="group-title">特定字符提取</div>
-              <div class="group-content">
-                <button class="tool-btn" @click="extract('number')">🔢 所有数字</button>
-                <button class="tool-btn" @click="extract('chinese')">🀄 所有中文</button>
-                <button class="tool-btn" @click="extract('english')">🔤 所有英文</button>
-                <button class="tool-btn" @click="extract('letter')">📝 英文单词</button>
+          <!-- 2. 工具面板 -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-pink text-white">
+              <span class="panel-title">2. 提取器 (EXTRACTOR)</span>
+            </div>
+            <div class="tools-scroll-area">
+              <div class="options-bar">
+                <label class="checkbox-label">
+                  <input v-model="options.append" type="checkbox" /> 追加模式
+                </label>
+                <label class="checkbox-label">
+                  <input v-model="options.unique" type="checkbox" /> 去重
+                </label>
+                <label class="checkbox-label">
+                  <input v-model="options.sort" type="checkbox" /> 排序
+                </label>
+                <label class="checkbox-label">
+                  <input v-model="options.trim" type="checkbox" /> 去空字符
+                </label>
+              </div>
+
+              <div class="tool-group">
+                <div class="group-title">常用信息提取</div>
+                <div class="group-content">
+                  <button class="tool-btn" @click="extract('email')">📧 邮箱</button>
+                  <button class="tool-btn" @click="extract('url')">🔗 网址</button>
+                  <button class="tool-btn" @click="extract('phone')">📱 手机号</button>
+                  <button class="tool-btn" @click="extract('ipv4')">🌐 IPv4</button>
+                  <button class="tool-btn" @click="extract('idcard')">💳 身份证号</button>
+                  <button class="tool-btn" @click="extract('date')">📅 日期</button>
+                  <button class="tool-btn" @click="extract('time')">🕒 时间</button>
+                  <button class="tool-btn" @click="extract('mac')">🖥️ MAC</button>
+                  <button class="tool-btn" @click="extract('color')">🎨 Hex 颜色</button>
+                  <button class="tool-btn" @click="extract('plate')">🚗 车牌号</button>
+                  <button class="tool-btn" @click="extract('passport')">🛂 护照号</button>
+                  <button class="tool-btn" @click="extract('uuid')">🆔 UUID</button>
+                  <button class="tool-btn" @click="extract('md5')">🔐 MD5</button>
+                  <button class="tool-btn" @click="extract('magnet')">🧲 磁力链</button>
+                  <button class="tool-btn" @click="extract('postcode')">📮 邮编</button>
+                </div>
+              </div>
+
+              <div class="tool-group">
+                <div class="group-title">特定字符提取</div>
+                <div class="group-content">
+                  <button class="tool-btn" @click="extract('number')">🔢 所有数字</button>
+                  <button class="tool-btn" @click="extract('chinese')">🀄 所有中文</button>
+                  <button class="tool-btn" @click="extract('english')">🔤 所有英文</button>
+                  <button class="tool-btn" @click="extract('letter')">📝 英文单词</button>
+                </div>
+              </div>
+
+              <div class="tool-group">
+                <div class="group-title">正则提取</div>
+                <div class="custom-input-group">
+                  <input
+                    v-model="customRegex"
+                    type="text"
+                    placeholder="/\d+/"
+                    class="brutal-input"
+                  />
+                  <button class="brutal-btn small-btn execute-btn" @click="extract('customRegex')">
+                    提取
+                  </button>
+                </div>
+              </div>
+
+              <div class="tool-group">
+                <div class="group-title">按行筛选</div>
+                <div class="custom-input-group mb-2">
+                  <input
+                    v-model="includeKeyword"
+                    type="text"
+                    placeholder="包含关键词..."
+                    class="brutal-input"
+                  />
+                  <button class="brutal-btn small-btn execute-btn" @click="filterLines('include')">
+                    保留
+                  </button>
+                </div>
+                <div class="custom-input-group">
+                  <input
+                    v-model="excludeKeyword"
+                    type="text"
+                    placeholder="不含关键词..."
+                    class="brutal-input"
+                  />
+                  <button class="brutal-btn small-btn" @click="filterLines('exclude')">剔除</button>
+                </div>
+              </div>
+
+              <div class="tool-group">
+                <div class="group-title">关键词统计</div>
+                <div class="custom-input-group">
+                  <input
+                    v-model="countKeyword"
+                    type="text"
+                    placeholder="输入关键词..."
+                    class="brutal-input"
+                  />
+                  <button class="brutal-btn small-btn execute-btn" @click="countOccurrences">
+                    统计
+                  </button>
+                </div>
               </div>
             </div>
+          </section>
 
-            <div class="tool-group">
-              <div class="group-title">正则提取</div>
-              <div class="custom-input-group">
-                <input v-model="customRegex" type="text" placeholder="/\d+/" class="custom-input" />
-                <button class="action-btn small-btn" @click="extract('customRegex')">提取</button>
+          <!-- 3. 输出 -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-blue text-white">
+              <span class="panel-title">3. 提取结果 (RESULT)</span>
+              <div class="panel-actions">
+                <span v-if="matchCount > 0" class="stats-info">{{ matchCount }} 项</span>
+                <button class="brutal-btn icon-btn" title="复制结果" @click="copyResult">
+                  📋 复制
+                </button>
+                <button class="brutal-btn icon-btn" title="清空结果" @click="clearOutput">
+                  🗑️ 清空
+                </button>
               </div>
             </div>
-
-            <div class="tool-group">
-              <div class="group-title">按行筛选</div>
-              <div class="custom-input-group mb-2">
-                <input
-                  v-model="includeKeyword"
-                  type="text"
-                  placeholder="包含关键词..."
-                  class="custom-input"
-                />
-                <button class="action-btn small-btn" @click="filterLines('include')">保留</button>
-              </div>
-              <div class="custom-input-group">
-                <input
-                  v-model="excludeKeyword"
-                  type="text"
-                  placeholder="不含关键词..."
-                  class="custom-input"
-                />
-                <button class="action-btn small-btn" @click="filterLines('exclude')">剔除</button>
-              </div>
+            <div class="editor-wrapper">
+              <textarea
+                v-model="outputText"
+                class="code-editor result-editor"
+                readonly
+                placeholder="提取结果列表..."
+              ></textarea>
             </div>
-
-            <div class="tool-group">
-              <div class="group-title">关键词统计</div>
-              <div class="custom-input-group">
-                <input
-                  v-model="countKeyword"
-                  type="text"
-                  placeholder="输入关键词..."
-                  class="custom-input"
-                />
-                <button class="action-btn small-btn" @click="countOccurrences">统计</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel output-panel">
-          <div class="panel-header">
-            <span class="panel-title">提取结果</span>
-            <div class="panel-actions">
-              <span v-if="matchCount > 0" class="stats-info">{{ matchCount }} 项</span>
-              <button class="icon-btn" title="复制结果" @click="copyResult">
-                <el-icon>
-                  <CopyDocument />
-                </el-icon>
-              </button>
-              <button class="icon-btn" title="清空结果" @click="clearOutput">
-                <el-icon>
-                  <Delete />
-                </el-icon>
-              </button>
-            </div>
-          </div>
-          <div class="editor-wrapper">
-            <textarea
-              v-model="outputText"
-              class="text-editor result-editor"
-              readonly
-              placeholder="提取结果列表..."
-            ></textarea>
-          </div>
-        </section>
-      </div>
-    </main>
-
-    <footer class="footer">© 2026 LRM工具箱 - 文本提取器</footer>
+          </section>
+        </div>
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, reactive, computed } from 'vue';
   import { useRouter } from 'vue-router';
-  import { ArrowLeft, Delete, CopyDocument } from '@element-plus/icons-vue';
   import { useCopy } from '@/composables/useCopy';
   import { ElMessage } from 'element-plus';
 
@@ -434,142 +428,142 @@
 </script>
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800;900&family=Noto+Sans+SC:wght@400;700;900&display=swap');
 
-  .text-extractor {
-    --bg: #f5f7fa;
-    --card: #ffffff;
-    --border: #e5e7eb;
-    --text: #1f2937;
-    --text-secondary: #6b7280;
-    --accent: #3b82f6;
-    --accent-light: #eff6ff;
-
-    font-family: 'Noto Sans SC', sans-serif;
-    background: var(--bg);
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    color: var(--text);
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-
-  .nav-back:hover {
-    background: var(--accent-light);
-    color: var(--accent);
-  }
-
-  .nav-center h1 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    text-align: center;
-  }
-
-  .nav-subtitle {
-    display: block;
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .nav-spacer {
-    width: 60px;
-  }
-
-  .main-content {
-    flex: 1;
+  .brutal-container {
     max-width: 1400px;
-    width: 100%;
     margin: 0 auto;
-    padding: 1.5rem;
-  }
-
-  .extractor-layout {
-    display: flex;
-    gap: 1.5rem;
-    height: calc(100vh - 120px);
-  }
-
-  .panel {
-    flex: 1;
     display: flex;
     flex-direction: column;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    gap: 2rem;
   }
 
-  .input-panel {
-    flex: 1;
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
 
-  .output-panel {
-    flex: 1;
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
   }
 
-  .tools-panel {
-    flex: 0.6;
-    min-width: 320px;
-    max-width: 450px;
+  .brutal-btn {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    padding: 0.6rem 1.2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0px #111;
+  }
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .badge {
+    background: #111;
+    color: #ff4b4b;
+    padding: 0.5rem 1.2rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    border: 3px solid #ff4b4b;
+    box-shadow: 4px 4px 0px #ff4b4b;
+  }
+
+  .brutal-main {
     display: flex;
     flex-direction: column;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    gap: 2rem;
+  }
+
+  .layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 400px 1fr;
+    gap: 2rem;
+    align-items: stretch;
+    height: calc(100vh - 180px);
+    min-height: 700px;
+  }
+
+  @media (max-width: 1024px) {
+    .layout-grid {
+      grid-template-columns: 1fr;
+      height: auto;
+    }
+  }
+
+  .brutal-pane {
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 6px 6px 0px #111;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
   }
 
-  .tools-scroll-area {
+  .pane-header {
     padding: 1rem;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    height: 100%;
-  }
-
-  .panel-header {
-    padding: 0.8rem 1rem;
-    border-bottom: 1px solid var(--border);
-    background: #f9fafb;
+    border-bottom: 3px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-
-  .panel-title {
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: var(--text);
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-pink {
+    background: #ff7be5;
+  }
+  .bg-blue {
+    background: #0ea5e9;
+  }
+  .text-white {
+    color: #fff;
   }
 
   .panel-actions {
@@ -579,106 +573,149 @@
   }
 
   .stats-info {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    margin-right: 0.5rem;
-    background: #f3f4f6;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: #fff;
+    color: #111;
+    border: 2px solid #111;
     padding: 2px 6px;
-    border-radius: 4px;
+  }
+  .text-white .stats-info {
+    background: #111;
+    color: #fff;
+    border: 2px solid #fff;
   }
 
   .icon-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    color: var(--text-secondary);
-    transition: all 0.2s;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    font-family: 'Noto Sans SC', sans-serif;
   }
-
-  .icon-btn:hover {
-    color: var(--accent);
-    background: var(--accent-light);
+  .execute-btn,
+  .text-white .execute-btn {
+    background: #fff;
+    color: #111;
+  }
+  .execute-btn:hover:not(:disabled),
+  .text-white .execute-btn:hover:not(:disabled) {
+    background: #ffd900;
+    color: #111;
   }
 
   .editor-wrapper {
     flex: 1;
-    position: relative;
+    display: flex;
+    flex-direction: column;
   }
 
-  .text-editor {
+  .code-editor {
+    flex: 1;
     width: 100%;
-    height: 100%;
     border: none;
-    resize: none;
     padding: 1rem;
-    font-family: inherit;
-    font-size: 0.95rem;
-    line-height: 1.6;
+    resize: none;
     outline: none;
-    color: var(--text);
+    font-family: 'IBM Plex Mono', 'Consolas', monospace;
+    font-size: 0.95rem;
+    line-height: 1.5;
     background: transparent;
+    color: #111;
+    box-sizing: border-box;
   }
 
   .result-editor {
     background: #fdfdfd;
   }
 
+  .tools-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #fdfae5;
+  }
+
+  .tool-group {
+    margin-bottom: 1.5rem;
+  }
+
   .group-title {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #111;
+    border-bottom: 3px solid #111;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
     text-transform: uppercase;
   }
 
   .group-content {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
+    gap: 0.6rem;
   }
 
   .tool-btn {
-    background: var(--card);
-    border: 1px solid var(--border);
+    background: #fff;
+    border: 2px solid #111;
     padding: 0.5rem;
-    border-radius: 6px;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', sans-serif;
     font-size: 0.85rem;
-    color: var(--text);
+    font-weight: 800;
+    color: #111;
     cursor: pointer;
-    transition: all 0.2s;
+    box-shadow: 2px 2px 0px #111;
+    transition: all 0.1s;
     text-align: left;
-    display: flex;
-    align-items: center;
   }
-
   .tool-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: var(--accent-light);
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px #111;
   }
-
   .tool-btn:active {
-    transform: translateY(1px);
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 transparent;
   }
 
   .options-bar {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
-    background: #f3f4f6;
-    padding: 0.75rem;
-    border-radius: 8px;
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.8rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 4px 4px 0px #111;
   }
 
   .checkbox-label {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0.4rem;
     cursor: pointer;
-    color: var(--text);
+    color: #111;
+  }
+  .checkbox-label input[type='checkbox'] {
+    appearance: none;
+    background-color: #fff;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #111;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .checkbox-label input[type='checkbox']:checked {
+    background-color: #111;
+  }
+  .checkbox-label input[type='checkbox']:checked::after {
+    content: '✖';
+    color: #ffd900;
+    font-size: 14px;
   }
 
   .custom-input-group {
@@ -686,93 +723,118 @@
     gap: 0.5rem;
   }
 
-  .custom-input {
+  .brutal-input {
     flex: 1;
-    border: 1px solid var(--border);
-    border-radius: 6px;
+    background: #fff;
+    color: #111;
+    border: 2px solid #111;
     padding: 0.4rem 0.6rem;
-    font-size: 0.85rem;
-    background: var(--card);
-    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
     outline: none;
+    font-size: 0.9rem;
+    box-shadow: 2px 2px 0px #111;
   }
-
-  .custom-input:focus {
-    border-color: var(--accent);
+  .brutal-input:focus {
+    box-shadow: 3px 3px 0px #ff4b4b;
   }
 
   .small-btn {
     padding: 0.4rem 0.8rem;
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 6px;
     font-size: 0.85rem;
-    cursor: pointer;
-    white-space: nowrap;
+    box-shadow: 2px 2px 0px #111;
   }
-
   .small-btn:hover {
-    background: #2563eb;
+    box-shadow: 3px 3px 0px #111;
   }
 
   .mb-2 {
     margin-bottom: 0.5rem;
   }
 
-  @media (max-width: 1024px) {
-    .extractor-layout {
-      flex-direction: column;
-      height: auto;
-    }
-
-    .panel {
-      height: 300px;
-    }
-
-    .tools-panel {
-      max-width: none;
-      height: auto;
-      min-height: auto;
-    }
+  /* Dark theme */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
   }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #111827;
-      --card: #1f2937;
-      --border: #374151;
-      --text: #f9fafb;
-      --text-secondary: #9ca3af;
-      --accent: #60a5fa;
-      --accent-light: rgba(59, 130, 246, 0.1);
-    }
-
-    .panel-header {
-      background: #1f2937;
-      border-bottom-color: #374151;
-    }
-
-    .result-editor {
-      background: #1f2937;
-    }
-
-    .stats-info,
-    .options-bar {
-      background: #374151;
-      color: #d1d5db;
-    }
-
-    .custom-input {
-      background: #111827;
-      border-color: #374151;
-    }
+  [data-theme='dark'] .brutal-pane {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
   }
-
-  .footer {
-    text-align: center;
-    padding: 3rem 0;
-    color: var(--text-secondary, #64748b);
-    font-size: 0.85rem;
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .badge {
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .code-editor {
+    color: #eee;
+  }
+  [data-theme='dark'] .result-editor {
+    background: #222;
+  }
+  [data-theme='dark'] .tools-scroll-area {
+    background: #111;
+  }
+  [data-theme='dark'] .group-title {
+    color: #eee;
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .tool-btn {
+    background: #222;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .options-bar {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .checkbox-label {
+    color: #eee;
+  }
+  [data-theme='dark'] .checkbox-label input[type='checkbox'] {
+    background-color: #222;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .checkbox-label input[type='checkbox']:checked {
+    background-color: #eee;
+  }
+  [data-theme='dark'] .checkbox-label input[type='checkbox']:checked::after {
+    color: #111;
+  }
+  [data-theme='dark'] .brutal-input {
+    background: #222;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #9d174d;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #075985;
+    color: #fff;
+  }
+  [data-theme='dark'] .stats-info {
+    background: #222;
+    color: #eee;
+    border-color: #eee;
   }
 </style>

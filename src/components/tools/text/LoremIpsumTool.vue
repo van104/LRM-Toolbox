@@ -1,106 +1,157 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon><ArrowLeft /></el-icon><span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">乱数假文生成器</h1>
-        <span class="tool-subtitle">Lorem Ipsum Generator</span>
-      </div>
-      <div class="header-right">
-        <el-button type="primary" :icon="DocumentCopy" @click="copyResult">一键复制</el-button>
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">乱数假文<span>生成器()</span></h1>
+        <div class="badge">📝 Lorem Ipsum</div>
+      </header>
 
-    <main class="tool-content">
-      <div class="layout-container">
-        <div class="config-section glass-card">
-          <div class="config-grid">
-            <div class="config-item">
-              <label>文本语言/风格</label>
-              <el-radio-group v-model="config.type" @change="generate">
-                <el-radio-button label="latin">经典拉丁语</el-radio-button>
-                <el-radio-button label="chinese">中文流行</el-radio-button>
-                <el-radio-button label="geek">程序员极客</el-radio-button>
-              </el-radio-group>
+      <main class="brutal-main">
+        <div class="layout-grid">
+          <!-- Settings Pane -->
+          <section class="brutal-pane side-pane">
+            <div class="pane-header bg-yellow">
+              <span class="panel-title">1. 生成设置 (SETTINGS)</span>
+            </div>
+            <div class="settings-content">
+              <div class="control-group">
+                <label class="group-label">生成内容数量: {{ config.count }}</label>
+                <div class="range-wrapper">
+                  <input
+                    v-model.number="config.count"
+                    type="range"
+                    min="1"
+                    max="50"
+                    step="1"
+                    class="brutal-slider"
+                    @input="generate"
+                  />
+                  <span class="range-val">{{ config.count }}</span>
+                </div>
+              </div>
+
+              <div class="divider-h"></div>
+
+              <div class="control-group">
+                <label class="group-label">文本语言/风格</label>
+                <div class="radio-buttons">
+                  <label class="radio-label">
+                    <input v-model="config.type" type="radio" value="latin" @change="generate" />
+                    <span class="radio-box">
+                      <b>经典拉丁语</b>
+                      <small>最经典的占位文本</small>
+                    </span>
+                  </label>
+                  <label class="radio-label">
+                    <input v-model="config.type" type="radio" value="chinese" @change="generate" />
+                    <span class="radio-box">
+                      <b>中文互联网</b>
+                      <small>充满互联网黑话和词语</small>
+                    </span>
+                  </label>
+                  <label class="radio-label">
+                    <input v-model="config.type" type="radio" value="geek" @change="generate" />
+                    <span class="radio-box">
+                      <b>程序员极客</b>
+                      <small>技术术语和梗</small>
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="divider-h"></div>
+
+              <div class="control-group">
+                <label class="group-label">生成单位</label>
+                <div class="radio-buttons compact-radio-group">
+                  <label class="radio-label">
+                    <input v-model="config.unit" type="radio" value="para" @change="generate" />
+                    <span class="radio-box"><b>段落</b></span>
+                  </label>
+                  <label class="radio-label">
+                    <input v-model="config.unit" type="radio" value="sent" @change="generate" />
+                    <span class="radio-box"><b>句子</b></span>
+                  </label>
+                  <label class="radio-label">
+                    <input v-model="config.unit" type="radio" value="word" @change="generate" />
+                    <span class="radio-box"><b>字词</b></span>
+                  </label>
+                </div>
+              </div>
+
+              <div v-if="config.type === 'latin'" class="control-group" style="margin-top: 1rem">
+                <label class="checkbox-label">
+                  <input v-model="config.startWithLorem" type="checkbox" @change="generate" /> 以
+                  "Lorem ipsum" 开头
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <!-- Working Area -->
+          <div class="work-area">
+            <!-- Action bar -->
+            <div class="action-top-bar">
+              <button class="brutal-btn min-btn bg-pink text-white" @click="generate">
+                🔄 重新生成
+              </button>
             </div>
 
-            <div class="config-item">
-              <label>生成单位</label>
-              <el-radio-group v-model="config.unit" @change="generate">
-                <el-radio-button label="para">段落</el-radio-button>
-                <el-radio-button label="sent">句子</el-radio-button>
-                <el-radio-button label="word">单词/字</el-radio-button>
-              </el-radio-group>
-            </div>
+            <!-- Output pane -->
+            <section class="brutal-pane output-pane">
+              <div class="pane-header bg-blue text-white">
+                <span class="panel-title">2. 生成结果 (OUTPUT)</span>
+                <div class="panel-actions">
+                  <span v-if="resultStats.words || resultStats.paras" class="count-badge">
+                    约 {{ resultStats.words }} 字 | {{ resultStats.paras }} 段
+                  </span>
+                  <button class="brutal-btn icon-btn execute-btn text-dark" @click="copyResult">
+                    📋 复制结果
+                  </button>
+                </div>
+              </div>
 
-            <div class="config-item">
-              <label>生成内容数量: {{ config.count }}</label>
-              <el-slider v-model="config.count" :min="1" :max="50" @input="generate" />
-            </div>
-
-            <div v-if="config.type === 'latin'" class="config-item-inline">
-              <el-checkbox v-model="config.startWithLorem" @change="generate"
-                >以 "Lorem ipsum" 开头</el-checkbox
-              >
-            </div>
-          </div>
-
-          <div class="action-bar">
-            <el-button size="large" type="primary" :icon="Refresh" @click="generate"
-              >重新生成</el-button
-            >
+              <div class="result-area">
+                <div class="paragraphs-list">
+                  <div v-for="(p, i) in paragraphs" :key="i" class="para-item">
+                    {{ p }}
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
         </div>
 
-        <div class="result-section glass-card">
-          <div class="result-header">
-            <span>生成结果预览</span>
-            <div class="stats">
-              <span>约 {{ resultStats.words }} 字</span>
-              <span>{{ resultStats.paras }} 段</span>
-            </div>
+        <section class="tips-section brutal-border-box mt-4">
+          <div class="tips-header">
+            <span class="tips-icon">💡</span>
+            <h3>关于 Lorem Ipsum</h3>
           </div>
-          <div ref="resultRef" class="result-body">
-            <div v-for="(p, i) in paragraphs" :key="i" class="para">
-              {{ p }}
-            </div>
+          <div class="tips-content">
+            <p><b>经典用法:</b> 拉丁语版本自 1500年代以来一直是印刷和排版行业的标准占位文本。</p>
+            <p>
+              <b>设计意义:</b>
+              使用乱数假文可以让设计师在真实内容准备好之前，专注于页面布局和视觉效果测试，排除真实文字带来的视觉干扰。
+            </p>
+            <p>
+              <b>中文黑话:</b>
+              包含了互联网流行语和现代汉语常用词汇，更适合中国互联网产品的排版演示。
+            </p>
+            <p>
+              <b>极客术语:</b>
+              包含了编程领域的流行术语和计算机词汇，适合IT技术类网站或开发工具类UI演示。
+            </p>
           </div>
-        </div>
-      </div>
-
-      <div class="tips-section glass-card">
-        <div class="tips-header">
-          <el-icon><InfoFilled /></el-icon>
-          <h4>关于 Lorem Ipsum</h4>
-        </div>
-        <div class="tips-content">
-          <ul class="premium-list">
-            <li><b>经典用法</b>：拉丁语版本自 1500s 以来一直是行业的标准占位文本。</li>
-            <li>
-              <b>设计意义</b>：使用 Lorem Ipsum
-              可以让设计师在内容准备好之前，专注于页面布局和视觉效果。
-            </li>
-            <li>
-              <b>中文风格</b>：包含了互联网流行语和现代汉语常用词汇，更适合中文产品的排版演示。
-            </li>
-            <li><b>极客风格</b>：包含了编程领域的术语和极客文化词汇，适合IT技术类网站演示。</li>
-          </ul>
-        </div>
-      </div>
-    </main>
-
-    <footer class="footer">© 2026 LRM工具箱 - 乱数假文生成器</footer>
+        </section>
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, reactive, computed, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
-  import { ArrowLeft, DocumentCopy, Refresh, InfoFilled } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
 
   const router = useRouter();
@@ -356,172 +407,543 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800;900&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f1f5f9;
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .tool-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  }
-
-  .header-center {
-    text-align: center;
-    flex: 1;
-  }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0;
-  }
-
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
-    text-transform: uppercase;
-  }
-
-  .tool-content {
-    flex: 1;
-    padding: 1.5rem;
-    max-width: 1000px;
+  .brutal-container {
+    max-width: 1400px;
     margin: 0 auto;
-    width: 100%;
-  }
-
-  .layout-container {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-
-  .config-section {
-    padding: 1.5rem;
-  }
-
-  .config-grid {
-    display: flex;
-    flex-wrap: wrap;
     gap: 2rem;
-    align-items: flex-end;
   }
 
-  .config-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    min-width: 200px;
-  }
-
-  .config-item label {
-    font-size: 0.85rem;
-    color: #64748b;
-    font-weight: 600;
-  }
-
-  .config-item-inline {
-    padding-bottom: 5px;
-  }
-
-  .action-bar {
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #f1f5f9;
-  }
-
-  .result-section {
-    padding: 1.5rem;
-  }
-
-  .result-header {
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid #f1f5f9;
-    font-weight: 600;
-    color: #475569;
-  }
-
-  .stats {
-    font-size: 0.8rem;
-    color: #94a3b8;
-    display: flex;
+    flex-wrap: wrap;
     gap: 1rem;
   }
 
-  .result-body {
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    padding: 0.6rem 1.2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
     font-size: 1rem;
-    line-height: 1.8;
-    color: #1e293b;
-    height: 400px;
-    overflow-y: auto;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0px #111;
+  }
+
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .min-btn {
+    padding: 0.8rem 1.6rem;
+    font-size: 1.1rem;
+    box-shadow: 6px 6px 0px #111;
+  }
+
+  .min-btn:hover:not(:disabled) {
+    box-shadow: 6px 6px 0px #111;
+    transform: none;
+  }
+
+  .badge {
+    background: #111;
+    color: #ff4b4b;
+    padding: 0.5rem 1.2rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    border: 3px solid #ff4b4b;
+    box-shadow: 4px 4px 0px #ff4b4b;
+  }
+
+  .brutal-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .layout-grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 2rem;
+    align-items: stretch;
+    min-height: 600px;
+  }
+
+  @media (max-width: 900px) {
+    .layout-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .brutal-pane {
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 6px 6px 0px #111;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .side-pane {
+    background: #fdfae5;
+  }
+
+  .pane-header {
     padding: 1rem;
+    border-bottom: 3px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-pink {
+    background: #ff7be5;
+  }
+  .bg-blue {
+    background: #0ea5e9;
+  }
+  .text-white {
+    color: #fff;
+  }
+
+  .panel-actions {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+  }
+
+  .icon-btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    font-family: 'Noto Sans SC', sans-serif;
+    box-shadow: 2px 2px 0px #111;
+  }
+
+  .icon-btn:hover {
+    box-shadow: 3px 3px 0px #111;
+  }
+
+  .execute-btn,
+  .text-dark.execute-btn {
+    background: #fff;
+    color: #111;
+  }
+
+  .execute-btn:hover:not(:disabled),
+  .text-dark.execute-btn:hover:not(:disabled) {
+    background: #ffd900;
+    color: #111;
+  }
+
+  .count-badge {
+    background: #111;
+    color: #ffd900;
+    padding: 0.2rem 0.6rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border: 2px solid #fff;
+  }
+
+  .work-area {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .action-top-bar {
+    display: flex;
+    align-items: center;
+  }
+
+  .output-pane {
+    flex: 1;
+  }
+
+  .result-area {
+    flex: 1;
+    padding: 1.5rem;
+    background: #fdfdfd;
+    overflow-y: auto;
+  }
+
+  .paragraphs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .para-item {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #111;
+    font-family: 'Noto Sans SC', serif;
+    padding: 1.5rem;
+    background: #fff;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    word-wrap: break-word;
+  }
+
+  .para-item:nth-child(even) {
     background: #f8fafc;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
   }
 
-  .para {
-    margin-bottom: 1.5rem;
+  /* Settings Panel Styles */
+  .settings-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
   }
 
-  .para:last-child {
-    margin-bottom: 0;
+  .group-label {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    color: #111;
+    margin-bottom: 0.8rem;
+    display: block;
   }
 
-  .tips-section {
-    padding: 1.5rem 2rem;
-    background: linear-gradient(to bottom right, #ffffff, #f8fafc);
+  .divider-h {
+    height: 3px;
+    background: #111;
+    width: 100%;
+  }
+
+  .range-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .brutal-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 10px;
+    background: #111;
+    outline: none;
+  }
+
+  .brutal-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 30px;
+    background: #ff4b4b;
+    border: 3px solid #111;
+    cursor: pointer;
+  }
+
+  .range-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 900;
+    font-size: 1.2rem;
+    background: #111;
+    color: #ffd900;
+    padding: 0.2rem 0.8rem;
+  }
+
+  .radio-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .compact-radio-group {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .radio-label {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .radio-label input {
+    display: none;
+  }
+
+  .radio-box {
+    display: flex;
+    flex-direction: column;
+    padding: 0.8rem;
+    background: #fff;
+    border: 3px solid #111;
+    color: #111;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.1s;
+    min-width: 80px;
+  }
+
+  .compact-radio-group .radio-box {
+    padding: 0.6rem 1rem;
+    text-align: center;
+  }
+
+  .radio-box b {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    font-size: 1rem;
+  }
+
+  .radio-box small {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 0.8rem;
+    color: #555;
+    margin-top: 0.2rem;
+  }
+
+  .radio-label input:checked + .radio-box {
+    background: #111;
+    color: #fff;
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px #ff4b4b;
+  }
+
+  .radio-label input:checked + .radio-box small {
+    color: #ccc;
+  }
+
+  .checkbox-label {
+    font-size: 1rem;
+    font-weight: 800;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+
+  .checkbox-label input[type='checkbox'] {
+    appearance: none;
+    background-color: #fff;
+    width: 24px;
+    height: 24px;
+    border: 3px solid #111;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .checkbox-label input[type='checkbox']:checked {
+    background-color: #111;
+  }
+
+  .checkbox-label input[type='checkbox']:checked::after {
+    content: '✖';
+    color: #ffd900;
+    font-size: 16px;
+  }
+
+  .brutal-border-box {
+    border: 3px solid #111;
+    background: #fff;
+    padding: 2rem;
+    box-shadow: 6px 6px 0px #111;
+  }
+
+  .mt-4 {
+    margin-top: 1rem;
   }
 
   .tips-header {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .tips-header h3 {
+    margin: 0;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #111;
+    text-transform: uppercase;
+  }
+
+  .tips-icon {
+    font-size: 2rem;
+  }
+
+  .tips-content p {
     margin-bottom: 1rem;
-    color: #3b82f6;
-  }
-
-  .tips-header h4 {
-    margin: 0;
-    font-size: 1.1rem;
-  }
-
-  .premium-list {
-    padding-left: 1.25rem;
-    margin: 0;
-  }
-
-  .premium-list li {
-    margin-bottom: 0.75rem;
-    color: #475569;
-    font-size: 0.9rem;
+    color: #111;
+    font-size: 1rem;
     line-height: 1.6;
+    font-family: 'Noto Sans SC', sans-serif;
   }
 
-  .glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  .tips-content p b {
+    color: #ff4b4b;
+    font-size: 1.05rem;
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  /* Dark theme */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-border-box {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .side-pane {
+    background: #222;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .badge {
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .result-area {
+    background: #1a1a1a;
+  }
+  [data-theme='dark'] .group-label {
+    color: #eee;
+  }
+  [data-theme='dark'] .divider-h {
+    background: #eee;
+  }
+  [data-theme='dark'] .brutal-slider {
+    background: #eee;
+  }
+  [data-theme='dark'] .brutal-slider::-webkit-slider-thumb {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .radio-box {
+    background: #1a1a1a;
+    color: #eee;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .radio-box small {
+    color: #aaa;
+  }
+  [data-theme='dark'] .radio-label input:checked + .radio-box {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .radio-label input:checked + .radio-box small {
+    color: #333;
+  }
+  [data-theme='dark'] .checkbox-label {
+    color: #eee;
+  }
+  [data-theme='dark'] .checkbox-label input[type='checkbox'] {
+    border-color: #eee;
+    background-color: #1a1a1a;
+  }
+  [data-theme='dark'] .checkbox-label input[type='checkbox']:checked {
+    background-color: #eee;
+  }
+  [data-theme='dark'] .checkbox-label input[type='checkbox']:checked::after {
+    color: #111;
+  }
+  [data-theme='dark'] .para-item {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .para-item:nth-child(even) {
+    background: #111;
+  }
+  [data-theme='dark'] .tips-content p {
+    color: #eee;
+  }
+  [data-theme='dark'] .tips-header h3 {
+    color: #eee;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #9d174d;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #075985;
+    color: #fff;
+  }
+  [data-theme='dark'] .execute-btn,
+  [data-theme='dark'] .text-dark.execute-btn {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .execute-btn:hover:not(:disabled),
+  [data-theme='dark'] .text-dark.execute-btn:hover:not(:disabled) {
+    background: #ffd900;
+  }
+  [data-theme='dark'] .count-badge {
+    border-color: #111;
   }
 </style>

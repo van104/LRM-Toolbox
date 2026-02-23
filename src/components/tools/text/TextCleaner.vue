@@ -1,281 +1,266 @@
 <template>
-  <div class="text-cleaner">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="goHome">
-        <el-icon>
-          <ArrowLeft />
-        </el-icon>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>文本清洗</h1>
-        <span class="nav-subtitle">Text Cleaner</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goHome">← 返回</button>
+        <h1 class="brutal-title">文本<span>清洗()</span></h1>
+        <div class="badge">🧹 Text Cleaner</div>
+      </header>
 
-    <main class="main-content">
-      <div class="cleaner-layout">
-        <section class="panel input-panel">
-          <div class="panel-header">
-            <span class="panel-title">输入文本</span>
-            <div class="panel-actions">
-              <span v-if="inputText" class="stats-info"
-                >{{ inputText.length }} 字符 | {{ inputLines }} 行</span
-              >
-              <button class="icon-btn" title="粘贴" @click="pasteText">
-                <el-icon>
-                  <CopyDocument />
-                </el-icon>
-              </button>
-              <button class="icon-btn" title="清空" @click="clearInput">
-                <el-icon>
-                  <Delete />
-                </el-icon>
-              </button>
+      <main class="brutal-main">
+        <div class="layout-grid">
+          <!-- 1. 输入 -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-yellow">
+              <span class="panel-title">1. 输入文本 (INPUT)</span>
+              <div class="panel-actions">
+                <span v-if="inputText" class="stats-info"
+                  >{{ inputText.length }} 字符 | {{ inputLines }} 行</span
+                >
+                <button class="brutal-btn icon-btn" title="粘贴" @click="pasteText">📋 粘贴</button>
+                <button class="brutal-btn icon-btn" title="清空" @click="clearInput">
+                  🗑️ 清空
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="editor-wrapper">
-            <textarea
-              v-model="inputText"
-              class="text-editor"
-              placeholder="在此输入或粘贴需要处理的文本..."
-              spellcheck="false"
-            ></textarea>
-          </div>
-        </section>
-
-        <section class="tools-panel">
-          <div class="action-bar">
-            <button
-              class="action-btn execute-btn"
-              :disabled="selectedFunctions.length === 0"
-              @click="executeSelected"
-            >
-              <el-icon>
-                <Check />
-              </el-icon>
-              执行 ({{ selectedFunctions.length }})
-            </button>
-            <button
-              class="action-btn clear-btn"
-              :disabled="selectedFunctions.length === 0"
-              @click="clearSelection"
-            >
-              <el-icon>
-                <Close />
-              </el-icon>
-              清除选择
-            </button>
-          </div>
-
-          <div class="tool-group">
-            <div class="group-title">基础清洗</div>
-            <div class="group-content">
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('removeEmptyLines') }"
-                @click="toggleFunction('removeEmptyLines')"
-              >
-                删除空行
-              </button>
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('trimLines') }"
-                @click="toggleFunction('trimLines')"
-              >
-                删除行首尾空格
-              </button>
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('removeAllSpaces') }"
-                @click="toggleFunction('removeAllSpaces')"
-              >
-                删除所有空格
-              </button>
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('mergeSpaces') }"
-                @click="toggleFunction('mergeSpaces')"
-              >
-                多空格转单空格
-              </button>
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('removeDuplicates') }"
-                @click="toggleFunction('removeDuplicates')"
-              >
-                按行去重
-              </button>
+            <div class="editor-wrapper">
+              <textarea
+                v-model="inputText"
+                class="code-editor"
+                placeholder="在此输入或粘贴需要处理的文本..."
+                spellcheck="false"
+              ></textarea>
             </div>
-          </div>
+          </section>
 
-          <div class="tool-group">
-            <div class="group-title">排序与反转</div>
-            <div class="group-content">
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('sortLinesAsc') }"
-                @click="toggleFunction('sortLinesAsc')"
-              >
-                按行升序 A-Z
-              </button>
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('sortLinesDesc') }"
-                @click="toggleFunction('sortLinesDesc')"
-              >
-                按行降序 Z-A
-              </button>
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('shuffleLines') }"
-                @click="toggleFunction('shuffleLines')"
-              >
-                按行打乱
-              </button>
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('reverseLines') }"
-                @click="toggleFunction('reverseLines')"
-              >
-                整行反转
-              </button>
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('reverseText') }"
-                @click="toggleFunction('reverseText')"
-              >
-                全文倒序
-              </button>
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('reverseEachLine') }"
-                @click="toggleFunction('reverseEachLine')"
-              >
-                逐行文本反转
-              </button>
+          <!-- 2. 工具选择 -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-pink text-white">
+              <span class="panel-title">2. 动作 (ACTIONS)</span>
+              <div class="panel-actions">
+                <button
+                  class="brutal-btn icon-btn execute-btn"
+                  style="border-color: #fff"
+                  :disabled="selectedFunctions.length === 0"
+                  @click="executeSelected"
+                >
+                  🚀 执行 ({{ selectedFunctions.length }})
+                </button>
+                <button
+                  class="brutal-btn icon-btn"
+                  style="border-color: #fff"
+                  :disabled="selectedFunctions.length === 0"
+                  @click="clearSelection"
+                >
+                  ✖ 清除
+                </button>
+              </div>
             </div>
-          </div>
+            <div class="tools-scroll-area">
+              <div class="tool-group">
+                <div class="group-title">基础清洗</div>
+                <div class="group-content">
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('removeEmptyLines') }"
+                    @click="toggleFunction('removeEmptyLines')"
+                  >
+                    删除空行
+                  </button>
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('trimLines') }"
+                    @click="toggleFunction('trimLines')"
+                  >
+                    删除行首尾空格
+                  </button>
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('removeAllSpaces') }"
+                    @click="toggleFunction('removeAllSpaces')"
+                  >
+                    删除所有空格
+                  </button>
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('mergeSpaces') }"
+                    @click="toggleFunction('mergeSpaces')"
+                  >
+                    多空格转单空格
+                  </button>
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('removeDuplicates') }"
+                    @click="toggleFunction('removeDuplicates')"
+                  >
+                    按行去重
+                  </button>
+                </div>
+              </div>
 
-          <div class="tool-group">
-            <div class="group-title">格式转换</div>
-            <div class="group-content">
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('toUpperCase') }"
-                @click="toggleFunction('toUpperCase')"
-              >
-                全大写
-              </button>
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('toLowerCase') }"
-                @click="toggleFunction('toLowerCase')"
-              >
-                全小写
-              </button>
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('capitalizeLines') }"
-                @click="toggleFunction('capitalizeLines')"
-              >
-                首字母大写
-              </button>
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('toHalfWidth') }"
-                @click="toggleFunction('toHalfWidth')"
-              >
-                全角转半角
-              </button>
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('toFullWidth') }"
-                @click="toggleFunction('toFullWidth')"
-              >
-                半角转全角
-              </button>
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('normalizePunctuation') }"
-                @click="toggleFunction('normalizePunctuation')"
-              >
-                中英文标点规整
-              </button>
+              <div class="tool-group">
+                <div class="group-title">排序与反转</div>
+                <div class="group-content">
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('sortLinesAsc') }"
+                    @click="toggleFunction('sortLinesAsc')"
+                  >
+                    按行升序 A-Z
+                  </button>
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('sortLinesDesc') }"
+                    @click="toggleFunction('sortLinesDesc')"
+                  >
+                    按行降序 Z-A
+                  </button>
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('shuffleLines') }"
+                    @click="toggleFunction('shuffleLines')"
+                  >
+                    按行打乱
+                  </button>
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('reverseLines') }"
+                    @click="toggleFunction('reverseLines')"
+                  >
+                    整行反转
+                  </button>
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('reverseText') }"
+                    @click="toggleFunction('reverseText')"
+                  >
+                    全文倒序
+                  </button>
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('reverseEachLine') }"
+                    @click="toggleFunction('reverseEachLine')"
+                  >
+                    逐行文本反转
+                  </button>
+                </div>
+              </div>
+
+              <div class="tool-group">
+                <div class="group-title">格式转换</div>
+                <div class="group-content">
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('toUpperCase') }"
+                    @click="toggleFunction('toUpperCase')"
+                  >
+                    全大写
+                  </button>
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('toLowerCase') }"
+                    @click="toggleFunction('toLowerCase')"
+                  >
+                    全小写
+                  </button>
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('capitalizeLines') }"
+                    @click="toggleFunction('capitalizeLines')"
+                  >
+                    首字母大写
+                  </button>
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('toHalfWidth') }"
+                    @click="toggleFunction('toHalfWidth')"
+                  >
+                    全角转半角
+                  </button>
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('toFullWidth') }"
+                    @click="toggleFunction('toFullWidth')"
+                  >
+                    半角转全角
+                  </button>
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('normalizePunctuation') }"
+                    @click="toggleFunction('normalizePunctuation')"
+                  >
+                    中英文标点规整
+                  </button>
+                </div>
+              </div>
+
+              <div class="tool-group">
+                <div class="group-title">排版</div>
+                <div class="group-content">
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('addSequence') }"
+                    @click="toggleFunction('addSequence')"
+                  >
+                    添加行号 (1.)
+                  </button>
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('addIndent') }"
+                    @click="toggleFunction('addIndent')"
+                  >
+                    添加缩进 (2格)
+                  </button>
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('removeIndent') }"
+                    @click="toggleFunction('removeIndent')"
+                  >
+                    删除缩进
+                  </button>
+                  <button
+                    class="tool-btn"
+                    :class="{ active: isSelected('jsonOneLine') }"
+                    @click="toggleFunction('jsonOneLine')"
+                  >
+                    JSON 转单行
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
+          </section>
 
-          <div class="tool-group">
-            <div class="group-title">排版</div>
-            <div class="group-content">
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('addSequence') }"
-                @click="toggleFunction('addSequence')"
-              >
-                添加行号 (1.)
-              </button>
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('addIndent') }"
-                @click="toggleFunction('addIndent')"
-              >
-                添加缩进 (2格)
-              </button>
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('removeIndent') }"
-                @click="toggleFunction('removeIndent')"
-              >
-                删除缩进
-              </button>
-              <button
-                class="tool-btn"
-                :class="{ active: isSelected('jsonOneLine') }"
-                @click="toggleFunction('jsonOneLine')"
-              >
-                JSON 转单行
-              </button>
+          <!-- 3. 输出 -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-blue text-white">
+              <span class="panel-title">3. 输出文本 (OUTPUT)</span>
+              <div class="panel-actions">
+                <span v-if="outputText" class="stats-info"
+                  >{{ outputText.length }} 字符 | {{ outputLines }} 行</span
+                >
+                <button class="brutal-btn icon-btn" title="复制结果" @click="copyResult">
+                  📋 复制
+                </button>
+              </div>
             </div>
-          </div>
-        </section>
-
-        <section class="panel output-panel">
-          <div class="panel-header">
-            <span class="panel-title">处理结果</span>
-            <div class="panel-actions">
-              <span v-if="outputText" class="stats-info"
-                >{{ outputText.length }} 字符 | {{ outputLines }} 行</span
-              >
-              <button class="icon-btn" title="复制结果" @click="copyResult">
-                <el-icon>
-                  <CopyDocument />
-                </el-icon>
-              </button>
+            <div class="editor-wrapper">
+              <textarea
+                v-model="outputText"
+                class="code-editor result-editor"
+                readonly
+                placeholder="处理结果将显示在这里..."
+              ></textarea>
             </div>
-          </div>
-          <div class="editor-wrapper">
-            <textarea
-              v-model="outputText"
-              class="text-editor result-editor"
-              readonly
-              placeholder="处理结果将显示在这里..."
-            ></textarea>
-          </div>
-        </section>
-      </div>
-    </main>
-
-    <footer class="footer">© 2026 LRM工具箱 - 文本清理</footer>
+          </section>
+        </div>
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, computed } from 'vue';
   import { useRouter } from 'vue-router';
-  import { ArrowLeft, Delete, CopyDocument, Check, Close } from '@element-plus/icons-vue';
-
   import { useCopy } from '@/composables/useCopy';
   import { ElMessage } from 'element-plus';
 
@@ -440,132 +425,142 @@
 </script>
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800;900&family=Noto+Sans+SC:wght@400;700;900&display=swap');
 
-  .text-cleaner {
-    --bg: #f5f7fa;
-    --card: #ffffff;
-    --border: #e5e7eb;
-    --text: #1f2937;
-    --text-secondary: #6b7280;
-    --accent: #3b82f6;
-
-    --accent-light: #eff6ff;
-
-    font-family: 'Noto Sans SC', sans-serif;
-    background: var(--bg);
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    color: var(--text);
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-
-  .nav-back:hover {
-    background: var(--accent-light);
-    color: var(--accent);
-  }
-
-  .nav-center h1 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    text-align: center;
-  }
-
-  .nav-subtitle {
-    display: block;
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .nav-spacer {
-    width: 60px;
-  }
-
-  .main-content {
-    flex: 1;
+  .brutal-container {
     max-width: 1400px;
-    width: 100%;
     margin: 0 auto;
-    padding: 1.5rem;
-  }
-
-  .cleaner-layout {
-    display: flex;
-    gap: 1.5rem;
-    height: calc(100vh - 120px);
-  }
-
-  .panel {
-    flex: 1;
     display: flex;
     flex-direction: column;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    gap: 2rem;
   }
 
-  .input-panel {
-    flex: 1.2;
-  }
-
-  .output-panel {
-    flex: 1.2;
-  }
-
-  .tools-panel {
-    flex: 0.8;
+  .brutal-header {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
     gap: 1rem;
-    padding: 1rem;
-    overflow-y: auto;
-    min-width: 260px;
   }
 
-  .panel-header {
-    padding: 0.8rem 1rem;
-    border-bottom: 1px solid var(--border);
-    background: #f9fafb;
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    padding: 0.6rem 1.2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0px #111;
+  }
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .badge {
+    background: #111;
+    color: #ff4b4b;
+    padding: 0.5rem 1.2rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    border: 3px solid #ff4b4b;
+    box-shadow: 4px 4px 0px #ff4b4b;
+  }
+
+  .brutal-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px 1fr;
+    gap: 2rem;
+    align-items: stretch;
+    height: calc(100vh - 180px);
+    min-height: 600px;
+  }
+
+  @media (max-width: 1024px) {
+    .layout-grid {
+      grid-template-columns: 1fr;
+      height: auto;
+    }
+  }
+
+  .brutal-pane {
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 6px 6px 0px #111;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .pane-header {
+    padding: 1rem;
+    border-bottom: 3px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-
-  .panel-title {
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: var(--text);
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-pink {
+    background: #ff7be5;
+  }
+  .bg-blue {
+    background: #0ea5e9;
+  }
+  .text-white {
+    color: #fff;
   }
 
   .panel-actions {
@@ -575,202 +570,179 @@
   }
 
   .stats-info {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    margin-right: 0.5rem;
-    background: #f3f4f6;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: #fff;
+    color: #111;
+    border: 2px solid #111;
     padding: 2px 6px;
-    border-radius: 4px;
+  }
+  .text-white .stats-info {
+    background: #111;
+    color: #fff;
+    border: 2px solid #fff;
   }
 
   .icon-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    color: var(--text-secondary);
-    transition: all 0.2s;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    font-family: 'Noto Sans SC', sans-serif;
   }
-
-  .icon-btn:hover {
-    color: var(--accent);
-    background: var(--accent-light);
+  .text-white .execute-btn {
+    background: #fff;
+    color: #111;
+  }
+  .text-white .execute-btn:hover:not(:disabled) {
+    background: #ffd900;
+    color: #111;
   }
 
   .editor-wrapper {
     flex: 1;
-    position: relative;
+    display: flex;
+    flex-direction: column;
   }
 
-  .text-editor {
+  .code-editor {
+    flex: 1;
     width: 100%;
-    height: 100%;
     border: none;
-    resize: none;
     padding: 1rem;
-    font-family: inherit;
-    font-size: 0.95rem;
-    line-height: 1.6;
+    resize: none;
     outline: none;
-    color: var(--text);
+    font-family: 'IBM Plex Mono', 'Consolas', monospace;
+    font-size: 0.95rem;
+    line-height: 1.5;
     background: transparent;
+    color: #111;
+    box-sizing: border-box;
   }
 
   .result-editor {
     background: #fdfdfd;
   }
 
+  .tools-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #fdfae5;
+  }
+
+  .tool-group {
+    margin-bottom: 1.5rem;
+  }
+
   .group-title {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #111;
+    border-bottom: 3px solid #111;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
     text-transform: uppercase;
   }
 
   .group-content {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-    gap: 0.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
   }
 
   .tool-btn {
-    background: var(--card);
-    border: 1px solid var(--border);
+    background: #fff;
+    border: 2px solid #111;
     padding: 0.6rem 0.5rem;
-    border-radius: 6px;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', sans-serif;
     font-size: 0.85rem;
-    color: var(--text);
+    font-weight: 800;
+    color: #111;
     cursor: pointer;
-    transition: all 0.2s;
+    box-shadow: 2px 2px 0px #111;
+    transition: all 0.1s;
     text-align: center;
   }
-
   .tool-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: var(--accent-light);
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px #111;
   }
-
   .tool-btn:active {
-    transform: translateY(1px);
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 transparent;
   }
 
   .tool-btn.active {
-    border-color: var(--accent);
-    color: white;
-    background: var(--accent);
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    background: #111;
+    color: #ff7be5;
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 transparent;
   }
 
-  .tool-btn.active:hover {
-    background: #2563eb;
-    border-color: #2563eb;
-    color: white;
+  /* Dark theme */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
   }
-
-  .action-bar {
-    display: flex;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    margin-bottom: 0.5rem;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+  [data-theme='dark'] .brutal-pane {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
   }
-
-  .action-btn {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    padding: 0.6rem 1rem;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: 1px solid var(--border);
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
   }
-
-  .execute-btn {
-    background: var(--accent);
-    color: white;
-    border-color: var(--accent);
+  [data-theme='dark'] .brutal-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 4px 4px 0px #eee;
   }
-
-  .execute-btn:hover:not(:disabled) {
-    background: #2563eb;
-    border-color: #2563eb;
+  [data-theme='dark'] .badge {
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
   }
-
-  .clear-btn {
-    background: var(--card);
-    color: var(--text-secondary);
+  [data-theme='dark'] .code-editor {
+    color: #eee;
   }
-
-  .clear-btn:hover:not(:disabled) {
-    background: #fee2e2;
-    color: #dc2626;
-    border-color: #fca5a5;
+  [data-theme='dark'] .result-editor {
+    background: #222;
   }
-
-  .action-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+  [data-theme='dark'] .tools-scroll-area {
+    background: #111;
   }
-
-  @media (max-width: 1024px) {
-    .cleaner-layout {
-      flex-direction: column;
-      height: auto;
-    }
-
-    .panel {
-      height: 300px;
-    }
-
-    .tools-panel {
-      max-height: none;
-      overflow-y: visible;
-    }
+  [data-theme='dark'] .group-title {
+    color: #eee;
+    border-bottom-color: #eee;
   }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #111827;
-      --card: #1f2937;
-      --border: #374151;
-      --text: #f9fafb;
-      --text-secondary: #9ca3af;
-      --accent: #60a5fa;
-      --accent-light: rgba(59, 130, 246, 0.1);
-    }
-
-    .panel-header {
-      background: #1f2937;
-      border-bottom-color: #374151;
-    }
-
-    .result-editor {
-      background: #1f2937;
-    }
-
-    .stats-info {
-      background: #374151;
-      color: #d1d5db;
-    }
+  [data-theme='dark'] .tool-btn {
+    background: #222;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 2px 2px 0px #eee;
   }
-
-  .footer {
-    text-align: center;
-    padding: 3rem 0;
-    color: var(--text-secondary, #64748b);
-    font-size: 0.85rem;
+  [data-theme='dark'] .tool-btn.active {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #9d174d;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #075985;
+    color: #fff;
+  }
+  [data-theme='dark'] .stats-info {
+    background: #222;
+    color: #eee;
+    border-color: #eee;
   }
 </style>

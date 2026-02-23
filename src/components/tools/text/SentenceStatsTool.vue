@@ -1,71 +1,89 @@
 <template>
-  <div class="sentence-stats-tool">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="$router.back()">
-        <el-icon>
-          <Back />
-        </el-icon>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>句子长度统计器</h1>
-        <span class="nav-subtitle">Sentence Length Statistics</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">句子长度<span>统计器()</span></h1>
+        <div class="badge">📊 Sentence Stats</div>
+      </header>
 
-    <main class="main-content">
-      <div class="tool-card glass-card">
-        <div class="input-section">
-          <label>粘贴文章段落 (自动识别句号、问号、感叹号)</label>
-          <textarea
-            v-model="inputText"
-            placeholder="在这里输入或粘贴您的文章内容..."
-            rows="8"
-          ></textarea>
-        </div>
+      <main class="brutal-main">
+        <div class="layout-grid">
+          <!-- Input pane -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-yellow">
+              <span class="panel-title">1. 输入文章段落 (INPUT)</span>
+            </div>
+            <div class="editor-wrapper">
+              <textarea
+                v-model="inputText"
+                class="code-editor"
+                placeholder="在此粘贴文章内容 (自动识别句号、问号、感叹号)..."
+                spellcheck="false"
+              ></textarea>
+            </div>
 
-        <div v-if="stats" class="stats-display animate-fade-in">
-          <div class="summary-cards">
-            <div class="summary-card">
-              <span class="num">{{ stats.totalChars }}</span>
-              <span class="label">总字数</span>
-            </div>
-            <div class="summary-card">
-              <span class="num">{{ stats.sentenceCount }}</span>
-              <span class="label">句子总数</span>
-            </div>
-            <div class="summary-card accent">
-              <span class="num">{{ stats.avgLength }}</span>
-              <span class="label">平均句长</span>
-            </div>
-          </div>
-
-          <div class="details-section">
-            <h3>句子长度分布</h3>
-            <div class="sentences-list">
-              <div v-for="(sentence, index) in stats.sentences" :key="index" class="sentence-item">
-                <div class="sentence-header">
-                  <span class="index">句子 {{ index + 1 }}</span>
-                  <span :class="['len-tag', getLengthClass(sentence.length)]"
-                    >{{ sentence.length }} 字</span
-                  >
-                </div>
-                <p class="sentence-text">{{ sentence.text }}</p>
+            <div v-if="stats" class="stats-panel bg-yellow">
+              <div class="stat-box">
+                <span class="stat-label">总字数</span>
+                <span class="stat-val text-blue">{{ stats.totalChars }}</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-label">句子总数</span>
+                <span class="stat-val text-pink">{{ stats.sentenceCount }}</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-label">平均句长</span>
+                <span class="stat-val text-dark">{{ stats.avgLength }}</span>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </main>
+          </section>
 
-    <footer class="footer">© 2026 LRM工具箱 - 句子长度统计器</footer>
+          <!-- Middle action -->
+          <div class="switch-area">
+            <div class="brutal-btn min-btn bg-pink text-white" style="cursor: default">
+              📏 分析结果
+            </div>
+          </div>
+
+          <!-- Output pane -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-blue text-white">
+              <span class="panel-title">2. 长度分布 (DISTRIBUTION)</span>
+              <div v-if="stats" class="panel-actions">
+                <span class="count-badge">共 {{ stats.sentenceCount }} 句</span>
+              </div>
+            </div>
+            <div class="result-area">
+              <div v-if="stats" class="sentences-list">
+                <div
+                  v-for="(sentence, index) in stats.sentences"
+                  :key="index"
+                  class="sentence-item"
+                >
+                  <div class="sentence-header">
+                    <span class="index">No.{{ index + 1 }}</span>
+                    <span :class="['len-tag', getLengthClass(sentence.length)]"
+                      >{{ sentence.length }} 字</span
+                    >
+                  </div>
+                  <div class="sentence-text">{{ sentence.text }}</div>
+                </div>
+              </div>
+              <div v-else class="empty-state">
+                <span class="empty-icon">📝</span>
+                <p>输入文本后自动显示统计数据</p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, computed } from 'vue';
-  import { Back } from '@element-plus/icons-vue';
 
   const inputText = ref('');
 
@@ -98,231 +116,407 @@
   });
 
   const getLengthClass = len => {
-    if (len < 10) return 'short';
-    if (len > 30) return 'long';
+    if (len <= 15) return 'short';
+    if (len > 35) return 'long';
     return 'medium';
   };
 </script>
 
 <style scoped>
-  .sentence-stats-tool {
-    --bg: #f5f3ff;
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800;900&family=Noto+Sans+SC:wght@400;700;900&display=swap');
 
-    --card: #ffffff;
-    --border: #ddd6fe;
-    --text: #1f2937;
-    --text-2: #6b7280;
-    --accent: #8b5cf6;
-
-    font-family: 'Noto Sans SC', sans-serif;
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: var(--bg);
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-back,
-  .nav-spacer {
-    width: 80px;
-  }
-
-  .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--text-2);
-    cursor: pointer;
-  }
-
-  .nav-center {
-    text-align: center;
-    flex: 1;
-  }
-
-  .nav-center h1 {
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-
-  .nav-subtitle {
-    font-size: 0.7rem;
-    color: var(--text-2);
-    text-transform: uppercase;
-    display: block;
-    text-align: center;
-  }
-
-  .main-content {
-    max-width: 800px;
+  .brutal-container {
+    max-width: 1300px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 2rem;
   }
 
-  .glass-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
 
-  .input-section label {
-    display: block;
-    margin-bottom: 0.8rem;
-    font-size: 0.9rem;
-    color: var(--text-2);
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
   }
 
-  .input-section textarea {
-    width: 100%;
-    padding: 1.2rem;
-    border: 2px solid var(--border);
-    border-radius: 16px;
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    padding: 0.6rem 1.2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
     font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0px #111;
+  }
+
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .min-btn {
+    padding: 0.8rem 1.6rem;
+    font-size: 1.1rem;
+    box-shadow: 6px 6px 0px #111;
+  }
+  .min-btn:hover:not(:disabled) {
+    box-shadow: 6px 6px 0px #111;
+    transform: none;
+  }
+
+  .badge {
+    background: #111;
+    color: #ff4b4b;
+    padding: 0.5rem 1.2rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    border: 3px solid #ff4b4b;
+    box-shadow: 4px 4px 0px #ff4b4b;
+  }
+
+  .brutal-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .layout-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 2rem;
+    align-items: stretch;
+    height: calc(100vh - 180px);
+    min-height: 500px;
+  }
+
+  @media (max-width: 900px) {
+    .layout-grid {
+      grid-template-columns: 1fr;
+      height: auto;
+    }
+  }
+
+  .brutal-pane {
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 6px 6px 0px #111;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .pane-header {
+    padding: 1rem;
+    border-bottom: 3px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-pink {
+    background: #ff7be5;
+  }
+  .bg-blue {
+    background: #0ea5e9;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .text-blue {
+    color: #0ea5e9;
+  }
+  .text-pink {
+    color: #ff7be5;
+  }
+  .text-dark {
+    color: #111;
+  }
+
+  .count-badge {
+    background: #111;
+    color: #ffd900;
+    padding: 0.2rem 0.6rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    border: 2px solid #fff;
+  }
+
+  .switch-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .editor-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .code-editor {
+    flex: 1;
+    width: 100%;
+    min-height: 200px;
+    border: none;
+    padding: 1.5rem;
+    resize: none;
     outline: none;
-    transition: border-color 0.2s;
-    resize: vertical;
-    line-height: 1.6;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    background: transparent;
+    color: #111;
+    box-sizing: border-box;
   }
 
-  .input-section textarea:focus {
-    border-color: var(--accent);
-  }
-
-  .summary-cards {
+  .stats-panel {
+    border-top: 3px solid #111;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    margin: 2rem 0;
   }
 
-  .summary-card {
-    background: #f9fafb;
-    padding: 1.5rem;
-    border-radius: 16px;
-    text-align: center;
-    border: 1px solid #f3f4f6;
+  .stat-box {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 3px solid #111;
   }
 
-  .summary-card.accent {
-    background: #ede9fe;
-    border-color: #ddd6fe;
+  .stat-box:last-child {
+    border-right: none;
   }
 
-  .summary-card .num {
-    display: block;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--accent);
+  .stat-label {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
   }
 
-  .summary-card .label {
-    font-size: 0.8rem;
-    color: var(--text-2);
+  .stat-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 1;
+    text-shadow: 2px 2px 0px #111;
+  }
+  .stat-val.text-dark {
+    color: #111;
+    text-shadow: 2px 2px 0px #fff;
   }
 
-  .details-section h3 {
-    font-size: 1rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
+  .result-area {
+    flex: 1;
+    background: #fdfdfd;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
   }
 
   .sentences-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    padding: 1.5rem;
+    gap: 1.5rem;
   }
 
   .sentence-item {
-    padding: 1.2rem;
     background: #fff;
-    border: 1px solid #f3f4f6;
-    border-radius: 12px;
-    transition: transform 0.2s;
-  }
-
-  .sentence-item:hover {
-    transform: translateX(5px);
-    border-color: var(--accent);
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    display: flex;
+    flex-direction: column;
   }
 
   .sentence-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.8rem;
+    padding: 0.5rem 1rem;
+    border-bottom: 3px solid #111;
+    background: #fdfae5;
   }
 
   .index {
-    font-size: 0.75rem;
-    color: var(--text-2);
-    font-weight: 500;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: 0.9rem;
   }
 
   .len-tag {
-    font-size: 0.75rem;
-    padding: 2px 10px;
-    border-radius: 20px;
-    font-weight: 600;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 900;
+    padding: 0.2rem 0.6rem;
+    border: 2px solid #111;
+    text-transform: uppercase;
   }
 
   .len-tag.short {
-    background: #dcfce7;
-    color: #166534;
+    background: #4ade80;
+    color: #111;
   }
-
   .len-tag.medium {
-    background: #fef9c3;
-    color: #854d0e;
+    background: #ffd900;
+    color: #111;
   }
-
   .len-tag.long {
-    background: #fee2e2;
-    color: #991b1b;
+    background: #ff4b4b;
+    color: #fff;
   }
 
   .sentence-text {
-    font-size: 0.95rem;
-    color: var(--text);
-    line-height: 1.5;
-    margin: 0;
+    padding: 1rem;
+    font-size: 1rem;
+    line-height: 1.6;
+    font-weight: 600;
   }
 
-  .footer {
-    text-align: center;
+  .empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #cbd5e1;
     padding: 2rem;
-    color: var(--text-2);
-    font-size: 0.85rem;
   }
 
-  .animate-fade-in {
-    animation: fadeIn 0.4s ease-out;
+  .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
   }
 
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  /* Dark theme */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    border-top-color: #eee !important;
+  }
+  [data-theme='dark'] .brutal-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .badge {
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .code-editor {
+    color: #eee;
+  }
+  [data-theme='dark'] .result-area {
+    background: #1a1a1a;
+  }
+  [data-theme='dark'] .stats-panel {
+    border-top-color: #eee;
+  }
+  [data-theme='dark'] .stat-box {
+    border-right-color: #eee;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #9d174d;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #075985;
+    color: #fff;
+  }
+  [data-theme='dark'] .stat-val.text-dark {
+    color: #fff;
+    text-shadow: 2px 2px 0px #111;
+  }
+  [data-theme='dark'] .sentence-item {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .sentence-header {
+    background: #1a1a1a;
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .len-tag {
+    border-color: #111;
+  }
+  [data-theme='dark'] .len-tag.short {
+    background: #15803d;
+    color: #eee;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .len-tag.medium {
+    background: #b28f00;
+    color: #eee;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .len-tag.long {
+    background: #991b1b;
+    color: #eee;
+    border-color: #eee;
   }
 </style>

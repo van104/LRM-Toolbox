@@ -1,216 +1,155 @@
 <template>
-  <div class="text-counter">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="goHome">
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>文本计数器</h1>
-        <span class="nav-subtitle">Text Counter</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goHome">← 返回</button>
+        <h1 class="brutal-title">文本<span>计数器()</span></h1>
+        <div class="badge">📊 Text Counter</div>
+      </header>
 
-    <main class="main-content">
-      <section class="input-section">
-        <textarea
-          v-model="textContent"
-          placeholder="在此输入或粘贴文本..."
-          class="text-input"
-          rows="8"
-          @input="updateStats"
-        ></textarea>
-        <div class="input-actions">
-          <button class="action-btn secondary" @click="clearText">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path
-                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-              ></path>
-            </svg>
-            清空
-          </button>
-          <button class="action-btn secondary" @click="saveManually">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-              <polyline points="17 21 17 13 7 13 7 21"></polyline>
-              <polyline points="7 3 7 8 15 8"></polyline>
-            </svg>
-            保存
-          </button>
-          <button class="action-btn secondary" @click="copyText">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
-            {{ copyBtnText }}
-          </button>
-          <button class="action-btn primary" @click="showExportModal = true">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            导出结果
-          </button>
-        </div>
-      </section>
-
-      <section class="stats-section">
-        <h2 class="section-title">统计结果</h2>
-        <div class="stats-grid">
-          <div v-for="stat in statsCards" :key="stat.label" class="stat-card">
-            <!-- eslint-disable-next-line vue/no-v-html -->
-            <div class="stat-icon" v-html="stat.icon"></div>
-            <div class="stat-info">
-              <span class="stat-value">{{ stat.value }}</span>
-              <span class="stat-label">{{ stat.label }}</span>
+      <main class="brutal-main">
+        <div class="layout-grid">
+          <!-- 1. 输入 -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-yellow">
+              <span class="panel-title">1. 输入 (INPUT)</span>
+              <div class="panel-actions">
+                <button class="brutal-btn icon-btn" @click="clearText">🗑️ 清空</button>
+                <button class="brutal-btn icon-btn" @click="saveManually">💾 保存</button>
+                <button class="brutal-btn icon-btn" @click="copyText">📋 {{ copyBtnText }}</button>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
+            <div class="editor-wrapper">
+              <textarea
+                v-model="textContent"
+                class="code-editor"
+                placeholder="在此输入或粘贴文本..."
+                spellcheck="false"
+                @input="updateStats"
+              ></textarea>
+            </div>
+          </section>
 
-      <section class="advanced-section">
-        <div class="section-header">
-          <h2 class="section-title">高级统计</h2>
-          <div class="toggle-options">
-            <label class="checkbox-wrap">
-              <input v-model="includeSpaces" type="checkbox" @change="updateStats" />
-              <span class="checkmark"></span>
-              包含空格
+          <!-- 2. 统计结果 -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-pink text-white">
+              <span class="panel-title">2. 统计结果 (STATS)</span>
+              <div class="panel-actions">
+                <button class="brutal-btn icon-btn" @click="showExportModal = true">📤 导出</button>
+              </div>
+            </div>
+            <div class="tools-scroll-area">
+              <div class="stats-grid">
+                <div v-for="stat in statsCards" :key="stat.label" class="stat-card">
+                  <div class="stat-info">
+                    <span class="stat-value">{{ stat.value }}</span>
+                    <span class="stat-label">{{ stat.label }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="divider mt-2 mb-2"></div>
+
+              <div class="advanced-section">
+                <label class="checkbox-label mb-2">
+                  <input v-model="includeSpaces" type="checkbox" @change="updateStats" />
+                  包含空格统计频次
+                </label>
+
+                <div class="advanced-card">
+                  <h3 class="group-label">字符频率 TOP 10</h3>
+                  <div class="frequency-list">
+                    <div v-if="charFrequency.length === 0" class="no-data">请输入文本</div>
+                    <div v-for="(item, idx) in charFrequency" :key="item.char" class="freq-item">
+                      <span class="freq-rank">{{ idx + 1 }}</span>
+                      <span class="freq-char">{{ item.char }}</span>
+                      <div class="freq-bar-wrap">
+                        <div class="freq-bar bg-blue" :style="{ width: item.percent + '%' }"></div>
+                      </div>
+                      <span class="freq-count">{{ item.count }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="advanced-card mt-2">
+                  <h3 class="group-label">常用单词 TOP 10</h3>
+                  <div class="word-list">
+                    <div v-if="commonWords.length === 0" class="no-data">请输入文本</div>
+                    <div v-for="(item, idx) in commonWords" :key="item.word" class="word-item">
+                      <span class="word-rank">{{ idx + 1 }}</span>
+                      <span class="word-text">{{ item.word }}</span>
+                      <span class="word-count">{{ item.count }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 3. 历史记录 -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-blue text-white">
+              <span class="panel-title">3. 历史记录 (HISTORY)</span>
+              <div class="panel-actions">
+                <button v-if="history.length > 0" class="brutal-btn icon-btn" @click="clearHistory">
+                  🗑️ 清空历史
+                </button>
+              </div>
+            </div>
+            <div class="tools-scroll-area">
+              <div class="history-list">
+                <div v-if="history.length === 0" class="no-data center">暂无历史记录</div>
+                <div
+                  v-for="item in history"
+                  :key="item.id"
+                  class="history-item"
+                  @click="loadHistory(item)"
+                >
+                  <div class="history-preview">{{ item.preview }}</div>
+                  <div class="history-meta mt-1">
+                    <span>⏱️ {{ item.date }}</span>
+                    <span>🔡 字符: {{ item.chars }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <!-- 导出弹窗 -->
+    <div v-if="showExportModal" class="brutal-modal-overlay" @click.self="showExportModal = false">
+      <div class="brutal-modal">
+        <div class="modal-header bg-yellow">
+          <h3 style="font-family: 'Syne', sans-serif; font-weight: 900">导出统计结果</h3>
+          <button class="brutal-btn icon-btn" @click="showExportModal = false">X</button>
+        </div>
+        <div class="modal-body">
+          <div class="control-row">
+            <label v-for="opt in exportFormats" :key="opt.value" class="radio-label">
+              <input v-model="exportFormat" type="radio" :value="opt.value" />
+              <span class="radio-box">{{ opt.label }}</span>
             </label>
           </div>
         </div>
-        <div class="advanced-grid">
-          <div class="advanced-card">
-            <h3>字符频率 TOP 10</h3>
-            <div class="frequency-list">
-              <div v-if="charFrequency.length === 0" class="no-data">请输入文本</div>
-              <div v-for="(item, idx) in charFrequency" :key="item.char" class="freq-item">
-                <span class="freq-rank">{{ idx + 1 }}</span>
-                <span class="freq-char">{{ item.char }}</span>
-                <div class="freq-bar-wrap">
-                  <div class="freq-bar" :style="{ width: item.percent + '%' }"></div>
-                </div>
-                <span class="freq-count">{{ item.count }}</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="advanced-card">
-            <h3>常用单词 TOP 10</h3>
-            <div class="word-list">
-              <div v-if="commonWords.length === 0" class="no-data">请输入文本</div>
-              <div v-for="(item, idx) in commonWords" :key="item.word" class="word-item">
-                <span class="word-rank">{{ idx + 1 }}</span>
-                <span class="word-text">{{ item.word }}</span>
-                <span class="word-count">{{ item.count }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="history-section">
-        <div class="section-header">
-          <h2 class="section-title">最近分析</h2>
-          <button v-if="history.length > 0" class="clear-btn" @click="clearHistory">
-            清空历史
+        <div class="modal-footer">
+          <button class="brutal-btn execute-btn" style="width: 100%" @click="exportStats">
+            执行导出
           </button>
         </div>
-        <div class="history-list">
-          <div v-if="history.length === 0" class="no-data center">暂无历史记录</div>
-          <div
-            v-for="item in history"
-            :key="item.id"
-            class="history-item"
-            @click="loadHistory(item)"
-          >
-            <div class="history-preview">{{ item.preview }}</div>
-            <div class="history-meta">
-              <span>{{ item.date }}</span>
-              <span>字符: {{ item.chars }}</span>
-              <span>中文: {{ item.chineseChars || 0 }}</span>
-              <span>英文: {{ item.englishWords || 0 }}</span>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="footer">
-      <p class="disclaimer">⚠️ 说明：统计结果仅供参考，可能存在误差，请以实际情况为准</p>
-      <p>© 2026 LRM工具箱 - 文本计数器</p>
-    </footer>
-
-    <Transition name="modal">
-      <div v-if="showExportModal" class="modal-overlay" @click.self="showExportModal = false">
-        <div class="modal-box">
-          <div class="modal-header">
-            <h3>导出统计结果</h3>
-            <button class="close-btn" @click="showExportModal = false">✕</button>
-          </div>
-          <div class="modal-body">
-            <div class="export-options">
-              <label v-for="opt in exportFormats" :key="opt.value" class="radio-option">
-                <input v-model="exportFormat" type="radio" :value="opt.value" />
-                <span>{{ opt.label }}</span>
-              </label>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="action-btn primary" @click="exportStats">导出</button>
-          </div>
-        </div>
       </div>
-    </Transition>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, reactive, computed, onMounted } from 'vue';
-
+  import { useRouter } from 'vue-router';
   import { useCopy } from '@/composables/useCopy';
   import { ElMessage } from 'element-plus';
 
+  const router = useRouter();
   const textContent = ref('');
   const includeSpaces = ref(false);
   const copyBtnText = ref('复制');
@@ -238,61 +177,25 @@
   });
 
   const statsCards = computed(() => [
-    {
-      label: '字符数',
-      value: stats.chars,
-      icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>'
-    },
-    {
-      label: '不含空格',
-      value: stats.charsNoSpaces,
-      icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6v6H9z"/></svg>'
-    },
-    {
-      label: '中文字数',
-      value: stats.chineseChars,
-      icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M7 12h10M3 17h18"/></svg>'
-    },
-    {
-      label: '英文单词',
-      value: stats.englishWords,
-      icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>'
-    },
-    {
-      label: '行数',
-      value: stats.lines,
-      icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>'
-    },
-    {
-      label: '段落数',
-      value: stats.paragraphs,
-      icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 4v16"/><path d="M17 4v16"/><path d="M13 4H9a4 4 0 0 0 0 8h4"/></svg>'
-    },
-    {
-      label: '空格数',
-      value: stats.spaces,
-      icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/></svg>'
-    },
-    {
-      label: '阅读时间',
-      value: stats.readingTime + ' 分钟',
-      icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
-    }
+    { label: '总字符数', value: stats.chars },
+    { label: '不含空格', value: stats.charsNoSpaces },
+    { label: '中文字数', value: stats.chineseChars },
+    { label: '英文单词', value: stats.englishWords },
+    { label: '行数', value: stats.lines },
+    { label: '段落数', value: stats.paragraphs },
+    { label: '空格数', value: stats.spaces },
+    { label: '阅读时间', value: stats.readingTime + ' m' }
   ]);
 
   const charFrequency = ref([]);
-
   const commonWords = ref([]);
 
   function updateStats() {
     const text = textContent.value;
-
     stats.chars = text.length;
     stats.charsNoSpaces = text.replace(/\s/g, '').length;
-
     stats.chineseChars = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
     stats.englishWords = (text.match(/[a-zA-Z]+/g) || []).length;
-
     stats.lines = text === '' ? 0 : text.split('\n').length;
     stats.paragraphs =
       text.trim() === ''
@@ -302,14 +205,12 @@
             .split(/\n\s*\n/)
             .filter(p => p.trim()).length;
     stats.spaces = (text.match(/\s/g) || []).length;
-
     const totalWords = stats.chineseChars + stats.englishWords;
     if (totalWords === 0) {
       stats.readingTime = 0;
     } else {
       stats.readingTime = Math.max(1, Math.ceil(totalWords / 300));
     }
-
     updateCharFrequency();
     updateCommonWords();
   }
@@ -420,10 +321,8 @@
 
   function saveToHistory() {
     const text = textContent.value;
-
     const chineseChars = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
     const englishWords = (text.match(/[a-zA-Z]+/g) || []).length;
-
     const item = {
       id: Date.now(),
       preview: text.slice(0, 60) + (text.length > 60 ? '...' : ''),
@@ -433,7 +332,6 @@
       chineseChars: chineseChars,
       englishWords: englishWords
     };
-
     history.value.unshift(item);
     if (history.value.length > historyLimit) history.value.pop();
     localStorage.setItem('textCounterHistory', JSON.stringify(history.value));
@@ -447,7 +345,6 @@
       }
     } catch (e) {
       console.error('Failed to load history', e);
-
       localStorage.removeItem('textCounterHistory');
     }
   }
@@ -486,7 +383,7 @@
         content = '指标,数值\n';
         content += `字符数,${stats.chars}\n`;
         content += `不含空格,${stats.charsNoSpaces}\n`;
-        content += `单词数,${stats.words}\n`;
+        content += `单词数,${stats.chineseChars + stats.englishWords}\n`;
         content += `行数,${stats.lines}\n`;
         content += `段落数,${stats.paragraphs}\n`;
         content += `空格数,${stats.spaces}\n`;
@@ -498,7 +395,7 @@
         content = `文本计数器统计报告\n${'='.repeat(30)}\n`;
         content += `字符数: ${stats.chars}\n`;
         content += `不含空格: ${stats.charsNoSpaces}\n`;
-        content += `单词数: ${stats.words}\n`;
+        content += `单词数: ${stats.chineseChars + stats.englishWords}\n`;
         content += `行数: ${stats.lines}\n`;
         content += `段落数: ${stats.paragraphs}\n`;
         content += `空格数: ${stats.spaces}\n`;
@@ -520,8 +417,8 @@
   }
 
   function goHome() {
-    if (window.history.length > 1) window.history.back();
-    else alert('返回首页');
+    if (window.history.length > 1) router.back();
+    else router.push('/');
   }
 
   onMounted(() => {
@@ -531,274 +428,280 @@
 </script>
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800;900&family=Noto+Sans+SC:wght@400;700;900&display=swap');
 
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  .text-counter {
-    --bg: #f5f7fa;
-    --card: #ffffff;
-    --border: #e5e7eb;
-    --text: #1f2937;
-    --text-secondary: #6b7280;
-    --text-muted: #9ca3af;
-    --accent: #6366f1;
-    --accent-light: #eef2ff;
-    --success: #10b981;
-    --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
-
-    font-family:
-      'Noto Sans SC',
-      -apple-system,
-      sans-serif;
-    background: var(--bg);
-    color: var(--text);
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-
-  .nav-back:hover {
-    background: var(--accent-light);
-    color: var(--accent);
-  }
-
-  .nav-center {
-    text-align: center;
-  }
-
-  .nav-center h1 {
-    font-size: 1.25rem;
-    font-weight: 600;
-  }
-
-  .nav-subtitle {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .nav-spacer {
-    width: 60px;
-  }
-
-  .main-content {
-    max-width: 800px;
+  .brutal-container {
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 1.5rem;
-  }
-
-  .input-section {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: var(--shadow);
-  }
-
-  .text-input {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1rem;
-    font-size: 1rem;
-    font-family: inherit;
-    resize: vertical;
-    min-height: 150px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  .text-input:focus {
-    border-color: var(--accent);
-  }
-
-  .input-actions {
     display: flex;
-    gap: 0.75rem;
-    margin-top: 1rem;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 2rem;
   }
 
-  .action-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .action-btn.primary {
-    background: var(--accent);
-    color: white;
-  }
-
-  .action-btn.primary:hover {
-    background: #4f46e5;
-  }
-
-  .action-btn.secondary {
-    background: var(--bg);
-    color: var(--text-secondary);
-    border: 1px solid var(--border);
-  }
-
-  .action-btn.secondary:hover {
-    background: var(--accent-light);
-    color: var(--accent);
-    border-color: var(--accent);
-  }
-
-  .stats-section,
-  .advanced-section,
-  .history-section {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: var(--shadow);
-  }
-
-  .section-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  .section-header {
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
-  }
-
-  .section-header .section-title {
-    margin-bottom: 0;
-  }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    flex-wrap: wrap;
     gap: 1rem;
   }
 
-  .stat-card {
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    padding: 0.6rem 1.2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0px #111;
+  }
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .badge {
+    background: #111;
+    color: #ff4b4b;
+    padding: 0.5rem 1.2rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    border: 3px solid #ff4b4b;
+    box-shadow: 4px 4px 0px #ff4b4b;
+  }
+
+  .brutal-main {
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    background: var(--bg);
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .layout-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1.2fr 0.8fr;
+    gap: 2rem;
+    align-items: stretch;
+    height: calc(100vh - 180px);
+    min-height: 600px;
+  }
+
+  @media (max-width: 1100px) {
+    .layout-grid {
+      grid-template-columns: 1fr;
+      height: auto;
+    }
+  }
+
+  .brutal-pane {
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 6px 6px 0px #111;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .pane-header {
     padding: 1rem;
-    border-radius: 12px;
-    transition:
-      transform 0.2s,
-      box-shadow 0.2s;
+    border-bottom: 3px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-pink {
+    background: #ff7be5;
+  }
+  .bg-blue {
+    background: #0ea5e9;
+  }
+  .text-white {
+    color: #fff;
   }
 
-  .stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  .panel-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .icon-btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    font-family: 'Noto Sans SC', sans-serif;
   }
 
-  .stat-icon {
-    color: var(--accent);
-    flex-shrink: 0;
-  }
-
-  .stat-info {
+  .editor-wrapper {
+    flex: 1;
     display: flex;
     flex-direction: column;
   }
 
-  .stat-value {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--accent);
+  .code-editor {
+    flex: 1;
+    width: 100%;
+    border: none;
+    padding: 1rem;
+    resize: none;
+    outline: none;
+    font-family: 'IBM Plex Mono', 'Consolas', monospace;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    background: #fdfdfd;
+    color: #111;
+    box-sizing: border-box;
   }
 
+  .tools-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    background: #fdfae5;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .stat-card {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 1rem;
+    box-shadow: 4px 4px 0px #111;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .stat-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #ff4b4b;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
   .stat-label {
-    font-size: 0.75rem;
-    color: var(--text-muted);
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #111;
     text-transform: uppercase;
   }
 
-  .toggle-options {
-    display: flex;
-    gap: 1rem;
+  .divider {
+    height: 3px;
+    background: #111;
+    width: 100%;
+  }
+  .mt-2 {
+    margin-top: 1rem;
+  }
+  .mb-2 {
+    margin-bottom: 1rem;
+  }
+  .mt-1 {
+    margin-top: 0.5rem;
   }
 
-  .checkbox-wrap {
-    display: flex;
+  .checkbox-label {
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.875rem;
-    color: var(--text-secondary);
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
     cursor: pointer;
   }
-
-  .checkbox-wrap input {
-    accent-color: var(--accent);
+  .checkbox-label input[type='checkbox'] {
+    appearance: none;
+    background-color: #fff;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #111;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .checkbox-label input[type='checkbox']:checked {
+    background-color: #111;
+  }
+  .checkbox-label input[type='checkbox']:checked::after {
+    content: '✖';
+    color: #ffd900;
+    font-size: 14px;
   }
 
-  .advanced-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1rem;
+  .group-label {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+    background: #111;
+    color: #fff;
+    display: inline-block;
+    padding: 0.3rem 0.6rem;
+    margin-bottom: 1rem;
   }
 
   .advanced-card {
-    background: var(--bg);
-    border-radius: 12px;
+    background: #fff;
+    border: 3px solid #111;
     padding: 1rem;
+    box-shadow: 4px 4px 0px #111;
   }
 
-  .advanced-card h3 {
+  .no-data {
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 700;
+    color: #666;
     font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-    color: var(--text-secondary);
-  }
-
-  .frequency-list,
-  .word-list {
-    max-height: 250px;
-    overflow-y: auto;
+    text-align: center;
+    padding: 1rem;
   }
 
   .freq-item,
@@ -806,231 +709,280 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid var(--border);
+    margin-bottom: 0.5rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 600;
   }
-
-  .freq-item:last-child,
-  .word-item:last-child {
-    border-bottom: none;
-  }
-
   .freq-rank,
   .word-rank {
-    width: 20px;
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    text-align: center;
-  }
-
-  .freq-char {
     width: 24px;
-    font-weight: 600;
-    text-align: center;
-    color: var(--accent);
+    height: 24px;
+    background: #111;
+    color: #ffd900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.8rem;
+    flex-shrink: 0;
   }
-
+  .freq-char,
+  .word-text {
+    width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .freq-bar-wrap {
     flex: 1;
-    height: 8px;
-    background: var(--border);
-    border-radius: 4px;
-    overflow: hidden;
+    height: 12px;
+    background: #eee;
+    border: 2px solid #111;
   }
-
   .freq-bar {
     height: 100%;
-    background: var(--accent);
-    border-radius: 4px;
-    transition: width 0.3s;
+    background: #111;
   }
-
   .freq-count,
   .word-count {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--accent);
-    min-width: 30px;
+    width: 40px;
     text-align: right;
   }
 
-  .word-text {
-    flex: 1;
-    font-size: 0.9rem;
-  }
-
-  .no-data {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-  }
-
-  .no-data.center {
-    text-align: center;
-  }
-
-  .clear-btn {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-size: 0.8rem;
-    cursor: pointer;
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
-  }
-
-  .clear-btn:hover {
-    color: #ef4444;
-    background: #fef2f2;
-  }
-
   .history-list {
-    max-height: 200px;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
-
   .history-item {
-    padding: 0.75rem;
-    background: var(--bg);
-    border-radius: 10px;
-    margin-bottom: 0.5rem;
-    cursor: pointer;
-    border-left: 3px solid var(--accent);
-    transition: background 0.2s;
+    background: #fff;
+    padding: 1rem;
+    text-align: left;
+    display: block;
   }
-
-  .history-item:hover {
-    background: var(--accent-light);
-  }
-
   .history-preview {
     font-size: 0.9rem;
-    color: var(--text);
-    margin-bottom: 0.5rem;
-    white-space: nowrap;
+    line-height: 1.4;
+    max-height: 2.8em;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-
   .history-meta {
     display: flex;
     gap: 1rem;
-    font-size: 0.75rem;
-    color: var(--text-muted);
-  }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 0.8rem;
-    color: var(--text-muted);
+    color: #333;
+    font-weight: 600;
   }
 
-  .footer p {
-    margin: 0.25rem 0;
-  }
-
-  .disclaimer {
-    font-size: 0.75rem;
-    color: #f59e0b;
-    background: #fffbeb;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    display: inline-block;
-    margin-bottom: 1.5rem;
-  }
-
-  .modal-overlay {
+  /* Modal */
+  .brutal-modal-overlay {
     position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.4);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
   }
-
-  .modal-box {
-    background: var(--card);
-    border-radius: 16px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  .brutal-modal {
+    background: #fff;
+    border: 3px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    width: 400px;
+    max-width: 90vw;
+    display: flex;
+    flex-direction: column;
   }
-
-  .modal-header {
+  .brutal-modal .modal-header {
+    padding: 1rem;
+    border-bottom: 3px solid #111;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.25rem;
-    border-bottom: 1px solid var(--border);
+  }
+  .brutal-modal .modal-body {
+    padding: 1.5rem;
+    background: #fdfae5;
+  }
+  .brutal-modal .modal-footer {
+    padding: 1rem;
+    border-top: 3px solid #111;
+    background: #fff;
   }
 
-  .modal-header h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-
-  .close-btn {
-    background: none;
-    border: none;
-    font-size: 1.25rem;
-    color: var(--text-muted);
+  .radio-label {
     cursor: pointer;
+    display: block;
+    margin-bottom: 0.8rem;
+  }
+  .radio-label input {
+    display: none;
+  }
+  .radio-box {
+    display: block;
+    padding: 0.6rem 1rem;
+    background: #fff;
+    color: #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    border: 3px solid #111;
+    transition: all 0.1s;
+    box-shadow: 2px 2px 0px #111;
+  }
+  .radio-label input:checked + .radio-box {
+    background: #111;
+    color: #ffd900;
+    box-shadow: 4px 4px 0px #ffd900;
+    transform: translate(-2px, -2px);
   }
 
-  .close-btn:hover {
-    color: var(--text);
+  .execute-btn {
+    background: #111;
+    color: #fff;
+  }
+  .execute-btn:hover:not(:disabled) {
+    background: #ffd900;
+    color: #111;
   }
 
-  .modal-body {
-    padding: 1.25rem;
+  /* Dark theme */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
   }
-
-  .export-options {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+  [data-theme='dark'] .brutal-pane {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
   }
-
-  .radio-option {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    background: var(--bg);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s;
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
   }
-
-  .radio-option:hover {
-    background: var(--accent-light);
+  [data-theme='dark'] .brutal-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 4px 4px 0px #eee;
   }
-
-  .radio-option input {
-    accent-color: var(--accent);
+  [data-theme='dark'] .badge {
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
   }
-
-  .modal-footer {
-    padding: 1rem 1.25rem;
-    border-top: 1px solid var(--border);
-    text-align: right;
+  [data-theme='dark'] .code-editor {
+    background: #222;
+    color: #eee;
   }
-
-  .modal-enter-active,
-  .modal-leave-active {
-    transition: all 0.3s ease;
+  [data-theme='dark'] .tools-scroll-area {
+    background: #111;
   }
-
-  .modal-enter-from,
-  .modal-leave-to {
-    opacity: 0;
+  [data-theme='dark'] .stat-card {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
   }
-
-  .modal-enter-from .modal-box,
-  .modal-leave-to .modal-box {
-    transform: scale(0.9);
+  [data-theme='dark'] .stat-value {
+    color: #ff4b4b;
+  }
+  [data-theme='dark'] .stat-label {
+    color: #eee;
+  }
+  [data-theme='dark'] .advanced-card {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .group-label {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .checkbox-label {
+    color: #eee;
+  }
+  [data-theme='dark'] .checkbox-label input[type='checkbox'] {
+    background-color: #222;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .checkbox-label input[type='checkbox']:checked {
+    background-color: #eee;
+  }
+  [data-theme='dark'] .checkbox-label input[type='checkbox']:checked::after {
+    color: #111;
+  }
+  [data-theme='dark'] .divider {
+    background: #eee;
+  }
+  [data-theme='dark'] .freq-rank,
+  [data-theme='dark'] .word-rank {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .freq-bar-wrap {
+    background: #222;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .freq-bar {
+    background: #eee;
+  }
+  [data-theme='dark'] .history-item {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .history-meta {
+    color: #ccc;
+  }
+  [data-theme='dark'] .brutal-modal {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-modal .modal-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .brutal-modal .modal-body {
+    background: #111;
+  }
+  [data-theme='dark'] .brutal-modal .modal-footer {
+    background: #1a1a1a;
+    border-top-color: #eee;
+  }
+  [data-theme='dark'] .radio-box {
+    background: #222;
+    color: #eee;
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .radio-label input:checked + .radio-box {
+    background: #eee;
+    color: #111;
+    box-shadow: 4px 4px 0px #ffd900;
+  }
+  [data-theme='dark'] .execute-btn {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .execute-btn:hover:not(:disabled) {
+    background: #ffd900;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #9d174d;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #075985;
+    color: #fff;
   }
 </style>

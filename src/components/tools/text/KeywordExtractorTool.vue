@@ -1,52 +1,65 @@
 <template>
-  <div class="keyword-tool">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="$router.back()">
-        <el-icon>
-          <Back />
-        </el-icon>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>标题关键词提取</h1>
-        <span class="nav-subtitle">Keyword Extractor</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">关键词<span>提取()</span></h1>
+        <div class="badge">🔑 Keyword Extractor</div>
+      </header>
 
-    <main class="main-content">
-      <div class="tool-card glass-card">
-        <div class="input-section">
-          <label>输入长文本/文章</label>
-          <textarea
-            v-model="inputText"
-            placeholder="粘贴文章内容，自动提取高频核心词..."
-            rows="8"
-          ></textarea>
-        </div>
-
-        <div class="output-section">
-          <button class="extract-btn" @click="extract">开始提取</button>
-
-          <div v-if="keywords.length" class="result-area">
-            <label>提取结果 (Top {{ keywords.length }})</label>
-            <div class="tags-cloud">
-              <span v-for="(kw, i) in keywords" :key="i" class="tag">
-                {{ kw.word }} <small>({{ kw.count }})</small>
-              </span>
+      <main class="brutal-main">
+        <div class="layout-grid">
+          <!-- Input pane -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-yellow">
+              <span class="panel-title">1. 输入长文本 (INPUT)</span>
             </div>
-          </div>
-        </div>
-      </div>
-    </main>
+            <div class="editor-wrapper">
+              <textarea
+                v-model="inputText"
+                class="code-editor"
+                placeholder="在此粘贴文章或长文本内容，自动提取高频核心词..."
+                spellcheck="false"
+              ></textarea>
+            </div>
+          </section>
 
-    <footer class="footer">© 2026 LRM工具箱 - 标题关键词提取</footer>
+          <!-- Middle action -->
+          <div class="switch-area">
+            <button class="brutal-btn min-btn bg-pink text-white" @click="extract">
+              ⚡ 开始提取
+            </button>
+          </div>
+
+          <!-- Output pane -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-blue text-white">
+              <span class="panel-title">2. 提取结果 (OUTPUT)</span>
+              <div v-if="keywords.length" class="panel-actions">
+                <span class="count-badge">Top {{ keywords.length }}</span>
+              </div>
+            </div>
+            <div class="result-area">
+              <div v-if="keywords.length" class="tags-cloud">
+                <div v-for="(kw, i) in keywords" :key="i" class="brutal-tag">
+                  <span class="word">{{ kw.word }}</span>
+                  <span class="count">{{ kw.count }}</span>
+                </div>
+              </div>
+              <div v-else class="empty-state">
+                <span class="empty-icon">🌱</span>
+                <p>提取结果将在此处显示</p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref } from 'vue';
-  import { Back } from '@element-plus/icons-vue';
 
   const inputText = ref('');
   const keywords = ref([]);
@@ -172,145 +185,305 @@
 </script>
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800;900&family=Noto+Sans+SC:wght@400;700;900&display=swap');
 
-  .keyword-tool {
-    --bg: #faf9f7;
-    --card: #ffffff;
-    --border: #e8e6e3;
-    --text: #1a1a1a;
-    --text-2: #6b6b6b;
-    --accent: #10b981;
-
-    font-family: 'Noto Sans SC', sans-serif;
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-back,
-  .nav-spacer {
-    width: 80px;
-  }
-
-  .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--text-2);
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
-
-  .nav-center h1 {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-
-  .nav-subtitle {
-    font-size: 0.7rem;
-    color: var(--text-2);
-    text-transform: uppercase;
-    display: block;
-    text-align: center;
-  }
-
-  .main-content {
-    max-width: 800px;
+  .brutal-container {
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 2rem;
   }
 
-  .glass-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
 
-  .input-section textarea {
-    width: 100%;
-    padding: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 12px;
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    padding: 0.6rem 1.2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
     font-size: 1rem;
-    outline: none;
-    margin-top: 0.5rem;
-    resize: vertical;
-  }
-
-  .input-section textarea:focus {
-    border-color: var(--accent);
-  }
-
-  .extract-btn {
-    width: 100%;
-    padding: 0.8rem;
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 8px;
+    font-weight: 800;
     cursor: pointer;
-    font-size: 1rem;
-    margin-top: 1rem;
-    transition: opacity 0.2s;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
   }
 
-  .extract-btn:hover {
-    opacity: 0.9;
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0px #111;
+  }
+
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .min-btn {
+    padding: 0.8rem 1.6rem;
+    font-size: 1.1rem;
+    box-shadow: 6px 6px 0px #111;
+  }
+
+  .badge {
+    background: #111;
+    color: #ff4b4b;
+    padding: 0.5rem 1.2rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    border: 3px solid #ff4b4b;
+    box-shadow: 4px 4px 0px #ff4b4b;
+  }
+
+  .brutal-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .layout-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 2rem;
+    align-items: stretch;
+    height: calc(100vh - 180px);
+    min-height: 500px;
+  }
+
+  @media (max-width: 900px) {
+    .layout-grid {
+      grid-template-columns: 1fr;
+      height: auto;
+    }
+    .switch-area {
+      transform: none !important;
+    }
+  }
+
+  .brutal-pane {
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 6px 6px 0px #111;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .pane-header {
+    padding: 1rem;
+    border-bottom: 3px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-pink {
+    background: #ff7be5;
+  }
+  .bg-blue {
+    background: #0ea5e9;
+  }
+  .text-white {
+    color: #fff;
+  }
+
+  .count-badge {
+    background: #111;
+    color: #ffd900;
+    padding: 0.2rem 0.6rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    border: 2px solid #fff;
+    border-radius: 4px;
+  }
+
+  .switch-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .editor-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .code-editor {
+    flex: 1;
+    width: 100%;
+    border: none;
+    padding: 1.5rem;
+    resize: none;
+    outline: none;
+    font-family: 'IBM Plex Mono', 'Consolas', monospace;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    background: transparent;
+    color: #111;
+    box-sizing: border-box;
   }
 
   .result-area {
-    margin-top: 2rem;
+    flex: 1;
+    padding: 1.5rem;
+    background: #fdfdfd;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #cbd5e1;
+  }
+
+  .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
   }
 
   .tags-cloud {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.8rem;
-    margin-top: 0.8rem;
+    gap: 1rem;
   }
 
-  .tag {
-    background: #ecfdf5;
-    color: #065f46;
-    padding: 0.4rem 0.8rem;
-    border-radius: 100px;
-    font-size: 0.95rem;
-    border: 1px solid #a7f3d0;
+  .brutal-tag {
+    display: flex;
+    align-items: center;
+    background: #111;
+    border: 3px solid #111;
+    box-shadow: 3px 3px 0px #ff4b4b;
+    transition: transform 0.1s;
+    padding: 0;
   }
 
-  .tag small {
-    opacity: 0.7;
-    font-size: 0.75rem;
-    margin-left: 4px;
+  .brutal-tag:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #ffd900;
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-2);
-    border-top: 1px solid var(--border);
-    margin-top: 2rem;
-    font-size: 0.85rem;
+  .brutal-tag .word {
+    padding: 0.5rem 0.8rem;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  .brutal-tag .count {
+    background: #ff4b4b;
+    padding: 0.5rem 0.6rem;
+    color: #111;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: bold;
+    border-left: 3px solid #111;
+  }
+
+  .brutal-tag:hover .count {
+    background: #ffd900;
+  }
+
+  /* Dark theme */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .badge {
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .code-editor {
+    color: #eee;
+  }
+  [data-theme='dark'] .result-area {
+    background: #1a1a1a;
+  }
+  [data-theme='dark'] .brutal-tag {
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #9d174d;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #075985;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-tag .count {
+    background: #eee;
+    color: #111;
+    border-left-color: #eee;
   }
 </style>

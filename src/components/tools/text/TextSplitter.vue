@@ -1,249 +1,212 @@
 <template>
-  <div class="text-splitter">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="goHome">
-        <el-icon>
-          <ArrowLeft />
-        </el-icon>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>文本拆分与拼接</h1>
-        <span class="nav-subtitle">Text Splitter & Joiner</span>
-      </div>
-      <div class="nav-spacer">
-        <button class="nav-back help-btn" title="使用说明" @click="showHelp = true">
-          <el-icon>
-            <QuestionFilled />
-          </el-icon>
-        </button>
-      </div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goHome">← 返回</button>
+        <h1 class="brutal-title">文本<span>拆分与拼接()</span></h1>
+        <div class="badge">✂️ Text Splitter</div>
+      </header>
 
-    <main class="main-content">
-      <div class="splitter-layout">
-        <section class="panel input-panel">
-          <div class="panel-header">
-            <span class="panel-title">源文本</span>
-            <div class="panel-actions">
-              <span v-if="inputText" class="stats-info"
-                >{{ inputText.length }} 字符 | {{ inputLines }} 行</span
-              >
-              <button class="icon-btn" title="示例数据" @click="fillDemoData">
-                <span style="font-size: 13px; font-weight: bold">Demo</span>
-              </button>
-              <button class="icon-btn" title="粘贴" @click="pasteText">
-                <el-icon>
-                  <CopyDocument />
-                </el-icon>
-              </button>
-              <button class="icon-btn" title="清空" @click="clearInput">
-                <el-icon>
-                  <Delete />
-                </el-icon>
-              </button>
-            </div>
-          </div>
-          <div class="editor-wrapper">
-            <textarea
-              v-model="inputText"
-              class="text-editor"
-              placeholder="在此输入需要处理的文本..."
-              spellcheck="false"
-            ></textarea>
-          </div>
-        </section>
-
-        <section class="tools-panel">
-          <div class="tabs-header">
-            <button
-              :class="['tab-btn', { active: currentTab === 'split' }]"
-              @click="currentTab = 'split'"
-            >
-              🔪 拆分
-            </button>
-            <button
-              :class="['tab-btn', { active: currentTab === 'join' }]"
-              @click="currentTab = 'join'"
-            >
-              🔗 拼接
-            </button>
-            <button
-              :class="['tab-btn', { active: currentTab === 'csv' }]"
-              @click="currentTab = 'csv'"
-            >
-              📊 表格/列
-            </button>
-          </div>
-
-          <div class="tools-content">
-            <div v-if="currentTab === 'split'" class="tool-group">
-              <div class="control-row">
-                <label>分隔符:</label>
-                <select v-model="splitOptions.separatorType" class="select-input">
-                  <option value="newline">换行符 (\n)</option>
-                  <option value="comma">逗号 (,)</option>
-                  <option value="space">空格 ( )</option>
-                  <option value="tab">制表符 (\t)</option>
-                  <option value="custom">自定义</option>
-                </select>
-              </div>
-              <div v-if="splitOptions.separatorType === 'custom'" class="control-row">
-                <input
-                  v-model="splitOptions.customSeparator"
-                  placeholder="输入分隔符"
-                  class="text-input"
-                />
-              </div>
-
-              <div class="divider"></div>
-
-              <div class="control-row">
-                <label>固定长度拆分:</label>
-                <input
-                  v-model.number="splitOptions.length"
-                  type="number"
-                  min="1"
-                  class="text-input"
-                  placeholder="字符数"
-                />
-              </div>
-
-              <div class="action-buttons">
-                <button class="action-btn primary" @click="doSplit('separator')">
-                  按分隔符拆分
+      <main class="brutal-main">
+        <div class="layout-grid">
+          <!-- 1. 输入 -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-yellow">
+              <span class="panel-title">1. 源文本 (INPUT)</span>
+              <div class="panel-actions">
+                <span v-if="inputText" class="stats-info"
+                  >{{ inputText.length }} 字符 | {{ inputLines }} 行</span
+                >
+                <button class="brutal-btn icon-btn" title="示例" @click="fillDemoData">
+                  ✨ 示例
                 </button>
-                <button class="action-btn" @click="doSplit('length')">按长度拆分</button>
+                <button class="brutal-btn icon-btn" title="粘贴" @click="pasteText">📋 粘贴</button>
+                <button class="brutal-btn icon-btn" title="清空" @click="clearInput">
+                  🗑️ 清空
+                </button>
               </div>
             </div>
-
-            <div v-if="currentTab === 'join'" class="tool-group">
-              <div class="control-row">
-                <label>连接符:</label>
-                <input v-model="joinOptions.connector" class="text-input" placeholder="默认为无" />
-                <span class="hint">(支持 \n, \t)</span>
-              </div>
-              <div class="control-row">
-                <label>前缀 (Prefix):</label>
-                <input v-model="joinOptions.prefix" class="text-input" />
-              </div>
-              <div class="control-row">
-                <label>后缀 (Suffix):</label>
-                <input v-model="joinOptions.suffix" class="text-input" />
-              </div>
-
-              <div class="control-row checkbox-row">
-                <label>
-                  <input v-model="joinOptions.removeEmpty" type="checkbox" /> 去除空行
-                </label>
-                <label> <input v-model="joinOptions.unique" type="checkbox" /> 去重 </label>
-              </div>
-
-              <div class="action-buttons">
-                <button class="action-btn primary" @click="doJoin">执行拼接</button>
-                <button class="action-btn" @click="doToJson">转为 JSON 数组</button>
-              </div>
+            <div class="editor-wrapper">
+              <textarea
+                v-model="inputText"
+                class="code-editor"
+                placeholder="在此输入需要处理的文本..."
+                spellcheck="false"
+              ></textarea>
             </div>
+          </section>
 
-            <div v-if="currentTab === 'csv'" class="tool-group">
-              <div class="control-row">
-                <label>输入分隔符:</label>
-                <select v-model="csvOptions.separator" class="select-input">
-                  <option value=",">逗号 (,)</option>
-                  <option value="\t">制表符 (\t)</option>
-                  <option value=" ">空格 ( )</option>
-                  <option value="|">竖线 (|)</option>
-                </select>
-              </div>
-              <div class="control-row">
-                <label>提取列 (索引):</label>
-                <input
-                  v-model.number="csvOptions.colIndex"
-                  type="number"
-                  min="1"
-                  class="text-input"
-                  placeholder="1 代表第一列"
-                />
-              </div>
-
-              <div class="action-buttons">
-                <button class="action-btn primary" @click="doExtractColumn">提取列数据</button>
-                <button class="action-btn" @click="doFormatList('md')">转 Markdown 列表</button>
-                <button class="action-btn" @click="doFormatList('html')">转 HTML 列表</button>
-              </div>
+          <!-- 2. 工具面板 -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-pink text-white">
+              <span class="panel-title">2. 操作面板 (OPERATE)</span>
             </div>
-          </div>
-        </section>
-
-        <section class="panel output-panel">
-          <div class="panel-header">
-            <span class="panel-title">处理结果</span>
-            <div class="panel-actions">
-              <span v-if="outputText" class="stats-info"
-                >{{ outputText.length }} 字符 | {{ outputLines }} 行</span
+            <div class="mode-tabs">
+              <button
+                :class="['tab-btn', { active: currentTab === 'split' }]"
+                @click="currentTab = 'split'"
               >
-              <button class="icon-btn" title="复制结果" @click="copyResult">
-                <el-icon>
-                  <CopyDocument />
-                </el-icon>
+                🔪 拆分
               </button>
-              <button class="icon-btn" title="清空" @click="clearOutput">
-                <el-icon>
-                  <Delete />
-                </el-icon>
+              <button
+                :class="['tab-btn', { active: currentTab === 'join' }]"
+                @click="currentTab = 'join'"
+              >
+                🔗 拼接
+              </button>
+              <button
+                :class="['tab-btn', { active: currentTab === 'csv' }]"
+                @click="currentTab = 'csv'"
+              >
+                📊 表格/列
               </button>
             </div>
-          </div>
-          <div class="editor-wrapper">
-            <textarea
-              v-model="outputText"
-              class="text-editor result-editor"
-              readonly
-              placeholder="结果将显示在这里..."
-            ></textarea>
-          </div>
-        </section>
-      </div>
+            <div class="tools-scroll-area">
+              <div v-if="currentTab === 'split'" class="tool-group">
+                <div class="control-row">
+                  <label>分隔符:</label>
+                  <select v-model="splitOptions.separatorType" class="brutal-input">
+                    <option value="newline">换行符 (\n)</option>
+                    <option value="comma">逗号 (,)</option>
+                    <option value="space">空格 ( )</option>
+                    <option value="tab">制表符 (\t)</option>
+                    <option value="custom">自定义</option>
+                  </select>
+                </div>
+                <div v-if="splitOptions.separatorType === 'custom'" class="control-row">
+                  <input
+                    v-model="splitOptions.customSeparator"
+                    placeholder="输入分隔符"
+                    class="brutal-input"
+                  />
+                </div>
 
-      <Transition name="fade">
-        <div v-if="showHelp" class="modal-overlay" @click="showHelp = false">
-          <div class="modal-content" @click.stop>
-            <div class="modal-header">
-              <h3>使用说明</h3>
-              <button class="close-btn" @click="showHelp = false">×</button>
+                <div class="divider"></div>
+
+                <div class="control-row">
+                  <label>固定长度拆分 (字符数):</label>
+                  <input
+                    v-model.number="splitOptions.length"
+                    type="number"
+                    min="1"
+                    class="brutal-input"
+                    placeholder="10"
+                  />
+                </div>
+
+                <div class="action-buttons">
+                  <button class="brutal-btn execute-btn" @click="doSplit('separator')">
+                    按分隔符拆分
+                  </button>
+                  <button class="brutal-btn small-btn" @click="doSplit('length')">
+                    按长度拆分
+                  </button>
+                </div>
+              </div>
+
+              <div v-if="currentTab === 'join'" class="tool-group">
+                <div class="control-row">
+                  <label>连接符 (支持 \n, \t):</label>
+                  <input
+                    v-model="joinOptions.connector"
+                    class="brutal-input"
+                    placeholder="默认为无"
+                  />
+                </div>
+                <div class="control-row">
+                  <label>前缀 (Prefix):</label>
+                  <input v-model="joinOptions.prefix" class="brutal-input" />
+                </div>
+                <div class="control-row">
+                  <label>后缀 (Suffix):</label>
+                  <input v-model="joinOptions.suffix" class="brutal-input" />
+                </div>
+
+                <div class="control-row checkbox-row">
+                  <label class="checkbox-label">
+                    <input v-model="joinOptions.removeEmpty" type="checkbox" /> 去除空行
+                  </label>
+                  <label class="checkbox-label">
+                    <input v-model="joinOptions.unique" type="checkbox" /> 去重
+                  </label>
+                </div>
+
+                <div class="action-buttons">
+                  <button class="brutal-btn execute-btn" @click="doJoin">执行拼接</button>
+                  <button class="brutal-btn small-btn" @click="doToJson">转为 JSON 数组</button>
+                </div>
+              </div>
+
+              <div v-if="currentTab === 'csv'" class="tool-group">
+                <div class="control-row">
+                  <label>输入分隔符:</label>
+                  <select v-model="csvOptions.separator" class="brutal-input">
+                    <option value=",">逗号 (,)</option>
+                    <option value="\t">制表符 (\t)</option>
+                    <option value=" ">空格 ( )</option>
+                    <option value="|">竖线 (|)</option>
+                  </select>
+                </div>
+                <div class="control-row">
+                  <label>提取列 (索引):</label>
+                  <input
+                    v-model.number="csvOptions.colIndex"
+                    type="number"
+                    min="1"
+                    class="brutal-input"
+                    placeholder="1 代表第一列"
+                  />
+                </div>
+
+                <div class="action-buttons">
+                  <button class="brutal-btn execute-btn" @click="doExtractColumn">
+                    提取列数据
+                  </button>
+                  <button class="brutal-btn small-btn" @click="doFormatList('md')">
+                    转 Markdown 列表
+                  </button>
+                  <button class="brutal-btn small-btn" @click="doFormatList('html')">
+                    转 HTML 列表
+                  </button>
+                </div>
+              </div>
             </div>
-            <div class="modal-body">
-              <div class="help-section">
-                <h4>🔪 拆分模式</h4>
-                <p>• <b>按分隔符</b>：支持换行、逗号、空格或自定义字符拆分。</p>
-                <p>• <b>按长度</b>：将连续文本每 N 个字符切割为一行。</p>
-              </div>
-              <div class="help-section">
-                <h4>🔗 拼接模式</h4>
-                <p>• <b>连接符</b>：将多行文本合并时使用的分隔符（支持 <code>\n</code> 换行）。</p>
-                <p>• <b>前后缀</b>：为每一行添加统一的开头（Prefix）或结尾（Suffix）。</p>
-                <p>• <b>转JSON</b>：直接将多行文本转换为 JSON 字符串数组。</p>
-              </div>
-              <div class="help-section">
-                <h4>📊 表格/列模式</h4>
-                <p>• 适用于处理 CSV、Excel 复制的数据。</p>
-                <p>• <b>提取列</b>：输入列索引（1代表第一列），提取指定列的所有数据。</p>
+          </section>
+
+          <!-- 3. 输出 -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-blue text-white">
+              <span class="panel-title">3. 处理结果 (RESULT)</span>
+              <div class="panel-actions">
+                <span v-if="outputText" class="stats-info"
+                  >{{ outputText.length }} 字符 | {{ outputLines }} 行</span
+                >
+                <button class="brutal-btn icon-btn" title="复制" @click="copyResult">
+                  📋 复制
+                </button>
+                <button class="brutal-btn icon-btn" title="清空" @click="clearOutput">
+                  🗑️ 清空
+                </button>
               </div>
             </div>
-          </div>
+            <div class="editor-wrapper">
+              <textarea
+                v-model="outputText"
+                class="code-editor result-editor"
+                readonly
+                placeholder="结果将显示在这里..."
+              ></textarea>
+            </div>
+          </section>
         </div>
-      </Transition>
-    </main>
-
-    <footer class="footer">© 2026 LRM工具箱 - 文本拆分与拼接</footer>
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, reactive, computed } from 'vue';
   import { useRouter } from 'vue-router';
-  import { ArrowLeft, Delete, CopyDocument, QuestionFilled } from '@element-plus/icons-vue';
-
   import { useCopy } from '@/composables/useCopy';
   import { ElMessage } from 'element-plus';
 
@@ -253,7 +216,6 @@
   const outputText = ref('');
 
   const currentTab = ref('split');
-  const showHelp = ref(false);
 
   const inputLines = computed(() => (inputText.value ? inputText.value.split('\n').length : 0));
   const outputLines = computed(() => (outputText.value ? outputText.value.split('\n').length : 0));
@@ -309,9 +271,7 @@
     } else if (mode === 'length') {
       const len = splitOptions.length || 10;
       const regex = new RegExp(`.{1,${len}}`, 'g');
-
       const text = inputText.value.replace(/\n/g, '');
-
       const matches = text.match(regex);
       result = matches || [];
     }
@@ -392,10 +352,7 @@
       joinOptions.prefix = '"';
       joinOptions.suffix = '"';
     } else if (currentTab.value === 'csv') {
-      inputText.value = `ID,Name,Age
-1,Alice,25
-2,Bob,30
-3,Charlie,28`;
+      inputText.value = `ID,Name,Age\n1,Alice,25\n2,Bob,30\n3,Charlie,28`;
       csvOptions.colIndex = 2;
     }
     ElMessage.success('已加载当前模式的示例数据');
@@ -430,126 +387,142 @@
 </script>
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800;900&family=Noto+Sans+SC:wght@400;700;900&display=swap');
 
-  .text-splitter {
-    --bg: #f5f7fa;
-    --card: #ffffff;
-    --border: #e5e7eb;
-    --text: #1f2937;
-    --text-secondary: #6b7280;
-    --accent: #8b5cf6;
-
-    --accent-light: #f5f3ff;
-
-    font-family: 'Noto Sans SC', sans-serif;
-    background: var(--bg);
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    color: var(--text);
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-
-  .nav-back:hover {
-    background: var(--accent-light);
-    color: var(--accent);
-  }
-
-  .nav-center h1 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    text-align: center;
-  }
-
-  .nav-subtitle {
-    display: block;
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .nav-spacer {
-    width: 60px;
-  }
-
-  .main-content {
-    flex: 1;
+  .brutal-container {
     max-width: 1400px;
-    width: 100%;
     margin: 0 auto;
-    padding: 1.5rem;
-  }
-
-  .splitter-layout {
-    display: flex;
-    gap: 1.5rem;
-    height: calc(100vh - 120px);
-  }
-
-  .panel {
-    flex: 1;
     display: flex;
     flex-direction: column;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    gap: 2rem;
   }
 
-  .tools-panel {
-    flex: 0.5;
-    min-width: 300px;
-    max-width: 400px;
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    padding: 0.6rem 1.2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0px #111;
+  }
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .badge {
+    background: #111;
+    color: #ff4b4b;
+    padding: 0.5rem 1.2rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    border: 3px solid #ff4b4b;
+    box-shadow: 4px 4px 0px #ff4b4b;
+  }
+
+  .brutal-main {
     display: flex;
     flex-direction: column;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    gap: 2rem;
+  }
+
+  .layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px 1fr;
+    gap: 2rem;
+    align-items: stretch;
+    height: calc(100vh - 180px);
+    min-height: 600px;
+  }
+
+  @media (max-width: 1024px) {
+    .layout-grid {
+      grid-template-columns: 1fr;
+      height: auto;
+    }
+  }
+
+  .brutal-pane {
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 6px 6px 0px #111;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
   }
 
-  .panel-header {
-    padding: 0.8rem 1rem;
-    border-bottom: 1px solid var(--border);
-    background: #f9fafb;
+  .pane-header {
+    padding: 1rem;
+    border-bottom: 3px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-
-  .panel-title {
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: var(--text);
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-pink {
+    background: #ff7be5;
+  }
+  .bg-blue {
+    background: #0ea5e9;
+  }
+  .text-white {
+    color: #fff;
   }
 
   .panel-actions {
@@ -559,135 +532,151 @@
   }
 
   .stats-info {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    margin-right: 0.5rem;
-    background: #f3f4f6;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: #fff;
+    color: #111;
+    border: 2px solid #111;
     padding: 2px 6px;
-    border-radius: 4px;
+  }
+  .text-white .stats-info {
+    background: #111;
+    color: #fff;
+    border: 2px solid #fff;
   }
 
   .icon-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    color: var(--text-secondary);
-    transition: all 0.2s;
-  }
-
-  .icon-btn:hover {
-    color: var(--accent);
-    background: var(--accent-light);
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    font-family: 'Noto Sans SC', sans-serif;
   }
 
   .editor-wrapper {
     flex: 1;
-    position: relative;
+    display: flex;
+    flex-direction: column;
   }
 
-  .text-editor {
+  .code-editor {
+    flex: 1;
     width: 100%;
-    height: 100%;
     border: none;
-    resize: none;
     padding: 1rem;
-    font-family: inherit;
-    font-size: 0.95rem;
-    line-height: 1.6;
+    resize: none;
     outline: none;
-    color: var(--text);
+    font-family: 'IBM Plex Mono', 'Consolas', monospace;
+    font-size: 0.95rem;
+    line-height: 1.5;
     background: transparent;
+    color: #111;
+    box-sizing: border-box;
   }
 
   .result-editor {
     background: #fdfdfd;
   }
 
-  .tabs-header {
+  .mode-tabs {
     display: flex;
-    border-bottom: 1px solid var(--border);
-    background: #f9fafb;
+    border-bottom: 3px solid #111;
+    background: #fdfae5;
   }
 
   .tab-btn {
     flex: 1;
     padding: 0.8rem;
-    border: none;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
     background: transparent;
+    border: none;
+    border-right: 3px solid #111;
+    color: #111;
     cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
+    transition: all 0.1s;
   }
-
+  .tab-btn:last-child {
+    border-right: none;
+  }
   .tab-btn.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-    background: white;
+    background: #111;
+    color: #ff7be5;
   }
 
-  .tools-content {
+  .tools-scroll-area {
     flex: 1;
-    padding: 1.5rem;
     overflow-y: auto;
+    padding: 1.5rem;
+    background: #fdfae5;
   }
 
   .tool-group {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.2rem;
   }
 
   .control-row {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-  }
-
-  .control-row.checkbox-row {
-    flex-direction: row;
-    gap: 1.5rem;
-    margin-top: 0.5rem;
-  }
-
-  .control-row label {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
     gap: 0.5rem;
   }
+  .control-row label {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    color: #111;
+  }
 
-  .text-input,
-  .select-input {
-    padding: 0.6rem;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 0.9rem;
+  .brutal-input {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    padding: 0.4rem 0.6rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
     outline: none;
-    transition: border-color 0.2s;
+    font-size: 0.9rem;
+    box-shadow: 3px 3px 0px #111;
   }
-
-  .text-input:focus,
-  .select-input:focus {
-    border-color: var(--accent);
-  }
-
-  .hint {
-    font-size: 0.75rem;
-    color: #9ca3af;
-    font-weight: normal;
+  .brutal-input:focus {
+    box-shadow: 4px 4px 0px #ff4b4b;
   }
 
   .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 1rem 0;
+    height: 3px;
+    background: #111;
+    margin: 0.5rem 0;
+  }
+
+  .checkbox-row {
+    flex-direction: row;
+    gap: 1.5rem;
+  }
+  .checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    font-weight: 800;
+  }
+  .checkbox-label input[type='checkbox'] {
+    appearance: none;
+    background-color: #fff;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #111;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .checkbox-label input[type='checkbox']:checked {
+    background-color: #111;
+  }
+  .checkbox-label input[type='checkbox']:checked::after {
+    content: '✖';
+    color: #ffd900;
+    font-size: 14px;
   }
 
   .action-buttons {
@@ -697,192 +686,117 @@
     margin-top: 1rem;
   }
 
-  .action-btn {
-    padding: 0.7rem;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: white;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .action-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  .action-btn.primary {
-    background: var(--accent);
-    color: white;
-    border-color: var(--accent);
-  }
-
-  .action-btn.primary:hover {
-    background: #7c3aed;
-
-    border-color: #7c3aed;
-  }
-
-  @media (max-width: 1024px) {
-    .splitter-layout {
-      flex-direction: column;
-      height: auto;
-    }
-
-    .panel {
-      height: 300px;
-    }
-
-    .tools-panel {
-      max-width: none;
-      height: auto;
-    }
-  }
-
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 200;
-    backdrop-filter: blur(2px);
-  }
-
-  .modal-content {
-    background: var(--card);
-    width: 90%;
-    max-width: 500px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    border: 1px solid var(--border);
-    animation: modalPop 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-  }
-
-  .modal-header {
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .modal-header h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-
-  .close-btn {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: var(--text-secondary);
-    line-height: 1;
-  }
-
-  .modal-body {
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .help-section h4 {
-    margin: 0 0 0.5rem 0;
-    font-size: 0.95rem;
-    color: var(--accent);
-  }
-
-  .help-section p {
-    margin: 0.3rem 0;
+  .small-btn {
+    padding: 0.4rem 0.8rem;
     font-size: 0.85rem;
-    color: var(--text-secondary);
-    line-height: 1.5;
   }
 
-  @keyframes modalPop {
-    from {
-      transform: scale(0.9);
-      opacity: 0;
-    }
-
-    to {
-      transform: scale(1);
-      opacity: 1;
-    }
+  .execute-btn,
+  .text-white .execute-btn {
+    background: #fff;
+    color: #111;
+  }
+  .execute-btn:hover:not(:disabled),
+  .text-white .execute-btn:hover:not(:disabled) {
+    background: #ffd900;
+    color: #111;
   }
 
-  .nav-spacer {
-    width: 60px;
-    display: flex;
-    justify-content: flex-end;
+  /* Dark theme */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
   }
-
-  .help-btn {
-    font-size: 1.1rem;
+  [data-theme='dark'] .brutal-pane {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
   }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #111827;
-      --card: #1f2937;
-      --border: #374151;
-      --text: #f9fafb;
-      --text-secondary: #9ca3af;
-      --accent: #a78bfa;
-      --accent-light: rgba(167, 139, 250, 0.1);
-    }
-
-    .panel-header,
-    .tabs-header {
-      background: #1f2937;
-      border-bottom-color: #374151;
-    }
-
-    .tab-btn.active {
-      background: #374151;
-    }
-
-    .result-editor {
-      background: #1f2937;
-    }
-
-    .stats-info {
-      background: #374151;
-      color: #d1d5db;
-    }
-
-    .text-input,
-    .select-input {
-      background: #374151;
-      border-color: #4b5563;
-      color: white;
-    }
-
-    .action-btn {
-      background: #374151;
-      border-color: #4b5563;
-      color: white;
-    }
-
-    .action-btn.primary {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #1f2937;
-    }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
   }
-
-  .footer {
-    text-align: center;
-    padding: 3rem 0;
-    color: var(--text-secondary, #64748b);
-    font-size: 0.85rem;
+  [data-theme='dark'] .brutal-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .badge {
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .code-editor {
+    color: #eee;
+  }
+  [data-theme='dark'] .result-editor {
+    background: #222;
+  }
+  [data-theme='dark'] .mode-tabs {
+    background: #1a1a1a;
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .tab-btn {
+    color: #eee;
+    border-right-color: #eee;
+  }
+  [data-theme='dark'] .tab-btn.active {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .tools-scroll-area {
+    background: #111;
+  }
+  [data-theme='dark'] .control-row label {
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-input {
+    background: #222;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .divider {
+    background: #eee;
+  }
+  [data-theme='dark'] .checkbox-label {
+    color: #eee;
+  }
+  [data-theme='dark'] .checkbox-label input[type='checkbox'] {
+    background-color: #222;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .checkbox-label input[type='checkbox']:checked {
+    background-color: #eee;
+  }
+  [data-theme='dark'] .checkbox-label input[type='checkbox']:checked::after {
+    color: #111;
+  }
+  [data-theme='dark'] .execute-btn,
+  [data-theme='dark'] .text-white .execute-btn {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .execute-btn:hover:not(:disabled),
+  [data-theme='dark'] .text-white .execute-btn:hover:not(:disabled) {
+    background: #ffd900;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #9d174d;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #075985;
+    color: #fff;
+  }
+  [data-theme='dark'] .stats-info {
+    background: #222;
+    color: #eee;
+    border-color: #eee;
   }
 </style>

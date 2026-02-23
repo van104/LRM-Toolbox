@@ -1,153 +1,152 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <h1 class="tool-title">文本模板引擎</h1>
-      <div class="header-right"></div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">文本<span>模板()</span></h1>
+        <div class="badge">📝 Text Template</div>
+      </header>
 
-    <div class="tool-content">
-      <div class="layout-container">
-        <section class="panel template-panel">
-          <div class="panel-header">
-            <span class="panel-title">1. 模板编辑</span>
-            <el-popover placement="bottom" title="变量提示" :width="200" trigger="hover">
-              <template #reference>
-                <el-icon class="info-icon">
-                  <InfoFilled />
-                </el-icon>
-              </template>
-              <p class="help-text">
-                使用
-                <code>{{ '{' }}{{ '{' }}key{{ '}' }}{{ '}' }}</code>
-                作为占位符。<br />自动从数据中提取变量。
-              </p>
-            </el-popover>
-          </div>
-          <div class="editor-wrapper">
-            <textarea
-              v-model="templateText"
-              class="code-editor"
-              placeholder="你好 {{name}}，你的验证码是 {{code}}。"
-              spellcheck="false"
-            ></textarea>
-          </div>
-          <div v-if="variables.length" class="variable-list">
-            <span v-for="v in variables" :key="v" class="var-tag" @click="insertVar(v)">{{
-              v
-            }}</span>
-          </div>
-        </section>
-
-        <section class="panel data-panel">
-          <div class="panel-header">
-            <span class="panel-title">2. 数据源</span>
-            <div class="mode-switch">
-              <button :class="{ active: curDataMode === 'json' }" @click="curDataMode = 'json'">
-                JSON
-              </button>
-              <button :class="{ active: curDataMode === 'csv' }" @click="curDataMode = 'csv'">
-                CSV
-              </button>
-            </div>
-          </div>
-          <div class="editor-wrapper">
-            <textarea
-              v-model="dataInput"
-              class="code-editor"
-              :placeholder="dataPlaceholder"
-              spellcheck="false"
-            ></textarea>
-          </div>
-          <div class="panel-footer">
-            <div class="data-status">
-              <span v-if="parsedData.length > 0" class="success"
-                >✅ 已解析 {{ parsedData.length }} 条数据</span
+      <main class="brutal-main">
+        <div class="layout-grid">
+          <!-- 1. 模板编辑 -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-yellow">
+              <span class="panel-title">1. 模板编辑 (TEMPLATE)</span>
+              <div
+                class="header-action"
+                title="使用 {{'{'}}{{'{'}}key{{'}'}}{{'}'}} 作为占位符，自动从数据中提取变量"
               >
-              <span v-else class="error">⚠️ {{ parseError || '等待输入...' }}</span>
+                ℹ️ 提示
+              </div>
             </div>
-            <el-button size="small" @click="fillDemo">填充示例</el-button>
-          </div>
-        </section>
+            <div class="editor-wrapper">
+              <textarea
+                v-model="templateText"
+                class="code-editor"
+                placeholder="你好 {{'{'}}{{'{'}}name{{'}'}}{{'}'}}，你的验证码是 {{'{'}}{{'{'}}code{{'}'}}{{'}'}}。"
+                spellcheck="false"
+              ></textarea>
+            </div>
+            <div v-if="variables.length" class="variable-list">
+              <span v-for="v in variables" :key="v" class="var-tag" @click="insertVar(v)">{{
+                v
+              }}</span>
+            </div>
+          </section>
 
-        <section class="panel result-panel">
-          <div class="panel-header">
-            <span class="panel-title">3. 生成结果</span>
-            <div class="actions">
-              <el-select v-model="separator" size="small" style="width: 100px">
-                <el-option label="换行符" value="\n" />
-                <el-option label="逗号" value="," />
-                <el-option label="分号" value=";" />
-                <el-option label="自定义" value="custom" />
-              </el-select>
-              <el-input
-                v-if="separator === 'custom'"
-                v-model="customSeparator"
-                size="small"
-                style="width: 60px"
-                placeholder="符号"
-              />
-              <el-button type="primary" size="small" @click="generate">生成</el-button>
+          <!-- 2. 数据源 -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-pink text-white">
+              <span class="panel-title">2. 数据源 (DATA)</span>
+              <div class="mode-switch">
+                <button
+                  class="mode-btn"
+                  :class="{ active: curDataMode === 'json' }"
+                  @click="curDataMode = 'json'"
+                >
+                  JSON
+                </button>
+                <button
+                  class="mode-btn"
+                  :class="{ active: curDataMode === 'csv' }"
+                  @click="curDataMode = 'csv'"
+                >
+                  CSV
+                </button>
+              </div>
             </div>
-          </div>
-          <div class="editor-wrapper">
-            <textarea
-              v-model="resultText"
-              class="code-editor result-editor"
-              readonly
-              placeholder="生成结果显示在此..."
-            ></textarea>
-          </div>
-          <div class="panel-footer">
-            <span v-if="resultText" class="count-info">{{ resultText.length }} chars</span>
-            <el-button size="small" :disabled="!resultText" @click="copyResult">复制结果</el-button>
-          </div>
-        </section>
-      </div>
+            <div class="editor-wrapper">
+              <textarea
+                v-model="dataInput"
+                class="code-editor"
+                :placeholder="dataPlaceholder"
+                spellcheck="false"
+              ></textarea>
+            </div>
+            <div class="pane-footer flex-between">
+              <div class="data-status">
+                <span v-if="parsedData.length > 0" class="success"
+                  >✅ 已解析 {{ parsedData.length }} 条</span
+                >
+                <span v-else class="error">⚠️ {{ parseError || '等待输入...' }}</span>
+              </div>
+              <button class="brutal-btn small-btn" @click="fillDemo">示例</button>
+            </div>
+          </section>
 
-      <div class="help-section">
-        <h3>
-          <el-icon>
-            <QuestionFilled />
-          </el-icon>
-          使用指南
-        </h3>
-        <div class="help-grid">
-          <div class="help-card">
-            <h4>1. 编写模板</h4>
-            <p>
-              使用 <code>{{ '{' }}{{ '{' }}变量名{{ '}' }}{{ '}' }}</code> 作为占位符。
-            </p>
-            <div class="example">
-              示例：<br />
-              你好 <strong>{{ '{' }}{{ '{' }}name{{ '}' }}{{ '}' }}</strong
-              >，验证码是 <strong>{{ '{' }}{{ '{' }}code{{ '}' }}{{ '}' }}</strong>
+          <!-- 3. 生成结果 -->
+          <section class="brutal-pane">
+            <div class="pane-header bg-blue text-white">
+              <span class="panel-title">3. 结果 (RESULT)</span>
+              <div class="actions">
+                <select v-model="separator" class="brutal-input small-input">
+                  <option value="\n">换行符</option>
+                  <option value=",">逗号</option>
+                  <option value=";">分号</option>
+                  <option value="custom">自定义</option>
+                </select>
+                <input
+                  v-if="separator === 'custom'"
+                  v-model="customSeparator"
+                  class="brutal-input small-input"
+                  style="width: 60px"
+                  placeholder="符号"
+                />
+                <button class="brutal-btn execute-btn" @click="generate">生成</button>
+              </div>
             </div>
-          </div>
-          <div class="help-card">
-            <h4>2. 准备数据</h4>
-            <p>支持 <strong>JSON</strong> (对象数组) 或 <strong>CSV</strong> (首行为表头)。</p>
-            <div class="example">
-              JSON:<br />
-              <code>[{"name": "张三", "code": 123}]</code>
+            <div class="editor-wrapper">
+              <textarea
+                v-model="resultText"
+                class="code-editor result-editor"
+                readonly
+                placeholder="生成结果显示在此..."
+              ></textarea>
             </div>
+            <div class="pane-footer flex-between">
+              <span v-if="resultText" class="count-info">{{ resultText.length }} chars</span>
+              <span v-else class="count-info">0 chars</span>
+              <button class="brutal-btn small-btn" :disabled="!resultText" @click="copyResult">
+                复制
+              </button>
+            </div>
+          </section>
+        </div>
+
+        <div class="brutal-pane help-section">
+          <div class="pane-header bg-green text-white">
+            <span class="panel-title">💡 使用指南 (GUIDE)</span>
           </div>
-          <div class="help-card">
-            <h4>3. 批量生成</h4>
-            <p>系统将遍历数据，逐条替换模板变量。</p>
-            <div class="example">支持自定义连接符（如换行、逗号）将结果拼接在一起。</div>
+          <div class="pane-body help-grid">
+            <div class="help-card">
+              <h4>01. 编写模板</h4>
+              <p>
+                使用 <code>{{ '{' }}{{ '{' }}变量名{{ '}' }}{{ '}' }}</code> 作为占位符。
+              </p>
+              <div class="example">
+                示例：<br />
+                你好 <strong>{{ '{' }}{{ '{' }}name{{ '}' }}{{ '}' }}</strong
+                >，验证码是 <strong>{{ '{' }}{{ '{' }}code{{ '}' }}{{ '}' }}</strong>
+              </div>
+            </div>
+            <div class="help-card">
+              <h4>02. 准备数据</h4>
+              <p>支持 <strong>JSON</strong> (对象数组) 或 <strong>CSV</strong> (首行为表头)。</p>
+              <div class="example">
+                JSON:<br />
+                <code>[{"name": "张三", "code": 123}]</code>
+              </div>
+            </div>
+            <div class="help-card">
+              <h4>03. 批量生成</h4>
+              <p>系统将遍历数据，逐条替换模板变量。</p>
+              <div class="example">支持自定义连接符（如换行、逗号）将结果拼接在一起。</div>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
-    <footer class="footer">© 2026 LRM工具箱 - 文本模板引擎</footer>
   </div>
 </template>
 
@@ -156,7 +155,6 @@
   import { useRouter } from 'vue-router';
   import { useCopy } from '@/composables/useCopy';
   import { ElMessage } from 'element-plus';
-  import { ArrowLeft, InfoFilled, QuestionFilled } from '@element-plus/icons-vue';
 
   const router = useRouter();
   const { copyToClipboard } = useCopy();
@@ -236,7 +234,7 @@
     const sep =
       separator.value === 'custom'
         ? customSeparator.value
-        : separator.value === '\\n'
+        : separator.value === '\n'
           ? '\n'
           : separator.value;
 
@@ -271,320 +269,404 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800;900&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f0f4f8;
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .tool-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    background: #ffffff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-  }
-
-  .tool-content {
-    flex: 1;
+  .brutal-container {
     max-width: 1400px;
-    width: 100%;
     margin: 0 auto;
-    padding: 1.5rem;
     display: flex;
     flex-direction: column;
+    gap: 2rem;
   }
 
-  .layout-container {
+  .brutal-header {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
     gap: 1rem;
-    height: calc(100vh - 180px);
-    min-height: 500px;
   }
 
-  .panel {
-    flex: 1;
-    background: #ffffff;
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    padding: 0.6rem 1.2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0px #111;
+  }
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .brutal-input {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    padding: 0.4rem 0.8rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    outline: none;
+    box-shadow: 3px 3px 0px #111;
+  }
+  .brutal-input:focus {
+    box-shadow: 5px 5px 0px #ff4b4b;
+  }
+
+  .text-white .execute-btn {
+    background: #fff;
+    color: #111;
+  }
+  .text-white .execute-btn:hover:not(:disabled) {
+    background: #ffd900;
+    color: #111;
+  }
+
+  .badge {
+    background: #111;
+    color: #ff4b4b;
+    padding: 0.5rem 1.2rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    border: 3px solid #ff4b4b;
+    box-shadow: 4px 4px 0px #ff4b4b;
+  }
+
+  .brutal-main {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    gap: 2rem;
   }
 
-  .panel-header {
-    background: #f8fafc;
-    padding: 0.8rem 1rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  .layout-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    align-items: stretch;
+  }
+
+  @media (max-width: 1024px) {
+    .layout-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .brutal-pane {
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 6px 6px 0px #111;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pane-header {
+    padding: 1rem;
+    border-bottom: 3px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-
-  .panel-title {
-    font-weight: 600;
-    color: #1e293b;
-    font-size: 0.95rem;
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-pink {
+    background: #ff7be5;
+  }
+  .bg-blue {
+    background: #0ea5e9;
+  }
+  .bg-green {
+    background: #10b981;
+  }
+  .text-white {
+    color: #fff;
   }
 
-  .help-text {
-    font-size: 0.8rem;
-    line-height: 1.4;
-    color: #64748b;
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
-  .mode-switch button {
-    border: none;
-    background: transparent;
-    padding: 2px 8px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    border-radius: 4px;
-    color: #64748b;
+  .pane-footer {
+    padding: 0.8rem 1rem;
+    border-top: 3px solid #111;
+    background: #fdfae5;
+    font-weight: 700;
+    font-size: 0.9rem;
   }
-
-  .mode-switch button.active {
-    background: #e2e8f0;
-    color: #0f172a;
-    font-weight: 600;
+  .flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .editor-wrapper {
     flex: 1;
-    position: relative;
-    background: #fff;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
   }
 
   .code-editor {
+    flex: 1;
     width: 100%;
-    height: 100%;
     border: none;
     padding: 1rem;
-    resize: none;
+    resize: vertical;
     outline: none;
-    font-family: 'Consolas', monospace;
-    font-size: 0.9rem;
+    font-family: 'IBM Plex Mono', 'Consolas', monospace;
+    font-size: 0.95rem;
     line-height: 1.5;
-    color: #334155;
     background: transparent;
+    color: #111;
+    box-sizing: border-box;
   }
 
   .result-editor {
-    background: #fdfdfd;
+    background: #f4f4f4;
   }
 
   .variable-list {
-    padding: 0.5rem 1rem;
-    background: #f1f5f9;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    border-top: 3px dashed #111;
+    padding: 0.8rem;
+    background: #fdfae5;
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
-    min-height: 40px;
   }
 
   .var-tag {
-    background: #fff;
-    border: 1px solid #cbd5e1;
-    border-radius: 4px;
-    padding: 2px 6px;
-    font-size: 0.75rem;
+    background: #111;
+    color: #ffd900;
+    border: 2px solid #111;
+    padding: 0.2rem 0.6rem;
+    font-weight: 800;
+    font-size: 0.85rem;
     cursor: pointer;
-    color: #475569;
+    box-shadow: 2px 2px 0px #111;
   }
-
   .var-tag:hover {
-    border-color: #3b82f6;
-    color: #3b82f6;
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px #111;
   }
 
-  .panel-footer {
-    padding: 0.8rem 1rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  .mode-switch {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #f8fafc;
+    border: 2px solid #111;
+    box-shadow: 3px 3px 0px #111;
+    background: #fff;
+  }
+  .mode-btn {
+    border: none;
+    background: transparent;
+    padding: 0.3rem 0.8rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    cursor: pointer;
+    color: #111;
+  }
+  .mode-btn.active {
+    background: #111;
+    color: #ff7be5;
   }
 
-  .data-status {
-    font-size: 0.75rem;
+  .small-btn {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.85rem;
+  }
+  .small-input {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.85rem;
   }
 
   .success {
     color: #10b981;
   }
-
   .error {
     color: #ef4444;
   }
 
-  .count-info {
-    font-size: 0.75rem;
-    color: #94a3b8;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .tool-page {
-      background: #111827;
-    }
-
-    .tool-header,
-    .footer {
-      background: #1f2937;
-      border-color: #374151;
-      color: #f3f4f6;
-    }
-
-    .tool-title {
-      color: #f3f4f6;
-    }
-
-    .panel {
-      background: #1f2937;
-      border-color: #374151;
-    }
-
-    .panel-header,
-    .panel-footer,
-    .variable-list {
-      background: #374151;
-      border-color: #4b5563;
-    }
-
-    .panel-title {
-      color: #f3f4f6;
-    }
-
-    .code-editor {
-      color: #e2e8f0;
-      background: #1f2937;
-    }
-
-    .result-editor {
-      background: #111827;
-    }
-
-    .mode-switch button.active {
-      background: #4b5563;
-      color: white;
-    }
-
-    .var-tag {
-      background: #374151;
-      border-color: #4b5563;
-      color: #cbd5e1;
-    }
-  }
-
-  @media (max-width: 900px) {
-    .layout-container {
-      flex-direction: column;
-      height: auto;
-    }
-
-    .panel {
-      min-height: 300px;
-    }
-  }
-
-  .help-section {
-    margin-top: 2rem;
-    background: #fff;
-    border-radius: 12px;
+  /* Help section */
+  .pane-body {
     padding: 1.5rem;
-    border: 1px solid rgba(0, 0, 0, 0.08);
   }
-
-  .help-section h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #334155;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
   .help-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
   }
-
+  @media (max-width: 1024px) {
+    .help-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .help-card {
+    border: 3px solid #111;
+    padding: 1rem;
+    box-shadow: 4px 4px 0px #111;
+    background: #fff;
+  }
   .help-card h4 {
-    font-weight: 600;
-    color: #475569;
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 900;
+    margin: 0 0 0.5rem 0;
+    color: #111;
+    border-bottom: 2px dashed #111;
+    padding-bottom: 0.5rem;
   }
-
   .help-card p {
-    font-size: 0.85rem;
-    color: #64748b;
-    line-height: 1.5;
+    font-weight: 600;
+    font-size: 0.9rem;
     margin-bottom: 0.5rem;
   }
-
-  .help-card .example {
-    background: #f8fafc;
-    padding: 0.5rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    color: #334155;
-    border: 1px solid #e2e8f0;
-    font-family: monospace;
-  }
-
   .help-card code {
-    background: #f1f5f9;
-    padding: 2px 4px;
-    border-radius: 3px;
-    color: #e11d48;
+    background: #111;
+    color: #0ea5e9;
+    padding: 2px 6px;
+    font-weight: bold;
   }
-
-  @media (prefers-color-scheme: dark) {
-    .help-section {
-      background: #1f2937;
-      border-color: #374151;
-    }
-
-    .help-section h3 {
-      color: #f3f4f6;
-    }
-
-    .help-card h4 {
-      color: #e2e8f0;
-    }
-
-    .help-card p {
-      color: #94a3b8;
-    }
-
-    .help-card .example {
-      background: #374151;
-      border-color: #4b5563;
-      color: #cbd5e1;
-    }
-
-    .help-card code {
-      background: #4b5563;
-      color: #fca5a5;
-    }
-  }
-
-  .footer {
-    text-align: center;
-    padding: 1rem 0;
-    color: var(--text-secondary, #64748b);
+  .example {
+    background: #fdfae5;
+    padding: 0.8rem;
+    border: 2px solid #111;
     font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  /* Dark theme */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .pane-footer {
+    border-top-color: #eee;
+    background: #222;
+  }
+  [data-theme='dark'] .brutal-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-input {
+    background: #222;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .badge {
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .code-editor {
+    color: #eee;
+  }
+  [data-theme='dark'] .result-editor {
+    background: #222;
+  }
+  [data-theme='dark'] .variable-list,
+  [data-theme='dark'] .example {
+    background: #222;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .var-tag {
+    box-shadow: 2px 2px 0px #eee;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #9d174d;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #075985;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #065f46;
+    color: #fff;
+  }
+  [data-theme='dark'] .mode-switch {
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+    background: #222;
+  }
+  [data-theme='dark'] .mode-btn {
+    color: #eee;
+  }
+  [data-theme='dark'] .mode-btn.active {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .help-card {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .help-card h4 {
+    border-bottom-color: #eee;
+    color: #eee;
   }
 </style>

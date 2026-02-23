@@ -1,332 +1,186 @@
 <template>
-  <div class="diff-comparer">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="goHome">
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>文本差异比较</h1>
-        <span class="nav-subtitle">Text Diff Checker</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goHome">← 返回</button>
+        <h1 class="brutal-title">差异<span>比较()</span></h1>
+        <div class="badge">⚖️ Diff Comparer</div>
+      </header>
 
-    <main class="main-content">
-      <div class="toolbar-card">
-        <div class="top-controls">
-          <div class="primary-actions">
-            <button class="btn primary" @click="handleCompare">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              比较差异
-            </button>
-            <button class="btn secondary" @click="handleClear">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path
-                  d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-                ></path>
-              </svg>
-              清空
-            </button>
-            <button class="btn secondary" @click="handleSwap">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-              </svg>
-              交换
-            </button>
+      <main class="brutal-main">
+        <!-- 控制栏 -->
+        <section class="brutal-pane control-pane">
+          <div class="pane-header bg-pink text-white">
+            <span class="panel-title">1. 控制面板 (CONTROLS)</span>
+            <div class="panel-actions">
+              <button class="brutal-btn icon-btn" @click="handleClear">🗑️ 清空</button>
+            </div>
           </div>
-
-          <div class="settings-group">
-            <div class="setting-item">
-              <label>模式:</label>
-              <select v-model="compareMode" class="select-input">
-                <option value="line">按行比较</option>
-                <option value="word">按词比较</option>
-                <option value="character">按字符比较</option>
-              </select>
+          <div class="control-content">
+            <div class="primary-actions">
+              <button class="brutal-btn execute-btn" @click="handleCompare">⚖️ 比较差异</button>
+              <button class="brutal-btn small-btn" @click="handleSwap">🔄 交换文本</button>
             </div>
 
-            <label class="setting-item checkbox">
-              <input v-model="ignoreWhitespace" type="checkbox" />
-              <span class="check-box"></span>
-              忽略空白
-            </label>
+            <div class="divider-v"></div>
 
-            <label class="setting-item checkbox">
-              <input v-model="ignoreCase" type="checkbox" />
-              <span class="check-box"></span>
-              忽略大小写
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <div class="editors-grid">
-        <div class="editor-card">
-          <div class="card-header">
-            <div class="header-title">
-              <span class="dot original"></span>
-              <h3>原始文本</h3>
+            <div class="control-group">
+              <label class="group-label">比较模式</label>
+              <div class="radio-group">
+                <label class="radio-label">
+                  <input v-model="compareMode" type="radio" value="line" />
+                  <span class="radio-box">按行</span>
+                </label>
+                <label class="radio-label">
+                  <input v-model="compareMode" type="radio" value="word" />
+                  <span class="radio-box">按词</span>
+                </label>
+                <label class="radio-label">
+                  <input v-model="compareMode" type="radio" value="character" />
+                  <span class="radio-box">按字符</span>
+                </label>
+              </div>
             </div>
-            <div class="header-actions">
-              <label class="icon-btn" title="上传文件">
-                <input
-                  type="file"
-                  hidden
-                  accept=".txt,.js,.css,.html,.json,.md"
-                  @change="e => handleFileUpload(e, 'original')"
-                />
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
-                </svg>
+
+            <div class="divider-v"></div>
+
+            <div class="control-group options-group">
+              <label class="checkbox-label">
+                <input v-model="ignoreWhitespace" type="checkbox" /> 忽略空白
               </label>
-              <button class="icon-btn" title="加载示例" @click="loadSample('original')">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                  <line x1="16" y1="13" x2="8" y2="13" />
-                  <line x1="16" y1="17" x2="8" y2="17" />
-                  <polyline points="10 9 9 9 8 9" />
-                </svg>
-              </button>
-            </div>
-          </div>
-          <textarea
-            v-model="originalText"
-            placeholder="输入原始内容..."
-            class="text-input"
-          ></textarea>
-        </div>
-
-        <div class="editor-card">
-          <div class="card-header">
-            <div class="header-title">
-              <span class="dot modified"></span>
-              <h3>修改后文本</h3>
-            </div>
-            <div class="header-actions">
-              <label class="icon-btn" title="上传文件">
-                <input
-                  type="file"
-                  hidden
-                  accept=".txt,.js,.css,.html,.json,.md"
-                  @change="e => handleFileUpload(e, 'modified')"
-                />
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
-                </svg>
+              <label class="checkbox-label">
+                <input v-model="ignoreCase" type="checkbox" /> 忽略大小写
               </label>
-              <button class="icon-btn" title="加载示例" @click="loadSample('modified')">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                  <line x1="16" y1="13" x2="8" y2="13" />
-                  <line x1="16" y1="17" x2="8" y2="17" />
-                  <polyline points="10 9 9 9 8 9" />
-                </svg>
-              </button>
             </div>
           </div>
-          <textarea
-            v-model="modifiedText"
-            placeholder="输入修改后内容..."
-            class="text-input"
-          ></textarea>
-        </div>
-      </div>
+        </section>
 
-      <div v-if="diffResult" class="results-section">
-        <div class="stats-bar">
-          <div class="stat-item added"><span class="dot"></span>新增: {{ stats.added }}</div>
-          <div class="stat-item removed"><span class="dot"></span>删除: {{ stats.removed }}</div>
-          <div class="stat-item modified"><span class="dot"></span>修改: {{ stats.modified }}</div>
-          <div class="stat-item unchanged">
-            <span class="dot"></span>未变: {{ stats.unchanged }}
+        <!-- 输入区域 -->
+        <div class="diff-input-grid">
+          <section class="brutal-pane">
+            <div class="pane-header bg-yellow">
+              <span class="panel-title">原始文本 (ORIGINAL)</span>
+              <div class="panel-actions">
+                <label class="brutal-btn icon-btn" title="上传文件" style="cursor: pointer">
+                  <input
+                    type="file"
+                    hidden
+                    accept=".txt,.js,.css,.html,.json,.md"
+                    @change="e => handleFileUpload(e, 'original')"
+                  />
+                  📁 上传
+                </label>
+                <button class="brutal-btn icon-btn" @click="loadSample('original')">✨ 示例</button>
+              </div>
+            </div>
+            <textarea
+              v-model="originalText"
+              class="code-editor"
+              placeholder="输入原始内容..."
+              spellcheck="false"
+            ></textarea>
+          </section>
+
+          <section class="brutal-pane">
+            <div class="pane-header bg-yellow">
+              <span class="panel-title">修改后文本 (MODIFIED)</span>
+              <div class="panel-actions">
+                <label class="brutal-btn icon-btn" title="上传文件" style="cursor: pointer">
+                  <input
+                    type="file"
+                    hidden
+                    accept=".txt,.js,.css,.html,.json,.md"
+                    @change="e => handleFileUpload(e, 'modified')"
+                  />
+                  📁 上传
+                </label>
+                <button class="brutal-btn icon-btn" @click="loadSample('modified')">✨ 示例</button>
+              </div>
+            </div>
+            <textarea
+              v-model="modifiedText"
+              class="code-editor"
+              placeholder="输入修改后内容..."
+              spellcheck="false"
+            ></textarea>
+          </section>
+        </div>
+
+        <!-- 结果区域 -->
+        <section v-if="diffResult" class="brutal-pane result-pane">
+          <div class="pane-header bg-blue text-white">
+            <span class="panel-title">2. 对比结果 (RESULT)</span>
+            <div class="panel-actions">
+              <button class="brutal-btn icon-btn" @click="toggleSideBySide">
+                {{ isSideBySide ? '合并视图' : '并排视图' }}
+              </button>
+              <button class="brutal-btn icon-btn" @click="copyResult">📋 复制</button>
+            </div>
           </div>
-          <div class="spacer"></div>
-          <button class="view-toggle" @click="toggleSideBySide">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path v-if="isSideBySide" d="M3 3h18v18H3zM12 3v18" />
-              <path
-                v-else
-                d="M9 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"
-              />
-            </svg>
-            {{ isSideBySide ? '合并视图' : '并排视图' }}
-          </button>
-          <button class="icon-btn" title="复制结果" @click="copyResult">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
-          </button>
-        </div>
 
-        <div v-if="isSideBySide && compareMode === 'line'" class="diff-view side-by-side">
-          <div class="side-panel">
-            <div class="panel-label">原始</div>
-            <div class="diff-content">
+          <div class="stats-bar">
+            <div class="stat-item added"><span class="dot"></span>新增: {{ stats.added }}</div>
+            <div class="stat-item removed"><span class="dot"></span>删除: {{ stats.removed }}</div>
+            <div class="stat-item modified">
+              <span class="dot"></span>修改: {{ stats.modified }}
+            </div>
+            <div class="stat-item unchanged">
+              <span class="dot"></span>未变: {{ stats.unchanged }}
+            </div>
+          </div>
+
+          <div class="result-content">
+            <div v-if="isSideBySide && compareMode === 'line'" class="diff-view side-by-side">
+              <div class="side-panel">
+                <div class="panel-label">原始</div>
+                <div class="diff-content">
+                  <div
+                    v-for="(line, idx) in sideBySideData.original"
+                    :key="'orig-' + idx"
+                    class="diff-line"
+                    :class="line.type"
+                  >
+                    <span class="line-num">{{ idx + 1 }}</span>
+                    <span class="line-text">{{ line.content }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="side-panel right-panel">
+                <div class="panel-label">修改后</div>
+                <div class="diff-content">
+                  <div
+                    v-for="(line, idx) in sideBySideData.modified"
+                    :key="'mod-' + idx"
+                    class="diff-line"
+                    :class="line.type"
+                  >
+                    <span class="line-num">{{ idx + 1 }}</span>
+                    <span class="line-text">{{ line.content }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div v-else class="diff-view unified">
               <div
-                v-for="(line, idx) in sideBySideData.original"
-                :key="'orig-' + idx"
-                class="diff-line"
-                :class="line.type"
+                v-for="(item, idx) in diffResult"
+                :key="idx"
+                class="diff-item"
+                :class="item.type"
               >
-                <span class="line-num">{{ idx + 1 }}</span>
-                <span class="line-text">{{ line.content }}</span>
+                <span v-if="item.content === '\n'" class="newline-mark">↵</span>
+                <span v-else>{{ item.content }}</span>
               </div>
             </div>
           </div>
-          <div class="side-panel">
-            <div class="panel-label">修改后</div>
-            <div class="diff-content">
-              <div
-                v-for="(line, idx) in sideBySideData.modified"
-                :key="'mod-' + idx"
-                class="diff-line"
-                :class="line.type"
-              >
-                <span class="line-num">{{ idx + 1 }}</span>
-                <span class="line-text">{{ line.content }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div v-else class="diff-view unified">
-          <div v-for="(item, idx) in diffResult" :key="idx" class="diff-item" :class="item.type">
-            <span v-if="item.content === '\n'" class="newline-mark">↵</span>
-            <span v-else>{{ item.content }}</span>
-          </div>
-        </div>
-      </div>
-
-      <section class="intro-section">
-        <h2>功能特性</h2>
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="icon-box primary">🔍</div>
-            <h4>多种比较模式</h4>
-            <p>支持按行、按单词、按字符三种精度的文本比对，满足不同粒度的差异分析需求。</p>
-          </div>
-          <div class="feature-card">
-            <div class="icon-box secondary">📄</div>
-            <h4>文件支持</h4>
-            <p>支持直接上传 txt、js、css、json、md 等多种文本格式文件进行快速比较。</p>
-          </div>
-          <div class="feature-card">
-            <div class="icon-box accent">👁️</div>
-            <h4>双视图展示</h4>
-            <p>提供"合并视图"与"并排视图"两种模式，可根据习惯自由切换，差异一目了然。</p>
-          </div>
-          <div class="feature-card">
-            <div class="icon-box success">📊</div>
-            <h4>智能统计</h4>
-            <p>实时统计新增、删除、修改和未变的内容数量，并支持自动跳转到差异点。</p>
-          </div>
-        </div>
-
-        <div class="usage-guide">
-          <h3>使用指南</h3>
-          <ol>
-            <li>
-              在左侧输入或上传<strong>原始文本</strong>，在右侧输入或上传<strong>修改后文本</strong>。
-            </li>
-            <li>在顶部工具栏选择<strong>比较模式</strong>（默认推荐"按行比较"）。</li>
-            <li>点击<strong>比较差异</strong>按钮，系统将自动分析并高亮显示不同之处。</li>
-            <li>点击结果右上角的<strong>并排视图</strong>按钮，可左右对照查看差异。</li>
-            <li>
-              支持一键<strong>复制</strong>差异结果，或使用<strong>交换</strong>按钮快速对调文本。
-            </li>
-          </ol>
-        </div>
-      </section>
-    </main>
-
-    <footer class="footer">© 2026 LRM工具箱 - 文本差异比较</footer>
-
-    <footer class="footer">© 2026 LRM工具箱 - 文本差异比较</footer>
+        </section>
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, reactive, computed, nextTick } from 'vue';
-
   import { useCopy } from '@/composables/useCopy';
   import { ElMessage } from 'element-plus';
 
@@ -408,24 +262,17 @@
       arrB = modifiedText.value.split('');
     }
 
-    // 预处理用于比较的数组（保持原数组用于显示）
     const compareA = arrA.map(preprocessItem);
     const compareB = arrB.map(preprocessItem);
 
     const lcs = longestCommonSubsequence(compareA, compareB);
 
-    // 构建差异结果
     const result = [];
     let i = 0,
       j = 0;
     let lcsIdx = 0;
 
-    // 简单的 diff 算法
-    // 注意：LCS 只能找到相同的，中间不同的需要判断是删除还是新增
-    // 这里简化处理：A中不同是删除，B中不同是新增
-
     while (i < arrA.length || j < arrB.length) {
-      // 匹配到 LCS 结尾
       if (lcsIdx >= lcs.length) {
         while (i < arrA.length) {
           result.push({ type: 'removed', content: arrA[i] });
@@ -448,24 +295,20 @@
       const processedB = j < arrB.length ? preprocessItem(itemB) : null;
 
       if (processedA === currentLCS && processedB === currentLCS) {
-        result.push({ type: 'unchanged', content: itemA }); // 这里的 itemA 和 itemB 及其相似
+        result.push({ type: 'unchanged', content: itemA });
         stats.unchanged++;
         i++;
         j++;
         lcsIdx++;
       } else if (processedB === currentLCS) {
-        // B 匹配 LCS，说明 A 是多余的（删除）
         result.push({ type: 'removed', content: itemA });
         stats.removed++;
         i++;
       } else if (processedA === currentLCS) {
-        // A 匹配 LCS，说明 B 是多余的（新增）
         result.push({ type: 'added', content: itemB });
         stats.added++;
         j++;
       } else {
-        // 都不匹配，简单的处理方式：认为 A 的是删除，B 的是新增
-        // 可以优化为修改（如果相似）
         if (i < arrA.length) {
           result.push({ type: 'removed', content: itemA });
           stats.removed++;
@@ -481,7 +324,6 @@
 
     diffResult.value = result;
 
-    // 自动滚动到第一个差异点
     nextTick(() => {
       const container = document.querySelector('.diff-view');
       if (container) {
@@ -491,8 +333,6 @@
         }
       }
     });
-
-    // 如果是行模式，可以在 Side by Side 中做更好的对齐（这里简化处理）
   }
 
   const sideBySideData = computed(() => {
@@ -509,10 +349,8 @@
         modified.push(item);
       } else if (item.type === 'removed') {
         original.push(item);
-        // 右侧占位？或者显示为空行
         modified.push({ type: 'empty', content: '' });
       } else if (item.type === 'added') {
-        // 左侧占位
         original.push({ type: 'empty', content: '' });
         modified.push(item);
       }
@@ -549,17 +387,9 @@
 
   function loadSample(target) {
     if (target === 'original') {
-      originalText.value = `这是原始文本示例。
-  这是第二行内容。
-  这是第三行，包含一些关键字。
-  第四行内容。
-  最后一行。`;
+      originalText.value = `这是原始文本示例。\n这是第二行内容。\n这是第三行，包含一些关键字。\n第四行内容。\n最后一行。`;
     } else {
-      modifiedText.value = `这是修改后的文本示例。
-  这是第二行内容，有一些变化。
-  这是第三行，包含一些不同的关键字。
-  新增的一行内容。
-  最后一行，有变化。`;
+      modifiedText.value = `这是修改后的文本示例。\n这是第二行内容，有一些变化。\n这是第三行，包含一些不同的关键字。\n新增的一行内容。\n最后一行，有变化。`;
     }
   }
 
@@ -585,96 +415,31 @@
 </script>
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800;900&family=Noto+Sans+SC:wght@400;700;900&display=swap');
 
-  .diff-comparer {
-    --bg: #f5f7fa;
-    --card: #ffffff;
-    --border: #e2e8f0;
-    --text: #1e293b;
-    --text-secondary: #64748b;
-    --primary: #10b981;
-    --primary-hover: #059669;
-    --secondary: #64748b;
-    --danger: #ef4444;
-    --warning: #f59e0b;
-    --added-bg: rgba(16, 185, 129, 0.1);
-    --added-text: #047857;
-    --removed-bg: rgba(239, 68, 68, 0.1);
-    --removed-text: #b91c1c;
-    --modified-bg: rgba(245, 158, 11, 0.1);
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Noto Sans SC', sans-serif;
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .nav-bar {
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-    padding: 1rem 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    flex-shrink: 0;
-  }
-
-  .nav-back {
-    background: none;
-    border: none;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--text-secondary);
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-
-  .nav-back:hover {
-    background: #f1f5f9;
-    color: var(--primary);
-  }
-
-  .nav-center h1 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0;
-  }
-
-  .nav-subtitle {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .main-content {
-    flex: 1;
-    max-width: 1200px;
-    width: 100%;
+  .brutal-container {
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 2rem 1rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 2rem;
   }
 
-  .toolbar-card {
-    background: var(--card);
-    padding: 1rem;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-  }
-
-  .top-controls {
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -682,508 +447,548 @@
     gap: 1rem;
   }
 
-  .primary-actions {
-    display: flex;
-    gap: 0.75rem;
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
   }
 
-  .btn {
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.9rem;
-  }
-
-  .btn.primary {
-    background: var(--primary);
-    color: white;
-  }
-
-  .btn.primary:hover {
-    background: var(--primary-hover);
-  }
-
-  .btn.secondary {
-    background: #f1f5f9;
-    color: var(--text);
-    border: 1px solid var(--border);
-  }
-
-  .btn.secondary:hover {
-    background: #e2e8f0;
-  }
-
-  .settings-group {
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-  }
-
-  .setting-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-    color: var(--text);
-  }
-
-  .select-input {
-    padding: 0.4rem 2rem 0.4rem 0.8rem;
-    border: 1px solid var(--border);
-    border-radius: 6px;
+  .brutal-btn {
     background: #fff;
-    font-size: 0.9rem;
-    color: var(--text);
-  }
-
-  .checkbox {
+    color: #111;
+    border: 3px solid #111;
+    padding: 0.6rem 1.2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
     cursor: pointer;
-    user-select: none;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0px #111;
+  }
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
   }
 
-  .checkbox input {
-    display: none;
+  .badge {
+    background: #111;
+    color: #ff4b4b;
+    padding: 0.5rem 1.2rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    border: 3px solid #ff4b4b;
+    box-shadow: 4px 4px 0px #ff4b4b;
   }
 
-  .check-box {
-    width: 16px;
-    height: 16px;
-    border: 2px solid var(--border);
-    border-radius: 4px;
-    display: inline-block;
-    position: relative;
-    vertical-align: middle;
-    margin-right: 0.25rem;
+  .brutal-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
   }
 
-  .checkbox input:checked + .check-box {
-    background: var(--primary);
-    border-color: var(--primary);
-  }
-
-  .checkbox input:checked + .check-box::after {
-    content: '';
-    position: absolute;
-    left: 4px;
-    top: 1px;
-    width: 4px;
-    height: 8px;
-    border: solid white;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-  }
-
-  .editors-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    height: 400px;
-  }
-
-  .editor-card {
-    background: var(--card);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
+  .brutal-pane {
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 6px 6px 0px #111;
     display: flex;
     flex-direction: column;
     overflow: hidden;
   }
 
-  .card-header {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--border);
-    background: #f8fafc;
+  .pane-header {
+    padding: 1rem;
+    border-bottom: 3px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-pink {
+    background: #ff7be5;
+  }
+  .bg-blue {
+    background: #0ea5e9;
+  }
+  .text-white {
+    color: #fff;
+  }
 
-  .header-title {
+  .panel-actions {
     display: flex;
-    align-items: center;
     gap: 0.5rem;
-  }
-
-  .header-title h3 {
-    margin: 0;
-    font-size: 0.95rem;
-    font-weight: 600;
-  }
-
-  .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    display: inline-block;
-  }
-
-  .dot.original {
-    background: var(--secondary);
-  }
-
-  .dot.modified {
-    background: var(--primary);
   }
 
   .icon-btn {
-    background: none;
-    border: none;
-    padding: 4px;
-    border-radius: 4px;
-    color: var(--text-secondary);
-    cursor: pointer;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    font-family: 'Noto Sans SC', sans-serif;
+  }
+
+  .control-content {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 1.5rem;
+    gap: 2rem;
+    background: #fdfae5;
   }
 
-  .icon-btn:hover {
-    background: #e2e8f0;
-    color: var(--text);
+  .primary-actions {
+    display: flex;
+    gap: 1rem;
+  }
+  .execute-btn {
+    background: #fff;
+    color: #111;
+  }
+  .execute-btn:hover:not(:disabled) {
+    background: #ffd900;
+    color: #111;
+  }
+  .small-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
   }
 
-  .text-input {
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .options-group {
+    flex-direction: row;
+    gap: 1.5rem;
+    align-items: center;
+    height: 100%;
+  }
+
+  .group-label {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    color: #111;
+    text-transform: uppercase;
+  }
+
+  .radio-group {
+    display: flex;
+    background: #111;
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .radio-label {
+    cursor: pointer;
+  }
+  .radio-label input {
+    display: none;
+  }
+  .radio-box {
+    display: block;
+    padding: 0.4rem 0.8rem;
+    background: #111;
+    color: #fff;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    border: 2px solid transparent;
+    transition: all 0.1s;
+  }
+  .radio-label input:checked + .radio-box {
+    background: #ffd900;
+    color: #111;
+    border-color: #111;
+  }
+
+  .checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    cursor: pointer;
+    font-size: 0.95rem;
+  }
+  .checkbox-label input[type='checkbox'] {
+    appearance: none;
+    background-color: #fff;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #111;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .checkbox-label input[type='checkbox']:checked {
+    background-color: #111;
+  }
+  .checkbox-label input[type='checkbox']:checked::after {
+    content: '✖';
+    color: #ffd900;
+    font-size: 14px;
+  }
+
+  .divider-v {
+    width: 3px;
+    height: 50px;
+    background: #111;
+  }
+
+  .diff-input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    height: 350px;
+  }
+
+  @media (max-width: 900px) {
+    .diff-input-grid {
+      grid-template-columns: 1fr;
+      height: auto;
+    }
+    .diff-input-grid .brutal-pane {
+      height: 250px;
+    }
+  }
+
+  .code-editor {
     flex: 1;
     width: 100%;
-    resize: none;
     border: none;
     padding: 1rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    color: var(--text);
-    background: var(--card);
-  }
-
-  .text-input:focus {
+    resize: none;
     outline: none;
-    background: #fafafa;
+    font-family: 'IBM Plex Mono', 'Consolas', monospace;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    background: #fdfdfd;
+    color: #111;
+    box-sizing: border-box;
   }
 
-  .results-section {
-    background: var(--card);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    overflow: hidden;
+  .result-pane {
+    min-height: 400px;
   }
 
   .stats-bar {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--border);
-    background: #f8fafc;
     display: flex;
-    align-items: center;
     gap: 1.5rem;
-    font-size: 0.9rem;
+    padding: 0.8rem 1rem;
+    background: #111;
+    color: #fff;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    border-bottom: 3px solid #111;
   }
-
   .stat-item {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-weight: 500;
-  }
-
-  .stat-item .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-  }
-
-  .stat-item.added {
-    color: var(--added-text);
-  }
-
-  .stat-item.added .dot {
-    background: var(--added-text);
-  }
-
-  .stat-item.removed {
-    color: var(--removed-text);
-  }
-
-  .stat-item.removed .dot {
-    background: var(--removed-text);
-  }
-
-  .stat-item.modified {
-    color: var(--warning);
-  }
-
-  .stat-item.modified .dot {
-    background: var(--warning);
-  }
-
-  .stat-item.unchanged {
-    color: var(--text-secondary);
-  }
-
-  .stat-item.unchanged .dot {
-    background: var(--text-secondary);
-  }
-
-  .spacer {
-    flex: 1;
-  }
-
-  .view-toggle {
-    border: 1px solid var(--border);
-    background: white;
-    padding: 0.4rem 0.8rem;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    cursor: pointer;
     display: flex;
     align-items: center;
     gap: 0.5rem;
   }
-
-  .view-toggle:hover {
-    background: #f1f5f9;
+  .dot {
+    width: 10px;
+    height: 10px;
+    border: 2px solid #fff;
+  }
+  .stat-item.added .dot {
+    background: #4ade80;
+  }
+  .stat-item.removed .dot {
+    background: #f87171;
+  }
+  .stat-item.modified .dot {
+    background: #facc15;
+  }
+  .stat-item.unchanged .dot {
+    background: #9ca3af;
   }
 
-  .diff-view {
-    padding: 1rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    max-height: 500px;
-    overflow-y: auto;
-  }
-
-  .diff-item {
-    display: inline;
-    white-space: pre-wrap;
-  }
-
-  .diff-view.unified .diff-item.added {
-    background: var(--added-bg);
-    color: var(--added-text);
-  }
-
-  .diff-view.unified .diff-item.removed {
-    background: var(--removed-bg);
-    color: var(--removed-text);
-    text-decoration: line-through;
-  }
-
-  .diff-item.modified {
-    background: var(--modified-bg);
-  }
-
-  .diff-view.side-by-side {
-    display: flex;
-    padding: 0;
-  }
-
-  .side-panel {
+  .result-content {
     flex: 1;
-    border-right: 1px solid var(--border);
+    background: #fff;
     display: flex;
     flex-direction: column;
   }
 
-  .side-panel:last-child {
-    border-right: none;
+  .diff-view.unified {
+    padding: 1.5rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-all;
   }
 
+  .diff-item {
+    display: inline;
+    border-radius: 2px;
+  }
+  .diff-item.added {
+    background-color: #86efac;
+    color: #14532d;
+    font-weight: 700;
+    padding: 0 2px;
+    border: 1px solid #16a34a;
+  }
+  .diff-item.removed {
+    background-color: #fca5a5;
+    color: #7f1d1d;
+    font-weight: 700;
+    text-decoration: line-through;
+    padding: 0 2px;
+    border: 1px solid #dc2626;
+  }
+  .diff-item.unchanged {
+    color: #333;
+  }
+
+  .side-by-side {
+    display: flex;
+    flex: 1;
+  }
+  .side-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .right-panel {
+    border-left: 3px solid #111;
+  }
   .panel-label {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
     padding: 0.5rem;
-    background: #f1f5f9;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.8rem;
+    background: #fdfae5;
+    border-bottom: 3px solid #111;
     text-align: center;
-    color: var(--text-secondary);
   }
 
   .diff-content {
-    flex: 1;
-    overflow-x: auto;
+    overflow-y: auto;
+    font-family: 'IBM Plex Mono', 'Consolas', monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
   }
 
   .diff-line {
     display: flex;
-    padding: 0 0.5rem;
+    width: 100%;
+    border-bottom: 2px dashed rgba(0, 0, 0, 0.1);
   }
-
   .diff-line:hover {
-    background: #f8fafc;
-  }
-
-  .diff-line.added {
-    background: var(--added-bg);
-  }
-
-  .diff-line.removed {
-    background: var(--removed-bg);
-  }
-
-  .diff-line.empty {
-    background: #f3f3f3;
+    background-color: #fcfcfc;
   }
 
   .line-num {
-    width: 2rem;
-    color: var(--text-secondary);
-    font-size: 0.8rem;
-    user-select: none;
+    width: 45px;
     text-align: right;
-    margin-right: 0.8rem;
-    opacity: 0.6;
+    padding: 4px 8px;
+    color: #111;
+    font-weight: 700;
+    background-color: #fdfae5;
+    border-right: 2px solid #111;
+    user-select: none;
+    flex-shrink: 0;
   }
 
   .line-text {
-    white-space: pre;
+    padding: 4px 12px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    flex: 1;
+    color: #111;
   }
 
-  @media (max-width: 768px) {
-    .editors-grid {
-      grid-template-columns: 1fr;
-      height: auto;
-    }
-
-    .text-input {
-      height: 200px;
-    }
-
-    .top-controls {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .stats-bar {
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
+  .diff-line.removed {
+    background-color: #ffe4e6;
   }
-
-  .intro-section {
-    margin-top: 3rem;
-    border-top: 1px solid var(--border);
-    padding-top: 3rem;
+  .diff-line.removed .line-num {
+    background-color: #fecdd3;
+    color: #be123c;
   }
-
-  .intro-section h2,
-  .usage-guide h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 2rem;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .intro-section h2::before,
-  .usage-guide h3::before {
-    content: '';
-    width: 6px;
-    height: 24px;
-    background: var(--primary);
-    border-radius: 4px;
-  }
-
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 4rem;
-  }
-
-  .feature-card {
-    background: var(--card);
-    padding: 1.5rem;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    transition: all 0.3s;
-  }
-
-  .feature-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow);
-    border-color: var(--primary);
-  }
-
-  .icon-box {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .icon-box.primary {
-    background: rgba(16, 185, 129, 0.1);
-    color: var(--primary);
-  }
-
-  .icon-box.secondary {
-    background: rgba(100, 116, 139, 0.1);
-    color: var(--secondary);
-  }
-
-  .icon-box.accent {
-    background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
-  }
-
-  .icon-box.success {
-    background: rgba(245, 158, 11, 0.1);
-    color: var(--warning);
-  }
-
-  .feature-card h4 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1rem;
+  .diff-line.removed .line-text {
+    color: #be123c;
     font-weight: 600;
   }
 
-  .feature-card p {
-    margin: 0;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    line-height: 1.6;
+  .diff-line.added {
+    background-color: #dcfce7;
   }
-
-  .usage-guide {
-    background: var(--card);
-    padding: 2.5rem;
-    border-radius: 16px;
-    border: 1px solid var(--border);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  .diff-line.added .line-num {
+    background-color: #bbf7d0;
+    color: #15803d;
   }
-
-  .usage-guide ol {
-    padding-left: 1.5rem;
-    color: var(--text-secondary);
-    margin: 0;
-  }
-
-  .usage-guide li {
-    margin-bottom: 0.75rem;
-    line-height: 1.8;
-    font-size: 0.95rem;
-  }
-
-  .usage-guide li strong {
-    color: var(--text);
+  .diff-line.added .line-text {
+    color: #15803d;
     font-weight: 600;
-    color: var(--primary);
   }
 
-  .footer {
-    text-align: center;
-    padding: 3rem 0;
-    color: var(--text-secondary, #64748b);
-    font-size: 0.85rem;
+  .diff-line.empty {
+    background-color: #f1f5f9;
+    background-image:
+      linear-gradient(45deg, #e2e8f0 25%, transparent 25%, transparent 75%, #e2e8f0 75%, #e2e8f0),
+      linear-gradient(45deg, #e2e8f0 25%, transparent 25%, transparent 75%, #e2e8f0 75%, #e2e8f0);
+    background-size: 10px 10px;
+    background-position:
+      0 0,
+      5px 5px;
+    opacity: 0.5;
+  }
+
+  /* Dark theme */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .badge {
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .code-editor {
+    background: #222;
+    color: #eee;
+  }
+  [data-theme='dark'] .control-content {
+    background: #111;
+  }
+  [data-theme='dark'] .radio-group {
+    background: #eee;
+  }
+  [data-theme='dark'] .radio-box {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .radio-label input:checked + .radio-box {
+    background: #ffd900;
+    color: #111;
+  }
+  [data-theme='dark'] .divider-v {
+    background: #eee;
+  }
+  [data-theme='dark'] .group-label {
+    color: #eee;
+  }
+  [data-theme='dark'] .checkbox-label {
+    color: #eee;
+  }
+  [data-theme='dark'] .checkbox-label input[type='checkbox'] {
+    background-color: #222;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .checkbox-label input[type='checkbox']:checked {
+    background-color: #eee;
+  }
+  [data-theme='dark'] .checkbox-label input[type='checkbox']:checked::after {
+    color: #111;
+  }
+  [data-theme='dark'] .stats-bar {
+    background: #222;
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .result-content {
+    background: #1a1a1a;
+  }
+  [data-theme='dark'] .diff-line {
+    border-bottom-color: #333;
+  }
+  [data-theme='dark'] .diff-line:hover {
+    background-color: #222;
+  }
+  [data-theme='dark'] .right-panel {
+    border-left-color: #eee;
+  }
+  [data-theme='dark'] .panel-label {
+    background: #222;
+    border-bottom-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .line-num {
+    background-color: #222;
+    color: #eee;
+    border-right-color: #eee;
+  }
+  [data-theme='dark'] .line-text {
+    color: #eee;
+  }
+  [data-theme='dark'] .diff-line.removed {
+    background-color: rgba(220, 38, 38, 0.2);
+  }
+  [data-theme='dark'] .diff-line.removed .line-num {
+    background-color: rgba(220, 38, 38, 0.3);
+    color: #fca5a5;
+  }
+  [data-theme='dark'] .diff-line.removed .line-text {
+    color: #fca5a5;
+  }
+  [data-theme='dark'] .diff-line.added {
+    background-color: rgba(22, 163, 74, 0.2);
+  }
+  [data-theme='dark'] .diff-line.added .line-num {
+    background-color: rgba(22, 163, 74, 0.3);
+    color: #86efac;
+  }
+  [data-theme='dark'] .diff-line.added .line-text {
+    color: #86efac;
+  }
+  [data-theme='dark'] .diff-line.empty {
+    background-color: #111;
+    background-image:
+      linear-gradient(45deg, #222 25%, transparent 25%, transparent 75%, #222 75%, #222),
+      linear-gradient(45deg, #222 25%, transparent 25%, transparent 75%, #222 75%, #222);
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #9d174d;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #075985;
+    color: #fff;
+  }
+  [data-theme='dark'] .execute-btn {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .execute-btn:hover:not(:disabled) {
+    background: #ffd900;
   }
 </style>
