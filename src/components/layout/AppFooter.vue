@@ -96,8 +96,14 @@
       </div>
     </div>
 
-    <el-dialog v-model="showFeedback" :title="t('footer.feedbackTitle')" width="500px">
-      <el-form :model="feedbackForm" label-position="top">
+    <el-dialog
+      v-model="showFeedback"
+      :title="t('footer.feedbackTitle')"
+      width="500px"
+      class="brutal-dialog brutal-dialog-yellow"
+      append-to-body
+    >
+      <el-form :model="feedbackForm" label-position="top" class="brutal-form">
         <el-form-item :label="t('footer.feedbackType')">
           <el-select
             v-model="feedbackForm.type"
@@ -122,10 +128,14 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="showFeedback = false">{{ t('footer.cancel') }}</el-button>
-        <el-button type="primary" :loading="isSubmitting" @click="submitFeedback">{{
-          t('footer.submit')
-        }}</el-button>
+        <div class="brutal-dialog-actions">
+          <button class="brutal-btn-secondary" @click="showFeedback = false">
+            {{ t('footer.cancel') }}
+          </button>
+          <button class="brutal-btn-primary" :disabled="isSubmitting" @click="submitFeedback">
+            {{ t('footer.submit') }}
+          </button>
+        </div>
       </template>
     </el-dialog>
 
@@ -133,12 +143,31 @@
       v-model="showChangelog"
       :title="t('footer.changelog')"
       width="600px"
-      custom-class="changelog-dialog"
+      class="brutal-dialog brutal-dialog-blue"
+      append-to-body
     >
       <div class="changelog-container">
         <div class="changelog-timeline">
           <div class="changelog-item featured">
             <div class="version-tag">LATEST</div>
+            <div class="item-header">
+              <span class="version-num">v2.0.0</span>
+              <span class="version-date">2026-02-23</span>
+            </div>
+            <ul class="change-list">
+              <li>
+                <span class="tag tag-ui">视觉</span>全域 Neobrutalism (新粗野主义) 设计语言重构
+              </li>
+              <li><span class="tag tag-ui">排版</span>全局硬核黑体备选加强与文本超重描边特效</li>
+              <li><span class="tag tag-fx">动效</span>新增平滑沉浮式的返回顶部/底部专属操作模块</li>
+              <li>
+                <span class="tag tag-fix">修复</span
+                >所有荧光色板实施马卡龙降调，彻底解决滚动感光频闪
+              </li>
+            </ul>
+          </div>
+
+          <div class="changelog-item">
             <div class="item-header">
               <span class="version-num">v1.9.0</span>
               <span class="version-date">2026-02-11</span>
@@ -147,9 +176,7 @@
               <li>
                 <span class="tag tag-refactor">重构</span>工具数据模块化：异步按需导入，秒开体验
               </li>
-              <li>
-                <span class="tag tag-ui">预览</span>首页布局优化：截断展示与一键展开，告别杂乱
-              </li>
+              <li><span class="tag tag-ui">预览</span>首页布局优化：截断展示与一键展开</li>
               <li>
                 <span class="tag tag-fx">动效</span>主题转场：View Transitions 圆形扩散/消退动画
               </li>
@@ -164,36 +191,35 @@
             </div>
             <ul class="change-list">
               <li><span class="tag tag-perf">性能</span>特定大工具数据 JSON 化拆分</li>
-              <li><span class="tag tag-fix">修复</span>全站 Linter 清理，极致代码质量</li>
-              <li><span class="tag tag-fix">修复</span>ESLint 与 Prettier 冲突配置修正</li>
-            </ul>
-          </div>
-
-          <div class="changelog-item">
-            <div class="item-header">
-              <span class="version-num">v1.7.0</span>
-              <span class="version-date">2026-02-09</span>
-            </div>
-            <ul class="change-list">
-              <li><span class="tag tag-fix">2048</span>深度逻辑优化，支持撤销与多规格网格</li>
-              <li><span class="tag tag-sys">系统</span>默认汉化配置与生产环境接口修复</li>
-              <li><span class="tag tag-sys">SEO</span>GitHub 检索权重优化</li>
+              <li><span class="tag tag-fix">工程</span>全站 Linter 错误与警告深度清理修复</li>
             </ul>
           </div>
         </div>
       </div>
       <template #footer>
-        <el-button class="close-btn" @click="showChangelog = false">{{ t('pwa.close') }}</el-button>
+        <div class="brutal-dialog-actions" style="justify-content: center">
+          <button class="brutal-btn-primary width-full" @click="showChangelog = false">
+            {{ t('pwa.close') }}
+          </button>
+        </div>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="showDisclaimer" :title="t('footer.disclaimerTitle')" width="500px">
+    <el-dialog
+      v-model="showDisclaimer"
+      :title="t('footer.disclaimerTitle')"
+      width="500px"
+      class="brutal-dialog brutal-dialog-pink"
+      append-to-body
+    >
       <!-- eslint-disable-next-line vue/no-v-html -->
-      <div class="disclaimer-content" v-html="t('footer.disclaimerContent')"></div>
+      <div class="disclaimer-content brutal-raw-text" v-html="t('footer.disclaimerContent')"></div>
       <template #footer>
-        <el-button type="primary" @click="showDisclaimer = false">{{
-          t('footer.understood')
-        }}</el-button>
+        <div class="brutal-dialog-actions" style="justify-content: center">
+          <button class="brutal-btn-primary width-full" @click="showDisclaimer = false">
+            {{ t('footer.understood') }}
+          </button>
+        </div>
       </template>
     </el-dialog>
   </footer>
@@ -711,64 +737,240 @@
 </style>
 
 <style>
-  [data-theme='dark'] .el-dialog {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+  /* === Brutalist Dialogs Global Styles === */
+  .brutal-dialog {
+    border: 4px solid #111 !important;
+    border-radius: 0 !important;
+    box-shadow: 12px 12px 0px #111 !important;
+    background: #fff !important;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif !important;
   }
 
-  [data-theme='dark'] .el-dialog__header .el-dialog__title {
-    color: var(--text-primary);
+  /* Specific Header Colors based on Dialog Type */
+  .brutal-dialog-yellow .el-dialog__header {
+    background: #ffd900;
+  }
+  .brutal-dialog-blue .el-dialog__header {
+    background: #4b7bff;
+  }
+  .brutal-dialog-pink .el-dialog__header {
+    background: #ff4b4b;
   }
 
-  [data-theme='dark'] .el-dialog__body {
-    color: var(--text-secondary);
+  .brutal-dialog .el-dialog__header {
+    margin-right: 0 !important;
+    padding: 1.5rem !important;
+    border-bottom: 4px solid #111 !important;
   }
 
-  [data-theme='dark'] .el-input__wrapper,
-  [data-theme='dark'] .el-textarea__inner {
-    background-color: var(--bg-primary);
-    box-shadow: 0 0 0 1px var(--border-color) inset;
+  .brutal-dialog .el-dialog__title {
+    color: #111 !important;
+    font-weight: 900 !important;
+    font-size: 1.5rem !important;
+    text-transform: uppercase;
   }
 
-  [data-theme='dark'] .el-input__inner {
-    color: var(--text-primary);
+  .brutal-dialog .el-dialog__headerbtn {
+    top: 1.25rem !important;
+    right: 1.25rem !important;
+    width: 32px !important;
+    height: 32px !important;
+    background: #fff !important;
+    border: 3px solid #111 !important;
+    border-radius: 0 !important;
+    box-shadow: 3px 3px 0px #111 !important;
+    transition: all 0.1s;
+  }
+  .brutal-dialog .el-dialog__headerbtn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111 !important;
+    background: #ff4b4b !important;
+  }
+  .brutal-dialog .el-dialog__headerbtn:hover .el-dialog__close {
+    color: #fff !important;
   }
 
-  [data-theme='dark'] .el-form-item__label {
-    color: var(--text-primary);
+  .brutal-dialog .el-dialog__body {
+    padding: 2rem 1.5rem !important;
+    color: #111 !important;
   }
 
-  [data-theme='dark'] .changelog-version {
-    color: var(--text-primary);
+  .brutal-dialog .el-dialog__footer {
+    border-top: 4px solid #111 !important;
+    padding: 1.5rem !important;
   }
 
-  [data-theme='dark'] .changelog-date {
-    color: var(--text-muted);
+  /* Brutalist Buttons in Dialog */
+  .brutal-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
   }
 
-  [data-theme='dark'] .changelog-list li {
-    color: var(--text-secondary);
+  .brutal-dialog-actions .brutal-btn-primary,
+  .brutal-dialog-actions .brutal-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    text-transform: uppercase;
+    transition: all 0.1s;
   }
 
-  [data-theme='dark'] .el-dialog .el-button {
-    background: var(--bg-primary);
-    border-color: var(--border-color);
-    color: var(--text-primary);
+  .width-full {
+    width: 100%;
   }
 
-  [data-theme='dark'] .el-dialog .el-button--primary {
-    background: var(--accent-purple);
-    border-color: var(--accent-purple);
-    color: white;
+  .brutal-dialog-actions .brutal-btn-primary {
+    background: #00e572;
+    color: #111;
+  }
+  .brutal-dialog-actions .brutal-btn-primary:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+    background: #00c964;
+  }
+  .brutal-dialog-actions .brutal-btn-primary:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
   }
 
-  [data-theme='dark'] .el-dialog .el-button:hover {
-    opacity: 0.9;
-    border-color: var(--accent-purple);
-    color: var(--accent-purple);
+  .brutal-dialog-actions .brutal-btn-secondary {
+    background: #fff;
+    color: #111;
+  }
+  .brutal-dialog-actions .brutal-btn-secondary:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+    background: #e5e5e5;
+  }
+  .brutal-dialog-actions .brutal-btn-secondary:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
   }
 
-  [data-theme='dark'] .el-dialog .el-button--primary:hover {
-    color: white;
+  /* Form & Input Overrides */
+  .brutal-form .el-form-item__label {
+    font-weight: 800 !important;
+    color: #111 !important;
+    font-size: 1.1rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+
+  .brutal-form .el-input__wrapper,
+  .brutal-form .el-textarea__inner {
+    border: 3px solid #111 !important;
+    border-radius: 0 !important;
+    box-shadow: 4px 4px 0px #111 !important;
+    background: #fff !important;
+    color: #111 !important;
+    transition: all 0.2s;
+    font-weight: bold;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+  }
+
+  .brutal-form .el-input__wrapper:focus-within,
+  .brutal-form .el-textarea__inner:focus {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #4b7bff !important;
+  }
+
+  /* Disclaimer Content styling */
+  .brutal-raw-text {
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 600;
+    line-height: 1.8;
+    background: #fdfae5;
+    padding: 1.5rem;
+    border: 3px dashed #111;
+  }
+
+  /* --- Dark Mode Overrides (Global) --- */
+  [data-theme='dark'] .brutal-dialog {
+    background: #1a1a1a !important;
+    border-color: #eee !important;
+    box-shadow: 12px 12px 0px #eee !important;
+  }
+
+  [data-theme='dark'] .brutal-dialog .el-dialog__header {
+    border-bottom-color: #eee !important;
+    background: #111 !important;
+  }
+  [data-theme='dark'] .brutal-dialog-yellow .el-dialog__header {
+    background: #000 !important;
+    border-bottom: 4px solid #b28f00 !important;
+  }
+  [data-theme='dark'] .brutal-dialog-blue .el-dialog__header {
+    background: #000 !important;
+    border-bottom: 4px solid #2a4eb2 !important;
+  }
+  [data-theme='dark'] .brutal-dialog-pink .el-dialog__header {
+    background: #000 !important;
+    border-bottom: 4px solid #cc0000 !important;
+  }
+
+  [data-theme='dark'] .brutal-dialog .el-dialog__title {
+    color: #eee !important;
+  }
+  [data-theme='dark'] .brutal-dialog .el-dialog__body {
+    color: #eee !important;
+  }
+  [data-theme='dark'] .brutal-dialog .el-dialog__footer {
+    border-top-color: #eee !important;
+  }
+
+  [data-theme='dark'] .brutal-dialog .el-dialog__headerbtn {
+    background: #222 !important;
+    border-color: #eee !important;
+    box-shadow: 3px 3px 0px #eee !important;
+  }
+  [data-theme='dark'] .brutal-dialog .el-dialog__headerbtn .el-dialog__close {
+    color: #eee !important;
+  }
+  [data-theme='dark'] .brutal-dialog .el-dialog__headerbtn:hover {
+    background: #cc0000 !important;
+    box-shadow: 5px 5px 0px #eee !important;
+  }
+
+  [data-theme='dark'] .brutal-dialog-actions .brutal-btn-primary,
+  [data-theme='dark'] .brutal-dialog-actions .brutal-btn-secondary {
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-dialog-actions .brutal-btn-primary {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-dialog-actions .brutal-btn-secondary {
+    background: #222;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-dialog-actions .brutal-btn-primary:active,
+  [data-theme='dark'] .brutal-dialog-actions .brutal-btn-secondary:active {
+    box-shadow: 0 0 0 #eee;
+  }
+  [data-theme='dark'] .brutal-form .el-form-item__label {
+    color: #eee !important;
+  }
+
+  [data-theme='dark'] .brutal-form .el-input__wrapper,
+  [data-theme='dark'] .brutal-form .el-textarea__inner {
+    background: #111 !important;
+    border-color: #eee !important;
+    box-shadow: 4px 4px 0px #eee !important;
+    color: #eee !important;
+  }
+
+  [data-theme='dark'] .brutal-raw-text {
+    background: #222;
+    border-color: #eee;
+    color: #eee;
   }
 </style>

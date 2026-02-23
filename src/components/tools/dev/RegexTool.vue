@@ -1,27 +1,17 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <h1 class="tool-title">正则表达式测试</h1>
-      <div class="header-right">
-        <el-button text @click="clearAll">
-          <el-icon>
-            <Delete />
-          </el-icon>
-          <span>清空</span>
-        </el-button>
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <div class="header-left">
+          <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        </div>
+        <h1 class="brutal-title">正则<span>.测试()</span></h1>
+        <div class="header-right">
+          <button class="brutal-btn clear-btn" @click="clearAll">清空全部</button>
+        </div>
+      </header>
 
-    <div class="tool-content">
-      <div class="regex-input-section">
+      <div class="brutal-toolbar">
         <div class="regex-wrapper">
           <span class="slash">/</span>
           <input
@@ -41,69 +31,66 @@
           />
         </div>
 
-        <el-dropdown trigger="click" @command="handleTemplateSelect">
-          <el-button>
-            {{ currentTemplateName }}
-            <el-icon class="el-icon--right">
-              <ArrowDown />
-            </el-icon>
-          </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item v-for="temp in templates" :key="temp.name" :command="temp">
-                {{ temp.name }}
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
+        <div style="display: flex; gap: 1rem; align-items: center">
+          <el-dropdown trigger="click" @command="handleTemplateSelect">
+            <button class="brutal-btn brutal-action-btn">
+              {{ currentTemplateName }}
+              <el-icon class="el-icon--right"><ArrowDown /></el-icon>
+            </button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item v-for="temp in templates" :key="temp.name" :command="temp">
+                  {{ temp.name }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
 
-        <el-popover
-          v-model:visible="aiVisible"
-          placement="bottom"
-          title="AI 智能生成"
-          :width="300"
-          trigger="click"
-        >
-          <template #reference>
-            <el-button type="primary" :loading="isAiGenerating">
-              <el-icon class="mr-1">
-                <MagicStick />
-              </el-icon>
-              AI 生成
-            </el-button>
-          </template>
-          <div class="ai-prompt-box">
-            <el-input
-              v-model="aiPrompt"
-              type="textarea"
-              :rows="3"
-              placeholder="例如：匹配中国手机号，或者匹配 1900-2099 年之间的日期..."
-              @keyup.enter.ctrl="generateRegexWithAi"
-            />
-            <div class="mt-2 flex justify-end">
-              <el-button
-                size="small"
-                type="primary"
-                :disabled="!aiPrompt"
-                @click="generateRegexWithAi"
+          <el-popover
+            v-model:visible="aiVisible"
+            placement="bottom"
+            title="AI 智能生成"
+            :width="300"
+            trigger="click"
+          >
+            <template #reference>
+              <button
+                class="brutal-btn brutal-action-btn primary"
+                :class="{ 'is-loading': isAiGenerating }"
               >
-                生成正则
-              </el-button>
+                <el-icon class="mr-1"><MagicStick /></el-icon> AI 生成
+              </button>
+            </template>
+            <div class="ai-prompt-box">
+              <el-input
+                v-model="aiPrompt"
+                type="textarea"
+                :rows="3"
+                placeholder="例如：匹配中国手机号，或者匹配 1900-2099 年之间的日期..."
+                @keyup.enter.ctrl="generateRegexWithAi"
+              />
+              <div class="mt-2 flex justify-end">
+                <el-button
+                  size="small"
+                  type="primary"
+                  :disabled="!aiPrompt"
+                  @click="generateRegexWithAi"
+                >
+                  生成正则
+                </el-button>
+              </div>
             </div>
-          </div>
-        </el-popover>
+          </el-popover>
+        </div>
       </div>
 
-      <div v-if="regexError" class="error-message">
-        <el-icon>
-          <Warning />
-        </el-icon>
-        {{ regexError }}
+      <div v-if="regexError" class="brutal-status error">
+        <el-icon><Warning /></el-icon> {{ regexError }}
       </div>
 
-      <div class="test-area">
+      <div class="test-area brutal-pane bg-white mt-4">
         <div class="area-header">
-          <span class="label">测试文本</span>
+          <span class="brutal-label">测试文本</span>
           <div v-if="matchCount > 0" class="stats">找到 {{ matchCount }} 个匹配</div>
         </div>
 
@@ -128,9 +115,9 @@
         </div>
       </div>
 
-      <div v-if="matchGroups.length > 0" class="matches-list">
-        <div class="list-header">匹配详情</div>
-        <el-collapse>
+      <div v-if="matchGroups.length > 0" class="matches-list brutal-pane bg-white mt-4">
+        <div class="brutal-label" style="display: inline-block; margin-bottom: 1rem">匹配详情</div>
+        <el-collapse class="brutal-collapse">
           <el-collapse-item
             v-for="(match, index) in matchGroups.slice(0, 50)"
             :key="index"
@@ -146,18 +133,18 @@
             <div class="match-index">Index: {{ match.index }}</div>
           </el-collapse-item>
         </el-collapse>
-        <div v-if="matchGroups.length > 50" class="more-matches">仅显示前 50 个匹配项...</div>
+        <div v-if="matchGroups.length > 50" class="more-matches mt-4">仅显示前 50 个匹配项...</div>
       </div>
-    </div>
 
-    <footer class="footer">© 2026 LRM工具箱 - 正则表达式测试</footer>
+      <footer class="footer">© 2026 LRM工具箱 - 正则表达式测试</footer>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, computed, watch } from 'vue';
   import { useRouter } from 'vue-router';
-  import { ArrowLeft, Delete, ArrowDown, Warning, MagicStick } from '@element-plus/icons-vue';
+  import { ArrowDown, Warning, MagicStick } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
 
   const router = useRouter();
@@ -365,48 +352,148 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  /* 核心设计元素与变量定义 */
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f0f4f8;
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .tool-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: #ffffff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-  }
-
-  .header-left,
-  .header-right {
-    width: 100px;
-  }
-
-  .tool-content {
-    flex: 1;
-    width: 100%;
-    max-width: 1000px;
+  .brutal-container {
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
     display: flex;
     flex-direction: column;
+  }
+
+  .brutal-pane {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    border-radius: 0;
+    padding: 1.5rem;
+  }
+
+  .bg-yellow {
+    background-color: #ffd900 !important;
+  }
+  .bg-blue {
+    background-color: #4b7bff !important;
+    color: white !important;
+  }
+  .bg-green {
+    background-color: #00e572 !important;
+  }
+  .bg-pink {
+    background-color: #ff4b4b !important;
+    color: white !important;
+  }
+  .bg-white {
+    background-color: #fff !important;
+  }
+
+  /* Header */
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+    -webkit-text-stroke: 1px #111;
+    color: #111;
+  }
+
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  /* 按钮 */
+  .brutal-btn {
+    font-family: 'Syne', 'Noto Sans SC', 'PingFang SC', sans-serif;
+    font-weight: 800;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    background: #fff;
+    padding: 0.5rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.15s ease-out;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    border-radius: 0;
+    color: #111;
+  }
+
+  .brutal-action-btn {
+    padding: 0.3rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0px #111;
+  }
+
+  .brutal-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    border: 4px solid #111;
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 8px 8px 0px #111;
+    flex-wrap: wrap;
     gap: 1.5rem;
   }
 
-  .regex-input-section {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
+  .brutal-btn.clear-btn {
+    background: #ff4b4b;
+    color: #fff;
+  }
+
+  .brutal-action-btn.primary {
+    background: #00e572;
+    color: #111;
+  }
+
+  .brutal-label {
+    font-weight: 800;
+    font-size: 1.1rem;
+    border-bottom: 3px solid #111;
+    padding-bottom: 0.2rem;
+    display: inline-block;
+    color: #111;
+  }
+
+  .mt-4 {
+    margin-top: 1.5rem;
   }
 
   .regex-wrapper {
@@ -414,108 +501,96 @@
     display: flex;
     align-items: center;
     background: #ffffff;
-    border: 1px solid #dcdfe6;
-
-    border-radius: 4px;
+    border: 3px solid #111;
+    box-shadow: inset 4px 4px 0px rgba(0, 0, 0, 0.05);
     padding: 0 1rem;
+    height: 48px;
+    min-width: 300px;
     transition: all 0.2s;
-    height: 40px;
   }
 
   .regex-wrapper:focus-within {
-    border-color: #409eff;
-    box-shadow: 0 0 0 1px #409eff;
+    border-color: #4b7bff;
+    background: #fdfae5;
   }
 
   .slash {
-    color: #909399;
-    font-family: monospace;
-    font-weight: bold;
-    font-size: 1.2rem;
-    user-select: none;
+    color: #111;
+    font-weight: 900;
+    font-size: 1.5rem;
   }
 
+  .regex-field,
+  .flags-field {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: 'IBM Plex Mono', 'Consolas', monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #111;
+  }
   .regex-field {
     flex: 1;
-    border: none;
-    outline: none;
-    font-family: 'Consolas', monospace;
-    font-size: 1.1rem;
-    color: #2c3e50;
     margin: 0 0.5rem;
   }
-
   .flags-field {
     width: 60px;
-    border: none;
-    border-left: 1px solid #dcdfe6;
-    outline: none;
-    font-family: 'Consolas', monospace;
-    font-size: 1rem;
-    color: #909399;
-
     padding-left: 0.5rem;
-    background: transparent;
+    border-left: 3px solid #111;
   }
 
-  .error-message {
-    color: #f56c6c;
-    background: #fef0f0;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    display: flex;
+  .brutal-status.error {
+    background: #ff4b4b;
+    color: #fff;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    padding: 1rem;
+    font-weight: 800;
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-  }
-
-  .test-area {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    flex: 1;
-    min-height: 300px;
-  }
-
-  .area-header {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.875rem;
-    color: #64748b;
-    font-weight: 500;
-  }
-
-  .stats {
-    color: #409eff;
+    margin-top: 1.5rem;
   }
 
   .editor-container {
     position: relative;
-    flex: 1;
-    border: 1px solid #dcdfe6;
-    border-radius: 8px;
-    background: #ffffff;
-    overflow: hidden;
-    font-family: 'Consolas', monospace;
+    border: 3px solid #111;
+    box-shadow: inset 4px 4px 0px rgba(0, 0, 0, 0.05);
+    background: #fafafa;
+    min-height: 250px;
+    font-family: 'IBM Plex Mono', 'Consolas', monospace;
     font-size: 16px;
     line-height: 1.5;
+    margin-top: 1rem;
   }
 
-  .highlight-layer,
-  .input-layer {
+  .input-layer,
+  .highlight-layer {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     padding: 1rem;
-    margin: 0;
     border: none;
     outline: none;
     box-sizing: border-box;
     overflow: auto;
     white-space: pre-wrap;
     word-wrap: break-word;
+  }
+
+  .input-layer {
+    z-index: 2;
+    background: transparent;
+    color: #111;
+    font-family: inherit;
+    resize: none;
+  }
+
+  .input-layer:focus {
+    background: rgba(255, 255, 255, 0.5);
   }
 
   .highlight-layer {
@@ -525,123 +600,206 @@
   }
 
   .highlight-layer :deep(.highlight-match) {
-    background-color: #d1edff;
-    border-radius: 2px;
-    box-shadow: 0 0 0 1px #a4d8ff;
+    background-color: #ffd900;
+    border: 2px solid #111;
+    box-shadow: 2px 2px 0px #111;
     color: transparent;
+    border-radius: 0;
   }
 
-  .input-layer {
-    z-index: 2;
-    color: #1e293b;
-    background: transparent;
-    resize: none;
+  .area-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
   }
 
-  .matches-list {
-    background: #ffffff;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
+  .stats {
+    font-weight: 800;
+    color: #4b7bff;
+  }
+
+  :deep(.brutal-collapse) {
+    border: 3px solid #111;
+    border-bottom: none;
+  }
+  :deep(.el-collapse-item__header) {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 800;
+    background: #fdfae5;
+    border-bottom: 3px solid #111;
+    color: #111;
+    padding: 0 1rem;
+  }
+
+  :deep(.el-collapse-item__wrap) {
+    border-bottom: 3px solid #111;
+  }
+
+  :deep(.el-collapse-item__content) {
     padding: 1rem;
-  }
-
-  .list-header {
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-    color: #1e293b;
-  }
-
-  .group-detail {
-    padding-left: 1rem;
-    margin-bottom: 0.5rem;
+    background: #fff;
   }
 
   .group-item {
-    font-size: 0.875rem;
-    color: #606266;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 0.5rem;
   }
-
   .group-label {
-    font-weight: 500;
     margin-right: 0.5rem;
+    font-weight: 800;
   }
-
   .group-value {
+    background: #eee;
+    border: 2px solid #111;
+    padding: 2px 6px;
     font-family: monospace;
-    color: #1e293b;
-    background: #f2f3f5;
-    padding: 0 4px;
-    border-radius: 2px;
+    word-break: break-all;
   }
-
   .match-index {
-    font-size: 0.75rem;
-    color: #909399;
-  }
-
-  .more-matches {
-    text-align: center;
-    color: #909399;
-    font-size: 0.875rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #666;
     margin-top: 0.5rem;
-  }
-
-  [data-theme='dark'] .tool-page {
-    background: var(--bg-primary);
-  }
-
-  [data-theme='dark'] .tool-header {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
-  }
-
-  [data-theme='dark'] .tool-title {
-    color: var(--text-primary);
-  }
-
-  [data-theme='dark'] .regex-wrapper {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
-  }
-
-  [data-theme='dark'] .regex-field,
-  [data-theme='dark'] .flags-field {
-    color: var(--text-primary);
-  }
-
-  [data-theme='dark'] .editor-container {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
-  }
-
-  [data-theme='dark'] .input-layer {
-    color: var(--text-primary);
-  }
-
-  [data-theme='dark'] .highlight-layer :deep(.highlight-match) {
-    background-color: rgba(64, 158, 255, 0.3);
-    box-shadow: 0 0 0 1px rgba(64, 158, 255, 0.5);
-  }
-
-  [data-theme='dark'] .matches-list {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
-  }
-
-  [data-theme='dark'] .list-header {
-    color: var(--text-primary);
-  }
-
-  [data-theme='dark'] .group-value {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--text-primary);
   }
 
   .footer {
     text-align: center;
-    padding: 3rem 0;
-    color: var(--text-secondary, #64748b);
-    font-size: 0.85rem;
+    padding: 2rem 0;
+    font-weight: 700;
+    border-top: 3px solid #111;
+    margin-top: 2rem;
+    color: #111;
+  }
+
+  /* Dark Mode 适配 */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-toolbar,
+  [data-theme='dark'] .brutal-status.error {
+    background: #1a1a1a !important;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-toolbar {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 7px 7px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #00994c !important;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-btn.clear-btn {
+    background: #cc0000 !important;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .bg-yellow {
+    background-color: #b28f00 !important;
+  }
+  [data-theme='dark'] .bg-blue {
+    background-color: #2a4eb2 !important;
+    color: #eee !important;
+  }
+  [data-theme='dark'] .bg-green {
+    background-color: #00994c !important;
+  }
+  [data-theme='dark'] .bg-pink {
+    background-color: #cc0000 !important;
+    color: white !important;
+  }
+  [data-theme='dark'] .bg-white {
+    background-color: #1a1a1a !important;
+    color: #eee !important;
+  }
+
+  [data-theme='dark'] .regex-wrapper {
+    background: #111;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .regex-wrapper:focus-within {
+    border-color: #4b7bff;
+    background: #222;
+  }
+  [data-theme='dark'] .slash,
+  [data-theme='dark'] .regex-field,
+  [data-theme='dark'] .flags-field {
+    color: #eee;
+  }
+  [data-theme='dark'] .flags-field {
+    border-color: #eee;
+  }
+
+  [data-theme='dark'] .editor-container {
+    background: #111;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .input-layer {
+    color: #eee;
+  }
+  [data-theme='dark'] .input-layer:focus {
+    background: rgba(0, 0, 0, 0.5);
+  }
+  [data-theme='dark'] .highlight-layer :deep(.highlight-match) {
+    background-color: #00994c;
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-title {
+    -webkit-text-stroke: 1px #eee;
+    text-shadow: 3px 3px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-label,
+  [data-theme='dark'] .footer {
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .stats {
+    color: #4b7bff;
+  }
+
+  :deep([data-theme='dark'] .brutal-collapse) {
+    border-color: #eee;
+  }
+  :deep([data-theme='dark'] .el-collapse-item__header) {
+    background: #222;
+    border-color: #eee;
+    color: #eee;
+  }
+  :deep([data-theme='dark'] .el-collapse-item__wrap) {
+    border-color: #eee;
+  }
+  :deep([data-theme='dark'] .el-collapse-item__content) {
+    background: #1a1a1a;
+    color: #eee;
+  }
+  [data-theme='dark'] .group-item {
+    color: #eee;
+  }
+  [data-theme='dark'] .group-value {
+    background: #111;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .match-index {
+    color: #aaa;
   }
 </style>

@@ -1,155 +1,136 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          <span>返回</span>
-        </el-button>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">时间戳<span>.转换()</span></h1>
+        <button class="brutal-btn clear-btn" @click="getCurrentTime">● 刷新当前</button>
+      </header>
+
+      <!-- Current Time Section -->
+      <div class="brutal-pane current-time-pane" style="margin-bottom: 3rem">
+        <div class="pane-header bg-yellow">
+          <span>系统.当前时间</span>
+        </div>
+        <div class="current-time-content">
+          <div class="time-main">{{ nowStr }}</div>
+          <div class="time-sub">
+            <div class="ts-badge">
+              <span>Unix (秒):</span>
+              <strong>{{ nowUnix }}</strong>
+              <button class="brutal-action-btn small" @click="handleCopy(nowUnix)">复制</button>
+            </div>
+            <div class="ts-badge">
+              <span>Unix (毫秒):</span>
+              <strong>{{ nowUnixMs }}</strong>
+              <button class="brutal-action-btn small" @click="handleCopy(nowUnixMs)">复制</button>
+            </div>
+          </div>
+        </div>
       </div>
-      <h1 class="tool-title">时间戳转换</h1>
-      <div class="header-right">
-        <el-button text @click="getCurrentTime">
-          <el-icon>
-            <Refresh />
-          </el-icon>
-          <span>刷新</span>
-        </el-button>
+
+      <div class="brutal-grid">
+        <!-- Timestamp to Date -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-blue">
+            <span class="text-white">时间戳 -> 日期</span>
+          </div>
+          <div class="converter-body">
+            <div class="input-row">
+              <input
+                v-model="tsInput"
+                class="brutal-input flex-1"
+                placeholder="输入整数时间戳..."
+                @input="convertTsToDate"
+              />
+              <select v-model="tsUnit" class="brutal-select" @change="convertTsToDate">
+                <option value="s">秒 (s)</option>
+                <option value="ms">毫秒 (ms)</option>
+              </select>
+            </div>
+
+            <div class="result-box mt-4">
+              <div class="result-row">
+                <span class="label">北京时间:</span>
+                <span class="val">{{ tsToDateResult || '等待输入...' }}</span>
+                <button
+                  v-if="tsToDateResult && tsToDateResult !== '无效的时间戳'"
+                  class="brutal-action-btn small"
+                  @click="handleCopy(tsToDateResult)"
+                >
+                  复制
+                </button>
+              </div>
+              <div class="result-row">
+                <span class="label">ISO 8601:</span>
+                <span class="val">{{ tsToIsoResult || '等待输入...' }}</span>
+                <button
+                  v-if="tsToIsoResult"
+                  class="brutal-action-btn small"
+                  @click="handleCopy(tsToIsoResult)"
+                >
+                  复制
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Date to Timestamp -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span>日期 -> 时间戳</span>
+          </div>
+          <div class="converter-body">
+            <div class="input-row">
+              <input
+                v-model="dateInputLocal"
+                type="datetime-local"
+                class="brutal-input flex-1"
+                step="1"
+                @input="convertDateToTsLocal"
+              />
+            </div>
+
+            <div class="result-box mt-4">
+              <div class="result-row">
+                <span class="label">Unix (秒):</span>
+                <span class="val">{{ dateToTsResult || '等待输入...' }}</span>
+                <button
+                  v-if="dateToTsResult && dateToTsResult !== '无效的日期'"
+                  class="brutal-action-btn small"
+                  @click="handleCopy(dateToTsResult)"
+                >
+                  复制
+                </button>
+              </div>
+              <div class="result-row">
+                <span class="label">Unix (毫秒):</span>
+                <span class="val">{{ dateToTsMsResult || '等待输入...' }}</span>
+                <button
+                  v-if="dateToTsMsResult"
+                  class="brutal-action-btn small"
+                  @click="handleCopy(dateToTsMsResult)"
+                >
+                  复制
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </header>
-
-    <div class="tool-content">
-      <section class="current-time-card">
-        <div class="card-label">当前时间</div>
-        <div class="time-display">{{ nowStr }}</div>
-        <div class="timestamp-display">
-          <span>Unix 时间戳 (秒):</span>
-          <span class="highlight">{{ nowUnix }}</span>
-          <el-button link type="primary" size="small" @click="handleCopy(nowUnix)">复制</el-button>
-        </div>
-        <div class="timestamp-display">
-          <span>Unix 时间戳 (毫秒):</span>
-          <span class="highlight">{{ nowUnixMs }}</span>
-          <el-button link type="primary" size="small" @click="handleCopy(nowUnixMs)"
-            >复制</el-button
-          >
-        </div>
-      </section>
-
-      <section class="converter-section">
-        <h2 class="section-title">
-          <el-icon>
-            <Timer />
-          </el-icon>
-          时间戳 转 日期
-        </h2>
-        <div class="converter-box">
-          <div class="input-group">
-            <el-input
-              v-model="tsInput"
-              placeholder="输入 Unix 时间戳 (秒或毫秒)"
-              clearable
-              @input="convertTsToDate"
-            >
-              <template #append>
-                <el-select v-model="tsUnit" style="width: 80px">
-                  <el-option label="秒" value="s" />
-                  <el-option label="毫秒" value="ms" />
-                </el-select>
-              </template>
-            </el-input>
-          </div>
-          <div class="arrow-divider">
-            <el-icon>
-              <ArrowDown />
-            </el-icon>
-          </div>
-          <div class="result-group">
-            <div class="result-item">
-              <span class="label">北京时间:</span>
-              <span class="value">{{ tsToDateResult }}</span>
-              <el-button
-                v-if="tsToDateResult"
-                link
-                icon="CopyDocument"
-                @click="handleCopy(tsToDateResult)"
-              />
-            </div>
-            <div class="result-item">
-              <span class="label">ISO 8601:</span>
-              <span class="value">{{ tsToIsoResult }}</span>
-              <el-button
-                v-if="tsToIsoResult"
-                link
-                icon="CopyDocument"
-                @click="handleCopy(tsToIsoResult)"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="converter-section">
-        <h2 class="section-title">
-          <el-icon>
-            <Calendar />
-          </el-icon>
-          日期 转 时间戳
-        </h2>
-        <div class="converter-box">
-          <div class="input-group">
-            <el-date-picker
-              v-model="dateInput"
-              type="datetime"
-              placeholder="选择日期时间"
-              style="width: 100%"
-              @change="convertDateToTs"
-            />
-          </div>
-          <div class="arrow-divider">
-            <el-icon>
-              <ArrowDown />
-            </el-icon>
-          </div>
-          <div class="result-group">
-            <div class="result-item">
-              <span class="label">Unix (秒):</span>
-              <span class="value">{{ dateToTsResult }}</span>
-              <el-button
-                v-if="dateToTsResult"
-                link
-                icon="CopyDocument"
-                @click="handleCopy(dateToTsResult)"
-              />
-            </div>
-            <div class="result-item">
-              <span class="label">Unix (毫秒):</span>
-              <span class="value">{{ dateToTsMsResult }}</span>
-              <el-button
-                v-if="dateToTsMsResult"
-                link
-                icon="CopyDocument"
-                @click="handleCopy(dateToTsMsResult)"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
-
-    <footer class="footer">© 2026 LRM工具箱 - 时间戳转换</footer>
   </div>
 </template>
 
 <script setup>
   import { ref, onMounted, onUnmounted } from 'vue';
   import { useRouter } from 'vue-router';
-  import { ArrowLeft, Refresh, Timer, Calendar, ArrowDown } from '@element-plus/icons-vue';
   import dayjs from 'dayjs';
+  import { useCopy } from '@/composables/useCopy';
 
   const router = useRouter();
+  const { copyToClipboard } = useCopy();
 
   const nowStr = ref('');
   const nowUnix = ref(0);
@@ -182,6 +163,7 @@
     const ts = parseInt(tsInput.value);
     if (isNaN(ts)) {
       tsToDateResult.value = '无效的时间戳';
+      tsToIsoResult.value = '';
       return;
     }
 
@@ -194,6 +176,7 @@
 
     if (!date.isValid()) {
       tsToDateResult.value = '无效的时间戳';
+      tsToIsoResult.value = '';
       return;
     }
 
@@ -201,18 +184,23 @@
     tsToIsoResult.value = date.toISOString();
   }
 
-  const dateInput = ref(null);
+  const dateInputLocal = ref('');
   const dateToTsResult = ref('');
   const dateToTsMsResult = ref('');
 
-  function convertDateToTs() {
-    if (!dateInput.value) {
+  function convertDateToTsLocal() {
+    if (!dateInputLocal.value) {
       dateToTsResult.value = '';
       dateToTsMsResult.value = '';
       return;
     }
 
-    const date = dayjs(dateInput.value);
+    const date = dayjs(dateInputLocal.value);
+    if (!date.isValid()) {
+      dateToTsResult.value = '无效的日期';
+      dateToTsMsResult.value = '';
+      return;
+    }
     dateToTsResult.value = date.unix();
     dateToTsMsResult.value = date.valueOf();
   }
@@ -225,16 +213,9 @@
     }
   }
 
-  import { useCopy } from '@/composables/useCopy';
-
-  const { copyToClipboard } = useCopy();
-  // Renaming to avoid conflict if template uses copyToClipboard directly
-  // The template uses copyToClipboard(text), useCopy's signature is (text, options).
-  // It's compatible if we don't pass options, or we can wrap it.
-
-  // The template calls copyToClipboard with numbers (Unix timestamp), so we need to ensure string conversion.
   function handleCopy(text) {
-    copyToClipboard(text.toString(), { success: '复制成功' });
+    if (!text || text === '无效的时间戳' || text === '无效的日期') return;
+    copyToClipboard(text.toString(), { success: '已安全复制到剪贴板' });
   }
 
   onMounted(() => {
@@ -243,8 +224,8 @@
 
     tsInput.value = dayjs().unix().toString();
     convertTsToDate();
-    dateInput.value = new Date();
-    convertDateToTs();
+    dateInputLocal.value = dayjs().format('YYYY-MM-DDTHH:mm:ss');
+    convertDateToTsLocal();
   });
 
   onUnmounted(() => {
@@ -253,185 +234,429 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Orbitron:wght@700&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f0f4f8;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+
+  .brutal-container {
+    max-width: 1400px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
   }
 
-  .tool-header {
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-btn.clear-btn {
+    background: #00e572;
+    color: #111;
+  }
+
+  .brutal-action-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.6rem 2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+  }
+
+  .brutal-action-btn.small {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.9rem;
+    border-width: 2px;
+    box-shadow: 3px 3px 0px #111;
+  }
+
+  .brutal-action-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+
+  .brutal-action-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .current-time-pane {
+    background: #fff;
+    overflow: hidden;
+  }
+
+  .current-time-content {
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: repeating-linear-gradient(45deg, #ffffff, #ffffff 10px, #f8fafc 10px, #f8fafc 20px);
+  }
+
+  .time-main {
+    font-family: 'Orbitron', monospace;
+    font-size: 5rem;
+    font-weight: 700;
+    text-shadow:
+      6px 6px 0px #ffd900,
+      10px 10px 0px #111;
+    margin-bottom: 2rem;
+    letter-spacing: -2px;
+    text-align: center;
+  }
+
+  .time-sub {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .ts-badge {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: #ffffff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    gap: 1rem;
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    box-shadow: 6px 6px 0px #111;
   }
 
-  .tool-title {
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .text-white {
+    color: #fff;
+  }
+
+  .converter-body {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .brutal-input {
+    flex: 1;
+    border: 4px solid #111;
+    padding: 1rem;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
     font-size: 1.25rem;
     font-weight: 600;
-    color: #1e293b;
+    background: #fff;
+    color: #111;
+    box-shadow: 4px 4px 0px #111;
+    outline: none;
+    transition: all 0.1s;
   }
 
-  .header-left,
-  .header-right {
-    width: 100px;
+  .brutal-input:focus {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
   }
 
-  .header-right {
-    text-align: right;
+  .brutal-select {
+    border: 4px solid #111;
+    padding: 0 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    background: #ffd900;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    outline: none;
   }
 
-  .tool-content {
-    flex: 1;
-    max-width: 800px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 2rem 1.5rem;
+  .result-box {
+    margin-top: 2rem;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-  }
-
-  .current-time-card {
-    background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-    border-radius: 16px;
-    padding: 2rem;
-    color: white;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(6, 182, 212, 0.2);
-  }
-
-  .card-label {
-    font-size: 0.875rem;
-    opacity: 0.9;
-    margin-bottom: 0.5rem;
-  }
-
-  .time-display {
-    font-size: 2.5rem;
-    font-weight: 700;
-    font-family: 'Orbitron', monospace;
-    margin-bottom: 1.5rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .timestamp-display {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    font-size: 0.875rem;
-    opacity: 0.9;
-    margin-bottom: 0.5rem;
-  }
-
-  .timestamp-display .highlight {
-    font-family: monospace;
-    font-size: 1rem;
-    font-weight: 600;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 0.1rem 0.5rem;
-    border-radius: 4px;
-  }
-
-  .converter-section {
-    background: #ffffff;
-    border-radius: 12px;
+    background: #fdfae5;
+    border: 3px solid #111;
     padding: 1.5rem;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 6px 6px 0px #111;
   }
 
-  .section-title {
+  .result-row {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 1rem;
-  }
-
-  .converter-box {
-    display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     gap: 1rem;
+    border-bottom: 2px dashed #111;
+    padding-bottom: 0.5rem;
   }
 
-  .arrow-divider {
-    display: flex;
-    justify-content: center;
-    color: #94a3b8;
+  .result-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
   }
 
-  .result-group {
-    background: #f8fafc;
-    border-radius: 8px;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+  .result-row .label {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    min-width: 100px;
   }
 
-  .result-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .result-item .label {
-    color: #64748b;
-    font-size: 0.875rem;
-    width: 80px;
-  }
-
-  .result-item .value {
+  .result-row .val {
     flex: 1;
-    font-family: monospace;
-    color: #1e293b;
-    font-weight: 500;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: right;
     word-break: break-all;
   }
 
-  [data-theme='dark'] .tool-page {
-    background: var(--bg-primary);
+  .mt-4 {
+    margin-top: 2rem;
+  }
+  .flex-1 {
+    flex: 1;
   }
 
-  [data-theme='dark'] .tool-header {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
+  @media (max-width: 1024px) {
+    .brutal-title {
+      font-size: 2.5rem;
+    }
+    .brutal-grid {
+      grid-template-columns: 1fr;
+    }
+    .time-main {
+      font-size: 3rem;
+      text-shadow:
+        3px 3px 0px #ffd900,
+        6px 6px 0px #111;
+    }
+    .time-sub {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .ts-badge {
+      justify-content: space-between;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .input-row {
+      flex-direction: column;
+    }
   }
 
-  [data-theme='dark'] .tool-title {
-    color: var(--text-primary);
+  /* Dark Mode Overrides */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
   }
 
-  [data-theme='dark'] .token-input :deep(.el-textarea__inner) {
-    background: var(--bg-input);
-    border-color: var(--border-color);
-    color: var(--text-primary);
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-input,
+  [data-theme='dark'] .result-box,
+  [data-theme='dark'] .ts-badge {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
   }
 
-  [data-theme='dark'] .converter-section {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
+  [data-theme='dark'] .current-time-content {
+    background: repeating-linear-gradient(45deg, #1a1a1a, #1a1a1a 10px, #222 10px, #222 20px);
   }
 
-  [data-theme='dark'] .section-title,
-  [data-theme='dark'] .result-item .value {
-    color: var(--text-primary);
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .ts-badge,
+  [data-theme='dark'] .result-box {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
   }
 
-  [data-theme='dark'] .result-group {
-    background: var(--bg-glass);
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-input,
+  [data-theme='dark'] .brutal-select {
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover,
+  [data-theme='dark'] .brutal-input:focus {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:active {
+    box-shadow: 0px 0px 0px #eee;
   }
 
-  .footer {
-    text-align: center;
-    padding: 3rem 0;
-    color: var(--text-secondary, #64748b);
-    font-size: 0.85rem;
+  [data-theme='dark'] .brutal-action-btn.small {
+    box-shadow: 3px 3px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .time-main {
+    text-shadow:
+      6px 6px 0px #b28f00,
+      10px 10px 0px #eee;
+  }
+
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+
+  [data-theme='dark'] .result-row {
+    border-bottom-color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-select {
+    background: #b28f00;
+    border-color: #eee;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .brutal-btn.clear-btn {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  @media (max-width: 1024px) {
+    [data-theme='dark'] .time-main {
+      text-shadow:
+        3px 3px 0px #b28f00,
+        6px 6px 0px #eee;
+    }
+  }
+
+  /* Ensure datetime picker works decently in brutal format */
+  ::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+  }
+  [data-theme='dark'] ::-webkit-calendar-picker-indicator {
+    filter: invert(1);
   }
 </style>

@@ -39,6 +39,35 @@
         </div>
       </section>
 
+      <!-- Recommended Tools Section -->
+      <div
+        v-if="activeCategory === 'all' && !searchKeyword && recommendedTools.length > 0"
+        class="brutal-content-wrapper"
+        style="padding-bottom: 0"
+      >
+        <div class="brutal-section-header">
+          <h2 class="brutal-section-title bg-title-pink">
+            <el-icon><StarFilled /></el-icon>
+            随机推荐
+          </h2>
+          <div class="bg-title-shadow"></div>
+        </div>
+
+        <section class="tools-grid-wrapper">
+          <div class="tools-grid">
+            <ToolCard
+              v-for="tool in recommendedTools"
+              :key="'rec-' + tool.id"
+              :tool="tool"
+              :is-favorite="userStore.isFavorite(tool.id)"
+              @click="handleToolClick"
+              @view-detail="openToolModal"
+              @toggle-favorite="handleToggleFavorite"
+            />
+          </div>
+        </section>
+      </div>
+
       <div class="brutal-content-wrapper">
         <div v-if="!searchKeyword" class="brutal-section-header">
           <h2 class="brutal-section-title bg-title">
@@ -86,7 +115,16 @@
     <AppFooter />
 
     <ToolModal :visible="modalVisible" :tool="selectedTool" @close="modalVisible = false" />
-    <el-backtop :right="40" :bottom="40" />
+
+    <!-- Floating Action Navigation (Up & Down) -->
+    <div class="brutal-floating-actions" :class="{ 'is-visible': showFloatNav }">
+      <button class="brutal-action-btn brutal-btn-up" title="返回顶部" @click="scrollToTop">
+        <el-icon><ArrowUp /></el-icon>
+      </button>
+      <button class="brutal-action-btn brutal-btn-down" title="到达底部" @click="scrollToBottom">
+        <el-icon><ArrowDown /></el-icon>
+      </button>
+    </div>
   </div>
 </template>
 
@@ -101,6 +139,7 @@
     Search,
     Grid,
     ArrowDown,
+    ArrowUp,
     Monitor,
     Document,
     Picture,
@@ -109,7 +148,8 @@
     Service,
     Coffee,
     Notebook,
-    IceTea
+    IceTea,
+    StarFilled
   } from '@element-plus/icons-vue';
   import AppHeader from '@/components/layout/AppHeader.vue';
   import AppFooter from '@/components/layout/AppFooter.vue';
@@ -134,6 +174,7 @@
 
   const allTools = ref([]);
   const displayedTools = ref([]);
+  const recommendedTools = ref([]);
 
   const getExpandedCategories = () => {
     try {
@@ -178,6 +219,17 @@
     loading.value = false;
     loadAllTools().then(res => {
       allTools.value = res;
+
+      // Select recommended tools
+      const perCategory = 2; // get at least 2 random hot tools per category
+      let recommendedList = [];
+      categories.forEach(cat => {
+        const catTools = res.filter(t => t.category === cat.id);
+        const shuffled = [...catTools].sort(() => 0.5 - Math.random());
+        recommendedList.push(...shuffled.slice(0, perCategory));
+      });
+      // Final shuffle to randomize across categories, take exactly top 6
+      recommendedTools.value = recommendedList.sort(() => 0.5 - Math.random()).slice(0, 6);
     });
   });
 
@@ -256,6 +308,26 @@
   function handleShowAll() {
     isShowAll.value = true;
   }
+
+  // Float Nav Logic
+  const showFloatNav = ref(false);
+
+  const handleScroll = () => {
+    // Show buttons if scrolled down a bit (e.g. 200px)
+    showFloatNav.value = window.scrollY > 200;
+  };
+
+  onMounted(() => {
+    window.addEventListener('scroll', handleScroll);
+  });
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const scrollToBottom = () => {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  };
 </script>
 
 <style scoped>
@@ -321,15 +393,17 @@
   }
 
   .brutal-hero-title {
-    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-family: 'Syne', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', 'Heiti SC', sans-serif;
     font-size: 5rem;
-    font-weight: 800;
-    margin: 0 0 1rem 0;
-    text-transform: uppercase;
-    letter-spacing: -3px;
-    position: relative;
-    z-index: 2;
+    font-weight: 900;
+    margin: 0 0 2rem 0;
     color: #111;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    line-height: 1.1;
+    position: relative;
+    display: inline-block;
+    -webkit-text-stroke: 1px #111;
   }
 
   .brutal-hero-title span {
@@ -480,6 +554,11 @@
     z-index: 2;
   }
 
+  .bg-title-pink {
+    background: #ff9fb2;
+    color: #111;
+  }
+
   .bg-title-shadow {
     position: absolute;
     top: 8px;
@@ -540,16 +619,16 @@
   }
 
   .empty-icon-box {
-    width: 100px;
-    height: 100px;
-    background: #ff4b4b;
+    width: 80px;
+    height: 80px;
     border: 4px solid #111;
-    box-shadow: 8px 8px 0px #111;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
-    transform: rotate(10deg);
+    box-shadow: 4px 4px 0px #111;
+    transform: rotate(5deg);
+    margin-bottom: 1.5rem;
+    color: #4b7bff;
   }
 
   .empty-text {
@@ -560,6 +639,55 @@
     border: 3px solid #111;
     padding: 0.5rem 1.5rem;
     box-shadow: 4px 4px 0px #111;
+  }
+
+  /* Floating Actions UI */
+  .brutal-floating-actions {
+    position: fixed;
+    right: 2rem;
+    bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .brutal-floating-actions.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .brutal-action-btn {
+    width: 60px;
+    height: 60px;
+    background: #fff;
+    border: 4px solid #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: #111;
+    box-shadow: 6px 6px 0px #111;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .brutal-action-btn.brutal-btn-up:hover,
+  .brutal-action-btn.brutal-btn-down:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 10px 10px 0px #111;
+    background: #e5e5e5;
+    color: #111;
+  }
+
+  .brutal-action-btn:active {
+    transform: translate(2px, 2px) !important;
+    box-shadow: 0px 0px 0px #111 !important;
   }
 
   @media (max-width: 1024px) {
@@ -594,6 +722,18 @@
     }
     .search-shortcut {
       display: none;
+    }
+    .brutal-floating-actions {
+      right: 1.5rem;
+      bottom: 1.5rem;
+      gap: 0.75rem;
+    }
+    .brutal-action-btn {
+      width: 50px;
+      height: 50px;
+      font-size: 1.25rem;
+      border-width: 3px;
+      box-shadow: 4px 4px 0px #111;
     }
   }
 
@@ -630,6 +770,7 @@
 
   [data-theme='dark'] .brutal-hero-title {
     color: #eee;
+    -webkit-text-stroke: 1px #eee;
   }
   [data-theme='dark'] .brutal-hero-title span {
     text-shadow:
@@ -691,29 +832,46 @@
     box-shadow: 0px 0px 0px #eee;
   }
 
-  [data-theme='dark'] .brutal-section-title {
+  [data-theme='dark'] .bg-title {
     background: #2a4eb2;
-    color: #fff;
+    color: #eee;
     border-color: #eee;
+  }
+  [data-theme='dark'] .bg-title-pink {
+    background: #b25465;
+    color: #eee;
   }
   [data-theme='dark'] .bg-title-shadow {
     background: #eee;
   }
 
-  [data-theme='dark'] .empty-icon-box {
-    background: #cc0000;
+  [data-theme='dark'] .brutal-empty-state {
+    background: #1a1a1a;
     border-color: #eee;
     box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-empty-state .empty-text {
     color: #eee;
   }
-  [data-theme='dark'] .empty-text {
-    background: #222;
+  [data-theme='dark'] .brutal-empty-state .empty-icon-box {
     border-color: #eee;
     box-shadow: 4px 4px 0px #eee;
-    color: #eee;
   }
 
-  [data-theme='dark'] :deep(.brutal-app-header-override) {
-    border-bottom: 4px solid #eee !important;
+  /* Dark Mode Floating Actions */
+  [data-theme='dark'] .brutal-action-btn {
+    background: #222;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.brutal-btn-up:hover,
+  [data-theme='dark'] .brutal-action-btn.brutal-btn-down:hover {
+    background: #444;
+    color: #fff;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:active {
+    box-shadow: 0px 0px 0px #eee !important;
   }
 </style>

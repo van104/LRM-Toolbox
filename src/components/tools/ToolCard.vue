@@ -139,25 +139,25 @@
   }
 
   .bg-yellow {
-    background: #ffd900;
+    background: #ffeba0;
     color: #111;
   }
   .bg-blue {
-    background: #4b7bff;
-    color: #fff;
+    background: #89b4f8;
+    color: #111;
   }
   .bg-pink {
-    background: #ff4b4b;
-    color: #fff;
+    background: #ff9fb2;
+    color: #111;
   }
   .bg-green {
-    background: #00e572;
+    background: #81e6b3;
     color: #111;
   }
 
   .bg-blue .custom-icon,
   .bg-pink .custom-icon {
-    filter: brightness(0) invert(1);
+    filter: brightness(0);
   }
 
   .card-icon-wrapper {
@@ -217,18 +217,20 @@
   }
 
   .brutal-card-title {
-    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-family: 'Syne', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', 'Heiti SC', sans-serif;
     font-size: 1.25rem;
-    font-weight: 800;
+    font-weight: 900;
     margin: 0 0 0.5rem 0;
     color: #111;
     text-transform: uppercase;
     letter-spacing: -0.5px;
+    -webkit-text-stroke: 0.5px #111;
   }
 
   .brutal-card-summary {
-    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', monospace;
     font-size: 0.85rem;
+    font-weight: 600;
     color: #444;
     line-height: 1.5;
     margin: 0;
@@ -338,6 +340,7 @@
 
   [data-theme='dark'] .brutal-card-title {
     color: #eee;
+    -webkit-text-stroke: 0.5px #eee;
   }
   [data-theme='dark'] .brutal-card-summary {
     color: #aaa;
@@ -363,19 +366,19 @@
   }
 
   [data-theme='dark'] .bg-yellow {
-    background: #b28f00;
+    background: #a98d36;
     color: #fff;
   }
   [data-theme='dark'] .bg-blue {
-    background: #2a4eb2;
+    background: #405d9e;
     color: #fff;
   }
   [data-theme='dark'] .bg-pink {
-    background: #cc0000;
+    background: #b25465;
     color: #fff;
   }
   [data-theme='dark'] .bg-green {
-    background: #00994c;
+    background: #3c9165;
     color: #fff;
   }
 </style>

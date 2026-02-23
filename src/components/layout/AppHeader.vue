@@ -299,7 +299,7 @@
     }
 
     const transition = document.startViewTransition(async () => {
-      themeStore.toggleTheme();
+      themeStore.setMode(isDark ? 'light' : 'dark');
       await nextTick();
     });
 
@@ -330,16 +330,17 @@
     width: 100%;
     z-index: 100;
     height: var(--header-height);
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(20px) saturate(180%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
-    transition: all 0.3s ease;
+    background: #fff;
+    border-bottom: 4px solid #111;
+    box-shadow: 0px 8px 0px #111;
+    transition: all 0.2s ease;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
   }
 
   [data-theme='dark'] .app-header {
-    background: rgba(15, 23, 42, 0.7);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: #1a1a1a;
+    border-bottom-color: #eee;
+    box-shadow: 0px 8px 0px #eee;
   }
 
   .header-content {
@@ -358,39 +359,44 @@
     align-items: center;
     gap: 0.75rem;
     flex-shrink: 0;
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.1s;
   }
 
   .logo:hover {
-    transform: scale(1.05);
-    filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.3));
+    transform: translate(-2px, -2px);
+  }
+
+  .logo:active {
+    transform: translate(2px, 2px);
   }
 
   .logo-text {
-    font-size: 1.35rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    background: var(--accent-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-family: 'Syne', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', 'Heiti SC', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    color: #111;
+    text-shadow: 3px 3px 0px #4b7bff;
+    text-transform: uppercase;
+    -webkit-text-stroke: 0.5px #111;
+  }
+
+  [data-theme='dark'] .logo-text {
+    color: #eee;
+    text-shadow: 3px 3px 0px #2a4eb2;
+    -webkit-text-stroke: 0.5px #eee;
   }
 
   .nav-menu {
     display: flex;
     gap: 0.5rem;
     padding: 0.25rem;
-    background: rgba(0, 0, 0, 0.03);
-    border-radius: 12px;
+    background: transparent;
     position: relative;
     overflow-x: auto;
     scrollbar-width: none;
     cursor: grab;
     user-select: none;
-  }
-
-  [data-theme='dark'] .nav-menu {
-    background: rgba(255, 255, 255, 0.05);
   }
 
   .nav-menu.is-dragging {
@@ -407,57 +413,100 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1.25rem;
-    border-radius: 10px;
-    color: var(--text-secondary);
-    font-size: 0.9375rem;
-    font-weight: 500;
+    color: #111;
+    font-size: 0.95rem;
+    font-weight: 800;
     white-space: nowrap;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.1s;
     position: relative;
     z-index: 1;
-    border: none;
+    border: 3px solid transparent;
     background: transparent;
+    cursor: pointer;
   }
 
   .nav-item:hover {
-    color: var(--text-primary);
+    transform: translate(-2px, -2px);
+    border-color: #111;
+    box-shadow: 4px 4px 0px #111;
+    background: #fff;
+    color: #111;
+  }
+
+  .nav-item:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px #111;
   }
 
   .nav-item.active {
-    color: var(--accent-purple);
+    color: #111;
   }
 
   .nav-indicator {
     position: absolute;
-    bottom: 4px;
-    top: 4px;
+    bottom: 2px;
+    top: 2px;
     height: auto;
-    border-radius: 8px;
-    background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 3px solid #111;
+    background: #ffd900;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 0;
     opacity: 0;
   }
 
+  /* Dark mode variants */
+  [data-theme='dark'] .nav-menu {
+    background: transparent;
+  }
+  [data-theme='dark'] .nav-item {
+    color: #eee;
+  }
+  [data-theme='dark'] .nav-item:hover {
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+    background: #222;
+    color: #eee;
+  }
+  [data-theme='dark'] .nav-item.active {
+    color: #111;
+  }
+  [data-theme='dark'] .nav-item:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+
   [data-theme='dark'] .nav-indicator {
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background: #b28f00;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
   }
 
   .count-badge {
+    font-family: 'Syne', sans-serif;
     font-size: 0.75rem;
-    background: rgba(0, 0, 0, 0.05);
-    padding: 0 6px;
-    border-radius: 99px;
-    color: var(--text-muted);
+    font-weight: 900;
+    background: #111;
+    color: #fff;
+    padding: 2px 6px;
+    border: 2px solid #111;
     transition: all 0.2s;
   }
 
   .nav-item:hover .count-badge,
   .nav-item.active .count-badge {
-    background: rgba(255, 255, 255, 0.5);
-    color: currentColor;
+    background: #fff;
+    color: #111;
+  }
+
+  [data-theme='dark'] .count-badge {
+    background: #eee;
+    color: #111;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .nav-item:hover .count-badge,
+  [data-theme='dark'] .nav-item.active .count-badge {
+    background: #222;
+    color: #eee;
   }
 
   .count-badge.mobile {
@@ -487,28 +536,26 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    border-radius: var(--radius-md);
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    transition: all var(--transition-fast);
+    background: #fff;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.1s;
   }
 
   .search-box:focus-within {
-    border-color: var(--accent-purple);
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #4b7bff;
   }
 
   .search-box input {
     border: none;
     background: none;
     outline: none;
-    font-size: 0.875rem;
-    color: var(--text-primary);
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: #111;
     width: 140px;
-  }
-
-  .search-box input::placeholder {
-    color: var(--text-muted);
   }
 
   .icon-btn {
@@ -517,18 +564,51 @@
     justify-content: center;
     width: 40px;
     height: 40px;
-    border-radius: var(--radius-md);
-    color: var(--text-secondary);
-    transition: all var(--transition-fast);
+    color: #111;
+    transition: all 0.1s;
     position: relative;
     background: transparent;
-    border: 1px solid transparent;
+    border: 3px solid transparent;
+    cursor: pointer;
   }
 
   .icon-btn:hover {
-    color: var(--accent-purple);
-    background: var(--bg-primary);
-    border-color: var(--border-color);
+    transform: translate(-2px, -2px);
+    background: #fff;
+    color: #111;
+    border-color: #111;
+    box-shadow: 3px 3px 0px #111;
+  }
+
+  .icon-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  /* Dark Mode header actions */
+  [data-theme='dark'] .search-box {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .search-box:focus-within {
+    box-shadow: 6px 6px 0px #2a4eb2;
+  }
+  [data-theme='dark'] .search-box input {
+    color: #eee;
+  }
+
+  [data-theme='dark'] .icon-btn {
+    color: #eee;
+  }
+  [data-theme='dark'] .icon-btn:hover {
+    background: #222;
+    color: #eee;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .icon-btn:active {
+    box-shadow: 0px 0px 0px #eee;
   }
 
   .mobile-menu-btn {
@@ -604,24 +684,5 @@
     .mobile-menu-btn {
       display: flex;
     }
-  }
-
-  .count-badge {
-    font-size: 0.75rem;
-    background: rgba(0, 0, 0, 0.05);
-    padding: 0 6px;
-    border-radius: 99px;
-    color: var(--text-muted);
-    transition: all 0.2s;
-  }
-
-  .nav-item:hover .count-badge,
-  .nav-item.active .count-badge {
-    background: rgba(255, 255, 255, 0.5);
-    color: currentColor;
-  }
-
-  .count-badge.mobile {
-    margin-left: auto;
   }
 </style>

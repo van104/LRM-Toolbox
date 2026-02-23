@@ -1,26 +1,23 @@
 <template>
-  <div class="page-container">
-    <header class="page-header">
-      <el-button text @click="$router.push('/')">
-        <el-icon>
-          <ArrowLeft />
-        </el-icon>
-        返回首页
-      </el-button>
+  <div class="brutal-page-container">
+    <header class="brutal-page-header">
+      <button class="brutal-btn-secondary" @click="$router.push('/')">
+        <el-icon><ArrowLeft /></el-icon> 返回首页
+      </button>
     </header>
 
-    <main class="page-content">
-      <h1 class="page-title">服务条款</h1>
-      <p class="update-time">最后更新时间：2026年1月29日</p>
+    <main class="brutal-page-content">
+      <h1 class="brutal-page-title">服务条款</h1>
+      <div class="update-stamp">最后更新时间：2026年1月29日</div>
 
-      <section class="content-section">
-        <h2>1. 服务说明</h2>
+      <section class="brutal-content-section bg-yellow">
+        <h2 class="section-title">1. 服务说明</h2>
         <p>LRM工具箱（以下简称"本站"）是一个免费的在线工具服务平台，为用户提供各类实用工具。</p>
         <p>本站保留随时修改、中断或终止部分或全部服务的权利，无需事先通知。</p>
       </section>
 
-      <section class="content-section">
-        <h2>2. 使用规范</h2>
+      <section class="brutal-content-section bg-blue text-white">
+        <h2 class="section-title variant-light">2. 使用规范</h2>
         <p>在使用本站服务时，您同意：</p>
         <ul>
           <li>遵守中华人民共和国相关法律法规</li>
@@ -30,14 +27,14 @@
         </ul>
       </section>
 
-      <section class="content-section">
-        <h2>3. 知识产权</h2>
+      <section class="brutal-content-section bg-pink text-white">
+        <h2 class="section-title variant-light">3. 知识产权</h2>
         <p>本站的所有内容，包括但不限于文字、图片、代码、界面设计等，均受知识产权法保护。</p>
         <p>未经许可，不得复制、修改、传播本站内容用于商业目的。</p>
       </section>
 
-      <section class="content-section">
-        <h2>4. 免责声明</h2>
+      <section class="brutal-content-section bg-green">
+        <h2 class="section-title">4. 免责声明</h2>
         <ul>
           <li>本站工具按"现状"提供，不保证完全准确或适合特定用途</li>
           <li>对于使用本站工具产生的任何直接或间接损失，本站不承担责任</li>
@@ -45,15 +42,15 @@
         </ul>
       </section>
 
-      <section class="content-section">
-        <h2>5. 条款修改</h2>
+      <section class="brutal-content-section">
+        <h2 class="section-title">5. 条款修改</h2>
         <p>
           本站保留随时修改本服务条款的权利。修改后的条款将在本页面公布，继续使用本站服务即表示您接受修改后的条款。
         </p>
       </section>
 
-      <section class="content-section">
-        <h2>6. 联系方式</h2>
+      <section class="brutal-content-section bg-yellow">
+        <h2 class="section-title">6. 联系方式</h2>
         <p>如对本服务条款有任何疑问，请直接联系网站管理员。</p>
       </section>
     </main>
@@ -65,115 +62,256 @@
 </script>
 
 <style scoped>
-  .page-container {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-page-container {
     min-height: 100vh;
-    background: #f0f4f8;
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+    padding-bottom: 4rem;
   }
 
-  .page-header {
-    padding: 1rem 1.5rem;
-    background: #ffffff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  .brutal-page-header {
+    background: #fff;
+    padding: 1.5rem 2rem;
+    border-bottom: 4px solid #111;
+    box-shadow: 0px 8px 0px #111;
+    position: relative;
+    z-index: 10;
   }
 
-  .page-content {
-    max-width: 800px;
+  .brutal-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.5rem 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+    text-transform: uppercase;
+    color: #111;
+  }
+
+  .brutal-btn-secondary:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+    background: #4b7bff;
+    color: #fff;
+  }
+  .brutal-btn-secondary:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-page-content {
+    max-width: 900px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
+    padding: 4rem 2rem;
   }
 
-  .page-title {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #1e293b;
+  .brutal-page-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3rem;
+    font-weight: 900;
+    color: #111;
     margin-bottom: 0.5rem;
+    text-transform: uppercase;
     text-align: center;
+    letter-spacing: -1px;
+    text-shadow: 5px 5px 0px #00e572;
   }
 
-  .update-time {
+  .update-stamp {
     text-align: center;
-    color: #94a3b8;
-    font-size: 0.875rem;
-    margin-bottom: 2rem;
+    background: #111;
+    color: #fff;
+    display: table;
+    margin: 0 auto 3rem;
+    padding: 4px 12px;
+    font-weight: bold;
+    border: 2px dashed #fff;
+    box-shadow: 4px 4px 0px #00e572;
   }
 
-  .content-section {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
+  .brutal-content-section {
+    border: 4px solid #111;
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+    box-shadow: 8px 8px 0px #111;
+    position: relative;
+    transition: transform 0.2s;
   }
 
-  .content-section h2 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 1rem;
+  .brutal-content-section:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 12px 12px 0px #111;
   }
 
-  .content-section p {
-    color: #64748b;
+  .bg-yellow {
+    background: #ffd900;
+    color: #111;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #111;
+  }
+  .bg-pink {
+    background: #ff4b4b;
+    color: #111;
+  }
+  .bg-green {
+    background: #00e572;
+    color: #111;
+  }
+
+  .text-white {
+    color: #fff;
+  }
+
+  .section-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    background: #111;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border: 3px solid #111;
+  }
+
+  .section-title.variant-light {
+    background: #fff;
+    color: #111;
+    box-shadow: 4px 4px 0px #111;
+  }
+
+  .brutal-content-section p {
+    font-size: 1.1rem;
     line-height: 1.8;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
   }
 
-  .content-section ul {
+  .brutal-content-section ul {
     list-style: none;
     padding: 0;
-    margin: 0.75rem 0;
   }
 
-  .content-section li {
-    color: #64748b;
+  .brutal-content-section li {
+    font-size: 1.1rem;
     line-height: 2;
-    padding-left: 1.5rem;
+    padding-left: 2rem;
     position: relative;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
   }
 
-  .content-section li::before {
-    content: '•';
-    color: #06b6d4;
-    font-weight: bold;
+  .brutal-content-section li::before {
+    content: '[!]';
+    font-weight: 900;
     position: absolute;
     left: 0;
   }
 
-  [data-theme='dark'] .page-container {
-    background: var(--bg-primary);
+  .brutal-footer-stamp {
+    text-align: center;
+    font-weight: bold;
+    padding: 2rem;
+    border-top: 4px dashed #111;
+    margin-top: 3rem;
   }
 
-  [data-theme='dark'] .page-header {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
+  /* --- Dark Mode Overrides --- */
+  [data-theme='dark'] .brutal-page-container {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
   }
 
-  [data-theme='dark'] .el-button {
-    color: var(--text-primary);
+  [data-theme='dark'] .brutal-page-header {
+    background: #1a1a1a;
+    border-bottom-color: #eee;
+    box-shadow: 0px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-page-title {
+    color: #eee;
+    text-shadow: 5px 5px 0px #00994c;
+  }
+  [data-theme='dark'] .update-stamp {
+    background: #eee;
+    color: #111;
+    border-color: #111;
+    box-shadow: 4px 4px 0px #00994c;
   }
 
-  [data-theme='dark'] .el-button:hover {
-    color: var(--accent-cyan);
+  [data-theme='dark'] .brutal-btn-secondary {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn-secondary:hover {
+    background: #b28f00;
+    color: #fff;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn-secondary:active {
+    box-shadow: 0px 0px 0px #eee;
   }
 
-  [data-theme='dark'] .page-title {
-    color: var(--text-primary);
+  [data-theme='dark'] .brutal-content-section {
+    border-color: #eee;
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-content-section:hover {
+    box-shadow: 12px 12px 0px #eee;
   }
 
-  [data-theme='dark'] .update-time {
-    color: var(--text-secondary);
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #00994c;
+    color: #fff;
   }
 
-  [data-theme='dark'] .content-section {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+  [data-theme='dark'] .section-title {
+    background: #eee;
+    color: #111;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .section-title.variant-light {
+    background: #222;
+    color: #eee;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
   }
 
-  [data-theme='dark'] .content-section h2 {
-    color: var(--text-primary);
-  }
-
-  [data-theme='dark'] .content-section p,
-  [data-theme='dark'] .content-section li {
-    color: var(--text-secondary);
+  [data-theme='dark'] .brutal-footer-stamp {
+    border-top-color: #eee;
   }
 </style>

@@ -1,55 +1,65 @@
 <template>
-  <div class="page-container">
-    <header class="page-header">
-      <el-button text @click="$router.push('/')">
-        <el-icon>
-          <ArrowLeft />
-        </el-icon>
-        返回首页
-      </el-button>
+  <div class="brutal-page-container">
+    <header class="brutal-page-header">
+      <button class="brutal-btn-secondary" @click="$router.push('/')">
+        <el-icon><ArrowLeft /></el-icon> 返回主板
+      </button>
     </header>
 
-    <main class="page-content">
-      <h1 class="page-title">关于本站</h1>
+    <main class="brutal-page-content">
+      <h1 class="brutal-page-title">关于本站.INFO()</h1>
 
-      <section class="content-section">
-        <h2>网站介绍</h2>
+      <section class="brutal-content-section bg-yellow">
+        <h2 class="section-title">01 // 网站介绍</h2>
         <p>
-          LRM工具箱是一个免费、开源的实用工具集合网站，旨在为开发者和日常用户提供便捷高效的在线工具服务。
+          LRM工具箱是一个免费、开源的实用工具集合网站，旨在为开发者和日常用户提供便捷高效的在线执行工具终端。
         </p>
-        <p>我们的目标是让每个人都能快速找到并使用所需的工具，无需下载安装，打开浏览器即可使用。</p>
+        <p>
+          我们的目标是让每个人都能快速调用所需的模块集，无需下载安装，唤醒浏览器即可进入工作状态。
+        </p>
       </section>
 
-      <section class="content-section">
-        <h2>主要功能</h2>
+      <section class="brutal-content-section bg-blue text-white">
+        <h2 class="section-title variant-light">02 // 核心总线</h2>
         <ul>
-          <li><strong>开发工具</strong> - JSON 格式化、正则测试、颜色选择器等</li>
-          <li><strong>编码转换</strong> - Base64、URL 编解码、MD5 哈希等</li>
-          <li><strong>图片处理</strong> - 图片压缩、二维码生成等</li>
-          <li><strong>文本工具</strong> - 文本对比、Markdown 预览等</li>
-          <li><strong>计算工具</strong> - 时间戳转换等</li>
+          <li><strong>[DEV] 开发工具</strong> - JSON 格式化、正则测试、颜色选择等链路</li>
+          <li><strong>[CODE] 编码引擎</strong> - Base64 封包、URL 编解码、MD5 加密</li>
+          <li><strong>[IMG] 图形处理</strong> - 图片压缩、二维码生成控制台</li>
+          <li><strong>[TXT] 文本模块</strong> - 文本对比、Markdown 渲染解析</li>
+          <li><strong>[CALC] 数值计算</strong> - 时间戳与各类函数标定</li>
         </ul>
       </section>
 
-      <section class="content-section">
-        <h2>技术栈</h2>
+      <section class="brutal-content-section bg-pink text-white">
+        <h2 class="section-title variant-light">03 // 动力栈配置</h2>
         <div class="tech-tags">
-          <span class="tech-tag">Vue 3</span>
-          <span class="tech-tag">Vite</span>
-          <span class="tech-tag">Element Plus</span>
-          <span class="tech-tag">Pinia</span>
+          <span class="brutal-tag">V U E 3</span>
+          <span class="brutal-tag">V I T E</span>
+          <span class="brutal-tag">E. L. P.</span>
+          <span class="brutal-tag">P I N I A</span>
         </div>
       </section>
 
-      <section id="contact" class="content-section">
-        <h2>联系我们</h2>
-        <p>如有任何问题或建议，欢迎通过以下方式联系我们：</p>
+      <section id="contact" class="brutal-content-section bg-green">
+        <h2 class="section-title">04 // 建立连接</h2>
+        <p>如在终端调用时遇到阻碍或需要新增特性请求，请通过以下协议端口与我们通讯：</p>
         <ul>
-          <li>网站：<a href="https://www.lrm123.site" target="_blank">www.lrm123.site</a></li>
-          <li>邮箱：<a href="mailto:powelabraham67@gmail.com">powelabraham67@gmail.com</a></li>
           <li>
-            GitHub：<a href="https://github.com/van104/LRM-Toolbox" target="_blank"
-              >github.com/van104/LRM-Toolbox</a
+            [主站中继]：<a href="https://www.lrm123.site" target="_blank" class="brutal-link"
+              >www.lrm123.site</a
+            >
+          </li>
+          <li>
+            [直连信箱]：<a href="mailto:powelabraham67@gmail.com" class="brutal-link"
+              >powelabraham67@gmail.com</a
+            >
+          </li>
+          <li>
+            [开源仓库]：<a
+              href="https://github.com/van104/LRM-Toolbox"
+              target="_blank"
+              class="brutal-link"
+              >GITHUB/LRM-TOOLBOX</a
             >
           </li>
         </ul>
@@ -63,70 +73,155 @@
 </script>
 
 <style scoped>
-  .page-container {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-page-container {
     min-height: 100vh;
-    background: #f0f4f8;
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+    padding-bottom: 4rem;
   }
 
-  .page-header {
-    padding: 1rem 1.5rem;
-    background: #ffffff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  .brutal-page-header {
+    background: #fff;
+    padding: 1.5rem 2rem;
+    border-bottom: 4px solid #111;
+    box-shadow: 0px 8px 0px #111;
+    position: relative;
+    z-index: 10;
   }
 
-  .page-content {
-    max-width: 800px;
+  .brutal-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.5rem 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+    text-transform: uppercase;
+    color: #111;
+  }
+
+  .brutal-btn-secondary:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+    background: #4b7bff;
+    color: #fff;
+  }
+  .brutal-btn-secondary:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-page-content {
+    max-width: 900px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
+    padding: 4rem 2rem;
   }
 
-  .page-title {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 2rem;
+  .brutal-page-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3rem;
+    font-weight: 900;
+    color: #111;
+    margin-bottom: 3rem;
+    text-transform: uppercase;
     text-align: center;
+    letter-spacing: -1px;
+    text-shadow: 5px 5px 0px #ff4b4b;
   }
 
-  .content-section {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 1.5rem;
+  .brutal-content-section {
+    border: 4px solid #111;
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+    box-shadow: 8px 8px 0px #111;
+    position: relative;
+    transition: transform 0.2s;
+  }
+
+  .brutal-content-section:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 12px 12px 0px #111;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+    color: #111;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #111;
+  }
+  .bg-pink {
+    background: #ff4b4b;
+    color: #111;
+  }
+  .bg-green {
+    background: #00e572;
+    color: #111;
+  }
+
+  .text-white {
+    color: #fff;
+  }
+
+  .section-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
     margin-bottom: 1.5rem;
-  }
-
-  .content-section h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #06b6d4;
     display: inline-block;
+    background: #111;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border: 3px solid #111;
   }
 
-  .content-section p {
-    color: #64748b;
+  .section-title.variant-light {
+    background: #fff;
+    color: #111;
+    box-shadow: 4px 4px 0px #111;
+  }
+
+  .brutal-content-section p {
+    font-size: 1.1rem;
     line-height: 1.8;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
   }
 
-  .content-section ul {
+  .brutal-content-section ul {
     list-style: none;
     padding: 0;
   }
 
-  .content-section li {
-    color: #64748b;
+  .brutal-content-section li {
+    font-size: 1.1rem;
     line-height: 2;
     padding-left: 1.5rem;
     position: relative;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
   }
 
-  .content-section li::before {
-    content: '•';
-    color: #06b6d4;
-    font-weight: bold;
+  .brutal-content-section li::before {
+    content: '>>';
+    font-weight: 900;
     position: absolute;
     left: 0;
   }
@@ -134,50 +229,124 @@
   .tech-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 1.5rem;
+    margin-top: 1rem;
   }
 
-  .tech-tag {
-    padding: 0.5rem 1rem;
-    background: linear-gradient(135deg, #06b6d4, #8b5cf6);
-    color: white;
-    border-radius: 20px;
-    font-size: 0.875rem;
-    font-weight: 500;
+  .brutal-tag {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    padding: 1rem 1.5rem;
+    background: #fff;
+    color: #111;
+    border: 4px solid #111;
+    font-size: 1.25rem;
+    font-weight: 900;
+    box-shadow: 6px 6px 0px #111;
+    letter-spacing: 2px;
   }
 
-  [data-theme='dark'] .page-container {
-    background: var(--bg-primary);
+  .brutal-link {
+    color: inherit;
+    text-decoration: none;
+    background: #111;
+    color: #fff;
+    padding: 2px 8px;
+    font-weight: bold;
+    border: 2px solid #111;
+    transition: all 0.2s;
   }
 
-  [data-theme='dark'] .page-header {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
+  .bg-green .brutal-link:hover {
+    background: #fff;
+    color: #111;
+    box-shadow: 4px 4px 0px #111;
   }
 
-  [data-theme='dark'] .el-button {
-    color: var(--text-primary);
+  /* --- Dark Mode Overrides --- */
+  [data-theme='dark'] .brutal-page-container {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
   }
 
-  [data-theme='dark'] .el-button:hover {
-    color: var(--accent-cyan);
+  [data-theme='dark'] .brutal-page-header {
+    background: #1a1a1a;
+    border-bottom-color: #eee;
+    box-shadow: 0px 8px 0px #eee;
   }
 
-  [data-theme='dark'] .page-title {
-    color: var(--text-primary);
+  [data-theme='dark'] .brutal-page-title {
+    color: #eee;
+    text-shadow: 5px 5px 0px #cc0000;
   }
 
-  [data-theme='dark'] .content-section {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+  [data-theme='dark'] .brutal-btn-secondary {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn-secondary:hover {
+    background: #b28f00;
+    color: #fff;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn-secondary:active {
+    box-shadow: 0px 0px 0px #eee;
   }
 
-  [data-theme='dark'] .content-section h2 {
-    color: var(--text-primary);
+  [data-theme='dark'] .brutal-content-section {
+    border-color: #eee;
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-content-section:hover {
+    box-shadow: 12px 12px 0px #eee;
   }
 
-  [data-theme='dark'] .content-section p,
-  [data-theme='dark'] .content-section li {
-    color: var(--text-secondary);
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #00994c;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .section-title {
+    background: #eee;
+    color: #111;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .section-title.variant-light {
+    background: #222;
+    color: #eee;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-tag {
+    background: #222;
+    color: #eee;
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-link {
+    background: #eee;
+    color: #111;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-link:hover {
+    background: #222;
+    color: #eee;
+    box-shadow: 4px 4px 0px #eee;
   }
 </style>
