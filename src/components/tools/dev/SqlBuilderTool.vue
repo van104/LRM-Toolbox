@@ -1,233 +1,205 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          <span>返回</span>
-        </el-button>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">SQL<span>.生成助手()</span></h1>
+        <div class="tab-nav">
+          <button
+            v-for="tab in tabs"
+            :key="tab.id"
+            :class="['brutal-btn tab-btn', { active: currentTab === tab.id }]"
+            @click="currentTab = tab.id"
+          >
+            {{ tab.label }}
+          </button>
+        </div>
+      </header>
+
+      <!-- Tab: 列表转 IN -->
+      <div v-if="currentTab === 'in'" class="brutal-pane">
+        <div class="pane-header bg-blue">
+          <span class="text-white">01. 列表 → IN 子句</span>
+          <div class="header-opts">
+            <label class="brutal-toggle">
+              <input v-model="inOpts.quote" type="checkbox" />
+              <span class="t-box"></span>
+              包含引号 (' ')
+            </label>
+            <label class="brutal-toggle">
+              <input v-model="inOpts.newline" type="checkbox" />
+              <span class="t-box"></span>
+              换行分隔
+            </label>
+          </div>
+        </div>
+        <div class="pane-body split-layout">
+          <textarea
+            v-model="inInput"
+            class="brutal-editor flex-1"
+            placeholder="输入列表，每行一个&#10;100&#10;200&#10;300"
+          ></textarea>
+          <div class="arrow-mid">→</div>
+          <textarea
+            v-model="inOutput"
+            class="brutal-editor flex-1 result-tinted"
+            readonly
+            placeholder="[生成结果]"
+          ></textarea>
+        </div>
+        <div class="pane-footer">
+          <button class="brutal-action-btn primary large-btn" @click="genIN">生成</button>
+          <button class="brutal-action-btn large-btn" @click="copy(inOutput)">📋 复制结果</button>
+        </div>
       </div>
-      <h1 class="tool-title">SQL 生成助手</h1>
-      <div class="header-right"></div>
-    </header>
 
-    <div class="tool-content">
-      <aside class="sidebar">
-        <div class="nav-menu">
-          <button :class="['nav-item', { active: currentTab === 'in' }]" @click="currentTab = 'in'">
-            <el-icon>
-              <List />
-            </el-icon>
-            列表转 IN
-          </button>
-          <button
-            :class="['nav-item', { active: currentTab === 'insert' }]"
-            @click="currentTab = 'insert'"
-          >
-            <el-icon>
-              <DocumentAdd />
-            </el-icon>
-            CSV转 INSERT
-          </button>
-          <button
-            :class="['nav-item', { active: currentTab === 'create' }]"
-            @click="currentTab = 'create'"
-          >
-            <el-icon>
-              <Coin />
-            </el-icon>
-            JSON转 CREATE
-          </button>
-          <button
-            :class="['nav-item', { active: currentTab === 'smart' }]"
-            @click="currentTab = 'smart'"
-          >
-            <el-icon>
-              <MagicStick />
-            </el-icon>
-            SQL 智能填充
-          </button>
-        </div>
-      </aside>
-
-      <main class="main-panel">
-        <div v-if="currentTab === 'in'" class="tool-pane">
-          <div class="pane-header">
-            <h3>列表转 IN 子句</h3>
-            <div class="opts">
-              <el-checkbox v-model="inOpts.quote">包含引号 (' ')</el-checkbox>
-              <el-checkbox v-model="inOpts.newline">换行分隔</el-checkbox>
-            </div>
-          </div>
-          <div class="split-view">
-            <textarea
-              v-model="inInput"
-              class="code-editor"
-              placeholder="输入列表，每行一个..."
-            ></textarea>
-            <div class="arrow-divider">
-              <el-icon>
-                <Right />
-              </el-icon>
-            </div>
-            <div class="result-box">
-              <textarea v-model="inOutput" class="code-editor result-editor" readonly></textarea>
-            </div>
-          </div>
-          <div class="actions-row">
-            <el-button type="primary" @click="genIN">生成</el-button>
-            <el-button @click="copy(inOutput)">复制结果</el-button>
-          </div>
-        </div>
-
-        <div v-if="currentTab === 'insert'" class="tool-pane">
-          <div class="pane-header">
-            <h3>CSV 转 INSERT</h3>
-            <div class="opts">
-              <el-input
-                v-model="insertOpts.table"
-                size="small"
-                placeholder="Table Name"
-                style="width: 150px"
-              />
-              <el-checkbox v-model="insertOpts.batch">批量插入 (Single Statement)</el-checkbox>
-            </div>
-          </div>
-          <div class="helper-text">第一行必须是CSV表头 (Column Names)</div>
-          <div class="split-view">
-            <textarea
-              v-model="insertInput"
-              class="code-editor"
-              placeholder="id,name,age&#10;1,Alice,20&#10;2,Bob,22"
-            ></textarea>
-            <div class="arrow-divider">
-              <el-icon>
-                <Right />
-              </el-icon>
-            </div>
-            <div class="result-box">
-              <textarea
-                v-model="insertOutput"
-                class="code-editor result-editor"
-                readonly
-              ></textarea>
-            </div>
-          </div>
-          <div class="actions-row">
-            <el-button type="primary" @click="genINSERT">生成</el-button>
-            <el-button @click="copy(insertOutput)">复制结果</el-button>
-          </div>
-        </div>
-
-        <div v-if="currentTab === 'create'" class="tool-pane">
-          <div class="pane-header">
-            <h3>JSON 转 CREATE TABLE</h3>
-            <el-input
-              v-model="createOpts.table"
-              size="small"
-              placeholder="Table Name"
-              style="width: 150px"
+      <!-- Tab: CSV 转 INSERT -->
+      <div v-else-if="currentTab === 'insert'" class="brutal-pane">
+        <div class="pane-header bg-yellow">
+          <span>02. CSV → INSERT</span>
+          <div class="header-opts">
+            <input
+              v-model="insertOpts.table"
+              class="brutal-input-inline"
+              placeholder="Table 名称"
             />
-          </div>
-          <div class="split-view">
-            <textarea
-              v-model="createInput"
-              class="code-editor"
-              placeholder='[{"id": 1, "name": "Test", "active": true}]'
-            ></textarea>
-            <div class="arrow-divider">
-              <el-icon>
-                <Right />
-              </el-icon>
-            </div>
-            <div class="result-box">
-              <textarea
-                v-model="createOutput"
-                class="code-editor result-editor"
-                readonly
-              ></textarea>
-            </div>
-          </div>
-          <div class="actions-row">
-            <el-button type="primary" @click="genCREATE">生成</el-button>
-            <el-button @click="copy(createOutput)">复制结果</el-button>
+            <label class="brutal-toggle">
+              <input v-model="insertOpts.batch" type="checkbox" />
+              <span class="t-box"></span>
+              批量插入
+            </label>
           </div>
         </div>
+        <div class="hint-bar">第一行必须是 CSV 表头 (Column Names)</div>
+        <div class="pane-body split-layout">
+          <textarea
+            v-model="insertInput"
+            class="brutal-editor flex-1"
+            placeholder="id,name,age&#10;1,Alice,20&#10;2,Bob,22"
+          ></textarea>
+          <div class="arrow-mid">→</div>
+          <textarea
+            v-model="insertOutput"
+            class="brutal-editor flex-1 result-tinted"
+            readonly
+            placeholder="[生成结果]"
+          ></textarea>
+        </div>
+        <div class="pane-footer">
+          <button class="brutal-action-btn primary large-btn" @click="genINSERT">生成</button>
+          <button class="brutal-action-btn large-btn" @click="copy(insertOutput)">
+            📋 复制结果
+          </button>
+        </div>
+      </div>
 
-        <div v-if="currentTab === 'smart'" class="tool-pane smart-pane">
-          <div class="pane-header">
-            <h3>SQL 智能填充 (Mock Data)</h3>
-          </div>
+      <!-- Tab: JSON 转 CREATE TABLE -->
+      <div v-else-if="currentTab === 'create'" class="brutal-pane">
+        <div class="pane-header bg-green">
+          <span>03. JSON → CREATE TABLE</span>
+          <input v-model="createOpts.table" class="brutal-input-inline" placeholder="Table 名称" />
+        </div>
+        <div class="pane-body split-layout">
+          <textarea
+            v-model="createInput"
+            class="brutal-editor flex-1"
+            placeholder='[{"id": 1, "name": "Test", "active": true}]'
+          ></textarea>
+          <div class="arrow-mid">→</div>
+          <textarea
+            v-model="createOutput"
+            class="brutal-editor flex-1 result-tinted"
+            readonly
+            placeholder="[生成结果]"
+          ></textarea>
+        </div>
+        <div class="pane-footer">
+          <button class="brutal-action-btn primary large-btn" @click="genCREATE">生成</button>
+          <button class="brutal-action-btn large-btn" @click="copy(createOutput)">
+            📋 复制结果
+          </button>
+        </div>
+      </div>
 
-          <div class="smart-layout">
-            <div class="smart-sidebar">
-              <div class="upload-area" @click="$refs.sqlFile.click()">
-                <el-icon class="upload-icon">
-                  <UploadFilled />
-                </el-icon>
-                <span>点击上传 SQL 文件</span>
+      <!-- Tab: SQL 智能填充 -->
+      <div v-else-if="currentTab === 'smart'" class="brutal-pane smart-pane">
+        <div class="pane-header bg-pink">
+          <span>04. SQL 智能填充 (Mock Data)</span>
+        </div>
+        <div class="smart-layout">
+          <!-- 左侧控制区 -->
+          <div class="smart-ctrl">
+            <div class="upload-zone" @click="$refs.sqlFile.click()">
+              <span class="upload-icon">📂</span>
+              <span>点击上传 SQL 文件</span>
+              <input
+                ref="sqlFile"
+                type="file"
+                accept=".sql,.txt"
+                style="display: none"
+                @change="handleSqlUpload"
+              />
+            </div>
+
+            <template v-if="parsedTables.length">
+              <div class="tables-list-header">
+                识别到 <strong>{{ parsedTables.length }}</strong> 张表
+                <button class="brutal-action-btn small" @click="checkAll">全选</button>
+              </div>
+              <div class="tables-scroll">
+                <div
+                  v-for="t in parsedTables"
+                  :key="t.name"
+                  :class="['table-row', { selected: selectedTables.includes(t.name) }]"
+                  @click="toggleTable(t.name)"
+                >
+                  <span class="table-name">{{ t.name }}</span>
+                  <span class="col-badge">{{ t.columns.length }} cols</span>
+                </div>
+              </div>
+              <div class="gen-count-row">
+                <label><strong>生成数量</strong></label>
                 <input
-                  ref="sqlFile"
-                  type="file"
-                  accept=".sql,.txt"
-                  style="display: none"
-                  @change="handleSqlUpload"
+                  v-model.number="smartCount"
+                  type="number"
+                  min="1"
+                  max="1000"
+                  class="brutal-input-inline number-input"
                 />
               </div>
+              <button
+                class="brutal-action-btn primary large-btn w-full"
+                :disabled="!selectedTables.length"
+                @click="genSmartData"
+              >
+                开始生成
+              </button>
+            </template>
+            <div v-else class="empty-tip">请上传包含 CREATE TABLE 语句的 SQL 文件</div>
+          </div>
 
-              <div v-if="parsedTables.length" class="table-list-area">
-                <div class="list-header">
-                  <span>识别到 {{ parsedTables.length }} 张表</span>
-                  <el-button size="small" link @click="checkAll">全选</el-button>
-                </div>
-                <div class="table-items">
-                  <el-checkbox-group v-model="selectedTables">
-                    <template v-for="t in parsedTables" :key="t.name">
-                      <div class="table-item">
-                        <el-checkbox :label="t.name">{{ t.name }}</el-checkbox>
-                        <span class="col-count">{{ t.columns.length }} cols</span>
-                      </div>
-                    </template>
-                  </el-checkbox-group>
-                </div>
-                <div class="gen-config">
-                  <span class="label">生成数量:</span>
-                  <el-input-number v-model="smartCount" :min="1" :max="1000" size="small" />
-                </div>
-                <el-button
-                  type="primary"
-                  class="full-btn"
-                  :disabled="!selectedTables.length"
-                  @click="genSmartData"
-                >
-                  开始生成
-                </el-button>
-              </div>
-              <div v-else class="empty-tip">请上传包含 CREATE TABLE 语句的 SQL 文件</div>
+          <!-- 右侧结果区 -->
+          <div class="smart-result">
+            <div class="result-label">
+              <span>// 生成结果</span>
+              <button
+                class="brutal-action-btn small"
+                :disabled="!smartOutput"
+                @click="copy(smartOutput)"
+              >
+                📋 复制
+              </button>
             </div>
-
-            <div class="smart-result">
-              <div class="result-header">
-                <span>生成结果</span>
-                <el-button size="small" :disabled="!smartOutput" @click="copy(smartOutput)"
-                  >复制</el-button
-                >
-              </div>
-              <textarea
-                v-model="smartOutput"
-                class="code-editor result-editor"
-                readonly
-                placeholder="INSERT 语句将显示在这里..."
-              ></textarea>
-            </div>
+            <textarea
+              v-model="smartOutput"
+              class="brutal-editor result-tinted smart-textarea"
+              readonly
+              placeholder="[INSERT 语句将显示在这里]"
+            ></textarea>
           </div>
         </div>
-      </main>
+      </div>
     </div>
-
-    <footer class="footer">© 2026 LRM工具箱 - SQL 生成助手</footer>
   </div>
 </template>
 
@@ -235,28 +207,26 @@
   import { ref, reactive } from 'vue';
   import { useRouter } from 'vue-router';
   import { ElMessage } from 'element-plus';
-  import {
-    ArrowLeft,
-    List,
-    DocumentAdd,
-    Coin,
-    Right,
-    UploadFilled,
-    MagicStick
-  } from '@element-plus/icons-vue';
   import Mock from 'mockjs';
-
-  const router = useRouter();
-  const currentTab = ref('in');
-
   import { useCopy } from '@/composables/useCopy';
 
+  const router = useRouter();
   const { copyToClipboard } = useCopy();
+  const currentTab = ref('in');
+
+  const tabs = [
+    { id: 'in', label: '列表→IN' },
+    { id: 'insert', label: 'CSV→INSERT' },
+    { id: 'create', label: 'JSON→CREATE' },
+    { id: 'smart', label: '智能填充' }
+  ];
 
   function copy(text) {
+    if (!text) return;
     copyToClipboard(text, { success: '已复制' });
   }
 
+  // --- IN ---
   const inInput = ref('');
   const inOutput = ref('');
   const inOpts = reactive({ quote: true, newline: false });
@@ -268,13 +238,13 @@
       .map(l => l.trim())
       .filter(l => l);
     if (lines.length === 0) return;
-
     const items = lines.map(item => (inOpts.quote ? `'${item}'` : item));
     const joiner = inOpts.newline ? ',\n  ' : ', ';
-
     inOutput.value = `IN (${inOpts.newline ? '\n  ' : ''}${items.join(joiner)}${inOpts.newline ? '\n' : ''})`;
+    ElMessage.success('生成完成');
   }
 
+  // --- INSERT ---
   const insertInput = ref('');
   const insertOutput = ref('');
   const insertOpts = reactive({ table: 'my_table', batch: false });
@@ -282,21 +252,16 @@
   function genINSERT() {
     if (!insertInput.value.trim()) return;
     const lines = insertInput.value.split('\n').filter(l => l.trim());
-    if (lines.length < 2) return ElMessage.warning('CSV需要至少两行(表头+数据)');
-
+    if (lines.length < 2) return ElMessage.warning('CSV 需要至少两行(表头+数据)');
     const headers = lines[0].split(',').map(h => h.trim());
     const valuesList = [];
-
     for (let i = 1; i < lines.length; i++) {
       const cols = lines[i].split(',').map(c => c.trim());
-
       const vals = cols.map(v => (isNaN(v) ? `'${v}'` : v)).join(', ');
       valuesList.push(`(${vals})`);
     }
-
     const colsStr = headers.join(', ');
     const table = insertOpts.table || 'table';
-
     if (insertOpts.batch) {
       insertOutput.value = `INSERT INTO ${table} (${colsStr}) VALUES\n${valuesList.join(',\n')};`;
     } else {
@@ -304,8 +269,10 @@
         .map(v => `INSERT INTO ${table} (${colsStr}) VALUES ${v};`)
         .join('\n');
     }
+    ElMessage.success('生成完成');
   }
 
+  // --- CREATE ---
   const createInput = ref('');
   const createOutput = ref('');
   const createOpts = reactive({ table: 'my_table' });
@@ -315,10 +282,8 @@
       let data = JSON.parse(createInput.value);
       if (Array.isArray(data)) data = data[0];
       if (!data || typeof data !== 'object') throw new Error('Invalid JSON Object');
-
       const lines = [];
       lines.push(`CREATE TABLE ${createOpts.table || 'table'} (`);
-
       for (const k in data) {
         const v = data[k];
         let type = 'VARCHAR(255)';
@@ -331,16 +296,16 @@
         }
         lines.push(`  \`${k}\` ${type},`);
       }
-
       let body = lines.slice(1).join('\n');
       body = body.substring(0, body.length - 1);
-
       createOutput.value = `${lines[0]}\n${body}\n);`;
+      ElMessage.success('生成完成');
     } catch (e) {
       ElMessage.error('JSON 解析失败: ' + e.message);
     }
   }
 
+  // --- SMART ---
   const parsedTables = ref([]);
   const selectedTables = ref([]);
   const smartCount = ref(10);
@@ -357,51 +322,30 @@
   function parseSqlContent(sql) {
     const tables = [];
     const parts = sql.split(/CREATE\s+TABLE\s+/i);
-
     for (let i = 1; i < parts.length; i++) {
-      let chunk = parts[i];
-
-      let tableNameMatch = chunk.match(/^[`"[]?([\w_-]+)[`"\]]?/);
+      const chunk = parts[i];
+      const tableNameMatch = chunk.match(/^[`"[]?([\w_-]+)[`"\]]?/);
       if (!tableNameMatch) continue;
-
       const tableName = tableNameMatch[1];
-
-      // Extract content inside first parenthesis pair (...)
-      // Find first ( and last );?
-      // This is tricky if nested parenthesis exist.
-      // Assuming standard SQL dump format.
       const openIdx = chunk.indexOf('(');
       const closeIdx = chunk.lastIndexOf(')');
       if (openIdx === -1) continue;
-
       const content = chunk.substring(openIdx + 1, closeIdx);
-
-      // Parse columns
-      // Split by comma BUT skip commas in parenthesis (e.g. DECIMAL(10,2))
       const colDefinitions = splitSqlColumns(content);
       const columns = [];
-
       colDefinitions.forEach(def => {
         def = def.trim();
         if (!def || /^(PRIMARY|KEY|UNIQUE|CONSTRAINT|INDEX)/i.test(def)) return;
-
-        // Extract col name and type
-        // `id` int(11) ...
         const parts = def.split(/\s+/);
         if (parts.length < 2) return;
-
-        let name = parts[0].replace(/[`"[\]]/g, '');
-        let type = parts[1].toUpperCase();
-
+        const name = parts[0].replace(/[`"[\]]/g, '');
+        const type = parts[1].toUpperCase();
         columns.push({ name, type });
       });
-
-      if (columns.length > 0) {
-        tables.push({ name: tableName, columns });
-      }
+      if (columns.length > 0) tables.push({ name: tableName, columns });
     }
-
     parsedTables.value = tables;
+    selectedTables.value = [];
     if (tables.length) ElMessage.success(`成功识别 ${tables.length} 张表`);
     else ElMessage.warning('未识别到有效表结构');
   }
@@ -414,7 +358,6 @@
       const char = str[i];
       if (char === '(') parenLevel++;
       if (char === ')') parenLevel--;
-
       if (char === ',' && parenLevel === 0) {
         res.push(buffer);
         buffer = '';
@@ -430,27 +373,24 @@
     selectedTables.value = parsedTables.value.map(t => t.name);
   }
 
+  function toggleTable(name) {
+    const idx = selectedTables.value.indexOf(name);
+    if (idx === -1) selectedTables.value.push(name);
+    else selectedTables.value.splice(idx, 1);
+  }
+
   function genSmartData() {
     let result = '';
-
     selectedTables.value.forEach(tName => {
       const table = parsedTables.value.find(t => t.name === tName);
       if (!table) return;
-
       const template = {};
       table.columns.forEach(col => {
         template[col.name] = mapTypeToMock(col.type);
       });
-
       const dataArr = [];
-      for (let i = 0; i < smartCount.value; i++) {
-        dataArr.push(Mock.mock(template));
-      }
-
-      const keys = table.columns
-        .map(c => c.name)
-        .map(k => `\`${k}\``)
-        .join(', ');
+      for (let i = 0; i < smartCount.value; i++) dataArr.push(Mock.mock(template));
+      const keys = table.columns.map(c => `\`${c.name}\``).join(', ');
       const values = dataArr
         .map(row => {
           return (
@@ -465,21 +405,16 @@
           );
         })
         .join(',\n');
-
       result += `INSERT INTO \`${tName}\` (${keys}) VALUES\n${values};\n\n`;
     });
-
     smartOutput.value = result;
+    ElMessage.success('生成完成');
   }
 
   function mapTypeToMock(type) {
     type = type.toUpperCase();
     if (type.includes('INT')) return '@integer(1, 100)';
-    if (type.includes('CHAR') || type.includes('TEXT')) {
-      if (type.includes('NAME')) return '@cname';
-      if (type.includes('EMAIL')) return '@email';
-      return '@word(5)';
-    }
+    if (type.includes('CHAR') || type.includes('TEXT')) return '@word(5)';
     if (type.includes('DATE') || type.includes('TIME')) return '@datetime("yyyy-MM-dd HH:mm:ss")';
     if (type.includes('DECIMAL') || type.includes('FLOAT') || type.includes('DOUBLE'))
       return '@float(0, 1000, 2, 2)';
@@ -494,252 +429,427 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f0f4f8;
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .tool-header {
+  .brutal-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    background: #ffffff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    flex-wrap: wrap;
+    gap: 1rem;
   }
 
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
   }
 
-  .tool-content {
-    flex: 1;
-    max-width: 1400px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 1.5rem;
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .tab-nav {
     display: flex;
-    gap: 1.5rem;
+    gap: 0.5rem;
+    flex-wrap: wrap;
   }
 
-  .sidebar {
-    width: 200px;
-    flex-shrink: 0;
-  }
-
-  .nav-menu {
+  .brutal-btn {
     background: #fff;
-    border-radius: 12px;
-    padding: 0.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-  }
-
-  .nav-item {
-    padding: 0.8rem 1rem;
-    border: none;
-    background: transparent;
-    text-align: left;
+    border: 4px solid #111;
+    padding: 0.6rem 1.2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
     cursor: pointer;
-    border-radius: 8px;
-    color: #64748b;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    transition: all 0.2s;
+    box-shadow: 5px 5px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+    white-space: nowrap;
   }
 
-  .nav-item:hover {
-    background: #f1f5f9;
-    color: #334155;
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 8px 8px 0px #111;
   }
 
-  .nav-item.active {
-    background: #eff6ff;
-    color: #3b82f6;
-    font-weight: 600;
+  .brutal-btn:active {
+    transform: translate(5px, 5px);
+    box-shadow: 0px 0px 0px #111;
   }
 
-  .main-panel {
-    flex: 1;
+  .brutal-btn.back-btn {
+    font-size: 1.1rem;
   }
 
-  .tool-pane {
+  .brutal-btn.tab-btn {
     background: #fff;
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    height: calc(100vh - 160px);
+  }
+  .brutal-btn.tab-btn.active {
+    background: #111;
+    color: #ffd900;
+  }
+
+  .brutal-pane {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    background: #fff;
   }
 
   .pane-header {
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid #f1f5f9;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
 
-  .pane-header h3 {
-    font-size: 1.1rem;
-    color: #334155;
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-green {
+    background: #00e572;
+  }
+  .bg-pink {
+    background: #ff7be5;
+  }
+  .text-white {
+    color: #fff;
+  }
+
+  .header-opts {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .hint-bar {
+    background: #fdfae5;
+    border-bottom: 3px solid #111;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.95rem;
     font-weight: 600;
   }
 
-  .opts {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-  }
-
-  .helper-text {
-    padding: 0.5rem 1.5rem;
-    font-size: 0.8rem;
-    color: #94a3b8;
-    background: #f8fafc;
-  }
-
-  .split-view {
+  .pane-body {
     flex: 1;
+    padding: 2rem;
+  }
+
+  .split-layout {
     display: flex;
-    padding: 1rem;
-    gap: 1rem;
+    gap: 1.5rem;
     align-items: stretch;
+    min-height: 55vh;
   }
 
-  .arrow-divider {
+  .arrow-mid {
     display: flex;
     align-items: center;
-    color: #cbd5e1;
-    font-size: 1.5rem;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #111;
+    flex-shrink: 0;
+    padding: 0 0.5rem;
   }
 
-  .code-editor {
-    flex: 1;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 1rem;
+  .brutal-editor {
+    border: 4px solid #111;
+    font-family: 'IBM Plex Mono', monospace;
+    background: #fdfae5;
+    color: #111;
+    box-shadow: 6px 6px 0px #111;
+    outline: none;
+    font-weight: 600;
     resize: none;
-    font-family: 'Consolas', monospace;
-    font-size: 0.9rem;
-    color: #334155;
-    background: #fdfdfd;
+    padding: 1.2rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    box-sizing: border-box;
   }
 
-  .result-box {
-    flex: 1;
-    display: flex;
-    position: relative;
-  }
-
-  .result-editor {
-    background: #f8fafc;
-    color: #0f172a;
-  }
-
-  .actions-row {
-    padding: 1rem 1.5rem;
-    border-top: 1px solid #f1f5f9;
-    background: #f8fafc;
-    display: flex;
-    gap: 1rem;
-  }
-
-  .smart-pane {
+  .brutal-editor:focus {
     background: #fff;
   }
 
-  .smart-layout {
+  .result-tinted {
+    background: #eaffed;
+  }
+
+  .flex-1 {
     flex: 1;
+  }
+  .w-full {
+    width: 100%;
+  }
+
+  .pane-footer {
     display: flex;
-    overflow: hidden;
-  }
-
-  .smart-sidebar {
-    width: 300px;
-    border-right: 1px solid #f1f5f9;
-    display: flex;
-    flex-direction: column;
-    background: #fcfcfc;
-  }
-
-  .upload-area {
-    padding: 2rem;
-    text-align: center;
-    border-bottom: 1px solid #f1f5f9;
-    cursor: pointer;
-    transition: bg 0.2s;
-    color: #64748b;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .upload-area:hover {
-    background: #f1f5f9;
-    color: #3b82f6;
-  }
-
-  .upload-icon {
-    font-size: 2rem;
-  }
-
-  .table-list-area {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .list-header {
-    padding: 0.8rem 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.85rem;
-    color: #475569;
-    border-bottom: 1px solid #f1f5f9;
-  }
-
-  .table-items {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1rem;
-  }
-
-  .table-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-  }
-
-  .col-count {
-    font-size: 0.75rem;
-    color: #94a3b8;
-  }
-
-  .gen-config {
-    padding: 1rem;
-    border-top: 1px solid #f1f5f9;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    border-top: 4px solid #111;
     background: #f8fafc;
   }
 
-  .full-btn {
-    margin: 0 1rem 1rem 1rem;
+  .brutal-action-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.5rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+    text-transform: uppercase;
+  }
+
+  .brutal-action-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+
+  .brutal-action-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-action-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: 4px 4px 0px #111 !important;
+  }
+
+  .brutal-action-btn.primary {
+    background: #00e572;
+  }
+  .brutal-action-btn.small {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.85rem;
+    border-width: 2px;
+    box-shadow: 2px 2px 0px #111;
+  }
+  .brutal-action-btn.small:hover {
+    box-shadow: 4px 4px 0px #111;
+  }
+  .brutal-action-btn.large-btn {
+    padding: 1rem;
+    font-size: 1.1rem;
+  }
+
+  .brutal-input-inline {
+    border: 3px solid #111;
+    padding: 0.4rem 0.8rem;
+    font-family: 'IBM Plex Mono', inherit;
+    font-weight: bold;
+    font-size: 1rem;
+    color: #111;
+    background: #fff;
+    box-shadow: 3px 3px 0px #111;
+    outline: none;
+    transition: all 0.1s;
+  }
+
+  .brutal-input-inline:focus {
+    transform: translate(-1px, -1px);
+    box-shadow: 5px 5px 0px #111;
+  }
+
+  .number-input {
+    width: 80px;
+    text-align: center;
+  }
+
+  /* Toggle */
+  .brutal-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-weight: 700;
+    user-select: none;
+    font-size: 0.95rem;
+  }
+
+  .brutal-toggle input {
+    display: none;
+  }
+
+  .t-box {
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border: 3px solid #111;
+    position: relative;
+    flex-shrink: 0;
+    box-shadow: 2px 2px 0px #111;
+  }
+
+  .brutal-toggle input:checked + .t-box {
+    background: #00e572;
+  }
+  .brutal-toggle input:checked + .t-box::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid #111;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+  }
+
+  /* Smart Tab */
+  .smart-pane {
+    min-height: 75vh;
+  }
+
+  .smart-layout {
+    display: flex;
+    flex: 1;
+  }
+
+  .smart-ctrl {
+    width: 280px;
+    border-right: 4px solid #111;
+    display: flex;
+    flex-direction: column;
+    background: #fdfae5;
+  }
+
+  .upload-zone {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 3px solid #111;
+    cursor: pointer;
+    transition: background 0.1s;
+    font-weight: 700;
+  }
+
+  .upload-zone:hover {
+    background: #ffd900;
+  }
+
+  .upload-icon {
+    font-size: 2.5rem;
+  }
+
+  .tables-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 3px solid #111;
+    font-weight: 700;
+    background: #fff;
+  }
+
+  .tables-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .table-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 3px solid #111;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    background: #fff;
+    box-shadow: 3px 3px 0px #111;
+    transition: all 0.1s;
+  }
+
+  .table-row:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px #111;
+  }
+
+  .table-row.selected {
+    background: #00e572;
+    border-color: #111;
+  }
+
+  .table-name {
+    font-weight: bold;
+  }
+  .col-badge {
+    font-size: 0.8rem;
+    background: #111;
+    color: #ffd900;
+    padding: 1px 5px;
+    font-weight: bold;
+  }
+
+  .gen-count-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-top: 3px solid #111;
+    border-bottom: 3px solid #111;
+    gap: 0.5rem;
+    background: #fff;
+  }
+
+  .w-full {
+    margin: 1rem;
+    width: calc(100% - 2rem);
+    box-sizing: border-box;
   }
 
   .empty-tip {
@@ -747,9 +857,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #cbd5e1;
-    padding: 2rem;
     text-align: center;
+    padding: 2rem;
+    font-weight: 600;
+    color: #555;
   }
 
   .smart-result {
@@ -758,136 +869,202 @@
     flex-direction: column;
   }
 
-  .result-header {
-    padding: 0.8rem 1rem;
-    border-bottom: 1px solid #f1f5f9;
+  .result-label {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #f8fafc;
+    padding: 0.75rem 1.5rem;
+    border-bottom: 3px solid #111;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    background: #fdfae5;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .tool-page {
-      background: #111827;
-    }
-
-    .tool-header {
-      background: #1f2937;
-      border-color: #374151;
-    }
-
-    .tool-title {
-      color: #f3f4f6;
-    }
-
-    .nav-menu {
-      background: #1f2937;
-      border-color: #374151;
-    }
-
-    .nav-item {
-      color: #9ca3af;
-    }
-
-    .nav-item:hover {
-      background: #374151;
-    }
-
-    .nav-item.active {
-      background: #374151;
-      color: #60a5fa;
-    }
-
-    .tool-pane {
-      background: #1f2937;
-      border-color: #374151;
-    }
-
-    .pane-header,
-    .actions-row {
-      background: #374151;
-      border-color: #4b5563;
-    }
-
-    .pane-header h3 {
-      color: #f3f4f6;
-    }
-
-    .code-editor,
-    .result-editor {
-      background: #111827;
-      border-color: #4b5563;
-      color: #e2e8f0;
-    }
-
-    .arrow-divider {
-      color: #4b5563;
-    }
-
-    .smart-sidebar {
-      background: #1f2937;
-      border-color: #374151;
-    }
-
-    .upload-area:hover {
-      background: #374151;
-    }
-
-    .list-header,
-    .gen-config,
-    .result-header {
-      background: #374151;
-      border-color: #4b5563;
-      color: #cbd5e1;
-    }
-
-    .table-list-area {
-      color: #cbd5e1;
-    }
+  .smart-textarea {
+    flex: 1;
+    min-height: auto;
+    border: none;
+    box-shadow: none;
+    background: #eaffed;
+    resize: none;
+    padding: 1.5rem;
+    font-size: 1rem;
+    height: 100%;
   }
 
   @media (max-width: 900px) {
-    .tool-content {
+    .brutal-title {
+      font-size: 2rem;
+    }
+    .split-layout {
       flex-direction: column;
     }
-
-    .sidebar {
-      width: 100%;
-      display: flex;
-      overflow-x: auto;
+    .arrow-mid {
+      transform: rotate(90deg);
+      align-self: center;
     }
-
-    .nav-menu {
-      flex-direction: row;
-      width: 100%;
-    }
-
-    .nav-item {
-      flex: 1;
-      justify-content: center;
-      padding: 1rem;
-    }
-
-    .tool-pane {
-      height: auto;
-      min-height: 500px;
-    }
-
     .smart-layout {
       flex-direction: column;
     }
-
-    .smart-sidebar {
+    .smart-ctrl {
       width: 100%;
-      height: 300px;
+      border-right: none;
+      border-bottom: 4px solid #111;
+    }
+    .tab-nav {
+      gap: 0.3rem;
+    }
+    .brutal-btn {
+      padding: 0.5rem 0.8rem;
+      font-size: 0.85rem;
     }
   }
 
-  .footer {
-    text-align: center;
-    padding: 1rem 0;
-    color: var(--text-secondary, #64748b);
-    font-size: 0.85rem;
+  /* Dark Mode */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 5px 5px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn.tab-btn.active {
+    background: #eee;
+    color: #111;
+  }
+
+  [data-theme='dark'] .brutal-pane {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .pane-footer {
+    background: #111;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #007a3d;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #cc62b6;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .brutal-action-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #00994c;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .brutal-editor {
+    background: #222;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-editor:focus {
+    background: #2a2a2a;
+  }
+  [data-theme='dark'] .result-tinted {
+    background: #0a2a14;
+  }
+
+  [data-theme='dark'] .brutal-input-inline {
+    background: #222;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-input-inline:focus {
+    box-shadow: 5px 5px 0px #eee;
+  }
+
+  [data-theme='dark'] .t-box {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-toggle input:checked + .t-box {
+    background: #007a3d;
+  }
+  [data-theme='dark'] .brutal-toggle input:checked + .t-box::after {
+    border-color: #fff;
+  }
+
+  [data-theme='dark'] .smart-ctrl {
+    background: #111;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .upload-zone {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .upload-zone:hover {
+    background: #b28f00;
+  }
+  [data-theme='dark'] .tables-list-header {
+    background: #1a1a1a;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .table-row {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .table-row.selected {
+    background: #007a3d;
+  }
+  [data-theme='dark'] .gen-count-row {
+    background: #1a1a1a;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .result-label {
+    background: #111;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .hint-bar {
+    border-color: #eee;
+    background: #222;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
   }
 </style>

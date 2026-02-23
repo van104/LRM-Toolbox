@@ -1,69 +1,45 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <h1 class="tool-title">CSS 格式化</h1>
-      <div class="header-right">
-        <el-button text @click="clearAll">
-          <el-icon>
-            <Delete />
-          </el-icon>
-          <span>清空</span>
-        </el-button>
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">CSS<span>.格式化()</span></h1>
+        <button class="brutal-btn clear-btn" @click="clearAll">清空</button>
+      </header>
 
-    <div class="tool-content">
-      <div class="editor-section">
-        <textarea
-          v-model="cssContent"
-          class="css-editor"
-          placeholder="在此粘贴 CSS 代码..."
-          spellcheck="false"
-        ></textarea>
-
-        <div class="controls">
-          <div class="config-group">
-            <span class="label">缩进字符:</span>
-            <el-select v-model="indentSize" size="small" style="width: 100px">
-              <el-option label="2 空格" :value="2" />
-              <el-option label="4 空格" :value="4" />
-              <el-option label="Tab" :value="'tab'" />
-            </el-select>
+      <div class="brutal-pane form-pane">
+        <div class="pane-header bg-yellow">
+          <span>CSS_CODE_EDITOR</span>
+          <div class="header-actions">
+            <span class="label">缩进:</span>
+            <select v-model="indentSize" class="brutal-select small-select">
+              <option :value="2">2 空格</option>
+              <option :value="4">4 空格</option>
+              <option value="tab">Tab</option>
+            </select>
           </div>
+        </div>
 
-          <div class="action-buttons">
-            <el-button type="primary" @click="formatCss">
-              <el-icon>
-                <MagicStick />
-              </el-icon>
-              格式化 (Beautify)
-            </el-button>
-            <el-button type="warning" @click="compressCss">
-              <el-icon>
-                <files />
-              </el-icon>
-              压缩 (Minify)
-            </el-button>
-            <el-button @click="copyResult">
-              <el-icon>
-                <CopyDocument />
-              </el-icon>
-              复制
-            </el-button>
+        <div class="pane-body">
+          <textarea
+            v-model="cssContent"
+            class="brutal-editor css-textarea"
+            placeholder="[在此粘贴你需要格式化或压缩的 CSS 代码]"
+            spellcheck="false"
+          ></textarea>
+
+          <div class="action-buttons mt-4">
+            <button class="brutal-action-btn primary large-btn flex-1" @click="formatCss">
+              ✨ 格式化 (Beautify)
+            </button>
+            <button class="brutal-action-btn primary bg-pink large-btn flex-1" @click="compressCss">
+              🗜️ 压缩 (Minify)
+            </button>
+            <button class="brutal-action-btn large-btn" @click="copyResult">📋 复制</button>
           </div>
         </div>
       </div>
     </div>
-
-    <footer class="footer">© 2026 LRM工具箱 - CSS 格式化</footer>
   </div>
 </template>
 
@@ -71,7 +47,6 @@
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { ElMessage } from 'element-plus';
-  import { ArrowLeft, Delete, MagicStick, Files, CopyDocument } from '@element-plus/icons-vue';
   import jsBeautify from 'js-beautify';
   import { useCopy } from '@/composables/useCopy';
 
@@ -84,7 +59,10 @@
   const indentSize = ref(2);
 
   function formatCss() {
-    if (!cssContent.value) return;
+    if (!cssContent.value) {
+      ElMessage.warning('警告: 找不到代码！');
+      return;
+    }
 
     try {
       const options = {
@@ -96,15 +74,18 @@
       };
 
       cssContent.value = cssBeautify(cssContent.value, options);
-      ElMessage.success('格式化完成');
+      ElMessage.success('格式化重组完毕');
     } catch (err) {
       console.error(err);
-      ElMessage.error('格式化失败');
+      ElMessage.error('糟糕，格式化失败');
     }
   }
 
   function compressCss() {
-    if (!cssContent.value) return;
+    if (!cssContent.value) {
+      ElMessage.warning('警告: 找不到代码！');
+      return;
+    }
 
     try {
       let compressed = cssContent.value.replace(/\/\*[\s\S]*?\*\//g, '');
@@ -116,16 +97,19 @@
         .trim();
 
       cssContent.value = compressed;
-      ElMessage.success('压缩完成');
+      ElMessage.success('极强压缩完成');
     } catch {
-      ElMessage.error('压缩失败');
+      ElMessage.error('糟糕，压缩失败');
     }
   }
 
   async function copyResult() {
-    if (!cssContent.value) return;
+    if (!cssContent.value) {
+      ElMessage.warning('没有可复制的内容');
+      return;
+    }
     await copyToClipboard(cssContent.value, {
-      success: '已复制'
+      success: '已复制代码至剪贴板'
     });
   }
 
@@ -139,127 +123,305 @@
 
   function clearAll() {
     cssContent.value = '';
+    ElMessage.success('画板已清空');
   }
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f0f4f8;
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .tool-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: #ffffff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-  }
-
-  .header-left,
-  .header-right {
-    width: 100px;
-  }
-
-  .tool-content {
-    flex: 1;
-    width: 100%;
+  .brutal-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
     display: flex;
     flex-direction: column;
   }
 
-  .editor-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background: #ffffff;
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    min-height: 500px;
-  }
-
-  .css-editor {
-    flex: 1;
-    width: 100%;
-    padding: 1.5rem;
-    border: none;
-    resize: none;
-    font-family: 'Consolas', monospace;
-    font-size: 14px;
-    line-height: 1.6;
-    color: #1e293b;
-    outline: none;
-    background: transparent;
-  }
-
-  .controls {
-    padding: 1rem 1.5rem;
-    background: #f8fafc;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
+    margin-bottom: 2rem;
   }
 
-  .config-group {
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-btn.clear-btn {
+    background: #ff4b4b;
+    color: #fff;
+  }
+
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-pink {
+    background: #ff7be5 !important;
+  }
+
+  .header-actions {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.875rem;
-    color: #64748b;
+    font-size: 1rem;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+  }
+
+  .label {
+    font-weight: bold;
+  }
+
+  .brutal-select {
+    appearance: none;
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.3rem 0.8rem;
+    font-family: inherit;
+    font-weight: bold;
+    color: #111;
+    box-shadow: 3px 3px 0px #111;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .pane-body {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .css-textarea {
+    width: 100%;
+    min-height: 50vh;
+    resize: vertical;
+    padding: 1.5rem;
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+
+  .brutal-editor {
+    border: 4px solid #111;
+    font-family: 'IBM Plex Mono', monospace;
+    background: #fdfae5;
+    color: #111;
+    box-shadow: 6px 6px 0px #111;
+    outline: none;
+    font-weight: 600;
+  }
+
+  .brutal-editor:focus {
+    background: #fff;
   }
 
   .action-buttons {
     display: flex;
-    gap: 1rem;
+    gap: 1.5rem;
+    flex-wrap: wrap;
   }
 
-  [data-theme='dark'] .tool-page {
-    background: var(--bg-primary);
+  .brutal-action-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.6rem 2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+    text-transform: uppercase;
   }
 
-  [data-theme='dark'] .tool-header {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
+  .brutal-action-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
   }
 
-  [data-theme='dark'] .tool-title {
-    color: var(--text-primary);
+  .brutal-action-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
   }
 
-  [data-theme='dark'] .editor-section {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
+  .brutal-action-btn.primary {
+    background: #00e572;
   }
 
-  [data-theme='dark'] .controls {
-    background: var(--bg-glass);
-    border-color: var(--border-color);
+  .large-btn {
+    padding: 1.2rem;
+    font-size: 1.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
   }
 
-  [data-theme='dark'] .css-editor {
-    color: var(--text-primary);
+  .flex-1 {
+    flex: 1;
   }
 
-  .footer {
-    text-align: center;
-    padding: 3rem 0;
-    color: var(--text-secondary, #64748b);
-    font-size: 0.85rem;
+  @media (max-width: 768px) {
+    .brutal-title {
+      font-size: 2.2rem;
+    }
+    .action-buttons {
+      flex-direction: column;
+    }
+    .pane-header {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+  }
+
+  /* Dark Mode Overrides */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-editor,
+  [data-theme='dark'] .brutal-select {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-editor {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-action-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-btn.clear-btn {
+    background: #cc3c3c;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-action-btn.bg-pink {
+    background: #cc62b6 !important;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .brutal-select {
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-editor:focus {
+    background: #222;
   }
 </style>

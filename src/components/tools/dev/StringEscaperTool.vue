@@ -1,101 +1,101 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <h1 class="tool-title">字符串转义工具</h1>
-      <div class="header-right"></div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">字符串<span>.转义()</span></h1>
+        <button
+          class="brutal-btn clear-btn"
+          @click="
+            inputText = '';
+            outputText = '';
+          "
+        >
+          清空
+        </button>
+      </header>
 
-    <div class="tool-content">
-      <div class="layout-container">
-        <section class="panel input-panel">
-          <div class="panel-header">
-            <span class="panel-title">输入</span>
-            <div class="actions">
-              <el-button size="small" text @click="inputText = ''">清空</el-button>
-            </div>
+      <div class="brutal-grid main-grid">
+        <!-- 输入区 -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span>INPUT.RAW_STRING</span>
           </div>
-          <div class="editor-wrapper">
+          <div class="pane-body">
             <textarea
               v-model="inputText"
-              class="code-editor"
-              placeholder="输入需要处理的文本..."
+              class="brutal-editor code-textarea"
+              placeholder="[在此粘贴需要处理的原始文本]"
               spellcheck="false"
             ></textarea>
           </div>
-        </section>
+        </div>
 
-        <section class="control-panel">
-          <div class="control-group">
-            <div class="label">语言模式</div>
-            <el-select v-model="mode" class="full-width">
-              <el-option label="Java / C# / C++" value="java" />
-              <el-option label="JavaScript / JSON" value="js" />
-              <el-option label="HTML Entities" value="html" />
-              <el-option label="XML" value="xml" />
-              <el-option label="SQL (Single Quote)" value="sql" />
-              <el-option label="URL Encode" value="url" />
-              <el-option label="CSV" value="csv" />
-            </el-select>
+        <!-- 操控面板 -->
+        <div class="brutal-pane control-pane">
+          <div class="pane-header bg-blue">
+            <span class="text-white">MODE.CONFIG</span>
           </div>
+          <div class="pane-body control-body">
+            <div class="control-group">
+              <label class="control-label">// 语言模式</label>
+              <select v-model="mode" class="brutal-select">
+                <option value="java">Java / C# / C++</option>
+                <option value="js">JavaScript / JSON</option>
+                <option value="html">HTML Entities</option>
+                <option value="xml">XML</option>
+                <option value="sql">SQL (Single Quote)</option>
+                <option value="url">URL Encode</option>
+                <option value="csv">CSV</option>
+              </select>
+            </div>
 
-          <div class="control-actions">
-            <el-button type="primary" class="action-btn" @click="doEscape">
-              转义
-              <el-icon>
-                <Right />
-              </el-icon>
-            </el-button>
-            <el-button class="action-btn" @click="doUnescape">
-              <el-icon>
-                <Back />
-              </el-icon>
-              反转义
-            </el-button>
-          </div>
+            <div class="info-badge">
+              <span v-if="mode === 'java'">处理双引号、反斜杠、换行符等。</span>
+              <span v-else-if="mode === 'js'">标准 JSON 字符串转义。</span>
+              <span v-else-if="mode === 'html'">将 &lt; &gt; &amp; " ' 转换为实体。</span>
+              <span v-else-if="mode === 'xml'">XML 仅支持 &lt; &gt; &amp; " '。</span>
+              <span v-else-if="mode === 'sql'">将单引号转义为双单引号。</span>
+              <span v-else-if="mode === 'url'">将非 ASCII 字符转换为百分号编码。</span>
+              <span v-else-if="mode === 'csv'">CSV 字段含特殊字符时会加引号。</span>
+            </div>
 
-          <div class="info-box">
-            <p v-if="mode === 'java'">处理双引号、反斜杠、换行符等。</p>
-            <p v-if="mode === 'js'">标准 JSON 字符串转义。</p>
-            <p v-if="mode === 'html'">将 &lt; &gt; &amp; " ' 转换为实体。</p>
-            <p v-if="mode === 'xml'">XML 仅支持 &lt; &gt; &amp; " '。</p>
-            <p v-if="mode === 'sql'">将单引号转义为双单引号。</p>
-          </div>
-        </section>
-
-        <section class="panel output-panel">
-          <div class="panel-header">
-            <span class="panel-title">结果</span>
-            <div class="actions">
-              <el-button size="small" :disabled="!outputText" @click="copyResult">复制</el-button>
+            <div class="action-buttons">
+              <button class="brutal-action-btn primary large-btn" @click="doEscape">转义 →</button>
+              <button class="brutal-action-btn large-btn" @click="doUnescape">← 反转义</button>
             </div>
           </div>
-          <div class="editor-wrapper">
+        </div>
+
+        <!-- 输出区 -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-green">
+            <span>OUTPUT.RESULT</span>
+            <button
+              class="brutal-action-btn small copy-btn-inline"
+              :disabled="!outputText"
+              @click="copyResult"
+            >
+              复制
+            </button>
+          </div>
+          <div class="pane-body">
             <textarea
               v-model="outputText"
-              class="code-editor result-editor"
+              class="brutal-editor code-textarea result-editor"
               readonly
-              placeholder="处理结果..."
+              placeholder="[处理结果将在此显示]"
             ></textarea>
           </div>
-        </section>
+        </div>
       </div>
 
-      <div class="help-section">
-        <h3>
-          <el-icon>
-            <QuestionFilled />
-          </el-icon>
-          使用指南
-        </h3>
-        <div class="help-grid">
+      <!-- 使用指南 -->
+      <div class="brutal-pane help-pane">
+        <div class="pane-header bg-yellow">
+          <span>// 使用指南</span>
+        </div>
+        <div class="pane-body help-grid">
           <div class="help-card">
             <h4>1. 代码转义 (Java/JS)</h4>
             <p>将特殊字符转换为字符串字面量安全格式。</p>
@@ -122,7 +122,6 @@
         </div>
       </div>
     </div>
-    <footer class="footer">© 2026 LRM工具箱 - 字符串转义工具</footer>
   </div>
 </template>
 
@@ -130,27 +129,36 @@
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { ElMessage } from 'element-plus';
-  import { ArrowLeft, Right, Back, QuestionFilled } from '@element-plus/icons-vue';
+  import { useCopy } from '@/composables/useCopy';
 
   const router = useRouter();
+  const { copyToClipboard } = useCopy();
+
   const inputText = ref('');
   const outputText = ref('');
   const mode = ref('java');
 
   function doEscape() {
-    if (!inputText.value) return;
+    if (!inputText.value) {
+      ElMessage.warning('输入区为空，无法转义');
+      return;
+    }
     try {
       outputText.value = escapeLogic(inputText.value, mode.value);
+      ElMessage.success('转义完成');
     } catch (e) {
       ElMessage.error('转义失败: ' + e.message);
     }
   }
 
   function doUnescape() {
-    if (!inputText.value) return;
-
+    if (!inputText.value) {
+      ElMessage.warning('输入区为空，无法反转义');
+      return;
+    }
     try {
       outputText.value = unescapeLogic(inputText.value, mode.value);
+      ElMessage.success('反转义完成');
     } catch (e) {
       ElMessage.error('反转义失败: ' + e.message);
     }
@@ -161,7 +169,6 @@
       case 'java':
       case 'js':
         return JSON.stringify(str).slice(1, -1);
-
       case 'html':
         return str
           .replace(/&/g, '&amp;')
@@ -194,15 +201,7 @@
     switch (type) {
       case 'java':
       case 'js':
-        // JSON.parse(`"${str}"`) might fail if str contains newlines literally without escape?
-        // If user inputs: \n (two chars), JSON.parse handles it.
-        // If user inputs actual newline, JSON.parse fails on unescaped newline within string.
-        // But Textarea content has actual newlines.
-        // We assume input is the "Escaped String" content.
-        // E.g. input: Hello\nWorld
         return JSON.parse('"' + str.replace(/"/g, '\\"') + '"');
-      // This is tricky. simpler to stick to JSON.parse?
-      // Or custom unescape.
       case 'html': {
         const doc = new DOMParser().parseFromString(str, 'text/html');
         return doc.documentElement.textContent;
@@ -225,12 +224,9 @@
     }
   }
 
-  import { useCopy } from '@/composables/useCopy';
-
-  const { copyToClipboard } = useCopy();
-
   function copyResult() {
-    copyToClipboard(outputText.value, { success: '已复制' });
+    if (!outputText.value) return;
+    copyToClipboard(outputText.value, { success: '已复制结果至剪贴板' });
   }
 
   function goBack() {
@@ -240,304 +236,443 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f0f4f8;
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .tool-header {
+  .brutal-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-btn.clear-btn {
+    background: #ff4b4b;
+    color: #fff;
+  }
+
+  .main-grid {
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .pane-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: #ffffff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  }
-
-  .tool-title {
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
     font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
+    letter-spacing: 1px;
   }
 
-  .tool-content {
-    flex: 1;
-    max-width: 1400px;
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+  }
+  .bg-green {
+    background: #00e572;
+  }
+  .text-white {
+    color: #fff;
+  }
+
+  .pane-body {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .code-textarea {
     width: 100%;
-    margin: 0 auto;
+    min-height: 40vh;
+    resize: vertical;
     padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
+    font-size: 1rem;
+    line-height: 1.6;
   }
 
-  .layout-container {
-    display: flex;
-    gap: 1rem;
-    height: calc(100vh - 180px);
-    min-height: 500px;
-  }
-
-  .panel {
-    flex: 1;
-    background: #ffffff;
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .control-panel {
-    width: 250px;
-    background: #ffffff;
-
-    background: #f8fafc;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 12px;
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    justify-content: center;
-  }
-
-  .panel-header {
-    background: #f8fafc;
-    padding: 0.8rem 1rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .panel-title {
+  .brutal-editor {
+    border: 4px solid #111;
+    font-family: 'IBM Plex Mono', monospace;
+    background: #fdfae5;
+    color: #111;
+    box-shadow: 6px 6px 0px #111;
+    outline: none;
     font-weight: 600;
-    color: #1e293b;
-    font-size: 0.95rem;
+    box-sizing: border-box;
   }
 
-  .editor-wrapper {
-    flex: 1;
-    position: relative;
+  .brutal-editor:focus {
     background: #fff;
   }
 
-  .code-editor {
-    width: 100%;
-    height: 100%;
-    border: none;
-    padding: 1rem;
-    resize: none;
-    outline: none;
-    font-family: 'Consolas', monospace;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    color: #334155;
-    background: transparent;
+  .result-editor {
+    background: #eaffed;
+    cursor: default;
   }
 
-  .result-editor {
-    background: #fdfdfd;
+  .control-pane {
+    min-width: 240px;
+  }
+
+  .control-body {
+    gap: 2rem;
+  }
+
+  .control-label {
+    display: block;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
   }
 
   .control-group {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
   }
 
-  .label {
-    font-size: 0.85rem;
+  .brutal-select {
+    appearance: none;
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.6rem 1rem;
+    font-family: 'IBM Plex Mono', inherit;
+    font-weight: bold;
+    font-size: 1rem;
+    color: #111;
+    box-shadow: 4px 4px 0px #111;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.1s;
+  }
+
+  .brutal-select:focus {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+
+  .info-badge {
+    background: #fdfae5;
+    border: 3px solid #111;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
-    color: #64748b;
+    box-shadow: 4px 4px 0px #111;
+    line-height: 1.5;
   }
 
-  .full-width {
-    width: 100%;
-  }
-
-  .control-actions {
+  .action-buttons {
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
 
-  .action-btn {
-    width: 100%;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .info-box {
-    background: #e2e8f0;
-    padding: 1rem;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    color: #475569;
-    line-height: 1.5;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .tool-page {
-      background: #111827;
-    }
-
-    .tool-header,
-    .footer {
-      background: #1f2937;
-      border-color: #374151;
-      color: #f3f4f6;
-    }
-
-    .tool-title {
-      color: #f3f4f6;
-    }
-
-    .panel,
-    .control-panel {
-      background: #1f2937;
-      border-color: #374151;
-    }
-
-    .panel-header {
-      background: #374151;
-      border-color: #4b5563;
-    }
-
-    .panel-title {
-      color: #f3f4f6;
-    }
-
-    .code-editor {
-      color: #e2e8f0;
-      background: #1f2937;
-    }
-
-    .result-editor {
-      background: #111827;
-    }
-
-    .info-box {
-      background: #374151;
-      color: #cbd5e1;
-    }
-
-    .label {
-      color: #cbd5e1;
-    }
-  }
-
-  .help-section {
-    margin-top: 2rem;
+  .brutal-action-btn {
     background: #fff;
-    border-radius: 12px;
-    padding: 1.5rem;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 3px solid #111;
+    padding: 0.6rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+    text-transform: uppercase;
+    text-align: center;
   }
 
-  .help-section h3 {
+  .brutal-action-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+
+  .brutal-action-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-action-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 4px 4px 0px #111;
+  }
+
+  .brutal-action-btn.primary {
+    background: #00e572;
+  }
+  .brutal-action-btn.small {
+    padding: 0.2rem 0.8rem;
+    font-size: 0.9rem;
+    border-width: 2px;
+    box-shadow: 2px 2px 0px #111;
+  }
+
+  .copy-btn-inline {
+    background: #111;
+    color: #ffd900;
+    border-color: #111;
+    box-shadow: 2px 2px 0px #555;
+  }
+
+  .copy-btn-inline:hover {
+    background: #333;
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px #555;
+  }
+
+  .large-btn {
+    padding: 1rem;
     font-size: 1.1rem;
-    font-weight: 600;
-    color: #334155;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
   }
 
-  .help-grid {
+  /* Help Section */
+  .help-pane .help-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
   }
 
   .help-card h4 {
-    font-weight: 600;
-    color: #475569;
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem 0;
+    border-bottom: 3px solid #111;
+    padding-bottom: 0.5rem;
   }
 
   .help-card p {
-    font-size: 0.85rem;
-    color: #64748b;
+    font-size: 0.9rem;
+    margin: 0 0 0.75rem 0;
     line-height: 1.5;
-    margin-bottom: 0.5rem;
+    color: #333;
   }
 
   .help-card .example {
-    background: #f8fafc;
-    padding: 0.5rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    color: #334155;
-    border: 1px solid #e2e8f0;
-    font-family: monospace;
+    background: #fdfae5;
+    border: 3px solid #111;
+    padding: 0.75rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    box-shadow: 4px 4px 0px #111;
     overflow-wrap: break-word;
   }
 
   .help-card code {
-    background: #f1f5f9;
-    padding: 2px 4px;
-    border-radius: 3px;
-    color: #0d9488;
+    background: #111;
+    color: #ffd900;
+    padding: 2px 5px;
+    font-weight: bold;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .help-section {
-      background: #1f2937;
-      border-color: #374151;
+  @media (max-width: 900px) {
+    .main-grid {
+      grid-template-columns: 1fr !important;
     }
 
-    .help-section h3 {
-      color: #f3f4f6;
+    .brutal-title {
+      font-size: 2.2rem;
     }
-
-    .help-card h4 {
-      color: #e2e8f0;
-    }
-
-    .help-card p {
-      color: #94a3b8;
-    }
-
-    .help-card .example {
-      background: #374151;
-      border-color: #4b5563;
-      color: #cbd5e1;
-    }
-
-    .help-card code {
-      background: #4b5563;
-      color: #5eead4;
+    .action-buttons {
+      flex-direction: row;
     }
   }
 
-  @media (max-width: 800px) {
-    .layout-container {
-      flex-direction: column;
-      height: auto;
-    }
-
-    .panel,
-    .control-panel {
-      width: 100%;
-    }
-
-    .panel {
-      min-height: 200px;
-    }
+  /* Dark Mode Overrides */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
   }
 
-  .footer {
-    text-align: center;
-    padding: 1rem 0;
-    color: var(--text-secondary, #64748b);
-    font-size: 0.85rem;
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-editor,
+  [data-theme='dark'] .brutal-select,
+  [data-theme='dark'] .info-badge {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-action-btn {
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #00994c;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .brutal-select {
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-select:focus {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-editor {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-editor:focus {
+    background: #222;
+  }
+
+  [data-theme='dark'] .result-editor {
+    background: #0a2a14;
+  }
+
+  [data-theme='dark'] .info-badge {
+    box-shadow: 4px 4px 0px #eee;
+  }
+
+  [data-theme='dark'] .help-card .example {
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+    background: #222;
+  }
+  [data-theme='dark'] .help-card p {
+    color: #aaa;
+  }
+
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #00994c;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .brutal-btn.clear-btn {
+    background: #cc3c3c;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .copy-btn-inline {
+    background: #ffd900;
+    color: #111;
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
   }
 </style>
