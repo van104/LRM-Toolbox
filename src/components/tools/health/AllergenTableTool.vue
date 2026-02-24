@@ -1,86 +1,70 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="$router.back()">
-          <el-icon><ArrowLeft /></el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">药物过敏原速查</h1>
-        <span class="tool-subtitle">Medical Allergen Database</span>
-      </div>
-      <div class="header-right">
-        <el-button type="warning" link @click="personalVisible = true">
-          <el-icon><List /></el-icon> 我的敏感史
-        </el-button>
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">健康<span>.药物过敏原速查()</span></h1>
+        <button class="brutal-action-btn primary" @click="personalVisible = true">
+          📝 我的敏感史
+        </button>
+      </header>
 
-    <main class="tool-content">
-      <div class="search-section glass-card mb-8">
-        <el-input
+      <div class="search-section">
+        <input
           v-model="searchQuery"
-          placeholder="搜索药物名称、成分或分类 (如：青霉素, 阿司匹林, 抗生素...)"
-          prefix-icon="Search"
-          size="large"
-          clearable
+          class="brutal-input large-input"
+          placeholder="🔍 搜索药物名称、成分或分类 (如：青霉素, 阿司匹林...)"
         />
       </div>
 
-      <div class="tool-layout">
-        <aside class="tool-sidebar">
-          <div class="panel glass-card">
-            <h2 class="panel-title">
-              <el-icon><Filter /></el-icon> 类别筛选
-            </h2>
-            <div class="filter-list">
-              <div
-                v-for="cat in categories"
-                :key="cat"
-                class="filter-tag"
-                :class="{ active: activeCategory === cat }"
-                @click="activeCategory = cat"
-              >
-                {{ cat }}
-              </div>
-            </div>
-
-            <div class="disclaimer mt-8">
-              <p>
-                <strong
-                  ><el-icon><Warning /></el-icon> 声明：</strong
+      <div class="brutal-grid-layout">
+        <!-- Sidebar Filter -->
+        <aside class="sidebar-pane">
+          <div class="brutal-pane">
+            <div class="pane-header bg-black"><span class="text-white">类别筛选</span></div>
+            <div class="pane-body padding-small">
+              <div class="filter-list">
+                <button
+                  v-for="cat in categories"
+                  :key="cat"
+                  class="brutal-action-btn filter-btn"
+                  :class="{ active: activeCategory === cat }"
+                  @click="activeCategory = cat"
                 >
-              </p>
-              <p>
-                本工具数据仅供科普参考，不能代替执业医师的诊断。用药前请务必确认个人过敏史，并遵循医嘱。
-              </p>
+                  {{ cat }}
+                </button>
+              </div>
+
+              <div class="disclaimer-brutal mt-8">
+                <strong>// ⚠️ 免责声明</strong>
+                <p>
+                  本工具数据仅供科普参考，不能代替执业医师的诊断。用药前请务必确认个人过敏史，并遵循医嘱。
+                </p>
+              </div>
             </div>
           </div>
         </aside>
 
-        <div class="tool-main">
-          <div v-if="filteredData.length === 0" class="empty-state glass-card">
-            <el-empty description="未找到相关药物信息，请尝试其他关键词" />
+        <!-- Main Content -->
+        <main class="main-content-pane">
+          <!-- Empty State -->
+          <div v-if="filteredData.length === 0" class="brutal-pane empty-pane">
+            <div class="empty-content">
+              <h3>[ 未找到相关药物信息 ]</h3>
+              <p>请尝试其他关键词或拼写</p>
+            </div>
           </div>
 
+          <!-- Allergen Grid -->
           <div v-else class="allergen-grid">
-            <div
-              v-for="item in filteredData"
-              :key="item.name"
-              class="allergen-card glass-card animate-fade-in"
-            >
-              <div class="card-header">
+            <div v-for="item in filteredData" :key="item.name" class="brutal-card">
+              <div class="card-header" :class="getRiskClass(item.risk)">
                 <div class="name-box">
-                  <h3 class="allergen-name">{{ item.name }}</h3>
-                  <span class="allergen-en">{{ item.en }}</span>
+                  <h3>{{ item.name }}</h3>
+                  <span class="en-name">{{ item.en }}</span>
                 </div>
-                <el-tag :type="getRiskColor(item.risk)" size="small" effect="dark">
-                  {{ item.risk }} 风险
-                </el-tag>
+                <div class="risk-badge">{{ item.risk }}风险</div>
               </div>
-
               <div class="card-body">
                 <div class="info-group">
                   <span class="info-label">所属分类</span>
@@ -89,15 +73,9 @@
                 <div class="info-group">
                   <span class="info-label">可能交叉过敏</span>
                   <div class="cross-list">
-                    <el-tag
-                      v-for="cross in item.crossAllergens"
-                      :key="cross"
-                      size="small"
-                      type="info"
-                      round
-                    >
+                    <span v-for="cross in item.crossAllergens" :key="cross" class="cross-tag">
                       {{ cross }}
-                    </el-tag>
+                    </span>
                   </div>
                 </div>
                 <div class="info-group">
@@ -107,38 +85,45 @@
               </div>
             </div>
           </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Personal Records Modal -->
+    <div v-if="personalVisible" class="brutal-modal-overlay" @click.self="personalVisible = false">
+      <div class="brutal-pane modal-pane">
+        <div class="pane-header bg-yellow modal-header">
+          <span>📝 我的药物敏感记录</span>
+          <button class="close-btn" @click="personalVisible = false">✖</button>
+        </div>
+        <div class="pane-body">
+          <div class="add-section">
+            <input
+              v-model="newRecord"
+              class="brutal-input"
+              placeholder="记录您过敏的药物名称"
+              @keyup.enter="addRecord"
+            />
+            <button class="brutal-action-btn primary" @click="addRecord">添加</button>
+          </div>
+
+          <ul class="record-list">
+            <li v-if="myRecords.length === 0" class="empty-record">暂无记录</li>
+            <li v-for="(record, index) in myRecords" :key="index" class="record-item">
+              <span>{{ record }}</span>
+              <button class="brutal-action-btn del-btn danger" @click="removeRecord(index)">
+                ✖
+              </button>
+            </li>
+          </ul>
         </div>
       </div>
-    </main>
-
-    <el-drawer v-model="personalVisible" title="我的药物敏感记录" direction="rtl" size="400px">
-      <div class="personal-records">
-        <div class="add-section">
-          <el-input v-model="newRecord" placeholder="记录您过敏的药物名称" @keyup.enter="addRecord">
-            <template #append>
-              <el-button @click="addRecord">添加</el-button>
-            </template>
-          </el-input>
-        </div>
-        <ul class="record-list mt-6">
-          <li v-for="(record, index) in myRecords" :key="index" class="record-item">
-            <span>{{ record }}</span>
-            <el-button type="danger" link @click="removeRecord(index)">
-              <el-icon><Delete /></el-icon>
-            </el-button>
-          </li>
-          <li v-if="myRecords.length === 0" class="empty-tip">暂无记录</li>
-        </ul>
-      </div>
-    </el-drawer>
-
-    <footer class="footer">© 2026 LRM工具箱 - 药物过敏原速查</footer>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue';
-  import { ArrowLeft, Filter, Warning, List, Delete } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
 
   const searchQuery = ref('');
@@ -212,11 +197,10 @@
     });
   });
 
-  const getRiskColor = (risk: string) => {
-    if (risk === '极高') return 'danger';
-    if (risk.includes('高')) return 'danger';
-    if (risk.includes('中')) return 'warning';
-    return 'info';
+  const getRiskClass = (risk: string) => {
+    if (risk.includes('高') || risk === '极高') return 'risk-high';
+    if (risk.includes('中')) return 'risk-medium';
+    return 'risk-low';
   };
 
   const addRecord = () => {
@@ -236,253 +220,501 @@
     myRecords.value.splice(index, 1);
     saveRecords();
   };
-
-  const saveRecords = () => {
+  const saveRecords = () =>
     localStorage.setItem('lrm_personal_allergens', JSON.stringify(myRecords.value));
-  };
 
   onMounted(() => {
     const saved = localStorage.getItem('lrm_personal_allergens');
-    if (saved) {
-      myRecords.value = JSON.parse(saved);
-    }
+    if (saved) myRecords.value = JSON.parse(saved);
   });
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
     min-height: 100vh;
-    background: #f8fafc;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 1400px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
   }
 
-  .tool-header {
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0 #4b7bff;
+    flex: 1;
+    text-align: center;
+  }
+  .brutal-title span {
+    color: #4b7bff;
+    text-shadow: 4px 4px 0 #111;
   }
 
-  .header-left,
-  .header-right {
-    width: 140px;
-  }
-  .header-center {
-    text-align: center;
-    flex: 1;
-  }
-  .tool-title {
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', sans-serif;
     font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0;
-  }
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0 #111;
+    transition: all 0.1s;
     text-transform: uppercase;
   }
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0 0 0 #111;
+  }
 
-  .tool-content {
-    flex: 1;
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
+  .brutal-action-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.6rem 1rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+  }
+  .brutal-action-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #111;
+  }
+  .brutal-action-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 #111;
+  }
+  .brutal-action-btn.primary {
+    background: #ffd900;
+  }
+  .brutal-action-btn.danger {
+    background: #ff4b4b;
+    color: white;
   }
 
   .search-section {
-    padding: 16px;
-    border-radius: 20px;
+    margin-bottom: 2rem;
   }
-  .search-section :deep(.el-input__wrapper) {
-    background: #f8fafc;
-    border-radius: 12px;
-    box-shadow: none !important;
-    border: 1px solid #e2e8f0;
+  .brutal-input {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 3px solid #111;
+    background: #fff;
+    font-weight: bold;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .brutal-input.large-input {
+    padding: 1rem 1.25rem;
+    font-size: 1.1rem;
+    border-width: 4px;
+    box-shadow: 6px 6px 0 #111;
+  }
+  .brutal-input:focus {
+    outline: none;
+    box-shadow: 6px 6px 0 #4b7bff;
+    border-color: #4b7bff;
   }
 
-  .tool-layout {
+  .brutal-grid-layout {
     display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 2rem;
-    align-items: start;
+    grid-template-columns: 280px 1fr;
+    gap: 2.5rem;
   }
 
-  @media (max-width: 900px) {
-    .tool-layout {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  }
-
-  .panel {
-    padding: 20px;
-  }
-
-  .panel-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 16px;
+  .brutal-pane {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0 #111;
+    min-width: 0;
+  }
+  .pane-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+  }
+  .bg-black {
+    background: #111;
+    color: white;
+  }
+  .pane-body {
+    padding: 1.5rem;
+    flex: 1;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+  .padding-small {
+    padding: 1rem;
   }
 
   .filter-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.75rem;
+  }
+  .filter-btn {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 3px 3px 0 #111;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 700;
+  }
+  .filter-btn.active {
+    background: #4b7bff;
+    color: white;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 #111;
   }
 
-  .filter-tag {
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: #475569;
-    transition: all 0.2s;
+  .disclaimer-brutal {
+    border: 3px dashed #111;
+    padding: 1rem;
+    margin-top: 2rem;
+    background: #fff8e0;
+    font-size: 0.85rem;
+    line-height: 1.5;
   }
-
-  .filter-tag:hover {
-    background: #f1f5f9;
-  }
-  .filter-tag.active {
-    background: #3b82f6;
-    color: #fff;
-    font-weight: 600;
-  }
-
-  .disclaimer {
-    padding: 12px;
-    background: #fff1f2;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    color: #9d174d;
-    line-height: 1.6;
+  .disclaimer-brutal strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #ff4b4b;
   }
 
   .allergen-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.5rem;
   }
-
-  .allergen-card {
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  .brutal-card {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
   }
-  .allergen-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  .brutal-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 #111;
   }
 
   .card-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid #f1f5f9;
+    padding: 1.25rem;
+    border-bottom: 4px solid #111;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
   }
-
-  .allergen-name {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: #1e293b;
+  .card-header h3 {
     margin: 0;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
   }
-  .allergen-en {
-    font-size: 0.8rem;
-    color: #94a3b8;
+  .card-header .en-name {
+    display: block;
+    font-size: 0.85rem;
+    color: #555;
+    margin-top: 0.25rem;
+  }
+
+  .risk-badge {
+    border: 3px solid #111;
+    padding: 0.3rem 0.6rem;
+    font-weight: 800;
+    font-size: 0.85rem;
+    background: #fff;
+  }
+  .risk-high {
+    background: #ffe4e4;
+  }
+  .risk-high .risk-badge {
+    background: #ff4b4b;
+    color: white;
+  }
+  .risk-medium {
+    background: #fffbe4;
+  }
+  .risk-medium .risk-badge {
+    background: #ffd900;
+  }
+  .risk-low .risk-badge {
+    background: #eee;
   }
 
   .card-body {
-    padding: 16px 20px;
+    padding: 1.25rem;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 1rem;
+    flex: 1;
   }
-
   .info-group {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 0.4rem;
   }
   .info-label {
-    font-size: 0.75rem;
-    color: #94a3b8;
-    font-weight: 600;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #555;
     text-transform: uppercase;
   }
   .info-val {
-    font-size: 0.95rem;
-    color: #334155;
+    font-size: 1rem;
+    font-weight: bold;
   }
 
   .cross-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 4px;
+    gap: 0.5rem;
   }
-  .symptoms {
-    font-size: 0.9rem;
-    color: #475569;
-    line-height: 1.5;
-    margin: 0;
+  .cross-tag {
+    border: 2px solid #111;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: #fdfae5;
   }
 
+  .symptoms {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .empty-pane {
+    background: #fafafa;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .empty-content h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Modal styling */
+  .brutal-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-pane {
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 16px 16px 0 #111;
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffd900;
+  }
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    color: #111;
+  }
+  .add-section {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .record-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
   .record-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px;
-    background: #f8fafc;
-    border-radius: 8px;
-    margin-bottom: 8px;
+    padding: 1rem;
+    border: 3px solid #111;
+    background: #fdfae5;
+    font-weight: bold;
   }
-
-  .record-list .empty-tip {
-    text-align: center;
-    color: #94a3b8;
-    font-size: 0.9rem;
-    padding: 40px 0;
+  .del-btn {
+    padding: 0.4rem 0.6rem;
   }
-
-  .animate-fade-in {
-    animation: fadeIn 0.8s ease;
-  }
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  .footer {
+  .empty-record {
     text-align: center;
     padding: 2rem;
-    color: #94a3b8;
-    font-size: 0.85rem;
+    font-weight: bold;
+    border: 3px dashed #111;
+    color: #666;
   }
-  .mb-8 {
-    margin-bottom: 2rem;
+
+  @media (max-width: 900px) {
+    .brutal-grid-layout {
+      grid-template-columns: 1fr;
+    }
+    .brutal-title {
+      font-size: 2.5rem;
+    }
   }
-  .mt-6 {
-    margin-top: 1.5rem;
+
+  /* Dark Mode Placeholder / Setup */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
   }
-  .mt-8 {
-    margin-top: 2rem;
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-input,
+  [data-theme='dark'] .brutal-card,
+  [data-theme='dark'] .cross-tag,
+  [data-theme='dark'] .risk-badge,
+  [data-theme='dark'] .record-item {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .modal-pane {
+    box-shadow: 12px 12px 0 #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-input.large-input {
+    box-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover {
+    box-shadow: 6px 6px 0 #eee;
+  }
+  [data-theme='dark'] .filter-btn {
+    box-shadow: 3px 3px 0 #eee;
+  }
+  [data-theme='dark'] .filter-btn.active {
+    box-shadow: 5px 5px 0 #eee;
+    background: #2a4eb2;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .bg-black {
+    background: #222;
+  }
+  [data-theme='dark'] .bg-yellow,
+  [data-theme='dark'] .brutal-action-btn.primary,
+  [data-theme='dark'] .modal-header {
+    background: #b28f00;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.danger {
+    background: #8b0000;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .pane-body {
+    background: #1a1a1a;
+  }
+  [data-theme='dark'] .brutal-card:hover {
+    box-shadow: 9px 9px 0 #eee;
+  }
+  [data-theme='dark'] .card-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .risk-high {
+    background: #3a1a1a;
+  }
+  [data-theme='dark'] .risk-high .risk-badge {
+    background: #8b0000;
+  }
+  [data-theme='dark'] .risk-medium {
+    background: #3a301a;
+  }
+  [data-theme='dark'] .risk-medium .risk-badge {
+    background: #b28f00;
+  }
+  [data-theme='dark'] .risk-low .risk-badge {
+    background: #333;
+  }
+  [data-theme='dark'] .disclaimer-brutal {
+    background: #3a2a00;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .empty-pane {
+    background: #222;
+  }
+  [data-theme='dark'] .close-btn {
+    color: #fff;
+  }
+  [data-theme='dark'] .empty-record {
+    border-color: #eee;
+    color: #aaa;
   }
 </style>

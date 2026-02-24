@@ -17,10 +17,10 @@
 <style scoped>
   .iframe-wrapper {
     width: 100%;
-
-    height: calc(100vh - 64px);
-    overflow: hidden;
-    background: #f8fafc;
+    height: 100vh;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
   }
 
   .full-frame {

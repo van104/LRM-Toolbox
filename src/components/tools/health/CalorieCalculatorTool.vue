@@ -1,234 +1,210 @@
 <template>
-  <div class="calorie-calculator-tool">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="$router.back()">
-        <el-icon>
-          <Back />
-        </el-icon>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>热量/TDEE 计算</h1>
-        <span class="nav-subtitle">Calorie & TDEE Calculator</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">健康<span>.热量与代谢()</span></h1>
+      </header>
 
-    <main class="main-content">
-      <section class="tdee-card glass-card">
-        <div class="section-title">
-          <el-icon>
-            <Odometer />
-          </el-icon>
-          基础代谢与每日消耗 (TDEE)
-        </div>
+      <div class="brutal-grid-layout">
+        <!-- Input & TDEE -->
+        <section class="main-content-pane">
+          <div class="brutal-pane">
+            <div class="pane-header bg-black">
+              <span class="text-white">⚙️ 身体数据换算 (TDEE)</span>
+            </div>
+            <div class="pane-body">
+              <div class="form-row">
+                <div class="input-group">
+                  <label>性别</label>
+                  <div class="brutal-radio-group">
+                    <label class="radio-btn" :class="{ active: gender === 'male' }">
+                      <input v-model="gender" type="radio" value="male" class="hidden-radio" />男
+                    </label>
+                    <label class="radio-btn" :class="{ active: gender === 'female' }">
+                      <input v-model="gender" type="radio" value="female" class="hidden-radio" />女
+                    </label>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <label>年龄</label>
+                  <input v-model.number="age" type="number" class="brutal-input" placeholder="岁" />
+                </div>
+              </div>
 
-        <div class="tdee-form">
-          <div class="form-row">
-            <div class="input-group">
-              <label>性别</label>
-              <div class="gender-switch">
-                <span :class="{ active: gender === 'male' }" @click="gender = 'male'">男</span>
-                <span :class="{ active: gender === 'female' }" @click="gender = 'female'">女</span>
+              <div class="form-row mt-4">
+                <div class="input-group">
+                  <label>身高 (cm)</label>
+                  <input
+                    v-model.number="height"
+                    type="number"
+                    class="brutal-input"
+                    placeholder="cm"
+                  />
+                </div>
+                <div class="input-group">
+                  <label>体重 (kg)</label>
+                  <input
+                    v-model.number="weight"
+                    type="number"
+                    class="brutal-input"
+                    placeholder="kg"
+                  />
+                </div>
+              </div>
+
+              <div class="form-row mt-4">
+                <div class="input-group full">
+                  <label>活动水平</label>
+                  <select v-model="activity" class="brutal-select">
+                    <option value="1.2">久坐 (办公室工作，极少运动)</option>
+                    <option value="1.375">轻度 (每周 1-3 天轻量运动)</option>
+                    <option value="1.55">中度 (每周 3-5 天中强度运动)</option>
+                    <option value="1.725">重度 (每周 6-7 天高强度运动)</option>
+                    <option value="1.9">极重度 (运动员 / 体力劳动者)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div v-if="bmr" class="tdee-display mt-6">
+                <div class="t-left">
+                  <span class="t-label">BMR 基础代谢</span>
+                  <span class="t-val">{{ bmr }} <small>kcal</small></span>
+                </div>
+                <div class="t-right bg-yellow">
+                  <span class="t-label text-black">TDEE 总消耗</span>
+                  <span class="t-val text-black">{{ tdee }} <small>kcal</small></span>
+                </div>
+              </div>
+
+              <div v-if="tdee" class="goals-grid mt-6">
+                <div class="brutal-card goal-loss">
+                  <span class="g-title">📉 减脂期</span>
+                  <span class="g-val">{{ tdee - 500 }} kcal</span>
+                </div>
+                <div class="brutal-card goal-maintain">
+                  <span class="g-title">⚖️ 维持期</span>
+                  <span class="g-val">{{ tdee }} kcal</span>
+                </div>
+                <div class="brutal-card goal-gain">
+                  <span class="g-title">📈 增肌期</span>
+                  <span class="g-val">{{ tdee + 300 }} kcal</span>
+                </div>
               </div>
             </div>
-            <div class="input-group">
-              <label>年龄</label>
-              <input v-model.number="age" type="number" placeholder="岁" />
+          </div>
+
+          <!-- Meal Plan -->
+          <div class="brutal-pane mt-8">
+            <div class="pane-header bg-yellow"><span>🍽️ 三餐热量分配建议</span></div>
+            <div class="pane-body">
+              <div class="ratio-chips">
+                <span class="chip-label">分配比例:</span>
+                <button
+                  class="brutal-action-btn chip"
+                  :class="{ active: mealRatio === '3:4:3' }"
+                  @click="mealRatio = '3:4:3'"
+                >
+                  3:4:3
+                </button>
+                <button
+                  class="brutal-action-btn chip"
+                  :class="{ active: mealRatio === '4:4:2' }"
+                  @click="mealRatio = '4:4:2'"
+                >
+                  4:4:2
+                </button>
+                <button
+                  class="brutal-action-btn chip"
+                  :class="{ active: mealRatio === '3:3:3:1' }"
+                  @click="mealRatio = '3:3:3:1'"
+                >
+                  3:3:3:1
+                </button>
+              </div>
+
+              <div class="meal-grid mt-6">
+                <div v-for="(meal, idx) in currentMealPlan" :key="idx" class="meal-card">
+                  <div class="m-header">{{ meal.icon }} {{ meal.name }}</div>
+                  <div class="m-cal">{{ meal.cal }} <span>kcal</span></div>
+                  <div class="m-ratio">{{ meal.ratio }}%</div>
+                </div>
+              </div>
             </div>
           </div>
+        </section>
 
-          <div class="form-row">
-            <div class="input-group">
-              <label>身高 (cm)</label>
-              <input v-model.number="height" type="number" placeholder="cm" />
-            </div>
-            <div class="input-group">
-              <label>体重 (kg)</label>
-              <input v-model.number="weight" type="number" placeholder="kg" />
-            </div>
-          </div>
+        <!-- Sidebar: Food DB -->
+        <aside class="sidebar-pane">
+          <div class="brutal-pane">
+            <div class="pane-header bg-black"><span class="text-white">🍔 食物热量查询</span></div>
+            <div class="pane-body padding-small">
+              <div class="search-box">
+                <input
+                  v-model="searchQuery"
+                  type="text"
+                  class="brutal-input"
+                  placeholder="🔍 搜索食物 (如: 米饭)..."
+                  @input="handleSearch"
+                />
+              </div>
 
-          <div class="form-row">
-            <div class="input-group full">
-              <label>活动水平</label>
-              <select v-model="activity">
-                <option value="1.2">久坐 (办公室工作，极少运动)</option>
-                <option value="1.375">轻度 (每周 1-3 天轻量运动)</option>
-                <option value="1.55">中度 (每周 3-5 天中强度运动)</option>
-                <option value="1.725">重度 (每周 6-7 天高强度运动)</option>
-                <option value="1.9">极重度 (运动员 / 体力劳动者)</option>
-              </select>
-            </div>
-          </div>
-        </div>
+              <div v-if="searchResults.length" class="search-results mt-4">
+                <div
+                  v-for="food in searchResults"
+                  :key="food.name"
+                  class="food-item"
+                  @click="addToRef(food)"
+                >
+                  <div class="f-info">
+                    <span class="f-name">{{ food.name }}</span>
+                    <span class="f-unit">{{ food.unit }}</span>
+                  </div>
+                  <div class="f-action">
+                    <span class="f-cal">{{ food.cal }} kcal</span>
+                    <button class="brutal-action-btn sm-btn">➕</button>
+                  </div>
+                </div>
+              </div>
+              <div v-else-if="searchQuery" class="empty-result mt-4">[ 未找到数据 ]</div>
 
-        <div v-if="bmr" class="tdee-result">
-          <div class="result-item">
-            <span class="label">BMR (基础代谢)</span>
-            <span class="val">{{ bmr }} kcal</span>
-          </div>
-          <div class="result-item highlight">
-            <span class="label">TDEE (总消耗)</span>
-            <span class="val big">{{ tdee }} kcal</span>
-          </div>
-        </div>
+              <div class="divider">今日记录</div>
 
-        <div v-if="tdee" class="goals-grid">
-          <div class="goal-card loss">
-            <span class="g-title">减脂期 (-500)</span>
-            <span class="g-val">{{ tdee - 500 }}</span>
-            <span class="g-unit">kcal/天</span>
-          </div>
-          <div class="goal-card maintain">
-            <span class="g-title">维持期 (保持)</span>
-            <span class="g-val">{{ tdee }}</span>
-            <span class="g-unit">kcal/天</span>
-          </div>
-          <div class="goal-card gain">
-            <span class="g-title">增肌期 (+300)</span>
-            <span class="g-val">{{ tdee + 300 }}</span>
-            <span class="g-unit">kcal/天</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="meal-plan-card glass-card">
-        <div class="section-title">
-          <el-icon><KnifeFork /></el-icon>
-          三餐热量分配建议
-        </div>
-
-        <div class="meal-config">
-          <div class="config-row">
-            <span class="label">分配比例:</span>
-            <div class="ratio-chips">
-              <button :class="{ active: mealRatio === '3:4:3' }" @click="mealRatio = '3:4:3'">
-                3:4:3 (均衡)
-              </button>
-              <button :class="{ active: mealRatio === '4:4:2' }" @click="mealRatio = '4:4:2'">
-                4:4:2 (早午丰盛)
-              </button>
-              <button :class="{ active: mealRatio === '3:3:3:1' }" @click="mealRatio = '3:3:3:1'">
-                3:3:3:1 (加餐)
-              </button>
+              <div class="log-area">
+                <div v-if="!todayLog.length" class="empty-result">暂无记录</div>
+                <div v-else class="log-list">
+                  <div v-for="(item, i) in todayLog" :key="i" class="log-item">
+                    <span class="l-name">{{ item.name }}</span>
+                    <span class="l-cal"
+                      >{{ item.cal }} kcal
+                      <button
+                        class="brutal-action-btn del-btn danger"
+                        @click="todayLog.splice(i, 1)"
+                      >
+                        ✖
+                      </button></span
+                    >
+                  </div>
+                  <div class="log-total mt-4">
+                    TOTAL: <strong>{{ totalIntake }}</strong> kcal
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </aside>
+      </div>
 
-        <div class="meal-grid">
-          <div v-for="(meal, idx) in currentMealPlan" :key="idx" class="meal-card">
-            <div class="m-header">
-              <span class="m-icon">{{ meal.icon }}</span>
-              <span class="m-name">{{ meal.name }}</span>
-            </div>
-            <div class="m-cal">{{ meal.cal }} kcal</div>
-            <div class="m-ratio">{{ meal.ratio }}%</div>
-          </div>
-        </div>
-      </section>
-
-      <section class="food-card glass-card">
-        <div class="section-title">
-          <el-icon>
-            <Bowl />
-          </el-icon>
-          食物热量查询与记录
-        </div>
-
-        <div class="search-box">
-          <el-icon class="search-icon">
-            <Search />
-          </el-icon>
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="搜索食物热量 (如: 米饭, 鸡肉)..."
-            @input="handleSearch"
-          />
-        </div>
-
-        <div v-if="searchResults.length" class="search-results">
-          <div
-            v-for="food in searchResults"
-            :key="food.name"
-            class="food-item"
-            @click="addToRef(food)"
-          >
-            <div class="f-info">
-              <span class="f-name">{{ food.name }}</span>
-              <span class="f-unit">单位: {{ food.unit }}</span>
-            </div>
-            <div class="f-action">
-              <span class="f-cal">{{ food.cal }} kcal</span>
-              <el-icon class="add-icon">
-                <Plus />
-              </el-icon>
-            </div>
-          </div>
-        </div>
-        <div v-else-if="searchQuery && !searchResults.length" class="no-result">
-          未找到相关食物数据
-        </div>
-
-        <div v-if="todayLog.length" class="intake-log">
-          <div class="log-header">今日记录</div>
-          <div class="log-list">
-            <div v-for="(item, i) in todayLog" :key="i" class="log-item">
-              <span>{{ item.name }}</span>
-              <span
-                >{{ item.cal }} kcal
-                <el-icon class="del" @click="todayLog.splice(i, 1)"> <Close /> </el-icon
-              ></span>
-            </div>
-          </div>
-          <div class="log-total">
-            今日总摄入: <b>{{ totalIntake }}</b> kcal
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <div class="disclaimer-wrap" style="max-width: 600px; margin: 0 auto; padding: 0 1.5rem 2rem">
-      <div
-        class="disclaimer-card"
-        style="
-          display: flex;
-          gap: 0.8rem;
-          padding: 1rem;
-          background: #fef2f2;
-          color: #991b1b;
-          border-radius: 12px;
-          font-size: 0.8rem;
-          align-items: start;
-        "
-      >
-        <el-icon>
-          <InfoFilled />
-        </el-icon>
-        <span
-          >：热量计算基于 Mifflin-St Jeor
-          公式，所得结果为估算值。食物数据库仅包含常见项。身体实际消耗受基因、环境等多种因素影响，仅供参考。</span
-        >
+      <div class="disclaimer-brutal text-center">
+        <strong>⚠️ 提示：</strong>计算基于 Mifflin-St Jeor
+        公式。身体实际消耗受基因、环境等多种因素影响，结果仅供参考。
       </div>
     </div>
-
-    <footer class="footer">© 2026 LRM工具箱 - 热量计算器</footer>
   </div>
 </template>
 
 <script setup>
   import { ref, computed } from 'vue';
-  import {
-    Back,
-    Odometer,
-    Bowl,
-    Search,
-    Plus,
-    Close,
-    InfoFilled,
-    KnifeFork
-  } from '@element-plus/icons-vue';
 
   const gender = ref('male');
   const age = ref('');
@@ -254,13 +230,10 @@
     return Math.round(bmr.value * parseFloat(activity.value));
   });
 
-  // Meal Splitter Logic
   const mealRatio = ref('3:4:3');
-
   const currentMealPlan = computed(() => {
-    const total = tdee.value || 2000; // Default to 2000 if no TDEE
+    const total = tdee.value || 2000;
     let plan = [];
-
     if (mealRatio.value === '3:4:3') {
       plan = [
         { name: '早餐', icon: '🍳', ratio: 30, cal: Math.round(total * 0.3) },
@@ -281,7 +254,6 @@
         { name: '加餐', icon: '🍎', ratio: 10, cal: Math.round(total * 0.1) }
       ];
     }
-
     return plan;
   });
 
@@ -296,18 +268,10 @@
     { name: '全麦面包', unit: '1片 (35g)', cal: 89 },
     { name: '煮鸡蛋', unit: '1个 (50g)', cal: 70 },
     { name: '煎蛋', unit: '1个 (50g)', cal: 118 },
-    { name: '鸡胸肉(水煮)', unit: '100g', cal: 133 },
-    { name: '酱牛肉', unit: '100g', cal: 246 },
-    { name: '猪肉(瘦)', unit: '100g', cal: 143 },
-    { name: '苹果', unit: '1个 (200g)', cal: 104 },
-    { name: '香蕉', unit: '1根 (150g)', cal: 138 },
+    { name: '鸡胸肉', unit: '100g', cal: 133 },
     { name: '牛奶', unit: '1盒 (250ml)', cal: 163 },
-    { name: '酸奶', unit: '1杯 (150g)', cal: 108 },
-    { name: '可乐', unit: '1听 (330ml)', cal: 142 },
-    { name: '薯片', unit: '1包 (70g)', cal: 375 },
-    { name: '西兰花', unit: '100g', cal: 36 },
-    { name: '生菜', unit: '100g', cal: 15 },
-    { name: '番茄', unit: '1个 (200g)', cal: 30 }
+    { name: '苹果', unit: '1个 (200g)', cal: 104 },
+    { name: '生菜', unit: '100g', cal: 15 }
   ];
 
   const handleSearch = () => {
@@ -321,213 +285,305 @@
 
   const addToRef = food => {
     todayLog.value.push(food);
-    searchQuery.value = '';
-    searchResults.value = [];
   };
 
-  const totalIntake = computed(() => {
-    return todayLog.value.reduce((acc, item) => acc + item.cal, 0);
-  });
+  const totalIntake = computed(() => todayLog.value.reduce((acc, item) => acc + item.cal, 0));
 </script>
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
 
-  .calorie-calculator-tool {
-    --bg: #faf9f7;
-    --card: #ffffff;
-    --border: #e8e6e3;
-    --text: #1a1a1a;
-    --text-2: #6b6b6b;
-    --green: #10b981;
-    --orange: #f59e0b;
-    --blue: #3b82f6;
-
-    font-family: 'Noto Sans SC', sans-serif;
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
     min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
-
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-back,
-  .nav-spacer {
-    width: 80px;
-  }
-
-  .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--text-2);
-    cursor: pointer;
-    font-size: 0.9rem;
-    padding: 0.5rem 0;
-  }
-
-  .nav-center {
-    text-align: center;
-    flex: 1;
-  }
-
-  .nav-center h1 {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 1.25rem;
-    font-weight: 600;
-  }
-
-  .nav-subtitle {
-    font-size: 0.7rem;
-    color: var(--text-2);
-    text-transform: uppercase;
-    display: block;
-    text-align: center;
-  }
-
-  .main-content {
-    max-width: 600px;
+  .brutal-container {
+    max-width: 1300px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
   }
 
-  .glass-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  }
-
-  .section-title {
+  .brutal-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    color: var(--text);
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0 #4b7bff;
+    flex: 1;
+    text-align: center;
+  }
+  .brutal-title span {
+    color: #4b7bff;
+    text-shadow: 4px 4px 0 #111;
   }
 
-  .section-title .el-icon {
-    font-size: 1.2rem;
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0 #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0 0 0 #111;
   }
 
-  .tdee-form {
+  .brutal-action-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.6rem 1rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+  }
+  .brutal-action-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #111;
+  }
+  .brutal-action-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 #111;
+  }
+
+  .brutal-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 2.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .brutal-pane {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0 #111;
+    min-width: 0;
+  }
+  .pane-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+  }
+  .bg-black {
+    background: #111;
+    color: white;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .text-black {
+    color: #111;
+  }
+  .pane-body {
+    padding: 2rem;
+    flex: 1;
+    box-sizing: border-box;
+  }
+  .padding-small {
+    padding: 1.5rem;
   }
 
   .form-row {
     display: flex;
     gap: 1rem;
   }
-
   .input-group {
     flex: 1;
     display: flex;
     flex-direction: column;
+    gap: 0.5rem;
   }
-
-  .input-group.full {
-    width: 100%;
-  }
-
   .input-group label {
-    font-size: 0.85rem;
-    color: var(--text-2);
-    margin-bottom: 0.4rem;
-  }
-
-  .input-group input,
-  .input-group select {
-    padding: 0.6rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    font-weight: 800;
     font-size: 1rem;
-    background: var(--bg);
+  }
+  .mt-4 {
+    margin-top: 1rem;
+  }
+  .mt-6 {
+    margin-top: 1.5rem;
+  }
+  .mt-8 {
+    margin-top: 2rem;
   }
 
-  .gender-switch {
+  .brutal-input,
+  .brutal-select {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 3px solid #111;
+    background: #fff;
+    font-weight: bold;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', monospace;
+    transition: all 0.1s;
+  }
+  .brutal-input:focus,
+  .brutal-select:focus {
+    outline: none;
+    box-shadow: 4px 4px 0 #4b7bff;
+    border-color: #4b7bff;
+    transform: translate(-2px, -2px);
+  }
+
+  .brutal-radio-group {
     display: flex;
-    align-items: flex-end;
-
-    padding-bottom: 2px;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0 #111;
   }
-
-  .gender-switch span {
-    padding: 0.6rem 1.2rem;
-    border: 1px solid var(--border);
-    background: white;
+  .radio-btn {
+    flex: 1;
+    text-align: center;
+    padding: 0.75rem;
+    background: #fff;
+    font-weight: 800;
     cursor: pointer;
-    font-size: 0.9rem;
+    border-right: 3px solid #111;
+    transition: background 0.1s;
   }
-
-  .gender-switch span:first-child {
-    border-radius: 8px 0 0 8px;
+  .radio-btn:last-child {
     border-right: none;
   }
-
-  .gender-switch span:last-child {
-    border-radius: 0 8px 8px 0;
-    border-left: none;
+  .hidden-radio {
+    display: none;
   }
-
-  .gender-switch span.active {
-    background: var(--text);
+  .radio-btn.active {
+    background: #111;
     color: white;
-    border-color: var(--text);
   }
 
-  /* Meal Plan Styles */
-  .meal-config {
-    margin-bottom: 1.5rem;
-  }
-
-  .config-row {
+  .tdee-display {
     display: flex;
-    flex-wrap: wrap;
+    border: 4px solid #111;
+    box-shadow: 6px 6px 0 #111;
+  }
+  .t-left,
+  .t-right {
+    flex: 1;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    background: #fdfae5;
+  }
+  .t-left {
+    border-right: 4px solid #111;
+  }
+  .t-label {
+    font-weight: 800;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .t-val {
+    font-size: 2.5rem;
+    font-weight: 900;
+    font-family: 'Syne', sans-serif;
+    line-height: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    color: #4b7bff;
+  }
+  .t-right .t-val {
+    color: #111;
+  }
+
+  .goals-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
+  }
+  .brutal-card {
+    border: 3px solid #111;
+    padding: 1rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    box-shadow: 4px 4px 0 #111;
+    transition: transform 0.1s;
+  }
+  .brutal-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #111;
+  }
+  .goal-loss {
+    background: #e0f2fe;
+  }
+  .goal-maintain {
+    background: #fff;
+  }
+  .goal-gain {
+    background: #ffedd5;
+    border-color: #111;
+  }
+  .g-title {
+    font-weight: 800;
+    font-family: 'Syne', sans-serif;
+  }
+  .g-val {
+    font-size: 1.25rem;
+    font-weight: 900;
   }
 
   .ratio-chips {
     display: flex;
     gap: 0.5rem;
+    align-items: center;
     flex-wrap: wrap;
   }
-
-  .ratio-chips button {
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: white;
-    cursor: pointer;
-    font-size: 0.85rem;
-    color: var(--text-2);
-    transition: all 0.2s;
+  .chip-label {
+    font-weight: 800;
+    margin-right: 0.5rem;
   }
-
-  .ratio-chips button.active {
-    background: var(--text);
+  .chip.active {
+    background: #111;
     color: white;
-    border-color: var(--text);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #4b7bff;
   }
 
   .meal-grid {
@@ -535,235 +591,297 @@
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: 1rem;
   }
-
   .meal-card {
-    background: #f9f9f9;
-    border-radius: 12px;
+    border: 3px solid #111;
     padding: 1rem;
     text-align: center;
+    background: #fff;
+    box-shadow: 3px 3px 0 #111;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
   }
-
   .m-header {
+    font-weight: 800;
     font-size: 0.9rem;
-    color: var(--text-2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.3rem;
+    border-bottom: 2px dashed #111;
+    padding-bottom: 0.5rem;
   }
-
   .m-cal {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--text);
-  }
-
-  .m-ratio {
-    font-size: 0.75rem;
-    color: #aaa;
-  }
-
-  .tdee-result {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px dashed var(--border);
-    display: flex;
-    justify-content: space-around;
-  }
-
-  .result-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .result-item .label {
-    font-size: 0.8rem;
-    color: var(--text-2);
-  }
-
-  .result-item .val {
-    font-weight: 600;
-  }
-
-  .result-item.highlight .val.big {
     font-size: 1.5rem;
-    color: var(--orange);
+    font-weight: 900;
+    font-family: 'Syne', sans-serif;
+    color: #ff4b4b;
   }
-
-  .goals-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 0.75rem;
-    margin-top: 1rem;
+  .m-cal span {
+    font-size: 0.8rem;
+    color: #111;
+    font-weight: 800;
   }
-
-  .goal-card {
-    padding: 0.75rem;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: #f9f9f9;
-  }
-
-  .g-title {
-    font-size: 0.75rem;
-    color: var(--text-2);
-    margin-bottom: 4px;
-  }
-
-  .g-val {
-    font-weight: 700;
-    font-size: 1.1rem;
-  }
-
-  .g-unit {
-    font-size: 0.7rem;
-    color: #999;
-  }
-
-  .goal-card.loss {
-    background: #f0fdf4;
-    color: var(--green);
-  }
-
-  .goal-card.maintain {
-    background: #f8fafc;
-    color: var(--blue);
-  }
-
-  .goal-card.gain {
-    background: #fff7ed;
-    color: var(--orange);
-  }
-
-  .search-box {
-    position: relative;
-    margin-bottom: 1rem;
-  }
-
-  .search-box input {
-    width: 100%;
-    padding: 0.75rem 0.75rem 0.75rem 2.5rem;
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    outline: none;
-    font-size: 0.95rem;
-  }
-
-  .search-icon {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-2);
+  .m-ratio {
+    font-size: 0.8rem;
+    font-weight: bold;
   }
 
   .search-results {
-    max-height: 200px;
+    max-height: 250px;
     overflow-y: auto;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    margin-bottom: 1rem;
+    border: 3px solid #111;
+    border-top: none;
+    background: #fff;
   }
-
   .food-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem;
-    border-bottom: 1px solid var(--bg);
+    padding: 0.75rem 1rem;
+    border-top: 3px solid #111;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.1s;
+    background: #fdfae5;
   }
-
   .food-item:hover {
-    background: #f5f5f5;
+    background: #ffd900;
   }
-
   .f-info {
     display: flex;
     flex-direction: column;
   }
-
   .f-name {
-    font-weight: 600;
-    font-size: 0.95rem;
+    font-weight: 800;
   }
-
   .f-unit {
     font-size: 0.75rem;
-    color: var(--text-2);
+    font-weight: bold;
+    color: #555;
   }
-
+  .f-action {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
   .f-cal {
-    font-weight: 600;
-    color: var(--orange);
+    font-weight: 900;
+  }
+  .sm-btn {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.8rem;
   }
 
-  .add-icon {
-    color: var(--green);
-    margin-left: 0.5rem;
-  }
-
-  .no-result {
+  .empty-result {
     text-align: center;
-    font-size: 0.85rem;
-    color: var(--text-2);
-    padding: 1rem;
+    padding: 2rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: bold;
+    border: 3px dashed #111;
+    margin-top: 1rem;
+  }
+  .divider {
+    text-align: center;
+    border-top: 3px dashed #111;
+    margin: 2rem 0;
+    padding-top: 1rem;
+    font-weight: 900;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
   }
 
-  .intake-log {
-    background: #fdfdfd;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 8px;
-    padding: 1rem;
+  .log-area {
+    font-family: 'IBM Plex Mono', monospace;
   }
-
-  .log-header {
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-  }
-
-  .log-list {
-    margin-bottom: 0.5rem;
-  }
-
   .log-item {
     display: flex;
     justify-content: space-between;
-    font-size: 0.9rem;
-    padding: 4px 0;
-    border-bottom: 1px dashed var(--bg);
+    align-items: center;
+    padding: 0.75rem;
+    background: #fff;
+    border: 3px solid #111;
+    margin-bottom: 0.5rem;
+    box-shadow: 2px 2px 0 #111;
+    font-weight: bold;
   }
-
-  .log-item .del {
-    color: #ccc;
-    cursor: pointer;
-    margin-left: 8px;
+  .del-btn {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+    margin-left: 0.5rem;
   }
-
-  .log-item .del:hover {
-    color: var(--text);
+  .brutal-action-btn.danger {
+    background: #ff4b4b;
+    color: white;
   }
-
   .log-total {
     text-align: right;
-    font-size: 0.95rem;
-    padding-top: 0.5rem;
+    font-size: 1.1rem;
+    border-top: 3px solid #111;
+    padding-top: 1rem;
+  }
+  .log-total strong {
+    font-size: 1.5rem;
+    color: #ff4b4b;
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-2);
-    font-size: 0.85rem;
-    border-top: 1px solid var(--border);
+  .disclaimer-brutal {
+    border-top: 4px dashed #111;
+    padding-top: 1.5rem;
+    font-size: 0.9rem;
+    font-weight: bold;
     margin-top: 2rem;
+  }
+  .text-center {
+    text-align: center;
+  }
+
+  @media (max-width: 900px) {
+    .brutal-grid-layout,
+    .form-row,
+    .goals-grid {
+      grid-template-columns: 1fr;
+      flex-direction: column;
+    }
+    .brutal-title {
+      font-size: 2.5rem;
+    }
+    .tdee-display {
+      flex-direction: column;
+    }
+    .t-left {
+      border-right: none;
+      border-bottom: 4px solid #111;
+    }
+  }
+
+  /* Dark Mode */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-input,
+  [data-theme='dark'] .brutal-select,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .radio-btn,
+  [data-theme='dark'] .t-left,
+  [data-theme='dark'] .brutal-card,
+  [data-theme='dark'] .meal-card,
+  [data-theme='dark'] .food-item,
+  [data-theme='dark'] .log-item {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn {
+    box-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0 #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0 #eee;
+  }
+
+  [data-theme='dark'] .brutal-input:focus,
+  [data-theme='dark'] .brutal-select:focus {
+    box-shadow: 4px 4px 0 #2a4eb2;
+    border-color: #2a4eb2;
+  }
+  [data-theme='dark'] .brutal-radio-group {
+    border-color: #eee;
+    box-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .radio-btn {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .radio-btn.active {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .bg-black {
+    background: #222;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .tdee-display {
+    border-color: #eee;
+    box-shadow: 6px 6px 0 #eee;
+  }
+  [data-theme='dark'] .t-val {
+    color: #6b8cff;
+  }
+  [data-theme='dark'] .brutal-card:hover {
+    box-shadow: 6px 6px 0 #eee;
+  }
+
+  [data-theme='dark'] .goal-loss {
+    background: #1a2f3a;
+  }
+  [data-theme='dark'] .goal-maintain {
+    background: #222;
+  }
+  [data-theme='dark'] .goal-gain {
+    background: #3a2a1a;
+  }
+
+  [data-theme='dark'] .chip.active {
+    background: #eee;
+    color: #111;
+    box-shadow: 6px 6px 0 #6b8cff;
+  }
+  [data-theme='dark'] .meal-card {
+    box-shadow: 3px 3px 0 #eee;
+  }
+  [data-theme='dark'] .m-header {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .m-cal {
+    color: #ff8b8b;
+  }
+  [data-theme='dark'] .m-cal span {
+    color: #eee;
+  }
+
+  [data-theme='dark'] .search-results {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .food-item:hover {
+    background: #222;
+  }
+  [data-theme='dark'] .food-item {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .empty-result {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .divider,
+  [data-theme='dark'] .disclaimer-brutal {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .log-item {
+    box-shadow: 2px 2px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.danger {
+    background: #8b0000;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .log-total {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .log-total strong {
+    color: #ff8b8b;
   }
 </style>

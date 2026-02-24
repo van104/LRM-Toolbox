@@ -14,6 +14,13 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
 
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: transparent !important;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             -webkit-tap-highlight-color: transparent;
@@ -59,6 +66,18 @@
 
         .btn-bounce {
             animation: bounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* 自定义确认弹窗动画 */
+        #confirm-modal.active #confirm-backdrop,
+        #prompt-modal.active #prompt-backdrop {
+            opacity: 1;
+        }
+
+        #confirm-modal.active #confirm-panel,
+        #prompt-modal.active #prompt-panel {
+            opacity: 1;
+            transform: scale(1);
         }
 
         @keyframes bounce {
@@ -148,7 +167,7 @@
     </style>
 </head>
 
-<body class="bg-slate-50 text-slate-800 min-h-screen pb-24 relative overflow-x-hidden selection:bg-blue-200">
+<body class="bg-transparent text-slate-800 min-h-screen relative overflow-x-hidden selection:bg-blue-200">
 
     <!-- 背景装饰 -->
     <div class="fixed top-0 left-0 w-full h-screen overflow-hidden -z-10 pointer-events-none">
@@ -472,6 +491,44 @@
         </div>
     </div>
 
+    <!-- 自定义确认弹窗 -->
+    <div id="confirm-modal" class="fixed inset-0 z-[120] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 opacity-0"
+            id="confirm-backdrop"></div>
+        <div class="bg-white rounded-3xl p-6 shadow-2xl relative w-full max-w-xs transform scale-90 opacity-0 transition-all duration-300"
+            id="confirm-panel">
+            <h3 class="text-xl font-bold text-slate-800 mb-2 text-center" id="confirm-title">提示</h3>
+            <p class="text-slate-500 mb-6 text-center leading-relaxed" id="confirm-message">确认执行此操作吗？</p>
+            <div class="flex gap-3">
+                <button id="confirm-cancel-btn"
+                    class="flex-1 py-3 rounded-2xl bg-slate-100 text-slate-500 font-bold text-sm tracking-wide">取消</button>
+                <button id="confirm-ok-btn"
+                    class="flex-1 py-3 rounded-2xl bg-blue-600 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/20">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 自定义输入弹窗 -->
+    <div id="prompt-modal" class="fixed inset-0 z-[120] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 opacity-0"
+            id="prompt-backdrop"></div>
+        <div class="bg-white rounded-3xl p-6 shadow-2xl relative w-full max-w-xs transform scale-90 opacity-0 transition-all duration-300"
+            id="prompt-panel">
+            <h3 class="text-xl font-bold text-slate-800 mb-2 text-center" id="prompt-title">标题</h3>
+            <div class="mb-6">
+                <input type="text" id="prompt-input"
+                    class="w-full bg-slate-50 border-none rounded-xl px-4 py-3 font-medium text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-300 text-center"
+                    placeholder="请输入...">
+            </div>
+            <div class="flex gap-3">
+                <button id="prompt-cancel-btn"
+                    class="flex-1 py-3 rounded-2xl bg-slate-100 text-slate-500 font-bold text-sm tracking-wide">取消</button>
+                <button id="prompt-ok-btn"
+                    class="flex-1 py-3 rounded-2xl bg-blue-600 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/20">确定</button>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript 逻辑 -->
     <script>
         // 音效管理器
@@ -641,7 +698,25 @@
                     modal: document.getElementById('plan-modal'),
                     modalBackdrop: document.getElementById('modal-backdrop'),
                     modalPanel: document.getElementById('modal-panel'),
-                    planForm: document.getElementById('plan-form')
+                    planForm: document.getElementById('plan-form'),
+
+                    // 确认弹窗
+                    confirmModal: document.getElementById('confirm-modal'),
+                    confirmBackdrop: document.getElementById('confirm-backdrop'),
+                    confirmPanel: document.getElementById('confirm-panel'),
+                    confirmTitle: document.getElementById('confirm-title'),
+                    confirmMsg: document.getElementById('confirm-message'),
+                    confirmOk: document.getElementById('confirm-ok-btn'),
+                    confirmCancel: document.getElementById('confirm-cancel-btn'),
+
+                    // 输入弹窗
+                    promptModal: document.getElementById('prompt-modal'),
+                    promptBackdrop: document.getElementById('prompt-backdrop'),
+                    promptPanel: document.getElementById('prompt-panel'),
+                    promptTitle: document.getElementById('prompt-title'),
+                    promptInput: document.getElementById('prompt-input'),
+                    promptOk: document.getElementById('prompt-ok-btn'),
+                    promptCancel: document.getElementById('prompt-cancel-btn')
                 };
             },
 
@@ -653,30 +728,30 @@
 
             exportData() {
                 if (this.data.plans.length === 0) {
-                    alert("当前没有可导出的训练计划");
+                    this.confirm("错误", "当前没有可导出的训练计划", null); // 这里复用 confirm 作为 alert
                     return;
                 }
 
                 const defaultName = `workout_plans_${new Date().toISOString().split('T')[0]}`;
-                let fileName = prompt("请输入导出的文件名:", defaultName);
 
-                if (fileName === null) return; // 用户点击了取消
+                this.prompt("导出计划", "请输入导出的文件名:", defaultName, (fileName) => {
+                    if (!fileName) return;
+                    fileName = fileName.trim();
+                    if (!fileName.toLowerCase().endsWith('.json')) {
+                        fileName += '.json';
+                    }
 
-                fileName = fileName.trim() || defaultName;
-                if (!fileName.toLowerCase().endsWith('.json')) {
-                    fileName += '.json';
-                }
-
-                const dataStr = JSON.stringify(this.data.plans, null, 2);
-                const blob = new Blob([dataStr], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = fileName;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
+                    const dataStr = JSON.stringify(this.data.plans, null, 2);
+                    const blob = new Blob([dataStr], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                });
             },
 
             importData(file) {
@@ -686,16 +761,15 @@
                     try {
                         const imported = JSON.parse(e.target.result);
                         if (Array.isArray(imported)) {
-                            if (confirm(`确定导入 ${imported.length} 个计划吗？这将覆盖现有数据。`)) {
+                            this.confirm("导入计划", `确定导入 ${imported.length} 个计划吗？这将覆盖现有数据。`, () => {
                                 this.data.plans = imported;
                                 this.saveData();
-                                alert('导入成功！');
-                            }
+                            });
                         } else {
-                            alert('无效的文件格式');
+                            this.confirm("错误", "无效的文件格式", null);
                         }
                     } catch (err) {
-                        alert('解析文件失败: ' + err.message);
+                        this.confirm("错误", "解析文件失败: " + err.message, null);
                     }
                 };
                 reader.readAsText(file);
@@ -1115,6 +1189,68 @@
                 document.title = seconds > 0 ? `${m}:${s} - 倒计时` : '智能健身助手 Pro';
             },
 
+            // --- 自定义确认框 ---
+            confirm(title, message, onOk) {
+                this.dom.confirmTitle.textContent = title;
+                this.dom.confirmMsg.textContent = message;
+                this.dom.confirmModal.classList.remove('hidden');
+                this.dom.confirmModal.classList.add('flex');
+
+                // 强制触发重绘以运行动画
+                this.dom.confirmModal.offsetHeight;
+                this.dom.confirmModal.classList.add('active');
+
+                const cleanup = () => {
+                    this.dom.confirmModal.classList.remove('active');
+                    setTimeout(() => {
+                        this.dom.confirmModal.classList.add('hidden');
+                        this.dom.confirmModal.classList.remove('flex');
+                    }, 300);
+                };
+
+                this.dom.confirmOk.onclick = () => {
+                    cleanup();
+                    if (onOk) onOk();
+                };
+
+                this.dom.confirmCancel.onclick = cleanup;
+                this.dom.confirmBackdrop.onclick = cleanup;
+            },
+
+            prompt(title, message, defaultValue, onOk) {
+                this.dom.promptTitle.textContent = title;
+                this.dom.promptInput.placeholder = message;
+                this.dom.promptInput.value = defaultValue || '';
+                this.dom.promptModal.classList.remove('hidden');
+                this.dom.promptModal.classList.add('flex');
+
+                this.dom.promptModal.offsetHeight;
+                this.dom.promptModal.classList.add('active');
+
+                const cleanup = () => {
+                    this.dom.promptModal.classList.remove('active');
+                    setTimeout(() => {
+                        this.dom.promptModal.classList.add('hidden');
+                        this.dom.promptModal.classList.remove('flex');
+                    }, 300);
+                };
+
+                this.dom.promptOk.onclick = () => {
+                    const val = this.dom.promptInput.value;
+                    cleanup();
+                    if (onOk) onOk(val);
+                };
+
+                this.dom.promptCancel.onclick = cleanup;
+                this.dom.promptBackdrop.onclick = cleanup;
+
+                // 自动聚焦并选中
+                setTimeout(() => {
+                    this.dom.promptInput.focus();
+                    this.dom.promptInput.select();
+                }, 100);
+            },
+
             // --- 辅助函数 ---
             clearInterval() {
                 if (this.state.timerId) {
@@ -1181,13 +1317,16 @@
                     el.className = 'bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow relative group';
                     el.innerHTML = `
                         <div class="flex justify-between items-start mb-3">
-                            <div>
-                                <h3 class="font-bold text-lg text-slate-800">${plan.title}</h3>
+                            <div class="cursor-pointer flex-1" onclick="App.togglePlanCard(this)">
+                                <h3 class="font-bold text-lg text-slate-800 flex items-center">
+                                    ${plan.title}
+                                    <i class="fa-solid fa-chevron-down ml-2 text-xs text-slate-300 transition-transform duration-300"></i>
+                                </h3>
                                 <div class="flex gap-1 mt-1 flex-wrap">
                                     ${plan.days.map(d => `<span class="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-medium">${d}</span>`).join('')}
                                 </div>
                             </div>
-                            <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div class="flex gap-2">
                                 <button class="w-8 h-8 rounded-full bg-slate-50 text-slate-400 hover:text-blue-600 hover:bg-blue-50 flex items-center justify-center transition-colors" onclick="App.editPlan('${plan.id}')">
                                     <i class="fa-solid fa-pen text-xs"></i>
                                 </button>
@@ -1196,7 +1335,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="space-y-2">
+                        <div class="space-y-2 hidden plan-exercises overflow-hidden transition-all duration-300">
                             ${plan.exercises.map(ex => `
                                 <div class="flex justify-between text-sm text-slate-600 bg-slate-50 p-2 rounded-lg">
                                     <span class="font-medium">${ex.name}</span>
@@ -1210,6 +1349,14 @@
                     `;
                     container.appendChild(el);
                 });
+            },
+
+            togglePlanCard(headerEl) {
+                const card = headerEl.closest('.group');
+                const content = card.querySelector('.plan-exercises');
+                const icon = headerEl.querySelector('.fa-chevron-down');
+                content.classList.toggle('hidden');
+                icon.classList.toggle('rotate-180');
             },
 
             openModal(planId = null) {
@@ -1318,10 +1465,10 @@
             },
 
             deletePlan(id) {
-                if (confirm("确定删除该计划吗？")) {
+                this.confirm("删除计划", "确定删除该计划吗？", () => {
                     this.data.plans = this.data.plans.filter(p => p.id !== id);
                     this.saveData();
-                }
+                });
             },
 
             savePlanFromForm() {
@@ -1390,7 +1537,9 @@
                 // 锻炼控制
                 this.dom.actionBtn.addEventListener('click', () => this.toggleWorkout());
                 this.dom.resetBtn.addEventListener('click', () => {
-                    if (confirm("重置当前训练进度？")) this.resetWorkoutState();
+                    this.confirm("确认重置", "确定要重置当前训练进度吗？", () => {
+                        this.resetWorkoutState();
+                    });
                 });
 
                 // 声音开关
@@ -1410,10 +1559,10 @@
                 document.getElementById('modal-save-btn').addEventListener('click', () => this.savePlanFromForm());
                 document.getElementById('add-exercise-btn').addEventListener('click', () => this.addExerciseRow());
                 document.getElementById('clear-all-plans').addEventListener('click', () => {
-                    if (confirm("确定清空所有计划？这将无法恢复。")) {
+                    this.confirm("清空计划", "确定清空所有计划吗？这将无法恢复。", () => {
                         this.data.plans = [];
                         this.saveData();
-                    }
+                    });
                 });
 
                 // 休息时间微调按钮事件

@@ -1,104 +1,92 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="$router.back()">
-          <el-icon><ArrowLeft /></el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">情绪压力测试</h1>
-        <span class="tool-subtitle">Stress Perception Test</span>
-      </div>
-      <div class="header-right">
-        <el-button type="info" link @click="showInfo">
-          <el-icon><InfoFilled /></el-icon> 关于量表
-        </el-button>
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">健康<span>.情绪压力测试()</span></h1>
+        <button class="brutal-btn" @click="showInfo">📖 量表说明</button>
+      </header>
 
-    <main class="tool-content">
-      <div v-if="!showResult" class="test-container glass-card">
-        <div class="test-header">
-          <div class="progress-bar">
-            <div class="progress-inner" :style="{ width: progress + '%' }"></div>
+      <main class="tool-content">
+        <div
+          v-if="!showResult"
+          class="brutal-pane test-pane mx-auto bg-white relative-pane animate-fade"
+        >
+          <div class="test-header">
+            <div class="test-progress-bar">
+              <div class="progress-fill" :style="{ width: progress + '%' }"></div>
+            </div>
+            <div class="progress-stats">
+              <span class="step-text">问题 {{ currentStep + 1 }} / {{ questions.length }}</span>
+            </div>
           </div>
-          <span class="progress-text">问题 {{ currentStep + 1 }} / {{ questions.length }}</span>
-        </div>
 
-        <div class="question-box animate-fade">
-          <h2 class="question-text">{{ questions[currentStep].text }}</h2>
-          <p class="question-subtext">在过去的一个月中...</p>
+          <div class="pane-body padding-large text-center">
+            <p class="question-subtext mt-4">在过去的一个月中...</p>
+            <h2 class="question-text">{{ questions[currentStep].text }}</h2>
 
-          <div class="options-list">
-            <div
-              v-for="opt in options"
-              :key="opt.value"
-              class="option-item"
-              @click="handleAnswer(opt.value)"
-            >
-              {{ opt.label }}
+            <div class="options-grid mt-8">
+              <button
+                v-for="opt in options"
+                :key="opt.value"
+                class="brutal-action-btn option-btn"
+                @click="handleAnswer(opt.value)"
+              >
+                {{ opt.label }}
+              </button>
+            </div>
+
+            <div class="nav-actions mt-8">
+              <button v-if="currentStep > 0" class="brutal-outline-btn" @click="currentStep--">
+                ↑ 上一题
+              </button>
             </div>
           </div>
         </div>
 
-        <div class="test-footer">
-          <el-button v-if="currentStep > 0" text @click="currentStep--">上一题</el-button>
-        </div>
-      </div>
-
-      <div v-else class="result-container glass-card animate-scale">
-        <div class="result-header">
-          <el-result
-            :icon="getResultIcon()"
-            :title="`得分：${totalScore}`"
-            :sub-title="resultText.title"
-          >
-            <template #extra>
-              <div class="score-indicator">
-                <el-progress
-                  type="dashboard"
-                  :percentage="(totalScore / 40) * 100"
-                  :color="getScoreColor()"
-                  :format="() => totalScore"
-                />
-              </div>
-            </template>
-          </el-result>
-        </div>
-
-        <div class="result-body">
-          <div class="advice-card">
-            <h3 class="body-title">测评分析</h3>
-            <p class="analysis-text">{{ resultText.analysis }}</p>
+        <div v-else class="brutal-pane result-pane mx-auto bg-yellow animate-scale">
+          <div class="pane-header bg-black flex-between">
+            <span class="text-white">测算结果：{{ resultText.title }}</span>
+            <button class="brutal-icon-btn small-btn" @click="resetTest">↻</button>
           </div>
 
-          <div class="advice-card mt-6">
-            <h3 class="body-title">缓解建议</h3>
-            <ul class="advice-list">
-              <li v-for="(advice, idx) in resultText.advices" :key="idx">
-                <el-icon class="bullet-icon"><Check /></el-icon> {{ advice }}
-              </li>
-            </ul>
+          <div class="pane-body">
+            <div class="score-banner" :class="getScoreClass()">
+              <div class="score-label">总得分</div>
+              <div class="score-val">{{ totalScore }} <small>/ 40</small></div>
+            </div>
+
+            <div class="brutal-card mt-6 bg-white">
+              <h3 class="card-title">📝 测评分析</h3>
+              <p class="card-text">{{ resultText.analysis }}</p>
+            </div>
+
+            <div class="brutal-card mt-6 bg-white">
+              <h3 class="card-title">💡 缓解建议</h3>
+              <ul class="brutal-list">
+                <li v-for="(advice, idx) in resultText.advices" :key="idx">
+                  <span class="check-icon">✔</span> {{ advice }}
+                </li>
+              </ul>
+            </div>
+
+            <div class="result-actions mt-8">
+              <button class="brutal-action-btn primary large-btn" @click="goHome">
+                返回工具箱首页
+              </button>
+              <button class="brutal-action-btn large-btn" @click="resetTest">重新测试</button>
+            </div>
           </div>
         </div>
+      </main>
 
-        <div class="result-actions">
-          <el-button type="primary" size="large" @click="resetTest">重新测试</el-button>
-          <el-button size="large" @click="goHome">返回首页</el-button>
-        </div>
-      </div>
-    </main>
-
-    <footer class="footer">© 2026 LRM工具箱 - 压力知觉量表 (PSS-10) 自测版</footer>
+      <footer class="footer mt-8">© 2026 LRM工具箱 - 压力知觉量表 (PSS-10)</footer>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, computed } from 'vue';
-  import { ArrowLeft, InfoFilled, Check } from '@element-plus/icons-vue';
-  import { ElMessageBox } from 'element-plus';
   import { useRouter } from 'vue-router';
 
   const router = useRouter();
@@ -189,16 +177,10 @@
     }
   });
 
-  const getResultIcon = () => {
-    if (totalScore.value <= 13) return 'success';
-    if (totalScore.value <= 26) return 'warning';
-    return 'error';
-  };
-
-  const getScoreColor = () => {
-    if (totalScore.value <= 13) return '#10b981';
-    if (totalScore.value <= 26) return '#f59e0b';
-    return '#ef4444';
+  const getScoreClass = () => {
+    if (totalScore.value <= 13) return 'score-green';
+    if (totalScore.value <= 26) return 'score-orange';
+    return 'score-red';
   };
 
   const resetTest = () => {
@@ -210,194 +192,358 @@
   const goHome = () => router.push('/');
 
   const showInfo = () => {
-    ElMessageBox.alert(
-      '压力知觉量表 (PSS-10) 是全球广泛使用的评估主观压力感的量表。它测查个人对生活中某些情境压力的看法，而非客观的压力源。分数范围为 0-40 分。',
-      '关于 PSS-10 量表'
+    alert(
+      '压力知觉量表 (PSS-10) 是全球广泛使用的评估主观压力感的量表。\n\n它测查个人对生活中某些情境压力的看法，而非客观的压力源。\n\n分数范围为 0-40 分。'
     );
   };
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
     min-height: 100vh;
-    background: #f0f4f8;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 900px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
   }
 
-  .tool-header {
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0 #4b7bff;
+    flex: 1;
+    text-align: center;
+  }
+  .brutal-title span {
+    color: #4b7bff;
+    text-shadow: 4px 4px 0 #111;
   }
 
-  .header-left,
-  .header-right {
-    width: 140px;
-  }
-  .header-center {
-    text-align: center;
-    flex: 1;
-  }
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0;
-  }
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 6px 6px 0 #111;
+    transition: all 0.1s;
     text-transform: uppercase;
   }
-
-  .tool-content {
-    flex: 1;
-    padding: 3rem 1.5rem;
-    max-width: 700px;
-    margin: 0 auto;
-    width: 100%;
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0 0 0 #111;
   }
 
-  .glass-card {
+  .mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .brutal-pane {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0 #111;
+    min-width: 0;
+  }
+  .test-pane {
+    max-width: 700px;
+  }
+  .bg-white {
     background: #fff;
-    border-radius: 24px;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-    padding: 40px;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .relative-pane {
+    transition: transform 0.1s;
+    display: flex;
+    flex-direction: column;
   }
 
   .test-header {
-    margin-bottom: 40px;
+    border-bottom: 4px solid #111;
+    background: #fff;
   }
-
-  .progress-bar {
-    height: 6px;
-    background: #e2e8f0;
-    border-radius: 3px;
-    margin-bottom: 12px;
-    overflow: hidden;
+  .test-progress-bar {
+    height: 16px;
+    background: #fff;
+    border-bottom: 4px solid #111;
+    width: 100%;
+    position: relative;
   }
-
-  .progress-inner {
+  .progress-fill {
     height: 100%;
-    background: #3b82f6;
-    transition: width 0.4s ease;
+    background: #4b7bff;
+    transition: width 0.3s ease;
+    border-right: 4px solid #111;
+    box-sizing: border-box;
+  }
+  .progress-stats {
+    padding: 0.75rem;
+    text-align: center;
+    font-weight: 900;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.1rem;
   }
 
-  .progress-text {
-    font-size: 0.85rem;
-    color: #64748b;
-    font-weight: 600;
+  .pane-body {
+    padding: 2rem;
+    flex: 1;
   }
-
-  .question-text {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: #1e293b;
-    line-height: 1.4;
-    margin-bottom: 8px;
+  .padding-large {
+    padding: 3rem;
+  }
+  .text-center {
+    text-align: center;
   }
 
   .question-subtext {
-    color: #3b82f6;
-    font-weight: 600;
-    margin-bottom: 32px;
-    font-size: 0.95rem;
+    font-size: 1rem;
+    font-weight: 900;
+    color: #555;
+    margin: 0 0 1rem;
+    border: 2px dashed #111;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+  }
+  .question-text {
+    font-size: 2rem;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    line-height: 1.4;
+    margin: 0;
   }
 
-  .options-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  .options-grid {
+    display: grid;
+    gap: 1rem;
   }
 
-  .option-item {
-    padding: 18px 24px;
-    background: #f8fafc;
-    border-radius: 16px;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 600;
-    color: #475569;
-  }
-
-  .option-item:hover {
+  .brutal-action-btn {
     background: #fff;
-    border-color: #3b82f6;
-    color: #3b82f6;
-    transform: translateX(4px);
+    border: 4px solid #111;
+    padding: 1.25rem 2rem;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+    box-shadow: 4px 4px 0 #111;
+  }
+  .option-btn:hover {
+    background: #fdfae5;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #111;
+    border-color: #4b7bff;
+  }
+  .option-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 #111;
   }
 
-  .test-footer {
-    margin-top: 40px;
+  .brutal-action-btn.primary {
+    background: #4b7bff;
+    color: white;
+  }
+  .brutal-action-btn.large-btn {
+    width: 100%;
+    display: block;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+  }
+  .brutal-action-btn.primary:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0 #111;
+  }
+
+  .brutal-outline-btn {
+    background: transparent;
+    border: none;
+    font-weight: 900;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    border-bottom: 2px solid transparent;
+  }
+  .brutal-outline-btn:hover {
+    color: #ff4b4b;
+  }
+
+  .nav-actions {
     display: flex;
     justify-content: flex-start;
   }
 
-  .result-header {
-    margin-bottom: 24px;
+  .result-pane {
+    max-width: 800px;
+  }
+  .pane-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', sans-serif;
+    font-weight: 900;
+    font-size: 1.5rem;
+  }
+  .bg-black {
+    background: #111;
+    color: white;
+  }
+  .flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  .score-indicator {
-    margin-top: 20px;
+  .brutal-icon-btn.small-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid #111;
+    font-weight: 900;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 2px 0 #111;
+  }
+  .brutal-icon-btn.small-btn:hover {
+    background: #ff4b4b;
+    color: white;
   }
 
-  .result-body {
-    background: #f8fafc;
-    padding: 24px;
-    border-radius: 20px;
-    margin-bottom: 32px;
+  .score-banner {
+    border: 4px dashed #111;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+  }
+  .score-label {
+    font-size: 2rem;
+    font-weight: 900;
+    font-family: 'Noto Sans SC', sans-serif;
+  }
+  .score-val {
+    font-size: 5rem;
+    font-weight: 900;
+    font-family: 'Syne', sans-serif;
+    line-height: 1;
+    text-shadow: 4px 4px 0 #111;
+  }
+  .score-val small {
+    font-size: 2rem;
   }
 
-  .body-title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 12px;
+  .score-green .score-val {
+    color: #10b981;
+  }
+  .score-orange .score-val {
+    color: #f59e0b;
+  }
+  .score-red .score-val {
+    color: #ff4b4b;
   }
 
-  .analysis-text {
-    font-size: 0.95rem;
-    color: #475569;
+  .brutal-card {
+    border: 4px solid #111;
+    padding: 1.5rem;
+    box-shadow: 6px 6px 0 #111;
+  }
+  .card-title {
+    margin: 0 0 1rem;
+    font-size: 1.5rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 900;
+  }
+  .card-text {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: bold;
     line-height: 1.6;
   }
 
-  .advice-list {
+  .brutal-list {
     list-style: none;
     padding: 0;
+    margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.75rem;
   }
-
-  .advice-list li {
-    font-size: 0.9rem;
-    color: #334155;
+  .brutal-list li {
+    font-size: 1.1rem;
+    font-weight: bold;
     display: flex;
-    align-items: center;
-    gap: 8px;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
-
-  .bullet-icon {
+  .check-icon {
+    font-size: 1.2rem;
+    margin-top: -2px;
     color: #10b981;
-    font-size: 0.8rem;
+    font-weight: 900;
   }
 
   .result-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .mt-4 {
+    margin-top: 1rem;
+  }
+  .mt-6 {
+    margin-top: 1.5rem;
+  }
+  .mt-8 {
+    margin-top: 2rem;
   }
 
   .animate-fade {
-    animation: fadeIn 0.5s ease;
+    animation: fadeIn 0.4s ease-out forwards;
   }
   .animate-scale {
-    animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   }
 
   @keyframes fadeIn {
@@ -423,11 +569,104 @@
 
   .footer {
     text-align: center;
-    padding: 2rem;
-    color: #94a3b8;
-    font-size: 0.85rem;
+    font-weight: 900;
+    margin-bottom: 2rem;
   }
-  .mt-6 {
-    margin-top: 1.5rem;
+
+  @media (max-width: 900px) {
+    .brutal-title {
+      font-size: 2rem;
+    }
+    .padding-large {
+      padding: 1.5rem;
+    }
+    .score-banner {
+      flex-direction: column;
+      text-align: center;
+      gap: 1rem;
+      padding: 1.5rem;
+    }
+    .result-actions {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Dark Mode */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-card,
+  [data-theme='dark'] .score-banner {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-card {
+    box-shadow: 6px 6px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover,
+  [data-theme='dark'] .option-btn:hover,
+  [data-theme='dark'] .brutal-action-btn.primary:hover {
+    box-shadow: 9px 9px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0 #eee;
+  }
+
+  [data-theme='dark'] .bg-white {
+    background: #1a1a1a;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #332700;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .test-header {
+    border-bottom-color: #eee;
+    background: #222;
+  }
+  [data-theme='dark'] .test-progress-bar {
+    background: #111;
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .progress-fill {
+    background: #2a4eb2;
+    border-right-color: #eee;
+  }
+
+  [data-theme='dark'] .question-subtext {
+    border-color: #eee;
+    color: #aaa;
+  }
+  [data-theme='dark'] .option-btn:hover {
+    background: #002233;
+    border-color: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #2a4eb2;
+  }
+
+  [data-theme='dark'] .brutal-outline-btn {
+    color: #aaa;
+  }
+  [data-theme='dark'] .brutal-outline-btn:hover {
+    color: #ff8b8b;
+  }
+
+  [data-theme='dark'] .score-val {
+    text-shadow: 4px 4px 0 #111;
   }
 </style>

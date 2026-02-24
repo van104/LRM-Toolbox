@@ -1,94 +1,94 @@
 <template>
-  <div class="tool-container">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="$router.back()">
-        <el-icon><Back /></el-icon>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>心率区间计算器</h1>
-        <span class="nav-subtitle">Heart Rate Zone & Training Intensity</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">健康<span>.心率区间()</span></h1>
+      </header>
 
-    <main class="main-content">
-      <div class="dashboard-grid">
-        <!-- 左侧：输入与核心指标 -->
-        <div class="input-card glass-card">
-          <div class="bpm-circle-wrapper">
-            <div class="heart-icon-wrapper">
-              <el-icon class="pulse-icon" :style="{ animationDuration: pulseSpeed + 'ms' }"
-                ><magic-stick
-              /></el-icon>
-              <!-- 这里用自定义 SVG 或 Element Plus 图标模拟心跳 -->
-              <svg
-                viewBox="0 0 32 32"
-                class="heart-shape"
-                :style="{ animationDuration: pulseSpeed + 'ms' }"
+      <main class="tool-content">
+        <div class="brutal-grid-layout">
+          <!-- Left Panel -->
+          <aside class="sidebar-pane">
+            <div class="brutal-pane">
+              <div class="pane-header bg-black">
+                <span class="text-white">❤️ 个人最大心率检测</span>
+              </div>
+              <div class="pane-body padding-large text-center">
+                <div class="bpm-box mt-4">
+                  <div class="heart-icon-wrapper">
+                    <svg
+                      viewBox="0 0 32 32"
+                      class="heart-shape"
+                      :style="{ animationDuration: pulseSpeed + 'ms' }"
+                    >
+                      <path
+                        d="M16,28.261c0,0-14-9.926-14-16.261c0-3.452,2.323-6.294,5.5-6.881c3.551-0.656,6.866,1.48,8.5,4.643 c1.634-3.162,4.949-5.299,8.5-4.643c3.177,0.587,5.5,3.429,5.5,6.881C30,18.335,16,28.261,16,28.261z"
+                      />
+                    </svg>
+                  </div>
+                  <div class="bpm-value">
+                    <span class="v-num">{{ maxHr }}</span>
+                    <span class="v-label">MAX BPM</span>
+                  </div>
+                </div>
+
+                <div class="input-controls mt-8">
+                  <label>设定您的当前年龄</label>
+                  <div class="age-display">{{ age }} <small>岁</small></div>
+                  <input v-model="age" type="range" min="10" max="90" class="brutal-range" />
+
+                  <div class="formula-tip mt-6">
+                    <strong>最大心率 ≈ 220 - 年龄</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Right Panel: Zones -->
+          <section class="main-content-pane">
+            <div class="zones-list">
+              <div
+                v-for="zone in zones"
+                :key="zone.name"
+                class="brutal-card zone-card relative-card"
+                :class="zone.class"
               >
-                <path
-                  d="M16,28.261c0,0-14-9.926-14-16.261c0-3.452,2.323-6.294,5.5-6.881c3.551-0.656,6.866,1.48,8.5,4.643 c1.634-3.162,4.949-5.299,8.5-4.643c3.177,0.587,5.5,3.429,5.5,6.881C30,18.335,16,28.261,16,28.261z"
-                />
-              </svg>
-            </div>
-            <div class="bpm-value">
-              {{ maxHr }}
-              <span class="label">MHR</span>
-            </div>
-          </div>
+                <div class="zone-left">
+                  <div class="zone-tag">{{ zone.range[0] }}%-{{ zone.range[1] }}%</div>
+                  <h3 class="zone-title">{{ zone.name }}</h3>
+                  <p class="zone-desc">{{ zone.desc }}</p>
+                </div>
 
-          <div class="input-controls">
-            <label>您的年龄</label>
-            <div class="age-display">{{ age }} <small>岁</small></div>
-            <el-slider v-model="age" :min="10" :max="90" :show-tooltip="false" class="age-slider" />
-            <p class="formula-tip">最大心率 ≈ 220 - 年龄</p>
-          </div>
-        </div>
+                <div class="zone-right">
+                  <div class="bpm-range">
+                    {{ Math.round((maxHr * zone.range[0]) / 100) }} -
+                    {{ Math.round((maxHr * zone.range[1]) / 100) }}
+                    <span class="unit">BPM</span>
+                  </div>
+                  <div class="benefit-badge">⚡ {{ zone.benefit }}</div>
+                </div>
 
-        <!-- 右侧：区间列表 -->
-        <div class="zones-list">
-          <div v-for="zone in zones" :key="zone.name" class="zone-item" :class="zone.class">
-            <div class="zone-left">
-              <div class="zone-tag">{{ zone.range[0] }}%-{{ zone.range[1] }}%</div>
-              <h3 class="zone-title">{{ zone.name }}</h3>
-              <p class="zone-desc">{{ zone.desc }}</p>
-            </div>
-
-            <div class="zone-right">
-              <div class="bpm-range">
-                {{ Math.round((maxHr * zone.range[0]) / 100) }} -
-                {{ Math.round((maxHr * zone.range[1]) / 100) }}
-                <span class="unit">bpm</span>
-              </div>
-              <div class="benefit-badge">
-                <el-icon><Trophy /></el-icon> {{ zone.benefit }}
+                <!-- Outline shadow block simulating progress -->
+                <div class="zone-bg-fill" :style="{ width: zone.range[1] + '%' }"></div>
               </div>
             </div>
-
-            <!-- 进度条装饰 -->
-            <div class="zone-progress-bg">
-              <div class="zone-progress-fill" :style="{ width: zone.range[1] + '%' }"></div>
-            </div>
-          </div>
+          </section>
         </div>
-      </div>
-    </main>
+      </main>
 
-    <footer class="footer">© 2026 LRM工具箱 - 运动科学</footer>
+      <footer class="footer mt-8">© 2026 LRM工具箱 - 运动科学</footer>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, computed } from 'vue';
-  import { Back, Trophy, MagicStick } from '@element-plus/icons-vue';
 
   const age = ref(25);
-  const maxHr = computed(() => 220 - (age.value || 0));
+  const maxHr = computed(() => 220 - (Number(age.value) || 0));
 
-  // 模拟心跳速度：最大心率越快，跳动越快（动画时间越短）
-  // Base 600ms for 220 bpm? No, animation logic:
-  // Let's just map 220-age to a reasonable animation duration for visual effect
   const pulseSpeed = computed(() => {
     const bpm = maxHr.value;
     return (60 / bpm) * 1000;
@@ -134,98 +134,131 @@
 </script>
 
 <style scoped>
-  .tool-container {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
     min-height: 100vh;
-    background: #f8fafc;
-    font-family: 'Inter', system-ui, sans-serif;
-    color: #334155;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
-
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 10;
+  .brutal-container {
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    flex-direction: column;
   }
 
-  .nav-back {
+  .brutal-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #64748b;
-    width: 80px;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
-
-  .nav-center {
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0 #4b7bff;
     flex: 1;
     text-align: center;
   }
+  .brutal-title span {
+    color: #4b7bff;
+    text-shadow: 4px 4px 0 #111;
+  }
 
-  .nav-center h1 {
-    margin: 0;
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', sans-serif;
     font-size: 1.25rem;
-    font-weight: 600;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0 #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0 0 0 #111;
   }
 
-  .nav-subtitle {
-    font-size: 0.8rem;
-    color: #64748b;
-  }
-
-  .nav-spacer {
-    width: 80px;
-  }
-
-  .main-content {
-    max-width: 900px;
-    margin: 2rem auto;
-    padding: 0 1.5rem;
-  }
-
-  .dashboard-grid {
+  .brutal-grid-layout {
     display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 2rem;
-    align-items: start;
+    grid-template-columns: 350px 1fr;
+    gap: 3rem;
   }
 
-  /* Left Panel Styles */
-  .input-card {
-    background: white;
-    border-radius: 20px;
-    padding: 2.5rem 2rem;
-    text-align: center;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e2e8f0;
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0 #111;
+    min-width: 0;
     position: sticky;
     top: 100px;
   }
+  .pane-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+  }
+  .bg-black {
+    background: #111;
+    color: white;
+  }
+  .pane-body {
+    padding: 2rem;
+  }
+  .padding-large {
+    padding: 3rem;
+  }
+  .text-center {
+    text-align: center;
+  }
 
-  .bpm-circle-wrapper {
+  .bpm-box {
     position: relative;
-    width: 180px;
-    height: 180px;
-    margin: 0 auto 2rem;
+    width: 100%;
+    max-width: 250px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle, #fee2e2 0%, transparent 70%);
+    border: 4px dashed #111;
+    padding: 3rem;
+    background: #fff1f2;
   }
 
+  .heart-icon-wrapper {
+    z-index: 1;
+  }
   .heart-shape {
-    width: 100px;
-    fill: #ef4444;
+    width: 120px;
+    fill: #ff4b4b;
     animation: pulse 1s infinite;
-    filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.4));
+    filter: drop-shadow(4px 4px 0 #111);
   }
 
   @keyframes pulse {
@@ -251,83 +284,113 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: white;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    line-height: 1;
+    align-items: center;
+    text-shadow: 2px 2px 0 #111;
+    color: #fff;
+    z-index: 2;
   }
-
-  .bpm-value .label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    opacity: 0.9;
-    margin-top: 4px;
+  .v-num {
+    font-size: 3rem;
+    font-weight: 900;
+    line-height: 1;
+    font-family: 'Syne', sans-serif;
+  }
+  .v-label {
+    font-size: 0.9rem;
+    font-weight: 900;
+    background: #111;
+    color: #fff;
+    padding: 0.1rem 0.5rem;
+    margin-top: 0.5rem;
+    text-shadow: none;
   }
 
   .input-controls label {
+    font-size: 1.1rem;
+    font-weight: 900;
     display: block;
-    color: #64748b;
-    font-size: 0.9rem;
     margin-bottom: 0.5rem;
+    font-family: 'Noto Sans SC', sans-serif;
   }
-
   .age-display {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #1e293b;
+    font-size: 3rem;
+    font-weight: 900;
+    font-family: 'Syne', sans-serif;
     line-height: 1;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    color: #4b7bff;
+    text-shadow: 2px 2px 0 #111;
   }
-
   .age-display small {
     font-size: 1rem;
-    color: #94a3b8;
-    font-weight: 500;
+    color: #111;
+    font-weight: 900;
+    text-shadow: none;
+    font-family: 'Noto Sans SC', sans-serif;
   }
 
-  .age-slider {
-    margin-bottom: 1rem;
-    --el-slider-main-bg-color: #ef4444;
+  .brutal-range {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 16px;
+    background: #fff;
+    border: 3px solid #111;
+    border-radius: 8px;
+    outline: none;
+    transition: background 0.2s;
+    box-shadow: 4px 4px 0 #111;
+  }
+  .brutal-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #4b7bff;
+    cursor: pointer;
+    border: 3px solid #111;
+  }
+  .brutal-range::-moz-range-thumb {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #4b7bff;
+    cursor: pointer;
+    border: 3px solid #111;
   }
 
   .formula-tip {
-    font-size: 0.8rem;
-    color: #94a3b8;
-    background: #f1f5f9;
-    padding: 0.5rem;
-    border-radius: 6px;
-    display: inline-block;
+    border: 3px dashed #111;
+    background: #fdfae5;
+    padding: 1rem;
+    font-size: 1.1rem;
   }
 
-  /* Right Panel Styles (Zone List) */
   .zones-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
   }
-
-  .zone-item {
-    background: white;
-    border-radius: 16px;
-    padding: 1.25rem 1.5rem;
+  .brutal-card {
+    border: 4px solid #111;
+    padding: 1.5rem 2rem;
+    background: #fff;
     display: flex;
     justify-content: space-between;
     align-items: center;
     position: relative;
     overflow: hidden;
-    border: 1px solid #e2e8f0;
-    transition:
-      transform 0.2s,
-      box-shadow 0.2s;
+    z-index: 1;
   }
-
-  .zone-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  .relative-card {
+    transition: transform 0.1s;
+    box-shadow: 10px 10px 0 #111;
+  }
+  .relative-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 13px 13px 0 #111;
   }
 
   .zone-left {
@@ -335,28 +398,28 @@
     z-index: 2;
     flex: 1;
   }
-
   .zone-tag {
     display: inline-block;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    margin-bottom: 0.25rem;
+    padding: 4px 8px;
+    border: 2px solid #111;
+    font-size: 0.85rem;
+    font-weight: 900;
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 0.5rem;
+    background: #fff;
+  }
+  .zone-title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 900;
+    font-family: 'Syne', sans-serif;
     text-transform: uppercase;
   }
-
-  .zone-title {
-    margin: 0 0 0.25rem 0;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #1e293b;
-  }
-
   .zone-desc {
     margin: 0;
-    font-size: 0.85rem;
-    color: #64748b;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #444;
   }
 
   .zone-right {
@@ -366,134 +429,257 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 0.25rem;
+    gap: 0.5rem;
   }
-
   .bpm-range {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: #0f172a;
+    font-size: 2.5rem;
+    font-weight: 900;
+    font-family: 'IBM Plex Mono', monospace;
+    line-height: 1;
   }
-
   .bpm-range .unit {
-    font-size: 0.75rem;
-    color: #94a3b8;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 900;
+    margin-left: 0.2rem;
   }
-
   .benefit-badge {
-    font-size: 0.75rem;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    color: #475569;
-    background: #f8fafc;
-    padding: 2px 8px;
-    border-radius: 99px;
+    border: 2px dashed #111;
+    background: #fff;
+    padding: 4px 10px;
+    font-weight: 900;
+    font-size: 0.85rem;
   }
 
-  /* Theme Specific Colors */
+  .zone-bg-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    z-index: 0;
+    opacity: 0.2;
+  }
+
+  /* Zone Types */
+  .zone-5 .zone-bg-fill {
+    background: #ff4b4b;
+    opacity: 0.3;
+  }
   .zone-5 .zone-tag {
-    color: #b91c1c;
-    background: #fecaca;
+    background: #ff4b4b;
+    color: white;
   }
   .zone-5 .bpm-range {
-    color: #dc2626;
-  }
-  .zone-5 {
-    border-left: 6px solid #ef4444;
+    color: #ff4b4b;
+    text-shadow: 2px 2px 0 #111;
   }
 
+  .zone-4 .zone-bg-fill {
+    background: #f59e0b;
+    opacity: 0.3;
+  }
   .zone-4 .zone-tag {
-    color: #b45309;
-    background: #fde68a;
+    background: #f59e0b;
+    color: white;
   }
   .zone-4 .bpm-range {
-    color: #d97706;
-  }
-  .zone-4 {
-    border-left: 6px solid #f59e0b;
+    color: #f59e0b;
+    text-shadow: 2px 2px 0 #111;
   }
 
+  .zone-3 .zone-bg-fill {
+    background: #10b981;
+    opacity: 0.3;
+  }
   .zone-3 .zone-tag {
-    color: #047857;
-    background: #a7f3d0;
+    background: #10b981;
+    color: white;
   }
   .zone-3 .bpm-range {
-    color: #059669;
-  }
-  .zone-3 {
-    border-left: 6px solid #10b981;
+    color: #10b981;
+    text-shadow: 2px 2px 0 #111;
   }
 
+  .zone-2 .zone-bg-fill {
+    background: #4b7bff;
+    opacity: 0.3;
+  }
   .zone-2 .zone-tag {
-    color: #1d4ed8;
-    background: #bfdbfe;
+    background: #4b7bff;
+    color: white;
   }
   .zone-2 .bpm-range {
-    color: #2563eb;
-  }
-  .zone-2 {
-    border-left: 6px solid #3b82f6;
+    color: #4b7bff;
+    text-shadow: 2px 2px 0 #111;
   }
 
-  .zone-1 .zone-tag {
-    color: #334155;
-    background: #e2e8f0;
-  }
-  .zone-1 .bpm-range {
-    color: #475569;
-  }
-  .zone-1 {
-    border-left: 6px solid #94a3b8;
-  }
-
-  /* Background Progress Effect */
-  .zone-progress-bg {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: #f1f5f9;
-  }
-
-  .zone-progress-fill {
-    height: 100%;
+  .zone-1 .zone-bg-fill {
+    background: #cbd5e1;
     opacity: 0.5;
   }
-
-  .zone-5 .zone-progress-fill {
-    background: #ef4444;
+  .zone-1 .zone-tag {
+    background: #fff;
+    color: #111;
   }
-  .zone-4 .zone-progress-fill {
-    background: #f59e0b;
-  }
-  .zone-3 .zone-progress-fill {
-    background: #10b981;
-  }
-  .zone-2 .zone-progress-fill {
-    background: #3b82f6;
-  }
-  .zone-1 .zone-progress-fill {
-    background: #94a3b8;
+  .zone-1 .bpm-range {
+    color: #555;
+    text-shadow: 1px 1px 0 #fff;
   }
 
+  .mt-4 {
+    margin-top: 1rem;
+  }
+  .mt-6 {
+    margin-top: 1.5rem;
+  }
+  .mt-8 {
+    margin-top: 2rem;
+  }
   .footer {
     text-align: center;
-    padding: 2rem;
-    color: #94a3b8;
-    font-size: 0.875rem;
+    font-weight: 900;
   }
 
-  @media (max-width: 768px) {
-    .dashboard-grid {
+  @media (max-width: 900px) {
+    .brutal-grid-layout {
       grid-template-columns: 1fr;
     }
-
-    .input-card {
-      position: static;
-      margin-bottom: 2rem;
+    .brutal-title {
+      font-size: 2.2rem;
     }
+    .brutal-pane {
+      position: static;
+    }
+    .zone-card {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+    }
+    .zone-right {
+      align-items: flex-start;
+    }
+  }
+
+  /* Dark Mode */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-card,
+  [data-theme='dark'] .bpm-box,
+  [data-theme='dark'] .brutal-range,
+  [data-theme='dark'] .formula-tip,
+  [data-theme='dark'] .zone-tag,
+  [data-theme='dark'] .benefit-badge {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-card,
+  [data-theme='dark'] .brutal-range {
+    box-shadow: 6px 6px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover,
+  [data-theme='dark'] .relative-card:hover {
+    box-shadow: 9px 9px 0 #eee;
+  }
+  [data-theme='dark'] .relative-card {
+    box-shadow: 10px 10px 0 #eee;
+  }
+  [data-theme='dark'] .relative-card:hover {
+    box-shadow: 13px 13px 0 #eee;
+  }
+
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0 #eee;
+  }
+
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .bg-black {
+    background: #222;
+  }
+
+  [data-theme='dark'] .age-display {
+    color: #6b8cff;
+    text-shadow: 2px 2px 0 #eee;
+  }
+  [data-theme='dark'] .age-display small {
+    color: #eee;
+  }
+
+  [data-theme='dark'] .formula-tip {
+    background: #332200;
+  }
+  [data-theme='dark'] .zone-desc {
+    color: #ccc;
+  }
+
+  [data-theme='dark'] .zone-5 .zone-bg-fill {
+    background: #660000;
+    opacity: 0.5;
+  }
+  [data-theme='dark'] .zone-5 .zone-tag {
+    background: #ff4b4b;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .zone-5 .bpm-range {
+    text-shadow: 2px 2px 0 #eee;
+  }
+
+  [data-theme='dark'] .zone-4 .zone-bg-fill {
+    background: #663300;
+    opacity: 0.5;
+  }
+  [data-theme='dark'] .zone-4 .zone-tag {
+    background: #f59e0b;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .zone-4 .bpm-range {
+    text-shadow: 2px 2px 0 #eee;
+  }
+
+  [data-theme='dark'] .zone-3 .zone-bg-fill {
+    background: #003322;
+    opacity: 0.5;
+  }
+  [data-theme='dark'] .zone-3 .zone-tag {
+    background: #10b981;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .zone-3 .bpm-range {
+    text-shadow: 2px 2px 0 #eee;
+  }
+
+  [data-theme='dark'] .zone-2 .zone-bg-fill {
+    background: #002266;
+    opacity: 0.5;
+  }
+  [data-theme='dark'] .zone-2 .zone-tag {
+    background: #4b7bff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .zone-2 .bpm-range {
+    text-shadow: 2px 2px 0 #eee;
+  }
+
+  [data-theme='dark'] .zone-1 .zone-bg-fill {
+    background: #333;
+    opacity: 0.5;
+  }
+  [data-theme='dark'] .zone-1 .zone-tag {
+    background: #1a1a1a;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .zone-1 .bpm-range {
+    color: #aaa;
+    text-shadow: 2px 2px 0 #eee;
   }
 </style>

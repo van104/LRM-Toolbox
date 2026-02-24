@@ -1,95 +1,108 @@
 <template>
-  <div class="tool-container">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="$router.back()">
-        <el-icon><Back /></el-icon>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>睡眠周期计算器</h1>
-        <span class="nav-subtitle">Sleep Cycle & Wake-up Time</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">健康<span>.睡眠周期()</span></h1>
+      </header>
 
-    <main class="main-content">
-      <div class="glass-card mode-switch">
-        <button :class="{ active: mode === 'wake' }" @click="mode = 'wake'">我要按时起床</button>
-        <button :class="{ active: mode === 'sleep' }" @click="mode = 'sleep'">我现在要睡觉</button>
-      </div>
-
-      <div class="glass-card main-calc">
-        <div v-if="mode === 'wake'" class="input-section">
-          <h3>您计划几点起床？</h3>
-          <el-time-picker
-            v-model="wakeTime"
-            format="HH:mm"
-            placeholder="选择起床时间"
-            class="time-picker"
-          />
+      <main class="tool-content">
+        <div class="brutal-pane mode-switch mx-auto mt-4">
+          <button
+            class="brutal-tab bg-white"
+            :class="{ 'active-tab': mode === 'wake' }"
+            @click="mode = 'wake'"
+          >
+            我计划按时起床
+          </button>
+          <button
+            class="brutal-tab bg-white"
+            :class="{ 'active-tab': mode === 'sleep' }"
+            @click="mode = 'sleep'"
+          >
+            我现在马上睡觉
+          </button>
         </div>
 
-        <div v-else class="input-section">
-          <h3>如果您现在 ({{ nowTimeFormatted }}) 入睡...</h3>
-          <p class="subtitle">平均需要 15 分钟入睡时间</p>
-        </div>
+        <div class="brutal-pane main-calc mx-auto mt-8">
+          <div v-if="mode === 'wake'" class="input-section bg-yellow">
+            <h3>您计划几点起床？</h3>
+            <input v-model="wakeTimeStr" type="time" class="brutal-time-input" />
+          </div>
 
-        <div class="result-list">
-          <h3>建议的时间</h3>
-          <p class="desc">基于 90 分钟的睡眠周期计算，在周期结束时醒来会倍感清醒。</p>
+          <div v-else class="input-section bg-yellow">
+            <h3>如果您现在 ({{ nowTimeFormatted }}) 入睡...</h3>
+            <p class="subtitle">计算已包含平均 <strong>15分钟</strong> 的入睡准备时间</p>
+          </div>
 
-          <div class="cycles-container">
-            <div
-              v-for="cycle in recommendedTimes"
-              :key="cycle.time"
-              class="cycle-card"
-              :class="cycle.type"
-            >
-              <span class="cycle-time">{{ cycle.time }}</span>
-              <span class="cycle-info">
-                {{ cycle.cycles }} 个周期 ({{ cycle.hours }}h)
-                <span v-if="cycle.tag" class="tag">{{ cycle.tag }}</span>
-              </span>
+          <div class="result-list pane-body">
+            <h3>推荐建议时间</h3>
+            <p class="desc">
+              基于 <strong>90分钟</strong> 的睡眠周期计算，在周期结束时的浅睡期醒来会倍感清醒。
+            </p>
+
+            <div class="cycles-container">
+              <div
+                v-for="cycle in recommendedTimes"
+                :key="cycle.time"
+                class="cycle-card relative-card"
+                :class="cycle.type"
+              >
+                <div class="cycle-time">{{ cycle.time }}</div>
+                <div class="cycle-info">
+                  <span class="info-text">{{ cycle.cycles }} 个周期 ({{ cycle.hours }}小时)</span>
+                  <span v-if="cycle.tag" class="tag">{{ cycle.tag }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="info-card">
-        <h3>😴 什么是睡眠周期？</h3>
-        <p>
-          人的睡眠由多个 90
-          分钟左右的周期组成。如果我们在周期的中间（深睡期）被闹钟叫醒，会有很强的起床气和疲惫感；而在周期结束的浅睡期醒来，则会感到神清气爽。
-        </p>
-      </div>
-    </main>
+        <div class="brutal-info-box mx-auto mt-8">
+          <h3>😴 什么是睡眠周期？</h3>
+          <p>
+            人的睡眠由多个
+            <strong>90 分钟</strong
+            >左右的周期组成。如果我们在周期的中间（深睡期）被闹钟叫醒，会有很强的起床气和疲惫感；而在周期结束的浅睡期醒来，则会感到神清气爽。
+          </p>
+        </div>
+      </main>
 
-    <footer class="footer">© 2026 LRM工具箱 - 睡眠健康</footer>
+      <footer class="footer mt-8">© 2026 LRM工具箱 - 睡眠健康</footer>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, computed, onMounted, onUnmounted } from 'vue';
-  import { Back } from '@element-plus/icons-vue';
-  import dayjs from 'dayjs';
 
   const mode = ref<'wake' | 'sleep'>('wake');
-  const wakeTime = ref(new Date());
   const now = ref(new Date());
+
+  // Format MM:HH for native input
+  const formatTime = (date: Date) => {
+    return (
+      date.getHours().toString().padStart(2, '0') +
+      ':' +
+      date.getMinutes().toString().padStart(2, '0')
+    );
+  };
+
+  const wakeTimeStr = ref('07:00');
 
   const timer = setInterval(() => {
     now.value = new Date();
   }, 60000);
 
   onMounted(() => {
-    wakeTime.value = dayjs().hour(7).minute(0).toDate();
+    wakeTimeStr.value = '07:00';
   });
 
   onUnmounted(() => {
     clearInterval(timer);
   });
 
-  const nowTimeFormatted = computed(() => dayjs(now.value).format('HH:mm'));
+  const nowTimeFormatted = computed(() => formatTime(now.value));
 
   interface ResultTime {
     time: string;
@@ -106,38 +119,39 @@
 
     if (mode.value === 'wake') {
       // Calculate bedtime based on wake time
-      const wake = dayjs(wakeTime.value);
-      // Suggest 4, 5, 6 cycles back
-      // Must subtract fallAsleepMinutes from the calculated cycle time to get "in bed" time
+      const [hours, minutes] = wakeTimeStr.value.split(':').map(Number);
+      const wake = new Date();
+      wake.setHours(hours, minutes, 0, 0);
+
       const cycles = [6, 5, 4]; // 9h, 7.5h, 6h
 
       cycles.forEach(c => {
         const sleepDuration = c * cycleMinutes;
-        const bedTime = wake.subtract(sleepDuration + fallAsleepMinutes, 'minute');
+        const bedTime = new Date(wake.getTime() - (sleepDuration + fallAsleepMinutes) * 60000);
 
         results.push({
-          time: bedTime.format('HH:mm'),
+          time: formatTime(bedTime),
           cycles: c,
           hours: (sleepDuration / 60).toFixed(1),
           type: c === 5 || c === 6 ? 'optimal' : 'good',
-          tag: c === 5 ? '推荐' : undefined
+          tag: c === 5 ? '★ 推荐' : undefined
         });
       });
     } else {
       // Calculate wake time based on now
-      const sleepStart = dayjs(now.value).add(fallAsleepMinutes, 'minute');
+      const sleepStart = new Date(now.value.getTime() + fallAsleepMinutes * 60000);
       const cycles = [4, 5, 6];
 
       cycles.forEach(c => {
         const sleepDuration = c * cycleMinutes;
-        const wake = sleepStart.add(sleepDuration, 'minute');
+        const wakeTime = new Date(sleepStart.getTime() + sleepDuration * 60000);
 
         results.push({
-          time: wake.format('HH:mm'),
+          time: formatTime(wakeTime),
           cycles: c,
           hours: (sleepDuration / 60).toFixed(1),
           type: c === 5 || c === 6 ? 'optimal' : 'good',
-          tag: c === 5 ? '推荐' : undefined
+          tag: c === 5 ? '★ 推荐' : undefined
         });
       });
     }
@@ -150,195 +164,410 @@
 </script>
 
 <style scoped>
-  .tool-container {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#111 2px, transparent 2px), linear-gradient(90deg, #111 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: center;
+    background-attachment: fixed;
     min-height: 100vh;
-    background: #1e1b4b; /* Dark blue night theme */
-    font-family: 'Inter', system-ui, sans-serif;
-    color: #e0e7ff;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 10;
+  .brutal-container {
+    max-width: 800px;
+    margin: 0 auto;
     display: flex;
+    flex-direction: column;
+  }
+
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: #fff;
+    border: 4px solid #111;
     padding: 1rem 1.5rem;
-    background: rgba(30, 27, 75, 0.8);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 8px 8px 0 #111;
   }
-
-  .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #a5b4fc;
-    width: 80px;
-  }
-
-  .nav-center {
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
     flex: 1;
     text-align: center;
   }
-
-  .nav-center h1 {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: white;
+  .brutal-title span {
+    color: #4b7bff;
   }
 
-  .nav-subtitle {
-    font-size: 0.8rem;
-    color: #818cf8;
+  .brutal-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.5rem 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #111;
+  }
+  .brutal-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 #111;
   }
 
-  .nav-spacer {
-    width: 80px;
+  .mx-auto {
+    margin-left: auto;
+    margin-right: auto;
   }
-
-  .main-content {
+  .brutal-pane {
+    width: 100%;
     max-width: 600px;
-    margin: 2rem auto;
-    padding: 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0 #111;
+    min-width: 0;
+    background: #fff;
   }
-
-  .glass-card {
-    background: rgba(49, 46, 129, 0.5);
-    border-radius: 20px;
+  .pane-body {
     padding: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(129, 140, 248, 0.2);
-    margin-bottom: 1.5rem;
   }
 
   .mode-switch {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    padding: 1rem !important;
+    flex-direction: row;
+    border-bottom: 4px solid #111;
   }
-
-  .mode-switch button {
-    background: transparent;
-    border: 1px solid #6366f1;
-    color: #c7d2fe;
-    padding: 0.8rem 1.5rem;
-    border-radius: 12px;
+  .brutal-tab {
+    flex: 1;
+    border: none;
+    border-right: 4px solid #111;
+    padding: 1.5rem 1rem;
+    font-size: 1.1rem;
+    font-weight: 900;
+    font-family: 'Noto Sans SC', sans-serif;
     cursor: pointer;
-    transition: all 0.3s;
-    font-size: 0.95rem;
+    transition: background 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .brutal-tab:last-child {
+    border-right: none;
+  }
+  .bg-white {
+    background: #fff;
+  }
+  .brutal-tab:hover:not(.active-tab) {
+    background: #fdfae5;
+  }
+  .active-tab {
+    background: #111;
+    color: #fff;
   }
 
-  .mode-switch button.active {
-    background: #6366f1;
-    color: white;
-    box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+  .bg-yellow {
+    background: #ffd900;
+    border-bottom: 4px solid #111;
+    padding: 2rem;
   }
-
   .input-section {
     text-align: center;
-    margin-bottom: 2rem;
+  }
+  .input-section h3 {
+    margin: 0 0 1rem;
+    font-size: 1.5rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 900;
   }
 
-  .input-section h3 {
-    margin-bottom: 1rem;
-    font-weight: 500;
+  .brutal-time-input {
+    width: 220px;
+    padding: 0.5rem 1rem;
+    font-size: 2.5rem;
+    border: 4px solid #111;
+    background: #fff;
+    font-weight: 900;
+    box-sizing: border-box;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    transition: all 0.1s;
+    box-shadow: 6px 6px 0 #111;
+  }
+  .brutal-time-input:focus {
+    outline: none;
+    box-shadow: 8px 8px 0 #4b7bff;
+    border-color: #111;
+    transform: translate(-2px, -2px);
   }
 
   .subtitle {
-    color: #a5b4fc;
-    font-size: 0.9rem;
+    font-size: 1rem;
+    color: #333;
+    margin: 0;
+  }
+  .subtitle strong {
+    color: #ff4b4b;
+    font-size: 1.2rem;
   }
 
   .result-list {
     text-align: center;
   }
-
-  .result-list .desc {
-    font-size: 0.85rem;
-    color: #a5b4fc;
-    margin-bottom: 1.5rem;
+  .result-list h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.5rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 900;
+  }
+  .desc {
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+    font-weight: bold;
+  }
+  .desc strong {
+    color: #4b7bff;
   }
 
   .cycles-container {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.25rem;
   }
-
   .cycle-card {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 1rem;
-    border-radius: 16px;
+    border: 4px solid #111;
+    padding: 1.5rem 2rem;
+    background: #fff;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .relative-card {
+    box-shadow: 6px 6px 0 #111;
+    transition: transform 0.1s;
+  }
+  .relative-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 #111;
   }
 
   .cycle-card.optimal {
-    background: linear-gradient(90deg, rgba(79, 70, 229, 0.3), rgba(67, 56, 202, 0.3));
-    border-color: rgba(99, 102, 241, 0.5);
+    background: #d1fae5;
+    border-color: #111;
+  }
+  .cycle-card.good {
+    background: #fdfae5;
   }
 
   .cycle-time {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: white;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    font-size: 2.5rem;
+    font-weight: 900;
+    font-family: 'IBM Plex Mono', monospace;
+    line-height: 1;
+    text-shadow: 2px 2px 0 #111;
+    color: #fff;
+  }
+  .cycle-card.optimal .cycle-time {
+    color: #10b981;
+  }
+  .cycle-card.good .cycle-time {
+    color: #111;
+    text-shadow: none;
   }
 
   .cycle-info {
-    text-align: right;
-    font-size: 0.9rem;
-    color: #c7d2fe;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    gap: 0.5rem;
   }
-
+  .info-text {
+    font-size: 1.1rem;
+    font-weight: 900;
+    font-family: 'Noto Sans SC', sans-serif;
+  }
   .tag {
-    background: #fbbf24;
-    color: #451a03;
-    font-size: 0.7rem;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-weight: 700;
-    margin-top: 4px;
+    background: #ff4b4b;
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 900;
+    padding: 2px 8px;
+    border: 2px solid #111;
   }
 
-  .info-card {
-    background: rgba(30, 27, 75, 0.95);
-    padding: 1.5rem;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    font-size: 0.9rem;
+  .brutal-info-box {
+    width: 100%;
+    max-width: 600px;
+    border: 4px dashed #111;
+    padding: 2rem;
+    background: #fff;
+    font-weight: bold;
+  }
+  .brutal-info-box h3 {
+    margin: 0 0 1rem;
+    font-size: 1.25rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 900;
+  }
+  .brutal-info-box p {
+    margin: 0;
+    font-size: 1rem;
     line-height: 1.6;
-    color: #a5b4fc;
+  }
+  .brutal-info-box strong {
+    color: #4b7bff;
   }
 
+  .mt-4 {
+    margin-top: 1rem;
+  }
+  .mt-8 {
+    margin-top: 2rem;
+  }
   .footer {
     text-align: center;
-    padding: 2rem;
-    color: #6366f1;
-    font-size: 0.875rem;
-    opacity: 0.6;
+    font-weight: 900;
+    margin-bottom: 2rem;
   }
 
-  :deep(.el-input__wrapper) {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    box-shadow: none !important;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+  @media (max-width: 900px) {
+    .brutal-grid-layout {
+      grid-template-columns: 1fr;
+    }
+    .brutal-title {
+      font-size: 2.2rem;
+    }
+    .cycle-card {
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    .cycle-info {
+      align-items: center;
+    }
   }
 
-  :deep(.el-input__inner) {
-    color: white !important;
-    font-size: 1.5rem !important;
-    text-align: center;
+  /* Dark Mode */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-header {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 8px 8px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-tab {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-time-input,
+  [data-theme='dark'] .relative-card {
+    box-shadow: 6px 6px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover,
+  [data-theme='dark'] .relative-card:hover {
+    box-shadow: 9px 9px 0 #eee;
+  }
+
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .bg-white {
+    background: #1a1a1a;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #332700;
+    border-bottom-color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-tab {
+    border-right-color: #eee;
+  }
+  [data-theme='dark'] .brutal-tab:hover:not(.active-tab) {
+    background: #222;
+  }
+  [data-theme='dark'] .active-tab {
+    background: #eee;
+    color: #111;
+  }
+
+  [data-theme='dark'] .brutal-time-input {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-time-input:focus {
+    border-color: #2a4eb2;
+    box-shadow: 8px 8px 0 #2a4eb2;
+  }
+  [data-theme='dark'] .subtitle {
+    color: #aaa;
+  }
+  [data-theme='dark'] .subtitle strong {
+    color: #ff8b8b;
+  }
+  [data-theme='dark'] .desc strong {
+    color: #6b8cff;
+  }
+
+  [data-theme='dark'] .cycle-card {
+    border-color: #eee;
+    background: #222;
+  }
+  [data-theme='dark'] .cycle-card.optimal {
+    background: #003322;
+  }
+  [data-theme='dark'] .cycle-card.good {
+    background: #332200;
+  }
+
+  [data-theme='dark'] .cycle-time {
+    text-shadow: 2px 2px 0 #eee;
+  }
+  [data-theme='dark'] .cycle-card.optimal .cycle-time {
+    color: #10b981;
+  }
+  [data-theme='dark'] .cycle-card.good .cycle-time {
+    color: #f59e0b;
+  }
+  [data-theme='dark'] .tag {
+    background: #ff8b8b;
+    color: #111;
+    border-color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-info-box {
+    background: #222;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-info-box strong {
+    color: #6b8cff;
   }
 </style>

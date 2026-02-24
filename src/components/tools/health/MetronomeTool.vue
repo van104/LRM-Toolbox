@@ -1,88 +1,68 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack"
-          ><el-icon> <ArrowLeft /> </el-icon><span>返回</span></el-button
-        >
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">节拍器</h1>
-        <span class="tool-subtitle">Metronome</span>
-      </div>
-      <div class="header-right"></div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">健康<span>.节拍器()</span></h1>
+      </header>
 
-    <main class="tool-content">
-      <div class="metronome-card glass-card">
-        <div class="visualizer">
-          <div class="dots">
-            <div
-              v-for="n in beatsPerBar"
-              :key="n"
-              class="dot"
-              :class="{ active: currentBeat === n }"
-            ></div>
-          </div>
-          <div class="bpm-display">
-            <span class="value">{{ bpm }}</span>
-            <span class="label">BPM</span>
-          </div>
-        </div>
-
-        <div class="controls">
-          <el-slider v-model="bpm" :min="40" :max="220" :show-tooltip="false" class="bpm-slider" />
-
-          <div class="btn-row">
-            <button class="adjust-btn" @click="bpm--">
-              <el-icon>
-                <Minus />
-              </el-icon>
-            </button>
-            <button class="play-btn" :class="{ playing: isPlaying }" @click="togglePlay">
-              <el-icon v-if="!isPlaying">
-                <VideoPlay />
-              </el-icon>
-              <el-icon v-else>
-                <VideoPause />
-              </el-icon>
-            </button>
-            <button class="adjust-btn" @click="bpm++">
-              <el-icon>
-                <Plus />
-              </el-icon>
-            </button>
-          </div>
-
-          <div class="settings-row">
-            <div class="setting">
-              <span class="label">拍号</span>
-              <el-select v-model="beatsPerBar" style="width: 80px">
-                <el-option v-for="n in [2, 3, 4, 6]" :key="n" :label="`${n}/4`" :value="n" />
-              </el-select>
+      <main class="tool-content">
+        <div class="brutal-pane metronome-pane mx-auto">
+          <div class="pane-header bg-black"><span class="text-white">🎵 节奏工具</span></div>
+          <div class="pane-body">
+            <div class="visualizer mt-4">
+              <div class="dots">
+                <div
+                  v-for="n in beatsPerBar"
+                  :key="n"
+                  class="dot"
+                  :class="{ active: currentBeat === n }"
+                ></div>
+              </div>
+              <div class="bpm-display mt-8">
+                <span class="value">{{ bpm }}</span>
+                <span class="label">BPM</span>
+              </div>
             </div>
-            <div class="setting">
-              <span class="label">音色</span>
-              <el-select v-model="soundType" style="width: 100px">
-                <el-option label="Tick" value="tick" />
-                <el-option label="Beep" value="beep" />
-              </el-select>
+
+            <div class="controls mt-8">
+              <input v-model="bpm" type="range" min="40" max="220" class="brutal-range" />
+
+              <div class="btn-row mt-8">
+                <button class="brutal-icon-btn adjust-btn" @click="bpm--">➖</button>
+                <button class="brutal-play-btn" :class="{ playing: isPlaying }" @click="togglePlay">
+                  {{ !isPlaying ? '▶' : '⏸' }}
+                </button>
+                <button class="brutal-icon-btn adjust-btn" @click="bpm++">➕</button>
+              </div>
+
+              <div class="settings-row mt-8">
+                <div class="setting-item">
+                  <label>拍号</label>
+                  <select v-model="beatsPerBar" class="brutal-select">
+                    <option v-for="n in [2, 3, 4, 6]" :key="n" :value="n">{{ n }}/4</option>
+                  </select>
+                </div>
+                <div class="setting-item">
+                  <label>音色</label>
+                  <select v-model="soundType" class="brutal-select">
+                    <option value="tick">Tick</option>
+                    <option value="beep">Beep</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - 节拍器</footer>
+      </main>
+
+      <footer class="footer mt-8">© 2026 LRM工具箱 - 节拍器</footer>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, watch, onUnmounted } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { ArrowLeft, VideoPlay, VideoPause, Plus, Minus } from '@element-plus/icons-vue';
-
-  const router = useRouter();
-  const goBack = () => router.back();
 
   const bpm = ref(100);
   const isPlaying = ref(false);
@@ -94,7 +74,6 @@
 
   const playSound = (accent = false) => {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
     if (audioCtx.state === 'suspended') audioCtx.resume();
 
     const osc = audioCtx.createOscillator();
@@ -119,11 +98,8 @@
   };
 
   const togglePlay = () => {
-    if (isPlaying.value) {
-      stop();
-    } else {
-      start();
-    }
+    if (isPlaying.value) stop();
+    else start();
   };
 
   const start = () => {
@@ -163,200 +139,397 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
     min-height: 100vh;
-    background: #f8fafc;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 800px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    color: #1e293b;
   }
 
-  .tool-header {
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
-
-  .header-left,
-  .header-right {
-    width: 100px;
-    display: flex;
-    align-items: center;
-  }
-
-  .header-center {
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0 #4b7bff;
     flex: 1;
     text-align: center;
   }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0;
+  .brutal-title span {
+    color: #4b7bff;
+    text-shadow: 4px 4px 0 #111;
   }
 
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0 #111;
+    transition: all 0.1s;
     text-transform: uppercase;
   }
-
-  .tool-content {
-    flex: 1;
-    padding: 2rem;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0 0 0 #111;
   }
 
-  .metronome-card {
+  .metronome-pane {
+    max-width: 500px;
     width: 100%;
-    max-width: 400px;
-    padding: 2rem;
+    display: flex;
+    flex-direction: column;
     background: #fff;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0 #111;
+  }
+  .pane-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
     text-align: center;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  .bg-black {
+    background: #111;
+    color: white;
+  }
+  .pane-body {
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+  .mx-auto {
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .visualizer {
-    margin-bottom: 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    justify-content: center;
   }
-
   .dots {
     display: flex;
-    gap: 12px;
+    gap: 1rem;
+    justify-content: center;
   }
-
   .dot {
-    width: 16px;
-    height: 16px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    background: #e2e8f0;
-    transition: background 0.1s;
+    border: 4px solid #111;
+    background: #fff;
+    transition: all 0.1s;
   }
-
   .dot.active {
-    background: #3b82f6;
-    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    background: #ff4b4b;
+    transform: scale(1.2);
+    box-shadow: 2px 2px 0 #111;
   }
 
-  .bpm-display .value {
-    font-size: 4rem;
-    font-weight: 700;
-    color: #1e293b;
-    line-height: 1;
-  }
-
-  .bpm-display .label {
-    font-size: 1rem;
-    color: #64748b;
-    letter-spacing: 2px;
-  }
-
-  .controls {
+  .bpm-display {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    align-items: center;
+  }
+  .bpm-display .value {
+    font-size: 6rem;
+    font-weight: 900;
+    line-height: 1;
+    font-family: 'Syne', sans-serif;
+    text-shadow: 4px 4px 0 #4b7bff;
+    color: #111;
+  }
+  .bpm-display .label {
+    font-size: 1.2rem;
+    font-weight: 900;
+    background: #111;
+    color: #fff;
+    padding: 0.2rem 1rem;
+    margin-top: 0.5rem;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .brutal-range {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 20px;
+    background: #fff;
+    border: 4px solid #111;
+    border-radius: 10px;
+    outline: none;
+    transition: background 0.2s;
+    box-shadow: 4px 4px 0 #111;
+  }
+  .brutal-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #ffd900;
+    cursor: pointer;
+    border: 4px solid #111;
+    box-shadow: 2px 2px 0 #111;
+  }
+  .brutal-range::-moz-range-thumb {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #ffd900;
+    cursor: pointer;
+    border: 4px solid #111;
+    box-shadow: 2px 2px 0 #111;
   }
 
   .btn-row {
     display: flex;
-    align-items: center;
     justify-content: center;
-    gap: 1.5rem;
+    align-items: center;
+    gap: 2rem;
   }
 
-  .adjust-btn {
-    width: 40px;
-    height: 40px;
+  .brutal-icon-btn {
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
-    border: none;
-    background: #f1f5f9;
-    color: #1e293b;
+    background: #fff;
+    border: 4px solid #111;
+    font-size: 1.5rem;
+    font-weight: 900;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    box-shadow: 4px 4px 0 #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+  }
+  .brutal-icon-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #111;
+  }
+  .brutal-icon-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 #111;
   }
 
-  .adjust-btn:hover {
-    background: #e2e8f0;
-  }
-
-  .adjust-btn:active {
-    transform: scale(0.95);
-  }
-
-  .play-btn {
-    width: 72px;
-    height: 72px;
+  .brutal-play-btn {
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
-    border: none;
-    background: #3b82f6;
+    background: #4b7bff;
+    border: 4px solid #111;
     color: #fff;
-    font-size: 2rem;
+    font-size: 3rem;
+    font-weight: 900;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
-    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+    box-shadow: 8px 8px 0 #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+    padding-left: 0.5rem;
   }
-
-  .play-btn:hover {
-    transform: scale(1.05);
+  .brutal-play-btn.playing {
+    background: #ff4b4b;
+    padding-left: 0;
   }
-
-  .play-btn:active {
-    transform: scale(0.95);
+  .brutal-play-btn:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 12px 12px 0 #111;
   }
-
-  .play-btn.playing {
-    background: #ef4444;
-    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+  .brutal-play-btn:active {
+    transform: translate(8px, 8px);
+    box-shadow: 0 0 0 #111;
   }
 
   .settings-row {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     gap: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid #f1f5f9;
+    border-top: 4px dashed #111;
+    padding-top: 2rem;
   }
-
-  .setting {
+  .setting-item {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+    flex: 1;
+  }
+  .setting-item label {
+    font-size: 1rem;
+    font-weight: 900;
+    font-family: 'Noto Sans SC', sans-serif;
   }
 
-  .setting .label {
-    font-size: 0.8rem;
-    color: #64748b;
-  }
-
-  .glass-card {
+  .brutal-select {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+    border: 4px solid #111;
     background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    font-weight: bold;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', monospace;
+    box-shadow: 4px 4px 0 #111;
+    transition: transform 0.1s;
+  }
+  .brutal-select:focus {
+    outline: none;
+    box-shadow: 6px 6px 0 #4b7bff;
+    border-color: #111;
+    transform: translate(-2px, -2px);
   }
 
+  .mt-4 {
+    margin-top: 1rem;
+  }
+  .mt-8 {
+    margin-top: 2rem;
+  }
   .footer {
     text-align: center;
-    padding: 2rem;
-    color: #666;
-    font-size: 0.85rem;
+    font-weight: 900;
+  }
+
+  @media (max-width: 900px) {
+    .brutal-title {
+      font-size: 2.2rem;
+    }
+    .metronome-pane {
+      border-left: none;
+      border-right: none;
+      border-radius: 0;
+      box-shadow: none;
+      border-bottom: 4px solid #111;
+      border-top: 4px solid #111;
+    }
+  }
+
+  /* Dark Mode */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-icon-btn,
+  [data-theme='dark'] .brutal-select,
+  [data-theme='dark'] .dot {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-icon-btn,
+  [data-theme='dark'] .brutal-play-btn,
+  [data-theme='dark'] .brutal-select,
+  [data-theme='dark'] .brutal-range {
+    box-shadow: 6px 6px 0 #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn:hover,
+  [data-theme='dark'] .brutal-icon-btn:hover,
+  [data-theme='dark'] .brutal-select:focus {
+    box-shadow: 9px 9px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-play-btn:hover {
+    box-shadow: 12px 12px 0 #eee;
+  }
+
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .bg-black {
+    background: #222;
+  }
+
+  [data-theme='dark'] .bpm-display .value {
+    color: #eee;
+    text-shadow: 4px 4px 0 #2a4eb2;
+  }
+  [data-theme='dark'] .bpm-display .label {
+    background: #eee;
+    color: #111;
+  }
+
+  [data-theme='dark'] .dot.active {
+    background: #ff4b4b;
+    border-color: #eee;
+    box-shadow: 2px 2px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-range {
+    background: #1a1a1a;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-range::-webkit-slider-thumb {
+    background: #b28f00;
+    border-color: #eee;
+    box-shadow: 2px 2px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-range::-moz-range-thumb {
+    background: #b28f00;
+    border-color: #eee;
+    box-shadow: 2px 2px 0 #eee;
+  }
+
+  [data-theme='dark'] .brutal-play-btn {
+    background: #2a4eb2;
+    border-color: #eee;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-play-btn.playing {
+    background: #8b0000;
+    border-color: #eee;
+  }
+
+  [data-theme='dark'] .settings-row {
+    border-top-color: #eee;
   }
 </style>
