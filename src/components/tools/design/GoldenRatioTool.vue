@@ -1,49 +1,36 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="$router.back()">
-          <el-icon><ArrowLeft /></el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">黄金比例计算器</h1>
-        <span class="tool-subtitle">Golden Ratio Calculator</span>
-      </div>
-      <div class="header-right">
-        <span class="phi-text">φ ≈ 1.618</span>
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">黄金<span>.比例()</span></h1>
+        <span class="phi-badge">φ ≈ 1.618</span>
+      </header>
 
-    <main class="tool-content">
-      <div class="tool-layout">
+      <div class="brutal-grid">
         <!-- 左侧输入面板 -->
-        <div class="tool-sidebar">
-          <div class="panel glass-card">
-            <h2 class="panel-title">
-              <el-icon><Crop /></el-icon> 比例设置
-            </h2>
-
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span>比例设置.CONFIG</span>
+          </div>
+          <div class="pane-content">
             <div class="config-item">
-              <label class="section-label">基准数值</label>
-              <div class="input-with-controls">
-                <input v-model.number="baseValue" type="number" class="main-number-input" />
-                <div class="unit-selector">
-                  <button
-                    v-for="u in ['px', 'pt', 'rem', '%']"
-                    :key="u"
-                    class="mini-tab"
-                    :class="{ active: unit === u }"
-                    @click="unit = u"
-                  >
-                    {{ u }}
-                  </button>
-                </div>
+              <label class="config-label">基准数值</label>
+              <input v-model.number="baseValue" type="number" class="brutal-input number-input" />
+              <div class="unit-selector">
+                <button
+                  v-for="u in ['px', 'pt', 'rem', '%']"
+                  :key="u"
+                  class="unit-btn"
+                  :class="{ active: unit === u }"
+                  @click="unit = u"
+                >
+                  {{ u }}
+                </button>
               </div>
             </div>
 
-            <div class="phi-visual mt-8">
+            <div class="phi-visual">
               <div class="phi-box">
                 <div class="phi-a" :style="{ flex: 1.618 }">A</div>
                 <div class="phi-b" :style="{ flex: 1 }">B</div>
@@ -51,8 +38,8 @@
               <div class="phi-formula">A / B = 1.618</div>
             </div>
 
-            <div class="presets-section mt-8">
-              <label class="section-label">常用基准</label>
+            <div class="config-item" style="margin-top: 2rem">
+              <label class="config-label">常用基准</label>
               <div class="quick-bases">
                 <button
                   v-for="val in [100, 400, 800, 1024, 1280, 1920]"
@@ -68,13 +55,14 @@
         </div>
 
         <!-- 右侧结果面板 -->
-        <div class="tool-main">
-          <div class="panel glass-card">
-            <h2 class="panel-title">推导序列</h2>
-
+        <div class="brutal-pane">
+          <div class="pane-header bg-blue">
+            <span class="text-white">推导序列.SEQUENCE</span>
+          </div>
+          <div class="pane-content">
             <div class="results-grid">
-              <div class="result-column larger">
-                <h3 class="column-title">向上扩展 (Larger)</h3>
+              <div class="result-column">
+                <h3 class="column-title up">向上扩展 (Larger)</h3>
                 <div class="result-list">
                   <div
                     v-for="(val, i) in largerValues"
@@ -88,13 +76,13 @@
                         >{{ val.toFixed(1) }}<small>{{ unit }}</small></span
                       >
                     </div>
-                    <el-icon class="copy-hint"><CopyDocument /></el-icon>
+                    <span class="copy-hint">复制</span>
                   </div>
                 </div>
               </div>
 
-              <div class="result-column smaller">
-                <h3 class="column-title">向下细分 (Smaller)</h3>
+              <div class="result-column">
+                <h3 class="column-title down">向下细分 (Smaller)</h3>
                 <div class="result-list">
                   <div
                     v-for="(val, i) in smallerValues"
@@ -108,15 +96,15 @@
                         >{{ val.toFixed(1) }}<small>{{ unit }}</small></span
                       >
                     </div>
-                    <el-icon class="copy-hint"><CopyDocument /></el-icon>
+                    <span class="copy-hint">复制</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="preview-section mt-8">
-              <h3 class="section-label">比例预览 (A:B)</h3>
-              <div class="preview-area">
+            <div class="preview-section">
+              <label class="config-label">比例预览 (A:B)</label>
+              <div class="preview-boxes">
                 <div class="preview-box-a" :style="{ width: '120px', height: '120px' }">
                   <span>{{ baseValue }}{{ unit }}</span>
                 </div>
@@ -131,24 +119,28 @@
           </div>
         </div>
       </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - 黄金比例计算器</footer>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, computed } from 'vue';
-  import { ArrowLeft, Crop, CopyDocument } from '@element-plus/icons-vue';
+  import { useRouter } from 'vue-router';
   import { useCopy } from '@/composables/useCopy';
 
-  const { copyToClipboard } = useCopy();
+  const router = useRouter();
+  function goBack() {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  }
 
+  const { copyToClipboard } = useCopy();
   const baseValue = ref(800);
   const unit = ref('px');
   const PHI_CONST = 1.61803398875;
 
   const largerValues = computed(() => {
-    const vals = [];
+    const vals: number[] = [];
     let current = baseValue.value;
     for (let i = 0; i < 5; i++) {
       current *= PHI_CONST;
@@ -158,7 +150,7 @@
   });
 
   const smallerValues = computed(() => {
-    const vals = [];
+    const vals: number[] = [];
     let current = baseValue.value;
     for (let i = 0; i < 5; i++) {
       current /= PHI_CONST;
@@ -169,355 +161,480 @@
 
   const copyValue = async (val: number) => {
     const text = val.toFixed(1) + unit.value;
-    await copyToClipboard(text, {
-      success: `复制成功: ${text}`
-    });
+    await copyToClipboard(text, { success: `复制成功: ${text}` });
   };
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f1f5f9;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 1600px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
   }
-
-  .tool-header {
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    margin-bottom: 2rem;
   }
-
-  .header-left,
-  .header-right {
-    width: 140px;
-  }
-
-  .header-right {
-    display: flex;
-    justify-content: flex-end;
-    color: #94a3b8;
-    font-family: serif;
-    font-style: italic;
-  }
-
-  .header-center {
-    text-align: center;
-    flex: 1;
-  }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
     margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
   }
-
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
     text-transform: uppercase;
   }
-
-  .tool-content {
-    flex: 1;
-    padding: 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
   }
 
-  .tool-layout {
+  .phi-badge {
+    font-family: 'Syne', serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    font-style: italic;
+    background: #ffd900;
+    border: 4px solid #111;
+    padding: 0.5rem 1.25rem;
+    box-shadow: 6px 6px 0px #111;
+  }
+
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+    min-height: 550px;
+  }
+
+  .brutal-pane {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
   }
 
-  @media (min-width: 1024px) {
-    .tool-layout {
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 1.5rem;
-      align-items: start;
-    }
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    padding: 24px;
-  }
-
-  .panel-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 24px;
+  .pane-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    gap: 0.75rem;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .pane-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
   }
 
   .config-item {
-    margin-bottom: 20px;
+    margin-bottom: 1.5rem;
   }
-
-  .section-label {
-    display: block;
-    font-size: 0.875rem;
+  .config-label {
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
     font-weight: 600;
-    color: #64748b;
-    margin-bottom: 12px;
+    font-size: 0.95rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 0.75rem;
   }
 
-  .input-with-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .main-number-input {
+  .brutal-input {
     width: 100%;
-    padding: 12px 16px;
-    font-size: 1.25rem;
-    font-family: monospace;
+    border: 3px solid #111;
+    padding: 0.75rem 1rem;
+    font-family: 'IBM Plex Mono', monospace;
     font-weight: 600;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
+    font-size: 1.25rem;
+    background: #fff;
     outline: none;
-    background: #f8fafc;
-    color: #3b82f6;
-    transition: all 0.2s;
+    box-shadow: 3px 3px 0px #111;
+    box-sizing: border-box;
+    margin-bottom: 0.75rem;
   }
-
-  .main-number-input:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    background: white;
+  .brutal-input:focus {
+    box-shadow: 5px 5px 0px #111;
+    transform: translate(-1px, -1px);
+  }
+  .number-input {
+    color: #4b7bff;
   }
 
   .unit-selector {
     display: flex;
-    background: #f1f5f9;
-    padding: 4px;
-    border-radius: 8px;
+    gap: 0.5rem;
   }
-
-  .mini-tab {
+  .unit-btn {
     flex: 1;
-    padding: 6px;
-    border: none;
-    background: transparent;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: #64748b;
+    padding: 0.5rem;
+    border: 3px solid #111;
+    background: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 0.9rem;
     cursor: pointer;
+    box-shadow: 2px 2px 0px #111;
+    transition: all 0.1s;
   }
-
-  .mini-tab.active {
-    background: white;
-    color: #3b82f6;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  .unit-btn.active {
+    background: #ffd900;
+  }
+  .unit-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px #111;
   }
 
   .phi-visual {
-    background: #f8fafc;
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px dashed #cbd5e1;
+    background: #ffd900;
+    padding: 1.25rem;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    margin-top: 1.5rem;
   }
-
   .phi-box {
     display: flex;
-    height: 36px;
-    border-radius: 6px;
+    height: 40px;
+    border: 2px solid #111;
+    margin-bottom: 0.75rem;
     overflow: hidden;
-    margin-bottom: 12px;
   }
-
   .phi-a {
-    background: #3b82f6;
-    color: white;
+    background: #4b7bff;
+    color: #fff;
   }
   .phi-b {
-    background: #e2e8f0;
-    color: #64748b;
+    background: #fff;
+    color: #111;
   }
   .phi-a,
   .phi-b {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
-    font-size: 0.85rem;
+    font-weight: 800;
+    font-size: 0.9rem;
+    font-family: 'Syne', sans-serif;
   }
-
   .phi-formula {
     text-align: center;
-    font-family: 'Times New Roman', serif;
+    font-family: 'Syne', serif;
     font-style: italic;
-    font-size: 1rem;
-    color: #94a3b8;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #111;
   }
 
   .quick-bases {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    gap: 0.5rem;
   }
-
   .preset-btn {
-    padding: 6px;
-    border: 1px solid #e2e8f0;
-    background: white;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    color: #64748b;
+    padding: 0.5rem;
+    border: 3px solid #111;
+    background: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 0.85rem;
     cursor: pointer;
-    transition: all 0.2s;
+    box-shadow: 3px 3px 0px #111;
+    transition: all 0.1s;
   }
-
   .preset-btn:hover {
-    border-color: #3b82f6;
-    color: #3b82f6;
-    background: #f0f7ff;
+    background: #ffd900;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+  }
+  .preset-btn:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
   }
 
   .results-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    gap: 2rem;
+    margin-bottom: 2rem;
   }
-
-  @media (max-width: 640px) {
-    .results-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
   .column-title {
-    font-size: 0.95rem;
-    color: #64748b;
-    margin-bottom: 16px;
-    padding-left: 10px;
-    border-left: 3px solid #3b82f6;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    padding: 0.4rem 0.75rem;
+    border: 2px solid #111;
+    display: inline-block;
   }
-
+  .column-title.up {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .column-title.down {
+    background: #ffd900;
+    color: #111;
+  }
   .result-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.5rem;
   }
-
   .result-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
-    background: #f8fafc;
-    border: 1px solid #f1f5f9;
-    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    background: #fff;
+    border: 3px solid #111;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.1s;
+    box-shadow: 3px 3px 0px #111;
   }
-
   .result-card:hover {
-    transform: translateX(4px);
-    background: #f0f7ff;
-    border-color: #3b82f6;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+    background: #ffd900;
   }
-
   .card-step {
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: #666;
     display: block;
   }
-
   .card-value {
-    font-size: 1.125rem;
+    font-size: 1.1rem;
     font-weight: 700;
-    color: #1e293b;
-    font-family: monospace;
+    font-family: 'IBM Plex Mono', monospace;
   }
-
   .card-value small {
-    font-size: 0.75rem;
-    margin-left: 4px;
-    font-weight: normal;
-    color: #94a3b8;
+    font-size: 0.7rem;
+    margin-left: 2px;
+    font-weight: 400;
+    color: #888;
   }
-
   .copy-hint {
-    color: #cbd5e1;
-    font-size: 0.9rem;
+    font-size: 0.75rem;
+    color: #aaa;
+    font-weight: 600;
   }
-
   .result-card:hover .copy-hint {
-    color: #3b82f6;
+    color: #111;
   }
 
-  .preview-area {
+  .preview-section {
+    margin-top: 1.5rem;
+  }
+  .preview-boxes {
     display: flex;
     align-items: flex-end;
-    gap: 24px;
-    background: #f8fafc;
-    padding: 30px;
-    border-radius: 16px;
-    border: 1px solid #f1f5f9;
+    gap: 1.5rem;
+    background: #fff;
+    padding: 2rem;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    margin-top: 0.75rem;
   }
-
   .preview-box-a,
   .preview-box-b {
-    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 600;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-family: 'IBM Plex Mono', monospace;
+    border: 3px solid #111;
   }
-
   .preview-box-a {
-    background: #3b82f6;
+    background: #4b7bff;
   }
   .preview-box-b {
-    background: #f59e0b;
+    background: #ffd900;
+    color: #111;
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
-  }
-
-  .mt-8 {
-    margin-top: 2rem;
-  }
-
-  @media (max-width: 640px) {
-    .tool-title {
-      font-size: 1.1rem;
+  @media (max-width: 1024px) {
+    .brutal-grid {
+      grid-template-columns: 1fr;
     }
-    .header-left,
-    .header-right {
-      width: 80px;
+    .brutal-title {
+      font-size: 2.5rem;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
     }
     .results-grid {
       grid-template-columns: 1fr;
     }
+  }
+
+  /* --- Dark Mode --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-input,
+  [data-theme='dark'] .unit-btn,
+  [data-theme='dark'] .preset-btn,
+  [data-theme='dark'] .result-card,
+  [data-theme='dark'] .preview-boxes {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .phi-badge {
+    background: #b28f00;
+    border-color: #eee;
+    color: #fff;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .unit-btn {
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .unit-btn.active {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .preset-btn {
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .preset-btn:hover {
+    background: #b28f00;
+    color: #fff;
+    box-shadow: 5px 5px 0px #eee;
+  }
+  [data-theme='dark'] .result-card {
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .result-card:hover {
+    box-shadow: 5px 5px 0px #eee;
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .preview-boxes {
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .phi-visual {
+    background: #b28f00;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+    color: #fff;
+  }
+  [data-theme='dark'] .phi-formula {
+    color: #fff;
+  }
+  [data-theme='dark'] .column-title {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-input {
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-input:focus {
+    box-shadow: 5px 5px 0px #eee;
+  }
+  [data-theme='dark'] .preview-box-a {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .preview-box-b {
+    border-color: #eee;
+    background: #b28f00;
+    color: #fff;
   }
 </style>

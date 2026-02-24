@@ -1,0 +1,13 @@
+
+C:\Users\van\Desktop\LRM-toolbox\src\components\tools\design\ColorPickerTool.vue
+  295:13  error  'hslToHex' is not defined  no-undef
+  295:36  error  'hslToHex' is not defined  no-undef
+  295:59  error  'hslToHex' is not defined  no-undef
+
+C:\Users\van\Desktop\LRM-toolbox\src\components\tools\design\ContrastCheckerTool.vue
+  149:12  error  'ArrowLeft' is defined but never used  @typescript-eslint/no-unused-vars
+  149:23  error  'Refresh' is defined but never used    @typescript-eslint/no-unused-vars
+  149:32  error  'Brush' is defined but never used      @typescript-eslint/no-unused-vars
+
+鉁?6 problems (6 errors, 0 warnings)
+

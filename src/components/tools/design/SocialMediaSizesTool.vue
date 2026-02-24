@@ -1,68 +1,56 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="$router.back()">
-          <el-icon><ArrowLeft /></el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">社交媒体尺寸指南</h1>
-        <span class="tool-subtitle">Social Media Sizes</span>
-      </div>
-      <div class="header-right">
-        <el-button type="primary" plain size="small"> 精选尺寸 </el-button>
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">社媒<span>.尺寸()</span></h1>
+        <div style="width: 100px"></div>
+      </header>
 
-    <main class="tool-content">
-      <div class="tool-layout">
-        <!-- 平台选择侧边栏 -->
-        <div class="tool-sidebar">
-          <div class="panel glass-card">
-            <h2 class="panel-title">
-              <el-icon><Monitor /></el-icon> 平台选择
-            </h2>
-            <div class="platform-list">
-              <button
-                v-for="platform in platforms"
-                :key="platform.id"
-                class="platform-btn"
-                :class="{ active: activePlatformId === platform.id }"
-                @click="activePlatformId = platform.id"
-              >
-                <i :class="['platform-icon', platform.iconClass]"></i>
-                <span>{{ platform.name }}</span>
-              </button>
+      <div class="brutal-grid">
+        <!-- 左侧平台选择 -->
+        <div class="left-column">
+          <div class="brutal-pane">
+            <div class="pane-header bg-yellow">
+              <span>平台选择.PLATFORM</span>
+            </div>
+            <div class="pane-content">
+              <div class="platform-list">
+                <button
+                  v-for="platform in platforms"
+                  :key="platform.id"
+                  class="platform-btn"
+                  :class="{ active: activePlatformId === platform.id }"
+                  @click="activePlatformId = platform.id"
+                >
+                  {{ platform.name }}
+                </button>
+              </div>
             </div>
           </div>
 
-          <div class="panel glass-card mt-6">
-            <h2 class="panel-title">
-              <el-icon><InfoFilled /></el-icon> 设计贴士
-            </h2>
-            <ul class="tips-list">
-              <li>
-                <strong>2x 导出</strong>：高清屏建议导出 2 倍尺寸，例如 200x200 画布使用 400x400。
-              </li>
-              <li><strong>安全区域</strong>：头像和封面应确保核心内容在中心 2/3 区域。</li>
-              <li><strong>格式选择</strong>：复杂图像用 JPG，Logo 或含透明背景用 PNG。</li>
-            </ul>
+          <div class="brutal-pane" style="margin-top: 2rem">
+            <div class="pane-header bg-green">
+              <span>设计贴士.TIPS</span>
+            </div>
+            <div class="pane-content">
+              <ul class="tips-list">
+                <li><strong>2x 导出</strong>：高清屏建议导出 2 倍尺寸。</li>
+                <li><strong>安全区域</strong>：核心内容应在中心 2/3 区域。</li>
+                <li><strong>格式选择</strong>：复杂图像用 JPG，Logo 用 PNG。</li>
+              </ul>
+            </div>
           </div>
         </div>
 
-        <!-- 尺寸内容主面板 -->
-        <div class="tool-main">
-          <div class="panel glass-card">
-            <div class="platform-header">
-              <div class="header-info">
-                <h2 class="current-platform-name">{{ currentPlatform?.name }}</h2>
-                <p class="current-platform-desc">{{ currentPlatform?.description }}</p>
-              </div>
-              <el-tag size="small" type="info" effect="plain">更新于 2026</el-tag>
-            </div>
-
+        <!-- 右侧尺寸内容 -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-blue">
+            <span class="text-white">{{ currentPlatform?.name }}</span>
+            <span class="update-tag">2026</span>
+          </div>
+          <div class="pane-content">
+            <p class="platform-desc">{{ currentPlatform?.description }}</p>
             <div class="size-grid">
               <div v-for="(item, index) in currentPlatform?.items" :key="index" class="size-card">
                 <div class="size-visual-container">
@@ -74,9 +62,7 @@
                   <h3 class="size-label">{{ item.label }}</h3>
                   <div class="size-value-row">
                     <span class="size-pixels">{{ item.size }}</span>
-                    <button class="mini-copy-btn" @click="copySize(item.size)">
-                      <el-icon><CopyDocument /></el-icon>
-                    </button>
+                    <button class="copy-btn-sm" @click="copySize(item.size)">复制</button>
                   </div>
                   <p class="size-hint">{{ item.hint }}</p>
                 </div>
@@ -85,25 +71,28 @@
           </div>
         </div>
       </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - 社交媒体尺寸指南</footer>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, computed } from 'vue';
-  import { ArrowLeft, Monitor, InfoFilled, CopyDocument } from '@element-plus/icons-vue';
+  import { useRouter } from 'vue-router';
   import { useCopy } from '@/composables/useCopy';
 
-  const { copyToClipboard } = useCopy();
+  const router = useRouter();
+  function goBack() {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  }
 
+  const { copyToClipboard } = useCopy();
   const activePlatformId = ref('wechat');
 
   const platforms = [
     {
       id: 'wechat',
       name: '微信 (WeChat)',
-      iconClass: 'fa-brands fa-weixin',
       description: '订阅号、服务号、视频号及朋友圈常用尺寸',
       items: [
         { label: '公众号头像', size: '200 x 200 px', hint: '1:1 正方形' },
@@ -116,7 +105,6 @@
     {
       id: 'red',
       name: '小红书 (RED)',
-      iconClass: 'fa-solid fa-note-sticky',
       description: '笔记封面是吸引点击的第一要素',
       items: [
         { label: '笔记封面 (竖版)', size: '1242 x 1656 px', hint: '3:4 比例 (最推荐)' },
@@ -128,7 +116,6 @@
     {
       id: 'douyin',
       name: '抖音 (Douyin)',
-      iconClass: 'fa-brands fa-tiktok',
       description: '短视频全屏预览与主页装修',
       items: [
         { label: '视频封面', size: '1080 x 1920 px', hint: '9:16 全屏比例' },
@@ -139,7 +126,6 @@
     {
       id: 'bilibili',
       name: 'Bilibili',
-      iconClass: 'fa-solid fa-play',
       description: '长视频投稿、专栏及直播室封面',
       items: [
         { label: '视频封面', size: '1146 x 717 px', hint: '16:10 左右展示比例' },
@@ -150,7 +136,6 @@
     {
       id: 'insta',
       name: 'Instagram',
-      iconClass: 'fa-brands fa-instagram',
       description: '深受时尚年轻群体喜爱的视觉平台',
       items: [
         { label: '帖子 (正方形)', size: '1080 x 1080 px', hint: '1:1 标准比例' },
@@ -165,10 +150,8 @@
   const getAspectRatio = (size: string) => {
     const parts = size.match(/(\d+) x (\d+)/);
     if (parts) {
-      const w = parseInt(parts[1]);
-      const h = parseInt(parts[2]);
-      const ratio = w / h;
-      return Math.min(Math.max(ratio, 0.4), 2.5); // 限制展示比例范围
+      const ratio = parseInt(parts[1]) / parseInt(parts[2]);
+      return Math.min(Math.max(ratio, 0.4), 2.5);
     }
     return 1;
   };
@@ -176,9 +159,9 @@
   const getRatioText = (size: string) => {
     const parts = size.match(/(\d+) x (\d+)/);
     if (parts) {
-      const w = parseInt(parts[1]);
-      const h = parseInt(parts[2]);
-      const commonRatios = [
+      const w = parseInt(parts[1]),
+        h = parseInt(parts[2]);
+      const ratios = [
         [1, 1],
         [4, 3],
         [3, 4],
@@ -187,7 +170,7 @@
         [2.35, 1],
         [4, 5]
       ];
-      for (const [rw, rh] of commonRatios) {
+      for (const [rw, rh] of ratios) {
         if (Math.abs(w / h - rw / rh) < 0.1) return `${rw}:${rh}`;
       }
     }
@@ -196,288 +179,362 @@
 
   const copySize = async (sizeText: string) => {
     const cleanSize = sizeText.replace(' px', '');
-    await copyToClipboard(cleanSize, {
-      success: `已复制尺寸: ${cleanSize}`
-    });
+    await copyToClipboard(cleanSize, { success: `已复制尺寸: ${cleanSize}` });
   };
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f1f5f9;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+    min-height: 550px;
+  }
+  .left-column {
     display: flex;
     flex-direction: column;
   }
 
-  .tool-header {
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+  .pane-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    gap: 0.75rem;
   }
-
-  .header-left,
-  .header-right {
-    width: 140px;
+  .bg-yellow {
+    background: #ffd900;
   }
-
-  .header-right {
-    display: flex;
-    justify-content: flex-end;
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
   }
-
-  .header-center {
-    text-align: center;
-    flex: 1;
+  .bg-green {
+    background: #00e572;
   }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0;
+  .text-white {
+    color: #fff;
   }
-
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
-    text-transform: uppercase;
-  }
-
-  .tool-content {
-    flex: 1;
+  .pane-content {
     padding: 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
+    flex: 1;
   }
 
-  .tool-layout {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  @media (min-width: 1024px) {
-    .tool-layout {
-      display: grid;
-      grid-template-columns: 240px 1fr;
-      gap: 1.5rem;
-      align-items: start;
-    }
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    padding: 24px;
-  }
-
-  .panel-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  .update-tag {
+    font-size: 0.75rem;
+    background: #fff;
+    color: #111;
+    padding: 0.15rem 0.5rem;
+    border: 2px solid #111;
+    font-weight: 700;
   }
 
   .platform-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.5rem;
   }
-
   .platform-btn {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 10px;
-    color: #64748b;
-    cursor: pointer;
-    transition: all 0.2s;
+    display: block;
+    width: 100%;
     text-align: left;
-  }
-
-  .platform-btn:hover {
-    background: #f8fafc;
-    color: #1e293b;
-  }
-
-  .platform-btn.active {
-    background: #f0f7ff;
-    border-color: #3b82f6;
-    color: #3b82f6;
+    padding: 0.75rem 1rem;
+    border: 3px solid #111;
+    background: #fff;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
     font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #111;
+    transition: all 0.1s;
   }
-
-  .platform-icon {
-    font-size: 1.1rem;
-    width: 20px;
-    text-align: center;
+  .platform-btn.active {
+    background: #ffd900;
+  }
+  .platform-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
   }
 
   .tips-list {
-    padding-left: 18px;
+    padding-left: 1.25rem;
     margin: 0;
-    color: #64748b;
-    font-size: 0.875rem;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: #333;
   }
-
   .tips-list li {
-    margin-bottom: 12px;
-    line-height: 1.5;
+    margin-bottom: 0.75rem;
+    list-style: disc;
   }
 
-  .platform-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 32px;
-    border-bottom: 1px solid #f1f5f9;
-    padding-bottom: 20px;
-  }
-
-  .current-platform-name {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin: 0 0 6px 0;
-  }
-  .current-platform-desc {
-    color: #64748b;
-    margin: 0;
-    font-size: 0.95rem;
+  .platform-desc {
+    margin: 0 0 1.5rem 0;
+    font-size: 0.9rem;
+    color: #666;
   }
 
   .size-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 20px;
+    gap: 1.5rem;
   }
-
   .size-card {
-    background: #f8fafc;
-    border: 1px solid #f1f5f9;
-    border-radius: 14px;
+    background: #fff;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
     overflow: hidden;
-    transition: all 0.2s;
+    transition: all 0.1s;
   }
-
   .size-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-    border-color: #e2e8f0;
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0px #111;
   }
-
   .size-visual-container {
-    height: 140px;
+    height: 120px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: white;
-    padding: 16px;
-    border-bottom: 1px solid #f1f5f9;
+    background: #fdfae5;
+    padding: 1rem;
+    border-bottom: 3px solid #111;
   }
-
   .size-visual-box {
     max-width: 100%;
     max-height: 100%;
-    border: 2px dashed #cbd5e1;
-    border-radius: 6px;
-    background: #f1f5f9;
+    border: 2px dashed #111;
+    background: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-
   .ratio-text {
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: #888;
     font-weight: 700;
   }
-
   .size-info {
-    padding: 16px;
+    padding: 1rem;
   }
-
   .size-label {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
     font-size: 0.95rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0 0 10px 0;
+    font-weight: 800;
+    margin: 0 0 0.5rem 0;
   }
-
   .size-value-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #f0f7ff;
-    padding: 6px 10px;
-    border-radius: 8px;
-    margin-bottom: 10px;
+    background: #ffd900;
+    padding: 0.35rem 0.5rem;
+    border: 2px solid #111;
+    margin-bottom: 0.5rem;
   }
-
   .size-pixels {
-    font-family: monospace;
+    font-family: 'IBM Plex Mono', monospace;
     font-weight: 700;
-    color: #3b82f6;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
-
-  .mini-copy-btn {
-    background: transparent;
+  .copy-btn-sm {
+    background: #111;
+    color: #ffd900;
     border: none;
-    color: #94a3b8;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.4rem;
     cursor: pointer;
-    padding: 2px;
-    display: flex;
+    transition: opacity 0.1s;
   }
-
-  .mini-copy-btn:hover {
-    color: #3b82f6;
+  .copy-btn-sm:hover {
+    opacity: 0.8;
   }
-
   .size-hint {
     margin: 0;
     font-size: 0.75rem;
-    color: #64748b;
+    color: #888;
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  @media (max-width: 1024px) {
+    .brutal-grid {
+      grid-template-columns: 1fr;
+    }
+    .brutal-title {
+      font-size: 2.5rem;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
   }
 
-  .mt-6 {
-    margin-top: 1.5rem;
+  /* --- Dark Mode --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
   }
-
-  @media (max-width: 768px) {
-    .tool-title {
-      font-size: 1.1rem;
-    }
-    .header-left,
-    .header-right {
-      width: 80px;
-    }
-    .platform-header {
-      flex-direction: column;
-      gap: 12px;
-    }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .platform-btn,
+  [data-theme='dark'] .size-card {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .platform-btn {
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .platform-btn.active {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .platform-btn:hover {
+    box-shadow: 5px 5px 0px #eee;
+  }
+  [data-theme='dark'] .size-card {
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .size-card:hover {
+    box-shadow: 7px 7px 0px #eee;
+  }
+  [data-theme='dark'] .size-visual-container {
+    background: #222;
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .size-visual-box {
+    border-color: #eee;
+    background: #1a1a1a;
+  }
+  [data-theme='dark'] .size-value-row {
+    background: #b28f00;
+    border-color: #eee;
+    color: #fff;
+  }
+  [data-theme='dark'] .copy-btn-sm {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .update-tag {
+    background: #eee;
+    color: #111;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .tips-list {
+    color: #ccc;
   }
 </style>

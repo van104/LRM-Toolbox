@@ -1,35 +1,22 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="$router.back()">
-          <el-icon><ArrowLeft /></el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">渐变色生成器</h1>
-        <span class="tool-subtitle">Gradient Generator</span>
-      </div>
-      <div class="header-right">
-        <el-button type="primary" @click="copyCSS">
-          <el-icon><CopyDocument /></el-icon>
-          复制 CSS
-        </el-button>
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">渐变色<span>.生成器()</span></h1>
+        <button class="brutal-btn copy-btn" @click="copyCSS">复制 CSS</button>
+      </header>
 
-    <main class="tool-content">
-      <div class="tool-layout">
+      <div class="brutal-grid">
         <!-- 左侧配置面板 -->
-        <div class="tool-sidebar">
-          <div class="panel glass-card">
-            <h2 class="panel-title">
-              <el-icon><MagicStick /></el-icon> 渐变配置
-            </h2>
-
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span>渐变配置.CONFIG</span>
+          </div>
+          <div class="pane-content">
+            <!-- 渐变类型 -->
             <div class="config-item">
-              <label class="section-label">渐变类型</label>
+              <label class="config-label">渐变类型</label>
               <div class="type-tabs">
                 <button
                   class="tab-btn"
@@ -48,40 +35,61 @@
               </div>
             </div>
 
+            <!-- 线性角度 -->
             <div v-if="gradientType === 'linear'" class="config-item">
               <div class="label-row">
-                <label class="section-label">渐变角度</label>
-                <span class="value-display">{{ angle }}°</span>
+                <label class="config-label" style="margin-bottom: 0">渐变角度</label>
+                <span class="value-tag">{{ angle }}°</span>
               </div>
-              <div class="slider-wrapper">
-                <input v-model.number="angle" type="range" min="0" max="360" class="range-input" />
-              </div>
+              <input v-model.number="angle" type="range" min="0" max="360" class="brutal-range" />
               <div class="quick-angles">
-                <button v-for="a in [0, 90, 180, 270]" :key="a" class="mini-btn" @click="angle = a">
+                <button
+                  v-for="a in [0, 45, 90, 135, 180, 270]"
+                  :key="a"
+                  class="angle-btn"
+                  @click="angle = a"
+                >
                   {{ a }}°
                 </button>
               </div>
             </div>
 
+            <!-- 径向设置 -->
             <div v-if="gradientType === 'radial'" class="config-item">
-              <label class="section-label">形状与位置</label>
-              <div class="select-group">
-                <el-select v-model="radialShape" size="default">
-                  <el-option label="圆形 (Circle)" value="circle" />
-                  <el-option label="椭圆 (Ellipse)" value="ellipse" />
-                </el-select>
-                <el-select v-model="radialPosition" size="default" class="mt-2">
-                  <el-option label="中心 (Center)" value="center" />
-                  <el-option label="左上" value="at top left" />
-                  <el-option label="右上" value="at top right" />
-                  <el-option label="左下" value="at bottom left" />
-                  <el-option label="右下" value="at bottom right" />
-                </el-select>
+              <label class="config-label">形状</label>
+              <div class="type-tabs">
+                <button
+                  class="tab-btn"
+                  :class="{ active: radialShape === 'circle' }"
+                  @click="radialShape = 'circle'"
+                >
+                  圆形
+                </button>
+                <button
+                  class="tab-btn"
+                  :class="{ active: radialShape === 'ellipse' }"
+                  @click="radialShape = 'ellipse'"
+                >
+                  椭圆
+                </button>
+              </div>
+              <label class="config-label" style="margin-top: 1rem">位置</label>
+              <div class="position-grid">
+                <button
+                  v-for="pos in positions"
+                  :key="pos.value"
+                  class="pos-btn"
+                  :class="{ active: radialPosition === pos.value }"
+                  @click="radialPosition = pos.value"
+                >
+                  {{ pos.label }}
+                </button>
               </div>
             </div>
 
+            <!-- 色彩停靠点 -->
             <div class="config-item">
-              <label class="section-label">色彩停靠点</label>
+              <label class="config-label">色彩停靠点</label>
               <div class="stops-list">
                 <div v-for="(stop, index) in colorStops" :key="index" class="stop-item">
                   <el-color-picker v-model="stop.color" show-alpha size="small" />
@@ -91,78 +99,96 @@
                       type="number"
                       min="0"
                       max="100"
-                      class="mini-number-input"
+                      class="mini-input"
                     />
-                    <span class="unit">%</span>
+                    <span class="unit-label">%</span>
                   </div>
                   <button
-                    class="delete-stop-btn"
+                    class="delete-btn"
                     :disabled="colorStops.length <= 2"
                     @click="removeStop(index)"
                   >
                     &times;
                   </button>
                 </div>
-                <button class="btn-add-stop" @click="addStop">
-                  <el-icon><Plus /></el-icon> 添加停靠点
-                </button>
+                <button class="add-stop-btn" @click="addStop">+ 添加停靠点</button>
               </div>
             </div>
           </div>
         </div>
 
         <!-- 右侧预览面板 -->
-        <div class="tool-main">
-          <div class="panel glass-card">
-            <h2 class="panel-title">效果预览</h2>
-            <div class="preview-box" :style="gradientStyle">
-              <div class="preview-text">LRM Toolbox</div>
+        <div class="right-column">
+          <div class="brutal-pane">
+            <div class="pane-header bg-blue">
+              <span class="text-white">预览效果.PREVIEW</span>
             </div>
+            <div class="pane-content">
+              <div class="preview-box" :style="gradientStyle">
+                <div class="preview-text">LRM Toolbox</div>
+              </div>
 
-            <div class="code-section mt-6">
-              <h3 class="section-label">CSS 代码</h3>
-              <div class="code-outer">
-                <pre><code>{{ cssCode }}</code></pre>
-                <button class="copy-icon-btn" title="点击复制" @click="copyCSS">
-                  <el-icon><CopyDocument /></el-icon>
-                </button>
+              <div class="code-section">
+                <div class="label-row">
+                  <label class="config-label" style="margin-bottom: 0">CSS 代码</label>
+                  <button class="brutal-action-btn compact" @click="copyCSS">复制</button>
+                </div>
+                <div class="code-outer">
+                  <pre><code>{{ cssCode }}</code></pre>
+                </div>
               </div>
             </div>
           </div>
 
-          <div class="panel glass-card mt-6">
-            <h2 class="panel-title">精选配色方案</h2>
-            <div class="presets-grid">
-              <div
-                v-for="(preset, idx) in presets"
-                :key="idx"
-                class="preset-item"
-                :style="{ background: preset.style }"
-                @click="applyPreset(preset)"
-              >
-                <span class="preset-name">{{ preset.name }}</span>
+          <div class="brutal-pane" style="margin-top: 3rem">
+            <div class="pane-header bg-green">
+              <span>精选配色.PRESETS</span>
+            </div>
+            <div class="pane-content">
+              <div class="presets-grid">
+                <div
+                  v-for="(preset, idx) in presets"
+                  :key="idx"
+                  class="preset-item"
+                  :style="{ background: preset.style }"
+                  @click="applyPreset(preset)"
+                >
+                  <span class="preset-name">{{ preset.name }}</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - 渐变色生成器</footer>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, computed } from 'vue';
   import { ElMessage } from 'element-plus';
-  import { ArrowLeft, Plus, MagicStick, CopyDocument } from '@element-plus/icons-vue';
+  import { useRouter } from 'vue-router';
   import { useCopy } from '@/composables/useCopy';
 
-  const { copyToClipboard } = useCopy();
+  const router = useRouter();
+  function goBack() {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  }
 
+  const { copyToClipboard } = useCopy();
   const gradientType = ref<'linear' | 'radial'>('linear');
   const angle = ref(135);
   const radialShape = ref('circle');
   const radialPosition = ref('center');
+
+  const positions = [
+    { label: '中心', value: 'center' },
+    { label: '左上', value: 'at top left' },
+    { label: '右上', value: 'at top right' },
+    { label: '左下', value: 'at bottom left' },
+    { label: '右下', value: 'at bottom right' }
+  ];
 
   interface ColorStop {
     color: string;
@@ -180,7 +206,6 @@
       .sort((a, b) => a.offset - b.offset)
       .map(s => `${s.color} ${s.offset}%`)
       .join(', ');
-
     if (gradientType.value === 'linear') {
       return `background: linear-gradient(${angle.value}deg, ${stops});`;
     } else {
@@ -188,9 +213,7 @@
     }
   });
 
-  const gradientStyle = computed(() => {
-    return cssCode.value;
-  });
+  const gradientStyle = computed(() => cssCode.value);
 
   const addStop = () => {
     if (colorStops.value.length < 8) {
@@ -209,9 +232,7 @@
   };
 
   const copyCSS = async () => {
-    await copyToClipboard(cssCode.value, {
-      success: 'CSS 代码已复制到剪贴板'
-    });
+    await copyToClipboard(cssCode.value, { success: 'CSS 代码已复制到剪贴板' });
   };
 
   const presets = [
@@ -288,377 +309,539 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f1f5f9;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 1600px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
   }
-
-  .tool-header {
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    margin-bottom: 2rem;
   }
-
-  .header-left,
-  .header-right {
-    width: 140px;
-  }
-
-  .header-right {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .header-center {
-    text-align: center;
-    flex: 1;
-  }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
     margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
   }
-
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
     text-transform: uppercase;
   }
-
-  .tool-content {
-    flex: 1;
-    padding: 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .copy-btn {
+    background: #00e572;
   }
 
-  .tool-layout {
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+    min-height: 550px;
+  }
+  .right-column {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
   }
 
-  @media (min-width: 1024px) {
-    .tool-layout {
-      display: grid;
-      grid-template-columns: 1fr 1.6fr;
-      gap: 1.5rem;
-      align-items: start;
-    }
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    padding: 24px;
-  }
-
-  .panel-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 24px;
+  .brutal-pane {
     display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    gap: 0.75rem;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .bg-green {
+    background: #00e572;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .pane-content {
+    padding: 1.5rem;
+    flex: 1;
   }
 
   .config-item {
-    margin-bottom: 24px;
+    margin-bottom: 1.5rem;
   }
-
-  .section-label {
-    display: block;
-    font-size: 0.875rem;
+  .config-label {
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
     font-weight: 600;
-    color: #64748b;
-    margin-bottom: 12px;
+    font-size: 0.95rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+  .label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+  .value-tag {
+    background: #111;
+    color: #ffd900;
+    padding: 0.15rem 0.6rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: 2px solid #111;
   }
 
   .type-tabs {
     display: flex;
-    background: #f1f5f9;
-    padding: 4px;
-    border-radius: 8px;
+    gap: 0.5rem;
   }
-
   .tab-btn {
     flex: 1;
-    padding: 8px;
-    border: none;
-    background: transparent;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #64748b;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .tab-btn.active {
-    background: white;
-    color: #3b82f6;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  }
-
-  .label-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-  }
-
-  .value-display {
-    font-family: monospace;
+    padding: 0.6rem;
+    border: 3px solid #111;
+    background: #fff;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
     font-weight: 600;
-    color: #3b82f6;
-  }
-
-  .slider-wrapper {
-    margin: 12px 0;
-  }
-
-  .range-input {
-    width: 100%;
-    height: 6px;
-    background: #e2e8f0;
-    border-radius: 3px;
-    appearance: none;
-    outline: none;
-  }
-
-  .range-input::-webkit-slider-thumb {
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    background: #3b82f6;
-    border: 3px solid white;
-    border-radius: 50%;
+    font-size: 0.9rem;
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 3px 3px 0px #111;
+    transition: all 0.1s;
+  }
+  .tab-btn.active {
+    background: #ffd900;
+  }
+  .tab-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px #111;
+  }
+
+  .brutal-range {
+    width: 100%;
+    height: 8px;
+    appearance: none;
+    background: #e5e5e5;
+    border: 2px solid #111;
+    outline: none;
+    cursor: pointer;
+    margin: 0.75rem 0;
+  }
+  .brutal-range::-webkit-slider-thumb {
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    background: #ffd900;
+    border: 3px solid #111;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px #111;
   }
 
   .quick-angles {
     display: flex;
-    gap: 8px;
-    margin-top: 8px;
+    gap: 0.4rem;
+    flex-wrap: wrap;
   }
-
-  .mini-btn {
-    padding: 4px 10px;
+  .angle-btn {
+    padding: 0.3rem 0.6rem;
+    border: 2px solid #111;
+    background: #fff;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 0.75rem;
-    border: 1px solid #e2e8f0;
-    background: white;
-    border-radius: 4px;
+    font-weight: 600;
     cursor: pointer;
-    color: #64748b;
+    box-shadow: 2px 2px 0px #111;
+    transition: all 0.1s;
+  }
+  .angle-btn:hover {
+    background: #ffd900;
   }
 
-  .mini-btn:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
+  .position-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.4rem;
   }
-
-  .select-group {
-    display: flex;
-    flex-direction: column;
+  .pos-btn {
+    padding: 0.4rem;
+    border: 2px solid #111;
+    background: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px #111;
+    transition: all 0.1s;
+  }
+  .pos-btn.active {
+    background: #ffd900;
+  }
+  .pos-btn:hover {
+    background: #ffd900;
   }
 
   .stops-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 0.75rem;
   }
-
   .stop-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    background: #f8fafc;
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid #f1f5f9;
+    gap: 0.75rem;
+    background: #fff;
+    padding: 0.5rem;
+    border: 2px solid #111;
   }
-
   .offset-control {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 0.25rem;
     flex: 1;
   }
-
-  .mini-number-input {
-    width: 50px;
-    padding: 4px;
-    border: 1px solid #e2e8f0;
-    border-radius: 4px;
+  .mini-input {
+    width: 60px;
+    padding: 0.25rem 0.4rem;
+    border: 2px solid #111;
     text-align: center;
-    font-family: monospace;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    background: #fff;
   }
-
-  .unit {
+  .unit-label {
     font-size: 0.8rem;
-    color: #94a3b8;
+    color: #666;
+    font-weight: 600;
   }
-
-  .delete-stop-btn {
-    background: none;
-    border: none;
-    color: #fca5a5;
+  .delete-btn {
+    background: #ff4b4b;
+    color: #fff;
+    border: 2px solid #111;
     font-size: 1.2rem;
     cursor: pointer;
-    padding: 0 4px;
+    padding: 0 0.5rem;
+    font-weight: 800;
+    box-shadow: 2px 2px 0px #111;
+    transition: all 0.1s;
   }
-
-  .delete-stop-btn:not(:disabled):hover {
-    color: #ef4444;
+  .delete-btn:not(:disabled):hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px #111;
   }
-
-  .btn-add-stop {
+  .delete-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .add-stop-btn {
     width: 100%;
-    padding: 8px;
-    border: 1px dashed #cbd5e1;
-    background: #f8fafc;
-    border-radius: 8px;
-    color: #64748b;
+    padding: 0.6rem;
+    border: 2px dashed #111;
+    background: #fff;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 600;
     font-size: 0.85rem;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition: all 0.2s;
+    transition: all 0.1s;
   }
-
-  .btn-add-stop:hover {
-    background: #f1f5f9;
-    border-color: #94a3b8;
+  .add-stop-btn:hover {
+    background: #ffd900;
+    border-style: solid;
   }
 
   .preview-box {
     width: 100%;
     height: 280px;
-    border-radius: 12px;
+    border: 3px solid #111;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
     position: relative;
     overflow: hidden;
+    box-shadow: 6px 6px 0px #111;
+    margin-bottom: 1.5rem;
   }
-
   .preview-text {
+    font-family: 'Syne', sans-serif;
     font-size: 2.5rem;
     font-weight: 800;
     color: white;
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.3);
     letter-spacing: -0.02em;
   }
 
-  .code-outer {
-    position: relative;
-    background: #1e293b;
-    border-radius: 12px;
-    padding: 20px;
-    margin-top: 12px;
+  .code-section {
+    margin-top: 1rem;
   }
-
+  .code-outer {
+    background: #111;
+    border: 3px solid #111;
+    padding: 1.25rem;
+    margin-top: 0.75rem;
+  }
   pre {
     margin: 0;
     white-space: pre-wrap;
     word-wrap: break-word;
-    font-family: 'Fira Code', 'Courier New', monospace;
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
     font-size: 0.95rem;
-    color: #e2e8f0;
-    line-height: 1.5;
+    color: #ffd900;
+    line-height: 1.6;
   }
 
-  .copy-icon-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    color: white;
-    padding: 8px;
-    border-radius: 6px;
+  .brutal-action-btn {
+    background: #ff4b4b;
+    color: #fff;
+    border: 3px solid #111;
+    padding: 0.4rem 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
     cursor: pointer;
-    transition: all 0.2s;
+    box-shadow: 3px 3px 0px #111;
+    transition: all 0.1s;
   }
-
-  .copy-icon-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
+  .brutal-action-btn.compact {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  .brutal-action-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+  }
+  .brutal-action-btn:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
   }
 
   .presets-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 16px;
+    gap: 1rem;
   }
-
   .preset-item {
     height: 80px;
-    border-radius: 12px;
+    border: 3px solid #111;
     display: flex;
     align-items: flex-end;
-    padding: 10px;
+    padding: 0.5rem;
     cursor: pointer;
-    transition:
-      transform 0.2s,
-      box-shadow 0.2s;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.1s;
+    box-shadow: 4px 4px 0px #111;
   }
-
   .preset-item:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0px #111;
   }
-
   .preset-name {
     color: white;
     font-size: 0.75rem;
-    font-weight: 600;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    font-weight: 700;
+    font-family: 'IBM Plex Mono', monospace;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  @media (max-width: 1024px) {
+    .brutal-grid {
+      grid-template-columns: 1fr;
+    }
+    .brutal-title {
+      font-size: 2.5rem;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
   }
 
-  .mt-6 {
-    margin-top: 1.5rem;
+  /* --- Dark Mode --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
   }
-  .mt-2 {
-    margin-top: 0.5rem;
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .tab-btn,
+  [data-theme='dark'] .stop-item,
+  [data-theme='dark'] .add-stop-btn,
+  [data-theme='dark'] .mini-input,
+  [data-theme='dark'] .angle-btn,
+  [data-theme='dark'] .pos-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
   }
-
-  @media (max-width: 640px) {
-    .tool-title {
-      font-size: 1.1rem;
-    }
-    .preview-text {
-      font-size: 1.8rem;
-    }
-    .header-left,
-    .header-right {
-      width: 80px;
-    }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .tab-btn {
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .tab-btn.active {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .tab-btn:hover {
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-range {
+    background: #333;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-range::-webkit-slider-thumb {
+    background: #ffd900;
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .value-tag {
+    background: #eee;
+    color: #111;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn {
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover {
+    box-shadow: 5px 5px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .code-outer {
+    background: #1a1a1a;
+    border-color: #eee;
+  }
+  [data-theme='dark'] pre {
+    color: #ffd900;
+  }
+  [data-theme='dark'] .preview-box {
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .preset-item {
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .preset-item:hover {
+    box-shadow: 7px 7px 0px #eee;
+  }
+  [data-theme='dark'] .angle-btn {
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .angle-btn:hover,
+  [data-theme='dark'] .pos-btn:hover,
+  [data-theme='dark'] .pos-btn.active,
+  [data-theme='dark'] .add-stop-btn:hover {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .pos-btn {
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .delete-btn {
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .copy-btn {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #00994c;
+    color: #fff;
   }
 </style>

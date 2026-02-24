@@ -1,41 +1,39 @@
 <template>
-  <div class="screen-tool">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="$router.back()">
-        <el-icon>
-          <Back />
-        </el-icon>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>屏幕分辨率适配</h1>
-        <span class="nav-subtitle">Screen Resolutions & PPI</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">屏幕<span>.分辨率()</span></h1>
+        <div style="width: 100px"></div>
+      </header>
 
-    <main class="main-content">
-      <div class="tool-card glass-card">
-        <div class="filter-bar">
+      <div class="brutal-toolbar">
+        <div class="tools-left">
           <button
             v-for="cat in categories"
             :key="cat.id"
+            class="filter-btn"
             :class="{ active: currentFilter === cat.id }"
             @click="currentFilter = cat.id"
           >
             {{ cat.name }}
           </button>
-
-          <div class="search-wrap">
-            <el-icon>
-              <Search />
-            </el-icon>
-            <input v-model="searchText" placeholder="搜索设备..." />
+        </div>
+        <div class="tools-right">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input v-model="searchText" placeholder="搜索设备..." class="search-input" />
           </div>
         </div>
+      </div>
 
-        <div class="screen-list animate-fade-in">
-          <div class="list-header">
+      <div class="brutal-pane">
+        <div class="pane-header bg-blue">
+          <span class="text-white">设备列表.DEVICES</span>
+          <span class="text-white" style="font-size: 0.85rem">{{ filteredDevices.length }} 项</span>
+        </div>
+        <div class="table-wrap">
+          <div class="table-header">
             <div class="col name">设备名称</div>
             <div class="col logic">逻辑分辨率 (pt/dp)</div>
             <div class="col phys">物理分辨率 (px)</div>
@@ -43,49 +41,44 @@
             <div class="col ppi">PPI</div>
             <div class="col size">尺寸</div>
           </div>
-
-          <div v-for="dev in filteredDevices" :key="dev.name" class="list-item">
+          <div v-for="dev in filteredDevices" :key="dev.name" class="table-row">
             <div class="col name">
               <span class="dev-name">{{ dev.name }}</span>
               <span v-if="dev.year" class="dev-year">{{ dev.year }}</span>
             </div>
             <div class="col logic">
-              <span class="val">{{ dev.lw }} x {{ dev.lh }}</span>
+              <span class="mono">{{ dev.lw }} × {{ dev.lh }}</span>
             </div>
             <div class="col phys">
-              <span class="val">{{ dev.pw }} x {{ dev.ph }}</span>
+              <span class="mono">{{ dev.pw }} × {{ dev.ph }}</span>
             </div>
             <div class="col ratio">
-              <span class="tag">@{{ dev.ratio }}x</span>
+              <span class="ratio-tag">@{{ dev.ratio }}x</span>
             </div>
             <div class="col ppi">{{ dev.ppi }}</div>
             <div class="col size">{{ dev.size }}"</div>
           </div>
-
-          <div v-if="filteredDevices.length === 0" class="empty">无匹配设备</div>
+          <div v-if="filteredDevices.length === 0" class="empty-row">无匹配设备</div>
         </div>
       </div>
 
-      <div class="tips-card">
-        <el-icon>
-          <InfoFilled />
-        </el-icon>
-        <div class="tip-content">
-          <p>
-            适配建议：设计稿通常以 **逻辑分辨率** 为基准（如 iPhone 的 375pt 或
-            393pt），导出切图时再根据倍率（@2x, @3x）生成对应资源。
-          </p>
-        </div>
+      <div class="brutal-tips-bar">
+        <strong>💡 适配建议：</strong>设计稿通常以逻辑分辨率为基准（如 iPhone 的 375pt 或
+        393pt），导出切图时再根据倍率（@2x, @3x）生成对应资源。
       </div>
-    </main>
-
-    <footer class="footer">© 2026 LRM工具箱 - 屏幕分辨率适配表</footer>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, computed } from 'vue';
-  import { Back, Search, InfoFilled } from '@element-plus/icons-vue';
+  import { useRouter } from 'vue-router';
+
+  const router = useRouter();
+  function goBack() {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  }
 
   const currentFilter = ref('mobile');
   const searchText = ref('');
@@ -230,7 +223,6 @@
       ppi: 476,
       size: 5.4
     },
-
     {
       type: 'mobile',
       name: 'Samsung S26 Ultra (Est.)',
@@ -279,7 +271,6 @@
       ppi: '~500',
       size: '-'
     },
-
     {
       type: 'tablet',
       name: 'iPad Pro 13" (M4)',
@@ -340,7 +331,6 @@
       ppi: 326,
       size: 8.3
     },
-
     {
       type: 'desktop',
       name: 'MacBook Pro 16" (M4)',
@@ -425,7 +415,6 @@
       ppi: 218,
       size: '27'
     },
-
     {
       type: 'watch',
       name: 'Apple Watch Ultra 2',
@@ -475,241 +464,315 @@
 </script>
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
 
-  .screen-tool {
-    --bg: #faf9f7;
-    --card: #ffffff;
-    --border: #e8e6e3;
-    --text: #1a1a1a;
-    --text-2: #6b6b6b;
-    --accent: #6366f1;
-
-    font-family: 'Noto Sans SC', sans-serif;
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
-
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-back,
-  .nav-spacer {
-    width: 80px;
-  }
-
-  .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--text-2);
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
-
-  .nav-center h1 {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-
-  .nav-subtitle {
-    font-size: 0.7rem;
-    color: var(--text-2);
-    text-transform: uppercase;
-    display: block;
-    text-align: center;
-  }
-
-  .main-content {
-    max-width: 1000px;
+  .brutal-container {
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
   }
-
-  .glass-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  }
-
-  .filter-bar {
+  .brutal-header {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.8rem;
-    margin-bottom: 1.5rem;
+    justify-content: space-between;
     align-items: center;
+    margin-bottom: 2rem;
   }
-
-  .filter-bar button {
-    padding: 0.5rem 1.2rem;
-    background: #f3f4f6;
-    border: 1px solid transparent;
-    border-radius: 100px;
-    color: var(--text-2);
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
     cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    border: 4px solid #111;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 8px 8px 0px #111;
+    gap: 1rem;
+    overflow: hidden;
+    flex-wrap: wrap;
+  }
+  .tools-left {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 0.5rem 1rem;
+    border: 3px solid #111;
+    background: #fff;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 600;
     font-size: 0.9rem;
-    transition: all 0.2s;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #111;
+    transition: all 0.1s;
   }
-
-  .filter-bar button:hover {
-    background: #e5e7eb;
+  .filter-btn.active {
+    background: #ffd900;
   }
-
-  .filter-bar button.active {
-    background: var(--accent);
-    color: white;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+  .filter-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px #111;
   }
-
-  .search-wrap {
-    margin-left: auto;
+  .search-box {
     display: flex;
     align-items: center;
-    background: #f9fafb;
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    padding: 0.4rem 1rem;
-    width: 200px;
+    border: 3px solid #111;
+    background: #fff;
+    padding: 0.3rem 0.75rem;
+    gap: 0.5rem;
+    box-shadow: 3px 3px 0px #111;
   }
-
-  .search-wrap input {
-    border: none;
-    background: transparent;
-    outline: none;
-    margin-left: 0.5rem;
-    width: 100%;
+  .search-icon {
     font-size: 0.9rem;
   }
-
-  @media (max-width: 600px) {
-    .search-wrap {
-      margin-left: 0;
-      width: 100%;
-      margin-top: 0.5rem;
-    }
+  .search-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    width: 150px;
   }
 
-  .screen-list {
-    border: 1px solid var(--border);
-    border-radius: 12px;
+  .brutal-pane {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    margin-bottom: 2rem;
+  }
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .text-white {
+    color: #fff;
+  }
+
+  .table-wrap {
     overflow-x: auto;
   }
-
-  .list-header,
-  .list-item {
+  .table-header,
+  .table-row {
     display: grid;
     grid-template-columns: 3fr 2fr 2fr 1fr 1fr 1fr;
     min-width: 800px;
   }
-
-  .list-header {
-    background: #f3f4f6;
-    font-weight: 600;
+  .table-header {
+    background: #ffd900;
+    font-weight: 800;
     font-size: 0.85rem;
-    color: var(--text-2);
-    border-bottom: 1px solid var(--border);
+    border-bottom: 3px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
   }
-
-  .list-item {
-    border-bottom: 1px solid var(--border);
+  .table-row {
+    border-bottom: 2px solid #e5e5e5;
     font-size: 0.9rem;
+    transition: background 0.1s;
   }
-
-  .list-item:last-child {
+  .table-row:last-child {
     border-bottom: none;
   }
-
-  .list-item:hover {
-    background: #fafafa;
+  .table-row:hover {
+    background: #fffbe6;
   }
-
   .col {
-    padding: 1rem;
+    padding: 0.75rem 1rem;
     display: flex;
     align-items: center;
   }
-
   .dev-name {
-    font-weight: 600;
-    color: var(--text);
+    font-weight: 700;
   }
-
   .dev-year {
-    font-size: 0.75rem;
-    color: var(--text-2);
-    background: #e5e7eb;
-    padding: 1px 4px;
-    border-radius: 4px;
+    font-size: 0.7rem;
+    background: #111;
+    color: #ffd900;
+    padding: 1px 6px;
     margin-left: 0.5rem;
+    font-weight: 600;
   }
-
-  .val {
-    font-family: monospace;
+  .mono {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
   }
-
-  .tag {
+  .ratio-tag {
     font-size: 0.8rem;
-    background: #e0e7ff;
-    color: var(--accent);
-    padding: 2px 6px;
-    border-radius: 4px;
+    background: #4b7bff;
+    color: #fff;
+    padding: 2px 8px;
+    border: 2px solid #111;
+    font-weight: 700;
+  }
+  .empty-row {
+    padding: 2rem;
+    text-align: center;
+    color: #888;
     font-weight: 600;
   }
 
-  .empty {
-    padding: 2rem;
-    text-align: center;
-    color: var(--text-2);
+  .brutal-tips-bar {
+    background: #ffd900;
+    border: 4px solid #111;
+    padding: 1rem 1.5rem;
+    box-shadow: 6px 6px 0px #111;
+    font-size: 0.9rem;
+    line-height: 1.6;
   }
 
-  .tips-card {
-    display: flex;
-    gap: 1rem;
-    padding: 1rem;
-    background: #eef2ff;
-    color: #4338ca;
-    border-radius: 12px;
-    font-size: 0.85rem;
-  }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-2);
-    border-top: 1px solid var(--border);
-    margin-top: 2rem;
-    font-size: 0.85rem;
-  }
-
-  .animate-fade-in {
-    animation: fadeIn 0.4s ease;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
+  @media (max-width: 768px) {
+    .brutal-title {
+      font-size: 2.5rem;
     }
-
-    to {
-      opacity: 1;
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
     }
+    .brutal-toolbar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .tools-left {
+      justify-content: center;
+    }
+  }
+
+  /* --- Dark Mode --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-toolbar,
+  [data-theme='dark'] .filter-btn,
+  [data-theme='dark'] .search-box {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-toolbar {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .filter-btn {
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .filter-btn.active {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .search-box {
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .search-input {
+    color: #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .table-header {
+    background: #b28f00;
+    color: #fff;
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .table-row {
+    border-bottom-color: #333;
+  }
+  [data-theme='dark'] .table-row:hover {
+    background: #222;
+  }
+  [data-theme='dark'] .dev-year {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .ratio-tag {
+    background: #2a4eb2;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-tips-bar {
+    background: #b28f00;
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
   }
 </style>

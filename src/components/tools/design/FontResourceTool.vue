@@ -1,86 +1,62 @@
 <template>
-  <div class="font-resource-tool">
-    <div class="nav-header">
-      <button class="back-btn" @click="$router.back()">
-        <el-icon>
-          <Back />
-        </el-icon>
-        <span>返回</span>
-      </button>
-    </div>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">字体<span>.资源()</span></h1>
+        <div style="width: 100px"></div>
+      </header>
 
-    <div class="tool-header">
-      <h1 class="font-display">字体资源大全</h1>
-      <p class="summary">精选全球优质免费商用字体与 WebFont 服务，设计师必备</p>
-    </div>
-
-    <div class="search-section">
-      <div class="search-box glass-card">
-        <el-icon class="search-icon" :size="24">
-          <Search />
-        </el-icon>
-        <input
-          v-model="searchKeyword"
-          type="text"
-          placeholder="输入字体名称关键词，尝试在下方平台搜索..."
-          class="search-input"
-          @keyup.enter="handleGlobalSearch"
-        />
-        <button v-if="searchKeyword" class="clear-btn" @click="searchKeyword = ''">
-          <el-icon>
-            <Close />
-          </el-icon>
-        </button>
+      <div class="brutal-toolbar">
+        <div class="tools-left">
+          <input
+            v-model="searchKeyword"
+            type="text"
+            class="brutal-input"
+            placeholder="输入字体名称关键词..."
+            @keyup.enter="handleGlobalSearch"
+          />
+        </div>
+        <div class="tools-right">
+          <button v-if="searchKeyword" class="brutal-action-btn" @click="searchKeyword = ''">
+            清空
+          </button>
+          <span>资源: {{ libraries.length }}</span>
+        </div>
       </div>
-    </div>
 
-    <div class="libraries-grid">
-      <div v-for="lib in libraries" :key="lib.name" class="lib-card glass-card">
-        <div class="lib-header">
-          <div class="lib-icon-wrapper" :style="{ background: lib.colorBg }">
-            <span class="text-icon" :style="{ color: lib.colorText }">{{
-              lib.iconText || lib.name[0]
-            }}</span>
+      <div class="assets-grid">
+        <div v-for="lib in libraries" :key="lib.name" class="brutal-pane lib-card">
+          <div class="pane-header" :class="lib.bgClass">
+            <span :class="lib.textClass">{{ lib.name }}</span>
+            <div class="pane-actions">
+              <button @click="openUrl(lib.url)">访问 ↑</button>
+              <button :disabled="!searchKeyword || !lib.searchUrl" @click="searchInLibrary(lib)">
+                搜索
+              </button>
+            </div>
           </div>
-          <h3 class="lib-name">{{ lib.name }}</h3>
-        </div>
-
-        <p class="lib-desc">{{ lib.description }}</p>
-
-        <div class="lib-stats">
-          <span v-for="tag in lib.tags" :key="tag" class="tag">{{ tag }}</span>
-        </div>
-
-        <div class="lib-actions">
-          <button class="btn-visit" @click="openUrl(lib.url)">
-            <span>访问官网</span>
-            <el-icon>
-              <Right />
-            </el-icon>
-          </button>
-
-          <button
-            class="btn-search"
-            :disabled="!searchKeyword || !lib.searchUrl"
-            :title="getSearchTitle(lib)"
-            @click="searchInLibrary(lib)"
-          >
-            <span>搜索</span>
-            <el-icon>
-              <Search />
-            </el-icon>
-          </button>
+          <div class="pane-content">
+            <p class="lib-desc">{{ lib.description }}</p>
+            <div class="lib-tags">
+              <span v-for="tag in lib.tags" :key="tag" class="brutal-tag">{{ tag }}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
-    <footer class="footer">© 2026 LRM工具箱 - 字体资源导航</footer>
   </div>
 </template>
 
 <script setup>
   import { ref } from 'vue';
-  import { Search, Close, Right, Back } from '@element-plus/icons-vue';
+  import { useRouter } from 'vue-router';
+
+  const router = useRouter();
+  function goBack() {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  }
 
   const searchKeyword = ref('');
 
@@ -92,9 +68,8 @@
       url: 'https://fonts.google.com/',
       searchUrl: 'https://fonts.google.com/?query={query}',
       tags: ['开源', 'WebFont', '免费商用'],
-      colorBg: '#E3F2FD',
-      colorText: '#1976D2',
-      iconText: 'G'
+      bgClass: 'bg-blue',
+      textClass: 'text-white'
     },
     {
       name: '字由 (HelloFont)',
@@ -103,9 +78,8 @@
       url: 'https://www.hellofont.cn/',
       searchUrl: 'https://www.hellofont.cn/search?content={query}',
       tags: ['客户端', '管理', '云字体'],
-      colorBg: '#FFF3E0',
-      colorText: '#F57C00',
-      iconText: '字'
+      bgClass: 'bg-yellow',
+      textClass: 'text-black'
     },
     {
       name: '100font',
@@ -113,9 +87,8 @@
       url: 'https://www.100font.com/',
       searchUrl: 'https://www.100font.com/?s={query}',
       tags: ['免费商用', '打包下载', '中文'],
-      colorBg: '#E8F5E9',
-      colorText: '#388E3C',
-      iconText: '100'
+      bgClass: 'bg-green',
+      textClass: 'text-black'
     },
     {
       name: 'Adobe Fonts (Typekit)',
@@ -124,9 +97,8 @@
       url: 'https://fonts.adobe.com/',
       searchUrl: 'https://fonts.adobe.com/search?q={query}',
       tags: ['Adobe', '高品质', '商用'],
-      colorBg: '#FFEBEE',
-      colorText: '#D32F2F',
-      iconText: 'A'
+      bgClass: 'bg-pink',
+      textClass: 'text-white'
     },
     {
       name: '猫啃网 (Maoken)',
@@ -134,9 +106,8 @@
       url: 'https://www.maoken.com/',
       searchUrl: 'https://www.maoken.com/?s={query}',
       tags: ['免费', '中文', '资讯'],
-      colorBg: '#F3E5F5',
-      colorText: '#7B1FA2',
-      iconText: '猫'
+      bgClass: 'bg-yellow',
+      textClass: 'text-black'
     },
     {
       name: 'Font Squirrel',
@@ -145,20 +116,13 @@
       url: 'https://www.fontsquirrel.com/',
       searchUrl: 'https://www.fontsquirrel.com/fonts/list/find_fonts?q={query}',
       tags: ['英文', '转换工具', '商用'],
-      colorBg: '#ECEFF1',
-      colorText: '#455A64',
-      iconText: 'Sq'
+      bgClass: 'bg-blue',
+      textClass: 'text-white'
     }
   ];
 
   function openUrl(url) {
     window.open(url, '_blank');
-  }
-
-  function getSearchTitle(lib) {
-    if (!lib.searchUrl) return '该站点不支持直接搜索';
-    if (!searchKeyword.value) return '请先在上方输入关键词';
-    return `k在 ${lib.name} 中搜索 '${searchKeyword.value}'`;
   }
 
   function searchInLibrary(lib) {
@@ -171,238 +135,367 @@
 </script>
 
 <style scoped>
-  .font-resource-tool {
-    max-width: 1200px;
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
+    min-height: 100vh;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 1600px;
     margin: 0 auto;
-    padding: 40px 20px;
-    min-height: 80vh;
     display: flex;
     flex-direction: column;
   }
-
-  .nav-header {
-    margin-bottom: 20px;
-  }
-
-  .back-btn {
+  .brutal-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 6px;
-    background: none;
-    border: none;
-    color: var(--text-secondary);
+    margin-bottom: 2rem;
+  }
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
     cursor: pointer;
-    font-size: 1rem;
-    padding: 8px 16px;
-    border-radius: 8px;
-    transition: all 0.2s;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
   }
 
-  .back-btn:hover {
-    background: rgba(0, 0, 0, 0.05);
-    color: var(--text-primary);
-  }
-
-  .tool-header {
-    text-align: center;
-    margin-bottom: 40px;
-  }
-
-  .tool-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    background: var(--accent-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 16px;
-  }
-
-  .summary {
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-  }
-
-  .search-section {
-    max-width: 700px;
-    margin: 0 auto 60px;
-    width: 100%;
-  }
-
-  .search-box {
+  .brutal-toolbar {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    padding: 8px 16px;
-    background: white;
-    border: 1px solid var(--border-color);
-    border-radius: 100px;
-    transition: all 0.3s;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  }
-
-  .search-box:focus-within {
-    border-color: var(--accent-purple);
-    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.15);
-    transform: translateY(-2px);
-  }
-
-  .search-input {
-    flex: 1;
-    border: none;
-    background: transparent;
-    padding: 12px;
-    font-size: 1.1rem;
-    outline: none;
-    color: var(--text-primary);
-  }
-
-  .search-icon {
-    color: var(--text-muted);
-  }
-
-  .clear-btn {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    display: flex;
-    padding: 4px;
-  }
-
-  .clear-btn:hover {
-    color: var(--text-primary);
-  }
-
-  .libraries-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 24px;
-    margin-bottom: 40px;
-  }
-
-  .lib-card {
-    background: white;
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
-    position: relative;
+    background: #fff;
+    border: 4px solid #111;
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 8px 8px 0px #111;
+    gap: 1.5rem;
     overflow: hidden;
   }
-
-  .lib-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
-    border-color: var(--accent-purple);
+  .tools-left {
+    display: flex;
+    gap: 1.5rem;
+    flex: 1;
+    min-width: 0;
   }
-
-  .lib-header {
+  .tools-right {
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
+    gap: 1rem;
+    font-weight: 800;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    white-space: nowrap;
   }
 
-  .lib-icon-wrapper {
-    width: 56px;
-    height: 56px;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    font-weight: bold;
-  }
-
-  .lib-name {
-    font-size: 1.25rem;
+  .brutal-input {
+    flex: 1;
+    border: 3px solid #111;
+    padding: 0.6rem 1rem;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
     font-weight: 600;
-    color: var(--text-primary);
+    font-size: 1.1rem;
+    background: #fff;
+    outline: none;
+    box-shadow: 3px 3px 0px #111;
+  }
+  .brutal-input:focus {
+    box-shadow: 5px 5px 0px #111;
+    transform: translate(-1px, -1px);
   }
 
-  .lib-desc {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin-bottom: 20px;
-    flex: 1;
-  }
-
-  .lib-stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 24px;
-  }
-
-  .tag {
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 500;
-  }
-
-  .lib-actions {
-    display: flex;
-    gap: 12px;
-  }
-
-  .lib-actions button {
-    flex: 1;
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
+  .brutal-action-btn {
+    background: #ff4b4b;
+    color: #fff;
+    border: 3px solid #111;
+    padding: 0.6rem 2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
     cursor: pointer;
-    font-weight: 500;
+    box-shadow: 4px 4px 0px #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+  }
+  .brutal-action-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+  .brutal-action-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .assets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 3rem;
+    margin-bottom: 3rem;
+    min-height: 500px;
+  }
+
+  .brutal-pane {
     display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition: all 0.2s;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    gap: 0.75rem;
   }
-
-  .btn-visit {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    border: 1px solid transparent;
+  .pane-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-shrink: 0;
   }
-
-  .btn-visit:hover {
-    background: #e2e8f0;
+  .pane-actions button {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #111;
+    transition: all 0.1s;
+    white-space: nowrap;
   }
-
-  .btn-search {
-    background: var(--accent-purple);
-    color: white;
+  .pane-actions button:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
   }
-
-  .btn-search:hover {
-    background: var(--accent-purple-dark, #4f46e5);
+  .pane-actions button:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
   }
-
-  .btn-search:disabled {
-    background: var(--bg-secondary);
-    color: var(--text-muted);
+  .pane-actions button:disabled {
+    background: #eee;
+    color: #aaa;
+    border-color: #aaa;
+    box-shadow: 2px 2px 0px #aaa;
     cursor: not-allowed;
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem 0;
-    margin-top: auto;
-    color: #64748b;
-    font-size: 0.85rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+  .pane-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .lib-desc {
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    flex: 1;
+    color: #111;
+  }
+  .lib-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .brutal-tag {
+    background: #fff;
+    border: 2px solid #111;
+    padding: 0.25rem 0.75rem;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 2px 2px 0px #111;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .footer {
-      color: #94a3b8;
-      border-color: rgba(255, 255, 255, 0.05);
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .bg-green {
+    background: #00e572;
+  }
+  .bg-pink {
+    background: #ff4b4b;
+    color: #fff;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .text-black {
+    color: #111;
+  }
+
+  @media (max-width: 1024px) {
+    .brutal-title {
+      font-size: 2.5rem;
     }
+    .assets-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .brutal-toolbar {
+      flex-direction: column;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+  }
+
+  /* --- Dark Mode --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-toolbar,
+  [data-theme='dark'] .pane-actions button,
+  [data-theme='dark'] .brutal-tag,
+  [data-theme='dark'] .brutal-input {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-toolbar {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+  [data-theme='dark'] .pane-actions button {
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .pane-actions button:hover:not(:disabled) {
+    box-shadow: 5px 5px 0px #eee;
+  }
+  [data-theme='dark'] .pane-actions button:active:not(:disabled) {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-tag {
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-input {
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-input:focus {
+    box-shadow: 5px 5px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn {
+    background: #cc0000;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .lib-desc {
+    color: #eee;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .text-white,
+  [data-theme='dark'] .text-black {
+    color: #fff;
   }
 </style>

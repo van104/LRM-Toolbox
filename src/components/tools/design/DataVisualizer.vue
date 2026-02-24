@@ -1,354 +1,398 @@
 <template>
-  <div class="data-visualizer">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="goHome">
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>数据可视化</h1>
-        <span class="nav-subtitle">Data Visualizer</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
-
-    <main class="main-content">
-      <section v-if="!dataLoaded" class="intro-section">
-        <h2>功能特性</h2>
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="icon-box primary">📊</div>
-            <h4>多维图表</h4>
-            <p>支持柱状图、折线图、饼图、环形图和雷达图，全方位展示数据。</p>
-          </div>
-          <div class="feature-card">
-            <div class="icon-box success">⚡</div>
-            <h4>即时预览</h4>
-            <p>自由切换 X/Y 轴数据列，实时渲染图表，所见即所得。</p>
-          </div>
-          <div class="feature-card">
-            <div class="icon-box warning">🎨</div>
-            <h4>高清导出</h4>
-            <p>内置智能重绘引擎，支持导出 3 倍高清 PNG 图片，适应各种文档需求。</p>
-          </div>
-          <div class="feature-card">
-            <div class="icon-box info">📁</div>
-            <h4>广泛兼容</h4>
-            <p>原生支持 Excel (.xlsx, .xls) 和 CSV 格式，无需手动转换。</p>
-          </div>
+  <div class="data-visualizer brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <div class="header-action start">
+          <button class="brutal-btn back-btn" @click="goHome">← 返回</button>
         </div>
+        <div class="header-text">
+          <h1 class="brutal-title">数据<span>.可视化()</span></h1>
+          <span class="tool-subtitle">Data Visualizer</span>
+        </div>
+        <div class="header-action end"></div>
+      </header>
 
-        <h2 class="mt-8">使用指南</h2>
-        <div class="steps-list">
-          <div class="step-item">
-            <span class="step-num">1</span>
-            <div class="step-content">
-              <h4>上传文件</h4>
-              <p>将 Excel 或 CSV 文件拖拽到上传区域。</p>
+      <main class="main-content">
+        <section v-if="!dataLoaded" class="intro-section">
+          <h2 class="pane-title mb-4">功能特性</h2>
+          <div class="features-grid">
+            <div class="feature-card brutal-shadow">
+              <div class="icon-box bg-blue text-white">📊</div>
+              <h4>多维图表</h4>
+              <p>支持柱状图、折线图、饼图、环形图和雷达图，全方位展示数据。</p>
+            </div>
+            <div class="feature-card brutal-shadow">
+              <div class="icon-box bg-yellow">⚡</div>
+              <h4>即时预览</h4>
+              <p>自由切换 X/Y 轴数据列，实时渲染图表，所见即所得。</p>
+            </div>
+            <div class="feature-card brutal-shadow">
+              <div class="icon-box bg-pink">🎨</div>
+              <h4>高清导出</h4>
+              <p>内置智能重绘引擎，支持导出 3 倍高清 PNG 图片，适应需求。</p>
+            </div>
+            <div class="feature-card brutal-shadow">
+              <div class="icon-box bg-cyan">📁</div>
+              <h4>广泛兼容</h4>
+              <p>原生支持 Excel (.xlsx, .xls) 和 CSV 格式，无需手动转换。</p>
             </div>
           </div>
-          <div class="step-item">
-            <span class="step-num">2</span>
-            <div class="step-content">
-              <h4>配置图表</h4>
-              <p>在左侧面板选择图表类型，并指定 X 轴和 Y 轴对应的数据列。</p>
+
+          <h2 class="pane-title mt-8 mb-4">使用指南</h2>
+          <div class="steps-list">
+            <div class="step-item brutal-shadow">
+              <span class="step-num bg-blue text-white">1</span>
+              <div class="step-content">
+                <h4>上传文件</h4>
+                <p>将 Excel 或 CSV 文件拖拽到上传区域。</p>
+              </div>
+            </div>
+            <div class="step-item brutal-shadow">
+              <span class="step-num bg-yellow">2</span>
+              <div class="step-content">
+                <h4>配置图表</h4>
+                <p>在左侧选择图表类型，并指定 X 轴和 Y 轴对应的数据列。</p>
+              </div>
+            </div>
+            <div class="step-item brutal-shadow">
+              <span class="step-num bg-pink">3</span>
+              <div class="step-content">
+                <h4>导出分享</h4>
+                <p>调整配色和标题，点击"导出图片"保存高清图表。</p>
+              </div>
             </div>
           </div>
-          <div class="step-item">
-            <span class="step-num">3</span>
-            <div class="step-content">
-              <h4>导出分享</h4>
-              <p>调整配色和标题，点击"导出图片"保存高清图表。</p>
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section v-if="!dataLoaded" class="upload-section">
-        <div
-          class="upload-card-content"
-          :class="{ dragover: isDragOver }"
-          @click="openUpload"
-          @dragover.prevent="isDragOver = true"
-          @dragleave.prevent="isDragOver = false"
-          @drop.prevent="handleDrop"
-        >
-          <input
-            ref="fileInput"
-            type="file"
-            accept=".xlsx,.xls,.csv"
-            hidden
-            @change="handleFileSelect"
-          />
+        <section v-if="!dataLoaded" class="upload-section mt-8">
+          <div
+            class="upload-card-content brutal-shadow"
+            :class="{ dragover: isDragOver }"
+            @click="openUpload"
+            @dragover.prevent="isDragOver = true"
+            @dragleave.prevent="isDragOver = false"
+            @drop.prevent="handleDrop"
+          >
+            <input
+              ref="fileInput"
+              type="file"
+              accept=".xlsx,.xls,.csv"
+              hidden
+              @change="handleFileSelect"
+            />
 
-          <div class="upload-part">
-            <div class="upload-icon">
-              <svg
-                width="40"
-                height="40"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-              >
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="12" y1="18" x2="12" y2="12"></line>
-                <line x1="9" y1="15" x2="15" y2="15"></line>
-              </svg>
-            </div>
-            <h3>点击或拖拽上传文件</h3>
-            <p class="upload-hint">支持 .xlsx, .xls, .csv 格式</p>
-          </div>
-
-          <div class="divider">
-            <span>或者</span>
-          </div>
-
-          <div class="generator-part">
-            <button class="demo-btn" @click.stop="openGeneratorModal">
-              <span class="mr-2">✨</span> 生成演示数据
-            </button>
-            <p class="demo-hint">快速体验图表功能</p>
-          </div>
-        </div>
-      </section>
-
-      <div v-if="dataLoaded" class="workspace">
-        <div class="file-bar">
-          <div class="file-info">
-            <span class="file-icon">📄</span>
-            <span class="file-name">{{ fileInfo.name }}</span>
-            <span class="file-size">{{ fileInfo.size }}</span>
-          </div>
-          <button class="btn text-danger" @click="resetData">重新上传</button>
-        </div>
-
-        <div class="workspace-grid">
-          <div class="sidebar">
-            <div class="panel-section">
-              <h3>图表类型</h3>
-              <div class="chart-types">
-                <button
-                  v-for="type in chartTypes"
-                  :key="type.value"
-                  class="type-btn"
-                  :class="{ active: config.chartType === type.value }"
-                  @click="config.chartType = type.value"
+            <div class="upload-part">
+              <div class="upload-icon">
+                <svg
+                  width="48"
+                  height="48"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
                 >
-                  <span class="type-icon">{{ type.icon }}</span>
-                  <span>{{ type.label }}</span>
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="12" y1="18" x2="12" y2="12"></line>
+                  <line x1="9" y1="15" x2="15" y2="15"></line>
+                </svg>
+              </div>
+              <h3>点击或拖拽上传文件</h3>
+              <p class="upload-hint">支持 .xlsx, .xls, .csv 格式</p>
+            </div>
+
+            <div class="divider">
+              <span class="brutal-label bg-yellow">或者</span>
+            </div>
+
+            <div class="generator-part">
+              <button class="brutal-btn demo-btn bg-cyan" @click.stop="openGeneratorModal">
+                <span class="mr-2">✨</span> 生成演示数据
+              </button>
+              <p class="demo-hint mt-2">快速体验图表功能</p>
+            </div>
+          </div>
+        </section>
+
+        <div v-if="dataLoaded" class="workspace mt-8">
+          <div class="file-bar brutal-pane p-4 flex justify-between items-center bg-white mb-4">
+            <div class="file-info text-lg font-bold">
+              <span class="file-icon mr-2">📄</span>
+              <span class="file-name mr-4">{{ fileInfo.name }}</span>
+              <span class="file-size brutal-badge bg-yellow">{{ fileInfo.size }}</span>
+            </div>
+            <button class="brutal-btn action-btn bg-pink text-white" @click="resetData">
+              🗑️ 重新上传
+            </button>
+          </div>
+
+          <div class="workspace-grid">
+            <div class="sidebar brutal-pane bg-white p-4">
+              <div class="panel-section">
+                <h3 class="section-label">图表类型</h3>
+                <div class="chart-types">
+                  <button
+                    v-for="type in chartTypes"
+                    :key="type.value"
+                    class="type-btn brutal-btn"
+                    :class="{ 'bg-yellow': config.chartType === type.value }"
+                    @click="config.chartType = type.value"
+                  >
+                    <span class="type-icon">{{ type.icon }}</span>
+                    <span class="type-label">{{ type.label }}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="panel-section mt-6">
+                <h3 class="section-label">数据映射</h3>
+                <div class="form-group">
+                  <label class="font-bold">X轴 / 类别 (Label)</label>
+                  <select v-model="config.xAxis" class="brutal-input form-select mt-2 w-full">
+                    <option value="" disabled>请选择列</option>
+                    <option v-for="(col, idx) in columns" :key="idx" :value="idx">{{ col }}</option>
+                  </select>
+                </div>
+                <div class="form-group mt-4">
+                  <label class="font-bold">Y轴 / 数值 (Value)</label>
+                  <select v-model="config.yAxis" class="brutal-input form-select mt-2 w-full">
+                    <option value="" disabled>请选择列</option>
+                    <option v-for="(col, idx) in columns" :key="idx" :value="idx">{{ col }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="panel-section mt-6">
+                <h3 class="section-label">样式配置</h3>
+                <div class="form-group">
+                  <label class="font-bold">图表标题</label>
+                  <input
+                    v-model="config.title"
+                    type="text"
+                    class="brutal-input form-input mt-2 w-full"
+                    placeholder="输入图表标题"
+                  />
+                </div>
+
+                <div class="form-group mt-4">
+                  <label class="font-bold">配色主题</label>
+                  <div class="color-themes mt-2 flex gap-2 flex-wrap">
+                    <button
+                      v-for="theme in themes"
+                      :key="theme.name"
+                      class="theme-dot brutal-btn"
+                      :style="{ background: theme.color }"
+                      :class="{ active: config.theme === theme.name }"
+                      :title="theme.label"
+                      @click="config.theme = theme.name"
+                    ></button>
+                  </div>
+                </div>
+
+                <div class="options-row mt-4">
+                  <label class="brutal-checkbox">
+                    <input v-model="config.showLegend" type="checkbox" />
+                    <span class="check-box"></span>
+                    <strong>显示图例</strong>
+                  </label>
+                  <label class="brutal-checkbox ml-4">
+                    <input v-model="config.showGrid" type="checkbox" />
+                    <span class="check-box"></span>
+                    <strong>显示网格</strong>
+                  </label>
+                </div>
+              </div>
+
+              <div class="mt-8 flex flex-col gap-4">
+                <button
+                  class="brutal-btn action-btn bg-cyan w-full text-lg py-3"
+                  @click="generateChart"
+                >
+                  🚀 生成图表
+                </button>
+                <button
+                  class="brutal-btn action-btn bg-blue text-white w-full text-lg py-3"
+                  @click="exportImage"
+                >
+                  💾 导出高清图片
                 </button>
               </div>
             </div>
 
-            <div class="panel-section">
-              <h3>数据映射</h3>
-              <div class="form-group">
-                <label>X轴 / 类别 (Label)</label>
-                <select v-model="config.xAxis" class="form-select">
-                  <option value="" disabled>请选择列</option>
-                  <option v-for="(col, idx) in columns" :key="idx" :value="idx">{{ col }}</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Y轴 / 数值 (Value)</label>
-                <select v-model="config.yAxis" class="form-select">
-                  <option value="" disabled>请选择列</option>
-                  <option v-for="(col, idx) in columns" :key="idx" :value="idx">{{ col }}</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="panel-section">
-              <h3>样式配置</h3>
-              <div class="form-group">
-                <label>标题</label>
-                <input
-                  v-model="config.title"
-                  type="text"
-                  class="form-input"
-                  placeholder="图表标题"
-                />
+            <div class="preview-area flex flex-col gap-6">
+              <div class="chart-card brutal-pane bg-white p-4 h-[500px] relative">
+                <canvas ref="chartCanvas"></canvas>
               </div>
 
-              <div class="form-group">
-                <label>配色主题</label>
-                <div class="color-themes">
-                  <button
-                    v-for="theme in themes"
-                    :key="theme.name"
-                    class="theme-dot"
-                    :style="{ background: theme.color }"
-                    :class="{ active: config.theme === theme.name }"
-                    :title="theme.label"
-                    @click="config.theme = theme.name"
-                  ></button>
+              <div class="table-card brutal-pane bg-white p-4">
+                <div class="card-header flex justify-between items-center mb-4">
+                  <h3 class="section-label m-0 border-0">📝 数据编辑器</h3>
+                  <div class="table-actions flex gap-2">
+                    <button
+                      class="brutal-btn bg-yellow text-sm py-1 px-3"
+                      title="添加行"
+                      @click="addRow"
+                    >
+                      + 增加行
+                    </button>
+                    <button
+                      class="brutal-btn bg-blue text-white text-sm py-1 px-3"
+                      title="添加列"
+                      @click="addColumn"
+                    >
+                      + 增加列
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              <div class="options-row">
-                <label class="checkbox-label">
-                  <input v-model="config.showLegend" type="checkbox" />
-                  <span class="check-box"></span>
-                  显示图例
-                </label>
-                <label class="checkbox-label">
-                  <input v-model="config.showGrid" type="checkbox" />
-                  <span class="check-box"></span>
-                  网格线
-                </label>
-              </div>
-            </div>
-
-            <button class="btn primary full-width" @click="generateChart">生成图表</button>
-            <button class="btn secondary full-width mt-2" @click="exportImage">导出图片</button>
-          </div>
-
-          <div class="preview-area">
-            <div class="chart-card">
-              <canvas ref="chartCanvas"></canvas>
-            </div>
-
-            <div class="table-card">
-              <div class="card-header">
-                <h3>数据编辑器</h3>
-                <div class="table-actions">
-                  <button class="action-btn" title="添加行" @click="addRow">
-                    <span class="icon">+</span> 行
-                  </button>
-                  <button class="action-btn" title="添加列" @click="addColumn">
-                    <span class="icon">+</span> 列
-                  </button>
-                </div>
-              </div>
-
-              <div class="table-wrapper">
-                <table>
-                  <thead>
-                    <tr>
-                      <th class="w-12">#</th>
-                      <th v-for="(col, cIdx) in columns" :key="cIdx" class="relative group">
-                        <div class="flex items-center">
+                <div class="table-wrapper brutal-table-container">
+                  <table class="brutal-table w-full text-left">
+                    <thead>
+                      <tr>
+                        <th class="w-12 bg-yellow">#</th>
+                        <th
+                          v-for="(col, cIdx) in columns"
+                          :key="cIdx"
+                          class="relative group bg-yellow"
+                        >
+                          <div class="flex items-center justify-between">
+                            <input
+                              v-model="rawData[0][cIdx]"
+                              class="th-input brutal-input flex-1"
+                              @change="handleDataChange"
+                            />
+                            <button
+                              v-if="columns.length > 2"
+                              class="del-col-btn brutal-btn ml-2 bg-pink text-white"
+                              title="删除此列"
+                              @click="removeColumn(cIdx)"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        </th>
+                        <th class="w-16 bg-yellow text-center">操作</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(row, rIdx) in editableRows" :key="rIdx">
+                        <td
+                          class="row-idx font-bold text-center bg-gray-100 border-b-2 border-r-2 border-black"
+                        >
+                          {{ rIdx + 1 }}
+                        </td>
+                        <td
+                          v-for="(cell, cIdx) in row"
+                          :key="cIdx"
+                          class="p-1 border-b-2 border-r-2 border-black"
+                        >
                           <input
-                            v-model="rawData[0][cIdx]"
-                            class="th-input"
+                            v-model="rawData[rIdx + 1][cIdx]"
+                            class="td-input brutal-input w-full"
+                            style="border-width: 2px"
                             @change="handleDataChange"
                           />
+                        </td>
+                        <td class="text-center border-b-2 border-black p-1">
                           <button
-                            v-if="columns.length > 2"
-                            class="del-col-btn group-hover:opacity-100"
-                            @click="removeColumn(cIdx)"
+                            class="del-row-btn brutal-btn bg-pink text-white py-1 px-2"
+                            title="删除当前行"
+                            @click="removeRow(rIdx + 1)"
                           >
-                            ×
+                            ✕
                           </button>
-                        </div>
-                      </th>
-                      <th class="w-10"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(row, rIdx) in editableRows" :key="rIdx">
-                      <td class="row-idx">{{ rIdx + 1 }}</td>
-                      <td v-for="(cell, cIdx) in row" :key="cIdx">
-                        <input
-                          v-model="rawData[rIdx + 1][cIdx]"
-                          class="td-input"
-                          @change="handleDataChange"
-                        />
-                      </td>
-                      <td class="text-center">
-                        <button class="del-row-btn" title="删除行" @click="removeRow(rIdx + 1)">
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                          >
-                            <path d="M18 6L6 18M6 6l12 12"></path>
-                          </svg>
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div v-if="rawData.length > 100" class="limit-hint">
-                为保证性能，仅显示前 100 行数据供编辑
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div
+                  v-if="rawData.length > 100"
+                  class="limit-hint mt-4 p-2 bg-yellow border-2 border-black font-bold text-center"
+                >
+                  ⚠️ 为保证性能，仅显示前 100 行数据供编辑
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
 
-    <footer class="tool-footer">
-      <p>
-        本工具仅供数据可视化演示与学习。所有数据均在本地浏览器处理，不会上传至云端服务器。请勿上传敏感隐私数据。
-      </p>
-      <p>© 2026 LRM工具箱 - 数据可视化</p>
-    </footer>
+      <footer class="footer mt-12 py-8 text-center text-gray-600 border-t-4 border-black">
+        <p class="font-bold mb-2">
+          本工具仅供数据可视化演示与学习。所有数据均在本地浏览器处理，不会上传至云端服务器。请勿上传敏感隐私数据。
+        </p>
+        <p>© 2026 LRM工具箱 - 数据可视化</p>
+      </footer>
 
-    <div v-if="showGenerator" class="modal-overlay" @click="showGenerator = false">
-      <div class="modal-card" @click.stop>
-        <div class="modal-header">
-          <h3>
-            <span class="mr-2">✨</span>
-            生成测试数据
-          </h3>
-          <button class="close-btn" @click="showGenerator = false">&times;</button>
-        </div>
-        <div class="modal-body">
-          <p class="text-secondary text-sm mb-4">
-            选择数据类型自动生成 Excel 格式数据，用于测试图表功能。
-          </p>
+      <div
+        v-if="showGenerator"
+        class="modal-overlay fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
+        @click="showGenerator = false"
+      >
+        <div class="modal-card brutal-pane bg-white p-6 max-w-lg w-full" @click.stop>
+          <div
+            class="modal-header flex justify-between items-center mb-6 pb-2 border-b-4 border-black"
+          >
+            <h3 class="text-xl font-black m-0">
+              <span class="mr-2">✨</span>
+              生成测试数据
+            </h3>
+            <button class="close-btn brutal-btn p-1 text-xl" @click="showGenerator = false">
+              ✕
+            </button>
+          </div>
+          <div class="modal-body">
+            <p class="font-bold mb-6 p-3 bg-yellow border-4 border-black">
+              选择数据主题，自动生成 Excel 格式测试数据。
+            </p>
 
-          <div class="form-group">
-            <label>数据主题</label>
-            <div class="topic-grid">
-              <button
-                v-for="topic in generatorTopics"
-                :key="topic.value"
-                class="topic-btn"
-                :class="{
-                  active:
-                    Number(genConfig.type) === Number(topic.value) || genConfig.type === topic.value
-                }"
-                @click="genConfig.type = topic.value"
+            <div class="form-group mb-6">
+              <label class="section-label">数据主题</label>
+              <div class="topic-grid grid grid-cols-2 gap-4 mt-2">
+                <button
+                  v-for="topic in generatorTopics"
+                  :key="topic.value"
+                  class="topic-btn brutal-btn py-3 text-lg font-bold"
+                  :class="{
+                    'bg-cyan':
+                      Number(genConfig.type) === Number(topic.value) ||
+                      genConfig.type === topic.value,
+                    'bg-gray-100': !(
+                      Number(genConfig.type) === Number(topic.value) ||
+                      genConfig.type === topic.value
+                    )
+                  }"
+                  @click="genConfig.type = topic.value"
+                >
+                  <span class="topic-icon mr-2">{{ topic.icon }}</span>
+                  <span>{{ topic.label }}</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group mb-8">
+              <label class="section-label"
+                >数据行数:
+                <span class="bg-black text-white px-2 rounded">{{ genConfig.rows }}</span></label
               >
-                <span class="topic-icon">{{ topic.icon }}</span>
-                <span>{{ topic.label }}</span>
+              <input
+                v-model.number="genConfig.rows"
+                type="range"
+                min="5"
+                max="50"
+                class="brutal-slider w-full mt-4"
+              />
+            </div>
+
+            <div class="modal-actions flex flex-col gap-4">
+              <button class="brutal-btn bg-blue text-white text-lg py-3" @click="generateAndLoad">
+                🚀 生成并在预览中加载
+              </button>
+              <button class="brutal-btn bg-gray-200 text-lg py-3" @click="generateAndDownload">
+                💾 仅下载 Excel 文件
               </button>
             </div>
-          </div>
-
-          <div class="form-group">
-            <label>数据行数 ({{ genConfig.rows }})</label>
-            <input
-              v-model.number="genConfig.rows"
-              type="range"
-              min="5"
-              max="50"
-              class="range-input"
-            />
-          </div>
-
-          <div class="modal-actions">
-            <button class="btn primary full-width" @click="generateAndLoad">生成并加载数据</button>
-            <button class="btn secondary full-width" @click="generateAndDownload">
-              仅下载 Excel
-            </button>
           </div>
         </div>
       </div>
@@ -403,19 +447,21 @@
   ];
 
   const themes = [
-    { name: 'blue', color: '#3b82f6', label: '蓝色' },
-    { name: 'green', color: '#10b981', label: '绿色' },
-    { name: 'purple', color: '#8b5cf6', label: '紫色' },
-    { name: 'red', color: '#ef4444', label: '红色' },
-    { name: 'orange', color: '#f97316', label: '橙色' }
+    { name: 'blue', color: '#4b7bff', label: '蓝色' },
+    { name: 'green', color: '#00e572', label: '绿色' },
+    { name: 'purple', color: '#b34bff', label: '紫色' },
+    { name: 'red', color: '#ff4b4b', label: '红色' },
+    { name: 'orange', color: '#ffa500', label: '橙色' },
+    { name: 'yellow', color: '#ffd900', label: '黄色' }
   ];
 
   const themeColors = {
-    blue: ['rgba(59, 130, 246, 0.7)', 'rgba(59, 130, 246, 0.5)', 'rgba(59, 130, 246, 0.3)'],
-    green: ['rgba(16, 185, 129, 0.7)', 'rgba(16, 185, 129, 0.5)', 'rgba(16, 185, 129, 0.3)'],
-    purple: ['rgba(139, 92, 246, 0.7)', 'rgba(139, 92, 246, 0.5)', 'rgba(139, 92, 246, 0.3)'],
-    red: ['rgba(239, 68, 68, 0.7)', 'rgba(239, 68, 68, 0.5)', 'rgba(239, 68, 68, 0.3)'],
-    orange: ['rgba(249, 115, 22, 0.7)', 'rgba(249, 115, 22, 0.5)', 'rgba(249, 115, 22, 0.3)']
+    blue: ['#4b7bff', '#83a4ff', '#b8caff', '#194bd1', '#002999'],
+    green: ['#00e572', '#4bffa1', '#99ffd0', '#00994c', '#006633'],
+    purple: ['#b34bff', '#cc8cff', '#e5ccff', '#8c19d1', '#590099'],
+    red: ['#ff4b4b', '#ff8c8c', '#ffcccc', '#d11919', '#990000'],
+    orange: ['#ffa500', '#ffc266', '#ffe0b3', '#cc8400', '#996300'],
+    yellow: ['#ffd900', '#ffe666', '#fff2b3', '#cca300', '#997a00']
   };
 
   const columns = computed(() => {
@@ -521,8 +567,11 @@
     }
 
     const { labels, values } = extractData();
-
     const colors = generateColors(labels.length, config.theme);
+
+    Chart.defaults.font.family = "'Syne', 'Noto Sans SC', sans-serif";
+    Chart.defaults.font.weight = 'bold';
+    Chart.defaults.color = '#111';
 
     chartInstance = new Chart(ctx, {
       type: config.chartType,
@@ -533,9 +582,11 @@
             label: config.title || columns.value[config.yAxis],
             data: values,
             backgroundColor: config.chartType === 'line' ? colors[0] : colors,
-            borderColor: config.chartType === 'line' ? colors[0].replace('0.7', '1') : undefined,
-            borderWidth: 1,
-            fill: config.chartType === 'line' || config.chartType === 'radar'
+            borderColor: '#111',
+            borderWidth: 2,
+            hoverOffset: 4,
+            fill: config.chartType === 'line' || config.chartType === 'radar',
+            tension: 0.1
           }
         ]
       },
@@ -544,11 +595,22 @@
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            display: config.showLegend
+            display: config.showLegend,
+            labels: { font: { weight: 'bold', size: 14 } }
           },
           title: {
             display: !!config.title,
-            text: config.title
+            text: config.title,
+            font: { size: 18, weight: 'bold' }
+          },
+          tooltip: {
+            backgroundColor: '#111',
+            titleFont: { size: 14 },
+            bodyFont: { size: 14, weight: 'bold' },
+            padding: 10,
+            cornerRadius: 0,
+            borderColor: '#fff',
+            borderWidth: 2
           }
         },
         scales:
@@ -558,10 +620,14 @@
             ? {}
             : {
                 x: {
-                  grid: { display: config.showGrid }
+                  grid: { display: config.showGrid, color: '#e2e8f0', tickColor: '#111' },
+                  ticks: { font: { weight: 'bold' } },
+                  border: { color: '#111', width: 2 }
                 },
                 y: {
-                  grid: { display: config.showGrid }
+                  grid: { display: config.showGrid, color: '#e2e8f0', tickColor: '#111' },
+                  ticks: { font: { weight: 'bold' } },
+                  border: { color: '#111', width: 2 }
                 }
               }
       }
@@ -645,8 +711,8 @@
             label: config.title || columns.value[config.yAxis],
             data: values,
             backgroundColor: config.chartType === 'line' ? colors[0] : colors,
-            borderColor: config.chartType === 'line' ? colors[0].replace('0.7', '1') : undefined,
-            borderWidth: 1,
+            borderColor: '#111',
+            borderWidth: 2 * scale,
             fill: config.chartType === 'line' || config.chartType === 'radar'
           }
         ]
@@ -656,8 +722,15 @@
         responsive: false,
         devicePixelRatio: 1,
         plugins: {
-          legend: { display: config.showLegend },
-          title: { display: !!config.title, text: config.title, font: { size: 18 * scale } }
+          legend: {
+            display: config.showLegend,
+            labels: { font: { size: 14 * scale, weight: 'bold' } }
+          },
+          title: {
+            display: !!config.title,
+            text: config.title,
+            font: { size: 18 * scale, weight: 'bold' }
+          }
         },
         scales:
           config.chartType === 'pie' ||
@@ -665,8 +738,16 @@
           config.chartType === 'radar'
             ? {}
             : {
-                x: { grid: { display: config.showGrid } },
-                y: { grid: { display: config.showGrid } }
+                x: {
+                  grid: { display: config.showGrid, color: '#e2e8f0' },
+                  ticks: { font: { size: 12 * scale, weight: 'bold' } },
+                  border: { color: '#111', width: 2 * scale }
+                },
+                y: {
+                  grid: { display: config.showGrid, color: '#e2e8f0' },
+                  ticks: { font: { size: 12 * scale, weight: 'bold' } },
+                  border: { color: '#111', width: 2 * scale }
+                }
               }
       },
       plugins: [
@@ -676,21 +757,17 @@
             const ctx = chart.ctx;
             ctx.save();
             ctx.globalCompositeOperation = 'destination-over';
-            ctx.fillStyle = 'white';
+            ctx.fillStyle = '#f9f9f5';
             ctx.fillRect(0, 0, chart.width, chart.height);
+            // Draw outer border for the image
+            ctx.lineWidth = 4 * scale;
+            ctx.strokeStyle = '#111';
+            ctx.strokeRect(0, 0, chart.width, chart.height);
             ctx.restore();
           }
         }
       ]
     };
-
-    if (exportConfig.options.scales.x) {
-      exportConfig.options.scales.x.ticks = { font: { size: 12 * scale } };
-    }
-    if (exportConfig.options.scales.y) {
-      exportConfig.options.scales.y.ticks = { font: { size: 12 * scale } };
-    }
-    exportConfig.options.plugins.legend.labels = { font: { size: 12 * scale } };
 
     const exportChart = new Chart(offscreenCanvas, exportConfig);
 
@@ -700,7 +777,7 @@
     link.click();
 
     exportChart.destroy();
-    ElMessage.success('高清图片已导出');
+    ElMessage.success('图表高清图片已导出 🖼️');
   }
 
   function handleDataChange() {
@@ -709,14 +786,11 @@
 
   function addRow() {
     const colCount = rawData.value[0].length;
-
     const newRow = new Array(colCount).fill(0);
-
     rawData.value.push(newRow);
     handleDataChange();
-
     nextTick(() => {
-      const tableDiv = document.querySelector('.table-wrapper');
+      const tableDiv = document.querySelector('.wrapper-table');
       if (tableDiv) tableDiv.scrollTop = tableDiv.scrollHeight;
     });
   }
@@ -732,9 +806,7 @@
 
   function addColumn() {
     const newHeader = `列 ${rawData.value[0].length + 1}`;
-
     rawData.value[0].push(newHeader);
-
     for (let i = 1; i < rawData.value.length; i++) {
       rawData.value[i].push(0);
     }
@@ -836,7 +908,7 @@
     const products = ['手机', '电脑', '平板', '耳机', '手表'];
     const regions = ['华东', '华北', '华南', '西部', '东北'];
 
-    const data = [['月份', '产品', '地区', '销售额', '销量', '增长率']];
+    const data = [['月份', '产品', '地区', '销售额(元)', '销量(件)', '增长率(%)']];
 
     for (let i = 0; i < rows; i++) {
       const month = months[i % months.length];
@@ -909,88 +981,152 @@
 </script>
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+  @import '@/assets/styles/brutalism.css';
 
-  .data-visualizer {
-    --bg: #f8fafc;
-    --card: #ffffff;
-    --border: #e2e8f0;
-    --text: #1e293b;
-    --text-secondary: #64748b;
-    --primary: #3b82f6;
-    --primary-hover: #2563eb;
-    --danger: #ef4444;
-    --success: #10b981;
-
-    min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    display: flex;
-    flex-direction: column;
+  .data-visualizer.brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
+  }
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
   }
 
-  .nav-bar {
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-    padding: 1rem 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  .header-text {
+    flex: 1;
+    text-align: center;
   }
 
-  .nav-back {
-    background: none;
-    border: none;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--text-secondary);
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
+  .tool-subtitle {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #111;
   }
 
-  .nav-back:hover {
-    background: #f1f5f9;
-    color: var(--primary);
+  .pane-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #111;
+    border-bottom: 4px solid #111;
+    padding-bottom: 12px;
   }
 
-  .nav-center h1 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0;
-  }
-
-  .nav-subtitle {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+  .section-label {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #111;
+    margin-bottom: 12px;
+    border-bottom: 2px solid #111;
+    padding-bottom: 6px;
   }
 
   .main-content {
-    flex: 1;
     max-width: 1400px;
-    width: 100%;
     margin: 0 auto;
-    padding: 2rem;
+    width: 100%;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2rem;
+  }
+
+  .feature-card {
+    background: #fff;
+    padding: 24px;
+    border: 3px solid #111;
+  }
+
+  .feature-card h4 {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin: 12px 0 8px 0;
+    color: #111;
+  }
+
+  .feature-card p {
+    font-size: 0.95rem;
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .icon-box {
+    width: 56px;
+    height: 56px;
+    border: 3px solid #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    box-shadow: 2px 2px 0px #111;
+  }
+
+  .steps-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+  }
+
+  .step-item {
+    display: flex;
+    gap: 16px;
+    background: #fff;
+    padding: 20px;
+    border: 3px solid #111;
+  }
+
+  .step-num {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border: 3px solid #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 900;
+    font-size: 1.25rem;
+    box-shadow: 2px 2px 0px #111;
+  }
+
+  .step-content h4 {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin: 0 0 8px 0;
+  }
+
+  .step-content p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #333;
+    line-height: 1.5;
   }
 
   .upload-section {
-    max-width: 600px;
-    margin: 2rem auto 3rem auto;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .upload-card-content {
-    background: white;
-    border: 2px dashed var(--border);
-    border-radius: 16px;
-    padding: 3rem 2rem;
+    background: #f4f4f0;
+    border: 4px dashed #111;
+    padding: 4rem 2rem;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -998,742 +1134,199 @@
 
   .upload-card-content:hover,
   .upload-card-content.dragover {
-    border-color: var(--primary);
-    background: #f8fafc;
+    background: #fffbe6;
+    border-style: solid;
+    border-color: #111;
   }
 
   .upload-part {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
     width: 100%;
   }
 
   .upload-icon {
-    color: var(--text-secondary);
-    margin-bottom: 1rem;
-    transition: transform 0.3s;
-  }
-
-  .upload-card-content:hover .upload-icon {
-    transform: scale(1.1);
-    color: var(--primary);
+    color: #111;
+    margin-bottom: 1.5rem;
   }
 
   .upload-card-content h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin: 0 0 0.5rem 0;
+    color: #111;
+  }
+
+  .upload-hint {
+    font-size: 1rem;
+    color: #555;
+    font-family: 'IBM Plex Mono', sans-serif;
   }
 
   .divider {
     width: 100%;
-    display: flex;
-    align-items: center;
     margin: 1rem 0 2rem 0;
-    color: var(--text-secondary);
+    border-top: 3px solid #111;
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .brutal-label {
+    position: absolute;
+    top: -14px;
+    padding: 2px 16px;
+    border: 3px solid #111;
+    font-weight: 800;
     font-size: 0.9rem;
-  }
-
-  .divider::before,
-  .divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  .divider span {
-    padding: 0 1rem;
-  }
-
-  .generator-part {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .demo-btn {
-    background: #eff6ff;
-    color: var(--primary);
-    border: 1px solid transparent;
-    padding: 0.8rem 2rem;
-    border-radius: 30px;
-    font-weight: 600;
-    font-size: 1rem;
-    transition: all 0.2s;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  }
-
-  .demo-btn:hover {
-    background: var(--primary);
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
-  }
-
-  .demo-hint {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-top: 0.5rem;
-  }
-
-  .workspace {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .file-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: white;
-    padding: 1rem;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-  }
-
-  .file-info {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-  }
-
-  .file-name {
-    font-weight: 500;
-  }
-
-  .file-size {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    background: #f1f5f9;
-    padding: 0.1rem 0.5rem;
-    border-radius: 4px;
+    color: #111;
   }
 
   .workspace-grid {
     display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 1.5rem;
-    align-items: start;
-  }
-
-  .sidebar {
-    background: var(--card);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
+    grid-template-columns: 320px 1fr;
     gap: 2rem;
-  }
-
-  .panel-section h3 {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    margin: 0 0 1rem 0;
   }
 
   .chart-types {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
+    gap: 12px;
   }
 
   .type-btn {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.3rem;
-    padding: 0.6rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: white;
-    cursor: pointer;
-    color: var(--text-secondary);
-  }
-
-  .type-btn:hover {
-    background: #f8fafc;
-    color: var(--primary);
-  }
-
-  .type-btn.active {
-    border-color: var(--primary);
-    background: #eff6ff;
-    color: var(--primary);
+    gap: 8px;
+    padding: 12px;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 700;
   }
 
   .type-icon {
-    font-size: 1.4rem;
-  }
-
-  .form-group {
-    margin-bottom: 1rem;
-  }
-
-  .form-group label {
-    display: block;
-    font-size: 0.85rem;
-    margin-bottom: 0.4rem;
-    font-weight: 500;
-  }
-
-  .form-select,
-  .form-input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 0.9rem;
-  }
-
-  .form-select:focus,
-  .form-input:focus {
-    border-color: var(--primary);
-    outline: none;
+    font-size: 1.8rem;
   }
 
   .color-themes {
     display: flex;
-    gap: 0.5rem;
+    gap: 12px;
     flex-wrap: wrap;
   }
 
   .theme-dot {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: 2px solid transparent;
-    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 0;
+    padding: 0;
+    border: 3px solid #111;
   }
 
   .theme-dot.active {
-    border-color: var(--text);
-    transform: scale(1.1);
+    box-shadow: 4px 4px 0px #111;
+    transform: translate(-2px, -2px);
   }
 
-  .options-row {
-    display: flex;
-    gap: 1rem;
-  }
-
-  .checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
-
-  .checkbox-label input {
-    display: none;
-  }
-
-  .check-box {
-    width: 16px;
-    height: 16px;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    display: inline-block;
-    position: relative;
-  }
-
-  .checkbox-label input:checked + .check-box {
-    background: var(--primary);
-    border-color: var(--primary);
-  }
-
-  .btn {
-    padding: 0.6rem 1rem;
-    border-radius: 6px;
-    border: none;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .btn.primary {
-    background: var(--primary);
-    color: white;
-  }
-
-  .btn.primary:hover {
-    background: var(--primary-hover);
-  }
-
-  .btn.secondary {
-    background: white;
-    border: 1px solid var(--border);
-    color: var(--text);
-  }
-
-  .btn.secondary:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
-  }
-
-  .btn.text-danger {
-    background: none;
-    color: var(--danger);
-  }
-
-  .btn.text-danger:hover {
-    background: #fef2f2;
-  }
-
-  .btn.full-width {
-    width: 100%;
-  }
-
-  .mt-2 {
-    margin-top: 0.5rem;
-  }
-
-  .preview-area {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .chart-card {
-    background: var(--card);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    padding: 1.5rem;
-    height: 500px;
-    position: relative;
-  }
-
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-
-  .table-card h3 {
-    margin: 0;
-    font-size: 1rem;
-  }
-
-  .table-actions {
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  .action-btn {
-    border: 1px solid var(--border);
-    background: white;
-    border-radius: 4px;
-    padding: 0.2rem 0.6rem;
-    font-size: 0.8rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    color: var(--text-secondary);
-    transition: all 0.2s;
-  }
-
-  .action-btn:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-    background: #eff6ff;
-  }
-
-  .action-btn .icon {
-    font-size: 1rem;
-    line-height: 1;
-  }
-
-  .wrapper-table {
+  .brutal-table-container {
+    border: 4px solid #111;
+    background: #fff;
     max-height: 500px;
     overflow-y: auto;
   }
 
-  th.w-12 {
-    width: 3rem;
-    text-align: center;
-    color: var(--text-secondary);
-    font-weight: normal;
+  .brutal-table th {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    padding: 12px;
+    border-bottom: 4px solid #111;
+    border-right: 2px solid #111;
+    color: #111;
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
 
-  th.w-10 {
-    width: 2.5rem;
-  }
-
-  .row-idx {
-    text-align: center;
-    color: var(--text-secondary);
-    font-size: 0.8rem;
-    background: #f8fafc;
-  }
-
-  .th-input {
-    width: 100%;
-    border: none;
-    background: transparent;
-    font-weight: 600;
-    font-size: 0.9rem;
-    padding: 0.2rem;
-    border-radius: 4px;
-    color: var(--text);
-  }
-
-  .th-input:hover,
-  .th-input:focus {
-    background: white;
-    box-shadow: 0 0 0 1px var(--primary);
+  .brutal-table th:last-child {
+    border-right: none;
   }
 
   .td-input {
-    width: 100%;
     border: none;
-    background: transparent;
-    font-size: 0.9rem;
-    padding: 0.2rem;
-    border-radius: 4px;
-    color: var(--text);
-    font-family: inherit;
-  }
-
-  .td-input:hover,
-  .td-input:focus {
-    background: #f1f5f9;
-    box-shadow: 0 0 0 1px var(--primary);
-  }
-
-  .del-col-btn {
-    position: absolute;
-    right: 2px;
-    top: 50%;
-    transform: translateY(-50%);
-    border: none;
-    background: rgba(255, 255, 255, 0.8);
-    color: var(--danger);
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.2s;
+    border-radius: 0;
+    padding: 8px;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
     font-size: 1rem;
-    line-height: 1;
+    background: transparent;
+    transition: background 0.1s;
   }
 
-  .del-row-btn {
-    border: none;
-    background: none;
-    color: #cbd5e1;
-    cursor: pointer;
+  .td-input:focus {
+    background: #fffbe6;
+    outline: 2px solid #111;
+    outline-offset: -2px;
+  }
+
+  .brutal-checkbox {
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 0.4rem;
-    border-radius: 4px;
+    gap: 8px;
+    cursor: pointer;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
   }
 
-  .del-row-btn:hover {
-    color: var(--danger);
-    background: #fef2f2;
+  .brutal-checkbox input {
+    display: none;
   }
 
-  .limit-hint {
-    text-align: center;
-    padding: 1rem;
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-    border-top: 1px solid var(--border);
+  .check-box {
+    width: 24px;
+    height: 24px;
+    border: 3px solid #111;
+    display: inline-block;
+    background: #fff;
+    transition: all 0.1s;
+    position: relative;
+    box-shadow: 2px 2px 0px #111;
   }
 
-  .toast {
-    position: fixed;
-    top: 2rem;
-    right: 2rem;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    color: white;
-    font-size: 0.9rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 100;
+  .brutal-checkbox input:checked + .check-box {
+    background: #00e572;
   }
 
-  .toast.success {
-    background: var(--success);
-  }
-
-  .toast.error {
-    background: var(--danger);
-  }
-
-  .toast-enter-active,
-  .toast-leave-active {
-    transition: all 0.3s ease;
-  }
-
-  .toast-enter-from,
-  .toast-leave-to {
-    opacity: 0;
-    transform: translateX(20px);
+  .brutal-checkbox input:checked + .check-box::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 6px;
+    height: 12px;
+    border: solid #111;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
   }
 
   @media (max-width: 1024px) {
     .workspace-grid {
       grid-template-columns: 1fr;
     }
-
-    .chart-card {
-      height: 400px;
-    }
   }
 
-  .intro-section {
-    margin-bottom: 3rem;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 3rem;
+  .bg-blue {
+    background-color: #4b7bff;
   }
-
-  .intro-section h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 2rem;
-    color: var(--text);
+  .bg-yellow {
+    background-color: #ffd900;
   }
-
-  .mt-8 {
-    margin-top: 3rem;
+  .bg-pink {
+    background-color: #ff66b2;
   }
-
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 2rem;
+  .bg-cyan {
+    background-color: #00ffff;
   }
-
-  .feature-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    transition: all 0.3s;
+  .bg-white {
+    background-color: #ffffff;
   }
-
-  .feature-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.05);
-    border-color: var(--primary);
-  }
-
-  .icon-box {
-    width: 48px;
-    height: 48px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .icon-box.primary {
-    background: #eff6ff;
-    color: var(--primary);
-  }
-
-  .icon-box.success {
-    background: #f0fdf4;
-    color: var(--success);
-  }
-
-  .icon-box.warning {
-    background: #fff7ed;
-    color: #f97316;
-  }
-
-  .icon-box.info {
-    background: #f8fafc;
-    color: var(--text-secondary);
-  }
-
-  .feature-card h4 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.05rem;
-  }
-
-  .feature-card p {
-    margin: 0;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    line-height: 1.6;
-  }
-
-  .steps-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-  }
-
-  .step-item {
-    display: flex;
-    gap: 1rem;
-  }
-
-  .step-num {
-    width: 32px;
-    height: 32px;
-    background: var(--primary);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    flex-shrink: 0;
-    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
-  }
-
-  .step-content h4 {
-    margin: 0 0 0.25rem 0;
-    font-size: 1rem;
-  }
-
-  .step-content p {
-    margin: 0;
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-    line-height: 1.5;
-  }
-
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 200;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(2px);
-  }
-
-  .modal-card {
-    background: white;
-    width: 90%;
-    max-width: 450px;
-    border-radius: 12px;
-    box-shadow:
-      0 20px 25px -5px rgba(0, 0, 0, 0.1),
-      0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    overflow: hidden;
-    animation: contentShow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  @keyframes contentShow {
-    from {
-      opacity: 0;
-      transform: scale(0.96);
-    }
-
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  .modal-header {
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .modal-header h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-  }
-
-  .close-btn {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: var(--text-secondary);
-    line-height: 1;
-  }
-
-  .modal-body {
-    padding: 1.5rem;
-  }
-
-  .topic-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.8rem;
-    margin-top: 0.5rem;
-  }
-
-  .topic-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.8rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: white;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.9rem;
-  }
-
-  .topic-btn:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-    background: #eff6ff;
-  }
-
-  .topic-btn.active {
-    border-color: var(--primary);
-    background: var(--primary);
-    color: white;
-  }
-
-  .topic-icon {
-    font-size: 1.2rem;
-  }
-
-  .range-input {
-    width: 100%;
-    margin-top: 0.5rem;
-  }
-
-  .modal-actions {
-    margin-top: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-  }
-
-  .text-secondary {
-    color: var(--text-secondary);
-  }
-
-  .tool-footer {
-    text-align: center;
-    padding: 3rem 0;
-    color: var(--text-secondary, #64748b);
-    font-size: 0.85rem;
+  .text-white {
+    color: #ffffff;
   }
 </style>

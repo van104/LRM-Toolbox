@@ -1,0 +1,188 @@
+/* src/assets/styles/brutalism.css */
+/* 基础容器 */
+.brutal-wrapper {
+  min-height: 100vh;
+  background-color: #f4f4f0;
+  background-image: radial-gradient(#111 1px, transparent 1px);
+  background-size: 20px 20px;
+  padding: 24px;
+}
+
+.brutal-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .brutal-wrapper {
+    padding: 12px;
+  }
+}
+
+/* 标题栏 */
+.brutal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 4px solid #111;
+}
+
+.brutal-title {
+  font-family: 'Syne', 'Noto Sans SC', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #111;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* 面板/卡片 */
+.brutal-pane {
+  background: #fff;
+  border: 4px solid #111;
+  padding: 24px;
+}
+
+/* 按钮基础 */
+.brutal-btn {
+  font-family: 'Syne', 'Noto Sans SC', sans-serif;
+  font-weight: 800;
+  border: 3px solid #111;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px #111;
+  transition: transform 0.1s, box-shadow 0.1s;
+  background: #fff;
+  color: #111;
+  padding: 8px 16px;
+}
+
+.brutal-btn:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 7px 7px 0px #111;
+}
+
+.brutal-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px #111;
+}
+
+/* 输入框 */
+.brutal-input {
+  border: 3px solid #111;
+  background: #fff;
+  font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+  font-weight: 700;
+  color: #111;
+  outline: none;
+  transition: all 0.1s;
+  padding: 8px 12px;
+}
+
+.brutal-input:focus {
+  background: #fffbe6;
+  box-shadow: 4px 4px 0px #111;
+  transform: translate(-2px, -2px);
+}
+
+/* 阴影块 */
+.brutal-shadow {
+  box-shadow: 6px 6px 0px #111;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.brutal-shadow:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px #111;
+}
+
+/* 拉杆 */
+.brutal-slider {
+  appearance: none;
+  height: 12px;
+  border: 3px solid #111;
+  background: #fff;
+  outline: none;
+}
+
+.brutal-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border: 3px solid #111;
+  background: #ffd900;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px #111;
+}
+
+/* 浅色主题背景颜色助手 */
+.bg-yellow { background-color: #ffd900; }
+.bg-blue { background-color: #4b7bff; }
+.bg-pink { background-color: #ff4b4b; }
+.bg-cyan { background-color: #00e572; }
+.bg-white { background-color: #ffffff; }
+
+/* 响应式网格 */
+.brutal-grid {
+  display: grid;
+  gap: 24px;
+}
+@media (min-width: 1024px) {
+  .brutal-grid {
+    grid-template-columns: 320px 1fr;
+  }
+}
+
+/* Dark Mode 适配 */
+[data-theme='dark'] .brutal-wrapper {
+  background-color: #111;
+  background-image: radial-gradient(#eee 1px, transparent 1px);
+}
+
+[data-theme='dark'] .brutal-header {
+  border-bottom-color: #eee;
+}
+
+[data-theme='dark'] .brutal-title,
+[data-theme='dark'] .brutal-btn,
+[data-theme='dark'] .brutal-pane {
+  color: #eee;
+}
+
+[data-theme='dark'] .brutal-pane,
+[data-theme='dark'] .brutal-btn,
+[data-theme='dark'] .brutal-input,
+[data-theme='dark'] .brutal-slider,
+[data-theme='dark'] .brutal-slider::-webkit-slider-thumb {
+  background-color: #1a1a1a;
+  border-color: #eee;
+}
+
+[data-theme='dark'] .bg-yellow,
+[data-theme='dark'] .bg-blue,
+[data-theme='dark'] .bg-pink,
+[data-theme='dark'] .bg-cyan,
+[data-theme='dark'] .bg-white {
+  background-color: #1a1a1a;
+  color: #eee;
+}
+
+[data-theme='dark'] .brutal-btn,
+[data-theme='dark'] .brutal-shadow,
+[data-theme='dark'] .brutal-slider::-webkit-slider-thumb {
+  box-shadow: 4px 4px 0px #eee;
+}
+
+[data-theme='dark'] .brutal-btn:hover {
+  box-shadow: 7px 7px 0px #eee;
+}
+
+[data-theme='dark'] .brutal-btn:active {
+  box-shadow: 0px 0px 0px #eee;
+}
+
+[data-theme='dark'] .brutal-input:focus {
+  background-color: #333;
+  box-shadow: 4px 4px 0px #eee;
+}

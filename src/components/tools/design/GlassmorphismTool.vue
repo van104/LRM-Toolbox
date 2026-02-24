@@ -1,37 +1,23 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="$router.back()">
-          <el-icon><ArrowLeft /></el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">玻璃拟态生成器</h1>
-        <span class="tool-subtitle">Glassmorphism Generator</span>
-      </div>
-      <div class="header-right">
-        <el-button type="primary" @click="copyCSS">
-          <el-icon><CopyDocument /></el-icon>
-          复制 CSS
-        </el-button>
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">玻璃<span>.拟态()</span></h1>
+        <button class="brutal-btn copy-btn" @click="copyCSS">复制 CSS</button>
+      </header>
 
-    <main class="tool-content">
-      <div class="tool-layout">
+      <div class="brutal-grid">
         <!-- 左侧配置面板 -->
-        <div class="tool-sidebar">
-          <div class="panel glass-card">
-            <h2 class="panel-title">
-              <el-icon><IceCream /></el-icon> 效果配置
-            </h2>
-
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span>效果配置.CONFIG</span>
+          </div>
+          <div class="pane-content">
             <!-- 背景颜色 -->
             <div class="config-item">
               <div class="label-row">
-                <label class="section-label">背景颜色</label>
+                <label class="config-label">背景颜色</label>
                 <el-color-picker v-model="bgColor" show-alpha size="small" />
               </div>
             </div>
@@ -39,97 +25,81 @@
             <!-- 模糊度 -->
             <div class="config-item">
               <div class="label-row">
-                <label class="section-label">模糊度 (Blur)</label>
-                <span class="value-display">{{ blur }}px</span>
+                <label class="config-label">模糊度 (Blur)</label>
+                <span class="value-tag">{{ blur }}px</span>
               </div>
-              <div class="slider-wrapper">
-                <input
-                  v-model.number="blur"
-                  type="range"
-                  min="0"
-                  max="20"
-                  step="0.5"
-                  class="range-input"
-                />
-              </div>
+              <input
+                v-model.number="blur"
+                type="range"
+                min="0"
+                max="20"
+                step="0.5"
+                class="brutal-range"
+              />
             </div>
 
             <!-- 透明度 -->
             <div class="config-item">
               <div class="label-row">
-                <label class="section-label">透明度 (Opacity)</label>
-                <span class="value-display">{{ opacity }}%</span>
+                <label class="config-label">透明度 (Opacity)</label>
+                <span class="value-tag">{{ opacity }}%</span>
               </div>
-              <div class="slider-wrapper">
-                <input
-                  v-model.number="opacity"
-                  type="range"
-                  min="0"
-                  max="100"
-                  class="range-input"
-                />
-              </div>
+              <input v-model.number="opacity" type="range" min="0" max="100" class="brutal-range" />
             </div>
 
             <!-- 饱和度 -->
             <div class="config-item">
               <div class="label-row">
-                <label class="section-label">饱和度 (Saturation)</label>
-                <span class="value-display">{{ saturate }}%</span>
+                <label class="config-label">饱和度 (Saturation)</label>
+                <span class="value-tag">{{ saturate }}%</span>
               </div>
-              <div class="slider-wrapper">
-                <input
-                  v-model.number="saturate"
-                  type="range"
-                  min="0"
-                  max="200"
-                  class="range-input"
-                />
-              </div>
+              <input
+                v-model.number="saturate"
+                type="range"
+                min="0"
+                max="200"
+                class="brutal-range"
+              />
             </div>
 
-            <!-- 边框 -->
+            <!-- 边框透明度 -->
             <div class="config-item">
               <div class="label-row">
-                <label class="section-label">边框透明度</label>
-                <span class="value-display">{{ borderOpacity }}%</span>
+                <label class="config-label">边框透明度</label>
+                <span class="value-tag">{{ borderOpacity }}%</span>
               </div>
-              <div class="slider-wrapper">
-                <input
-                  v-model.number="borderOpacity"
-                  type="range"
-                  min="0"
-                  max="100"
-                  class="range-input"
-                />
-              </div>
+              <input
+                v-model.number="borderOpacity"
+                type="range"
+                min="0"
+                max="100"
+                class="brutal-range"
+              />
             </div>
 
             <!-- 圆角 -->
             <div class="config-item">
               <div class="label-row">
-                <label class="section-label">圆角 (Radius)</label>
-                <span class="value-display">{{ borderRadius }}px</span>
+                <label class="config-label">圆角 (Radius)</label>
+                <span class="value-tag">{{ borderRadius }}px</span>
               </div>
-              <div class="slider-wrapper">
-                <input
-                  v-model.number="borderRadius"
-                  type="range"
-                  min="0"
-                  max="50"
-                  class="range-input"
-                />
-              </div>
+              <input
+                v-model.number="borderRadius"
+                type="range"
+                min="0"
+                max="50"
+                class="brutal-range"
+              />
             </div>
           </div>
         </div>
 
         <!-- 右侧预览面板 -->
-        <div class="tool-main">
-          <div class="panel glass-card preview-panel">
-            <h2 class="panel-title">预览效果</h2>
-
-            <!-- 预览区域，带有复杂背景以展示效果 -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-blue">
+            <span class="text-white">预览效果.PREVIEW</span>
+          </div>
+          <div class="pane-content">
             <div class="preview-area" :style="{ background: previewBackground }">
               <div class="background-dots"></div>
               <div class="floating-shapes">
@@ -137,21 +107,15 @@
                 <div class="shape shape-2"></div>
                 <div class="shape shape-3"></div>
               </div>
-
-              <!-- 玻璃卡片 -->
               <div class="glass-preview-container">
                 <div class="glass-element" :style="glassStyle">
                   <div class="glass-content">
                     <h3>Hello Glassmorphism</h3>
-                    <p>
-                      这是一个实时生成的毛玻璃效果示例。你可以通过调整左侧参数来改变模糊度、透明度以及边框细节。
-                    </p>
+                    <p>这是一个实时生成的毛玻璃效果示例。调整左侧参数来改变效果。</p>
                     <div class="glass-demo-btn">示例按钮</div>
                   </div>
                 </div>
               </div>
-
-              <!-- 预览背景切换 -->
               <div class="preview-bg-controls">
                 <button
                   v-for="bg in backgrounds"
@@ -164,12 +128,10 @@
               </div>
             </div>
 
-            <div class="code-section mt-6">
+            <div class="code-section">
               <div class="label-row">
-                <h3 class="section-label">CSS 代码</h3>
-                <el-button type="primary" link size="small" @click="copyCSS">
-                  <el-icon><CopyDocument /></el-icon> 复制
-                </el-button>
+                <label class="config-label">CSS 代码</label>
+                <button class="brutal-action-btn compact" @click="copyCSS">复制</button>
               </div>
               <div class="code-outer">
                 <pre><code>{{ cssCode }}</code></pre>
@@ -178,19 +140,23 @@
           </div>
         </div>
       </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - 玻璃拟态生成器</footer>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, computed } from 'vue';
-  import { ArrowLeft, IceCream, CopyDocument } from '@element-plus/icons-vue';
+  import { useRouter } from 'vue-router';
   import { useCopy } from '@/composables/useCopy';
+
+  const router = useRouter();
+  function goBack() {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  }
 
   const { copyToClipboard } = useCopy();
 
-  // 配置参数
   const bgColor = ref('rgba(255, 255, 255, 0.2)');
   const blur = ref(10);
   const opacity = ref(20);
@@ -198,7 +164,6 @@
   const borderOpacity = ref(30);
   const borderRadius = ref(16);
 
-  // 预览背景
   const backgrounds = [
     { name: '炫彩渐变', value: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
     { name: '日落色', value: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' },
@@ -208,20 +173,14 @@
   ];
   const previewBackground = ref(backgrounds[0].value);
 
-  // 计算玻璃样式
   const glassStyle = computed(() => {
-    // 解析 bgColor
     let baseColor = bgColor.value;
     if (baseColor.startsWith('rgba')) {
       const parts = baseColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
       if (parts) {
-        const r = parts[1];
-        const g = parts[2];
-        const b = parts[3];
-        baseColor = `rgba(${r}, ${g}, ${b}, ${opacity.value / 100})`;
+        baseColor = `rgba(${parts[1]}, ${parts[2]}, ${parts[3]}, ${opacity.value / 100})`;
       }
     }
-
     return {
       background: baseColor,
       boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
@@ -232,20 +191,14 @@
     };
   });
 
-  // 计算 CSS 代码
   const cssCode = computed(() => {
-    // 解析颜色
     let baseColor = bgColor.value;
     if (baseColor.startsWith('rgba')) {
       const parts = baseColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
       if (parts) {
-        const r = parts[1];
-        const g = parts[2];
-        const b = parts[3];
-        baseColor = `rgba(${r}, ${g}, ${b}, ${opacity.value / 100})`;
+        baseColor = `rgba(${parts[1]}, ${parts[2]}, ${parts[3]}, ${opacity.value / 100})`;
       }
     }
-
     return `background: ${baseColor};
 box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 backdrop-filter: blur(${blur.value}px) saturate(${saturate.value}%);
@@ -255,179 +208,214 @@ border: 1px solid rgba(255, 255, 255, ${borderOpacity.value / 100});`;
   });
 
   const copyCSS = async () => {
-    await copyToClipboard(cssCode.value, {
-      success: 'CSS 代码已复制到剪贴板'
-    });
+    await copyToClipboard(cssCode.value, { success: 'CSS 代码已复制到剪贴板' });
   };
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f1f5f9;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 1600px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
   }
-
-  .tool-header {
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    margin-bottom: 2rem;
   }
-
-  .header-left,
-  .header-right {
-    width: 140px;
-  }
-
-  .header-right {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .header-center {
-    text-align: center;
-    flex: 1;
-  }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
     margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
   }
-
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
     text-transform: uppercase;
   }
-
-  .tool-content {
-    flex: 1;
-    padding: 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .copy-btn {
+    background: #00e572;
   }
 
-  .tool-layout {
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+    min-height: 550px;
+  }
+
+  .brutal-pane {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
   }
 
-  @media (min-width: 1024px) {
-    .tool-layout {
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 1.5rem;
-      align-items: start;
-    }
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    padding: 24px;
-  }
-
-  .panel-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 24px;
+  .pane-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    gap: 0.75rem;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .text-white {
+    color: #fff;
+  }
+
+  .pane-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
   }
 
   .config-item {
-    margin-bottom: 24px;
+    margin-bottom: 1.75rem;
   }
-
-  .section-label {
-    display: block;
-    font-size: 0.875rem;
+  .config-label {
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
     font-weight: 600;
-    color: #64748b;
+    font-size: 0.95rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
-
   .label-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 0.75rem;
   }
-
-  .value-display {
-    font-family: monospace;
+  .value-tag {
+    background: #111;
+    color: #ffd900;
+    padding: 0.15rem 0.6rem;
+    font-family: 'IBM Plex Mono', monospace;
     font-weight: 600;
-    color: #3b82f6;
+    font-size: 0.9rem;
+    border: 2px solid #111;
   }
 
-  .slider-wrapper {
-    margin: 12px 0;
-  }
-
-  .range-input {
+  .brutal-range {
     width: 100%;
-    height: 6px;
-    background: #e2e8f0;
-    border-radius: 3px;
+    height: 8px;
     appearance: none;
+    background: #e5e5e5;
+    border: 2px solid #111;
     outline: none;
-  }
-
-  .range-input::-webkit-slider-thumb {
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    background: #3b82f6;
-    border: 3px solid white;
-    border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .brutal-range::-webkit-slider-thumb {
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    background: #ffd900;
+    border: 3px solid #111;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px #111;
   }
 
-  .preview-panel {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+  .brutal-action-btn {
+    background: #ff4b4b;
+    color: #fff;
+    border: 3px solid #111;
+    padding: 0.4rem 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #111;
+    transition: all 0.1s;
+  }
+  .brutal-action-btn.compact {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  .brutal-action-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+  }
+  .brutal-action-btn:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
   }
 
   .preview-area {
-    flex: 1;
-    min-height: 400px;
-    border-radius: 12px;
+    min-height: 350px;
     position: relative;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: background 0.5s ease;
+    border: 3px solid #111;
+    margin-bottom: 1.5rem;
   }
-
   .background-dots {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
     background-size: 20px 20px;
   }
-
   .floating-shapes {
     position: absolute;
     width: 100%;
@@ -436,7 +424,6 @@ border: 1px solid rgba(255, 255, 255, ${borderOpacity.value / 100});`;
     left: 0;
     z-index: 0;
   }
-
   .shape {
     position: absolute;
     border-radius: 50%;
@@ -444,7 +431,6 @@ border: 1px solid rgba(255, 255, 255, ${borderOpacity.value / 100});`;
     opacity: 0.6;
     animation: float 20s infinite alternate;
   }
-
   .shape-1 {
     width: 150px;
     height: 150px;
@@ -452,7 +438,6 @@ border: 1px solid rgba(255, 255, 255, ${borderOpacity.value / 100});`;
     top: 20%;
     left: 15%;
   }
-
   .shape-2 {
     width: 200px;
     height: 200px;
@@ -461,7 +446,6 @@ border: 1px solid rgba(255, 255, 255, ${borderOpacity.value / 100});`;
     right: 15%;
     animation-delay: -5s;
   }
-
   .shape-3 {
     width: 100px;
     height: 100px;
@@ -470,7 +454,6 @@ border: 1px solid rgba(255, 255, 255, ${borderOpacity.value / 100});`;
     left: 50%;
     animation-delay: -10s;
   }
-
   @keyframes float {
     0% {
       transform: translate(0, 0) scale(1);
@@ -488,31 +471,26 @@ border: 1px solid rgba(255, 255, 255, ${borderOpacity.value / 100});`;
     width: 80%;
     max-width: 400px;
   }
-
   .glass-element {
     width: 100%;
     padding: 40px;
     transition: all 0.3s ease;
   }
-
   .glass-content {
     color: white;
     text-align: center;
   }
-
   .glass-content h3 {
     margin: 0 0 16px 0;
     font-size: 1.5rem;
     font-weight: 700;
   }
-
   .glass-content p {
     margin: 0 0 24px 0;
     font-size: 0.95rem;
     line-height: 1.6;
     opacity: 0.9;
   }
-
   .glass-demo-btn {
     display: inline-block;
     padding: 10px 24px;
@@ -523,61 +501,144 @@ border: 1px solid rgba(255, 255, 255, ${borderOpacity.value / 100});`;
     cursor: pointer;
     transition: all 0.2s;
   }
-
   .glass-demo-btn:hover {
     background: rgba(255, 255, 255, 0.3);
   }
 
   .preview-bg-controls {
     position: absolute;
-    bottom: 16px;
-    right: 16px;
+    bottom: 12px;
+    right: 12px;
     display: flex;
     gap: 8px;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 6px;
-    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 6px 10px;
+    border: 2px solid #111;
   }
-
   .bg-dot {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid white;
+    width: 22px;
+    height: 22px;
+    border: 2px solid #fff;
     cursor: pointer;
     padding: 0;
     transition: transform 0.2s;
   }
-
   .bg-dot:hover {
     transform: scale(1.2);
   }
 
-  .code-outer {
-    background: #1e293b;
-    border-radius: 12px;
-    padding: 20px;
-    margin-top: 12px;
+  .code-section {
+    margin-top: 1rem;
   }
-
+  .code-outer {
+    background: #111;
+    border: 3px solid #111;
+    padding: 1.25rem;
+    margin-top: 0.75rem;
+  }
   pre {
     margin: 0;
     white-space: pre-wrap;
     word-wrap: break-word;
-    font-family: 'Fira Code', 'Courier New', monospace;
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
     font-size: 0.95rem;
-    color: #e2e8f0;
-    line-height: 1.5;
+    color: #ffd900;
+    line-height: 1.6;
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  @media (max-width: 1024px) {
+    .brutal-grid {
+      grid-template-columns: 1fr;
+    }
+    .brutal-title {
+      font-size: 2.5rem;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
   }
 
-  .mt-6 {
-    margin-top: 1.5rem;
+  /* --- Dark Mode --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .brutal-range {
+    background: #333;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-range::-webkit-slider-thumb {
+    background: #ffd900;
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .value-tag {
+    background: #eee;
+    color: #111;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn {
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover {
+    box-shadow: 5px 5px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .code-outer {
+    background: #1a1a1a;
+    border-color: #eee;
+  }
+  [data-theme='dark'] pre {
+    color: #ffd900;
+  }
+  [data-theme='dark'] .preview-area {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .copy-btn {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
   }
 </style>
