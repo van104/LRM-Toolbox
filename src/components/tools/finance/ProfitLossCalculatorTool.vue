@@ -1,150 +1,199 @@
 <template>
-  <div class="pl-tool">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="$router.back()">
-        <el-icon>
-          <Back />
-        </el-icon>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>盈亏分摊计算器</h1>
-        <span class="nav-subtitle">Profit & Loss Calculator</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">盈亏<span>.分摊()</span></h1>
+        <div style="width: 100px"></div>
+      </header>
 
-    <main class="main-content">
-      <div class="layout-container">
-        <section class="calc-panel">
-          <div class="glass-card">
-            <div class="section-title">当前持有状态</div>
-            <div class="form-row">
-              <div class="form-item">
-                <label>持有数量</label>
-                <el-input-number v-model="currentQty" :min="0" class="w-full" />
-              </div>
-              <div class="form-item">
-                <label>持仓成本 (单价)</label>
-                <el-input-number v-model="currentPrice" :min="0" :precision="4" class="w-full" />
-              </div>
-            </div>
-
-            <div class="section-title mt-8">新增操作内容</div>
-            <div class="form-row">
-              <div class="form-item">
-                <label>操作类型</label>
-                <el-radio-group v-model="actionType" class="w-full">
-                  <el-radio-button label="buy">补仓 / 买入</el-radio-button>
-                  <el-radio-button label="sell">减仓 / 卖出</el-radio-button>
-                </el-radio-group>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-item">
-                <label>{{ actionType === 'buy' ? '买入数量' : '卖出数量' }}</label>
-                <el-input-number v-model="actionQty" :min="0" class="w-full" />
-              </div>
-              <div class="form-item">
-                <label>{{ actionType === 'buy' ? '成交价格' : '卖出价格' }}</label>
-                <el-input-number v-model="actionPrice" :min="0" :precision="4" class="w-full" />
-              </div>
-            </div>
-
-            <div class="section-title mt-8">费率配置</div>
-            <div class="form-row">
-              <div class="form-item">
-                <label>综合税费率 (%)</label>
-                <el-input-number
-                  v-model="feeRate"
-                  :min="0"
-                  :max="1"
-                  :step="0.01"
-                  :precision="3"
-                  class="w-full"
+      <main class="brutal-grid">
+        <div class="left-column">
+          <section class="brutal-pane bg-white mb-6">
+            <h2 class="pane-title mb-4">当前持有状态.CURRENT</h2>
+            <div class="form-grid mb-6">
+              <div class="form-group flex-1">
+                <label class="form-label">持有数量</label>
+                <input
+                  v-model.number="currentQty"
+                  type="number"
+                  min="0"
+                  class="brutal-input w-full"
                 />
-                <span class="tip">如：股票印花税+佣金约 0.1%</span>
+              </div>
+              <div class="form-group flex-1">
+                <label class="form-label">持仓成本 (单价)</label>
+                <input
+                  v-model.number="currentPrice"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  class="brutal-input w-full"
+                />
               </div>
             </div>
 
-            <el-button type="primary" class="calc-btn" size="large" @click="calculate"
-              >开始测算</el-button
-            >
-          </div>
-
-          <div class="glass-card mt-6">
-            <div class="section-title">目标点位测算</div>
-            <div class="form-row">
-              <div class="form-item">
-                <label>预期盈利目标 (%)</label>
-                <el-input-number v-model="targetProfit" :min="-100" :step="5" class="w-full" />
-              </div>
-              <div class="form-item">
-                <label>目标价位预估</label>
-                <div class="target-val">¥ {{ formatValue(targetPrice) }}</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="result-panel">
-          <div v-if="result" class="glass-card result-hero">
-            <div class="hero-label">调整后平均成本</div>
-            <div
-              class="cost-value"
-              :class="{ 'text-red': result.avgCost > currentPrice && actionType === 'buy' }"
-            >
-              ¥ {{ formatValue(result.avgCost) }}
-            </div>
-            <div class="hero-stats">
-              <div class="h-stat">
-                <div class="l">总持仓数量</div>
-                <div class="v">{{ result.totalQty }}</div>
-              </div>
-              <div class="h-stat">
-                <div class="l">累计投入金额</div>
-                <div class="v">¥ {{ formatValue(result.totalAmt) }}</div>
+            <h2 class="pane-title mt-6 mb-4">新增操作内容.ACTION</h2>
+            <div class="mb-4">
+              <label class="form-label">操作类型</label>
+              <div class="mode-tabs brutal-shadow">
+                <button
+                  class="tab-btn"
+                  :class="{ active: actionType === 'buy' }"
+                  @click="actionType = 'buy'"
+                >
+                  ➕ 补仓 / 买入
+                </button>
+                <button
+                  class="tab-btn"
+                  :class="{ active: actionType === 'sell' }"
+                  @click="actionType = 'sell'"
+                >
+                  ➖ 减仓 / 卖出
+                </button>
               </div>
             </div>
-          </div>
-
-          <div v-if="result" class="glass-card mt-6">
-            <div class="section-title">操作明细分析</div>
-            <div class="detail-list">
-              <div class="d-item">
-                <span>交易手续费</span>
-                <span class="val">¥ {{ formatValue(result.fee) }}</span>
+            <div class="form-grid mb-6">
+              <div class="form-group flex-1">
+                <label class="form-label">{{
+                  actionType === 'buy' ? '买入数量' : '卖出数量'
+                }}</label>
+                <input
+                  v-model.number="actionQty"
+                  type="number"
+                  min="0"
+                  class="brutal-input w-full"
+                />
               </div>
-              <div class="d-item">
-                <span>当前价格变动幅度</span>
-                <span class="val" :class="getPriceChangeClass">
+              <div class="form-group flex-1">
+                <label class="form-label">{{
+                  actionType === 'buy' ? '成交价格' : '卖出价格'
+                }}</label>
+                <input
+                  v-model.number="actionPrice"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  class="brutal-input w-full"
+                />
+              </div>
+            </div>
+
+            <h2 class="pane-title mt-6 mb-4">费率配置.FEES</h2>
+            <div class="form-group w-1/2">
+              <label class="form-label">综合税费率 (%)</label>
+              <input
+                v-model.number="feeRate"
+                type="number"
+                min="0"
+                max="1"
+                step="0.01"
+                class="brutal-input w-full"
+              />
+              <p class="text-xs font-bold mt-2 opacity-80">(如：股票印花税+佣金约 0.1%)</p>
+            </div>
+          </section>
+
+          <section class="brutal-pane bg-cyan hidden-xs">
+            <h4 class="font-bold mb-2">🎯 目标点位测算</h4>
+            <div class="form-grid items-end">
+              <div class="form-group flex-1">
+                <label class="form-label">预期盈利目标 (%)</label>
+                <input
+                  v-model.number="targetProfit"
+                  type="number"
+                  min="-100"
+                  step="5"
+                  class="brutal-input w-full"
+                />
+              </div>
+              <div class="form-group flex-1">
+                <label class="form-label opacity-70">目标价位预估</label>
+                <div
+                  class="w-full bg-white border-3 border-black p-2 font-mono font-black text-xl text-center brutal-shadow-sm"
+                >
+                  ¥ {{ formatValue(targetPrice) }}
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="right-column">
+          <section v-if="result" class="brutal-pane bg-yellow h-full flex-col">
+            <h2 class="pane-title mb-4">测算结果.RESULT</h2>
+            <div class="text-center w-full mb-6">
+              <h3 class="font-bold text-lg mb-2">调整后平均成本</h3>
+              <div
+                class="value huge font-mono font-black my-4"
+                :class="
+                  result.avgCost > currentPrice && actionType === 'buy'
+                    ? 'text-pink drop-shadow-red'
+                    : 'drop-shadow-black'
+                "
+              >
+                <span class="text-3xl mr-2">¥</span>{{ formatValue(result.avgCost) }}
+              </div>
+              <div class="badge border-black p-2 bg-white inline-block mt-2">
+                当前价格变动幅度:
+                <strong :class="result.changePercent > 0 ? 'text-pink' : 'text-green'">
                   {{ result.changePercent > 0 ? '+' : '' }}{{ result.changePercent.toFixed(2) }}%
-                </span>
-              </div>
-              <div class="d-item">
-                <span>盈亏平衡点 (保本价)</span>
-                <span class="val">¥ {{ formatValue(result.breakeven) }}</span>
+                </strong>
               </div>
             </div>
-          </div>
 
-          <div v-else class="empty-state glass-card">
-            <el-icon>
-              <DataLine />
-            </el-icon>
-            <p>录入当前的仓位和预想操作，点击测算即可实时查看分摊后的成本变化。</p>
-          </div>
-        </section>
-      </div>
-    </main>
+            <div class="details-grid mt-auto pt-6 border-t-4 border-black">
+              <div
+                class="detail-item bg-white border-3 border-black brutal-shadow p-3 pb-2 text-center"
+              >
+                <span class="block text-sm font-bold mb-1">总持仓数量</span>
+                <span class="block font-mono font-black text-xl">{{ result.totalQty }}</span>
+              </div>
+              <div
+                class="detail-item bg-white border-3 border-black brutal-shadow p-3 pb-2 text-center"
+              >
+                <span class="block text-sm font-bold mb-1">累计投入金额</span>
+                <span class="block font-mono font-black text-xl"
+                  >¥ {{ formatValue(result.totalAmt) }}</span
+                >
+              </div>
+              <div
+                class="detail-item bg-white border-3 border-black brutal-shadow p-3 pb-2 text-center"
+              >
+                <span class="block text-sm font-bold mb-1 opacity-70">交易手续费</span>
+                <span class="block font-mono font-black text-xl"
+                  >¥ {{ formatValue(result.fee) }}</span
+                >
+              </div>
+              <div
+                class="detail-item bg-pink text-white border-3 border-black brutal-shadow p-3 pb-2 text-center"
+              >
+                <span class="block text-sm font-bold mb-1">保本价 (含费)</span>
+                <span class="block font-mono font-black text-xl"
+                  >¥ {{ formatValue(result.breakeven) }}</span
+                >
+              </div>
+            </div>
+          </section>
 
-    <footer class="footer">© 2026 LRM工具箱 - 资产盈亏测算</footer>
+          <section
+            v-else
+            class="brutal-pane bg-pink text-white h-full flex-col items-center justify-center p-8 text-center border-dashed border-4 border-black"
+          >
+            <div class="text-6xl mb-4">📈</div>
+            <h2 class="font-black text-2xl mb-2">想要平摊成本？</h2>
+            <p class="font-bold opacity-90">
+              录入当前的仓位和预想操作<br />系统将自动实时测算成本变化
+            </p>
+          </section>
+        </div>
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue';
-  import { Back, DataLine } from '@element-plus/icons-vue';
+  import { ref, computed, watch } from 'vue';
 
   const currentQty = ref(1000);
   const currentPrice = ref(10.5);
@@ -156,11 +205,15 @@
 
   const result = ref(null);
 
-  const formatValue = val => {
-    return val.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
-  };
+  const formatValue = val =>
+    val.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
 
   const calculate = () => {
+    if (currentQty.value === 0 && actionQty.value === 0) {
+      result.value = null;
+      return;
+    }
+
     const feeScale = feeRate.value / 100;
     const currentAmt = currentQty.value * currentPrice.value;
     const actionTotal = actionQty.value * actionPrice.value;
@@ -174,259 +227,353 @@
       totalAmt = currentAmt + actionTotal + fee;
     } else {
       totalQty = Math.max(0, currentQty.value - actionQty.value);
-
       totalAmt = currentAmt - actionTotal + fee;
     }
 
     const avgCost = totalQty > 0 ? totalAmt / totalQty : 0;
     const changePercent =
       currentPrice.value !== 0 ? ((avgCost - currentPrice.value) / currentPrice.value) * 100 : 0;
-
     const breakeven = totalQty > 0 ? totalAmt / (totalQty * (1 - feeScale)) : 0;
 
-    result.value = {
-      totalQty,
-      totalAmt,
-      avgCost,
-      fee,
-      changePercent,
-      breakeven
-    };
+    result.value = { totalQty, totalAmt, avgCost, fee, changePercent, breakeven };
   };
 
   const targetPrice = computed(() => {
     if (!result.value || result.value.avgCost === 0) {
-      const cost = (currentQty.value * currentPrice.value) / currentQty.value || 0;
+      const cost =
+        currentQty.value > 0 ? (currentQty.value * currentPrice.value) / currentQty.value : 0;
       return cost * (1 + targetProfit.value / 100);
     }
     return result.value.avgCost * (1 + targetProfit.value / 100);
   });
 
-  const getPriceChangeClass = computed(() => {
-    if (!result.value) return '';
-    return result.value.changePercent > 0 ? 'text-red' : 'text-green';
-  });
+  watch(
+    [currentQty, currentPrice, actionType, actionQty, actionPrice, feeRate],
+    () => {
+      calculate();
+    },
+    { immediate: true }
+  );
 </script>
 
 <style scoped>
-  .pl-tool {
-    --primary: #2563eb;
-    --text-main: #1f2937;
-    --text-sub: #6b7280;
-    --red: #ef4444;
-    --green: #10b981;
-    --bg: #f3f4f6;
+  @import '@/assets/styles/brutalism.css';
 
-    min-height: 100vh;
-    background: var(--bg);
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
   }
 
-  .nav-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 2rem;
-    background: #fff;
-    border-bottom: 1px solid #e5e7eb;
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
   }
 
-  .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-sub);
-  }
-
-  .nav-center h1 {
+  .pane-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
     font-size: 1.25rem;
+    font-weight: 800;
     margin: 0;
+    border-bottom: 3px solid #111;
+    padding-bottom: 8px;
   }
 
-  .nav-subtitle {
-    font-size: 0.75rem;
-    color: #9ca3af;
-    text-transform: uppercase;
-  }
-
-  .main-content {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem;
-  }
-
-  .layout-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    align-items: start;
-  }
-
-  .glass-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 1.5rem;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  }
-
-  .section-title {
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: var(--text-main);
-    margin-bottom: 1rem;
+  .form-grid {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .section-title::before {
-    content: '';
-    width: 3px;
-    height: 14px;
-    background: var(--primary);
-    border-radius: 2px;
-  }
-
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
     gap: 1rem;
-    margin-bottom: 1rem;
+    flex-wrap: wrap;
   }
 
-  .form-item label {
+  .form-label {
     display: block;
-    font-size: 0.8rem;
-    color: var(--text-sub);
-    margin-bottom: 0.4rem;
+    font-size: 0.95rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
   }
 
+  .mode-tabs {
+    display: flex;
+    background: #111;
+    border: 3px solid #111;
+    gap: 4px;
+    padding: 4px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: #fff;
+    padding: 12px;
+    font-size: 1.1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: none;
+  }
+  .tab-btn.active {
+    background: #ffd900;
+    color: #111;
+  }
+  .tab-btn:hover:not(.active) {
+    background: #333;
+  }
+
+  .flex {
+    display: flex;
+  }
+  .justify-center {
+    justify-content: center;
+  }
+  .items-center {
+    align-items: center;
+  }
+  .items-end {
+    align-items: flex-end;
+  }
+  .flex-col {
+    flex-direction: column;
+  }
+  .flex-1 {
+    flex: 1;
+    min-width: 150px;
+  }
   .w-full {
     width: 100%;
+    min-width: 0;
+  }
+  .w-1\/2 {
+    width: 50%;
+    min-width: 150px;
+  }
+  .h-full {
+    height: 100%;
   }
 
-  .mt-8 {
-    margin-top: 1.5rem;
+  .mb-1 {
+    margin-bottom: 0.25rem;
   }
-
-  .mt-6 {
-    margin-top: 1rem;
-  }
-
-  .tip {
-    font-size: 0.7rem;
-    color: #9ca3af;
-    margin-top: 4px;
-    display: block;
-  }
-
-  .calc-btn {
-    width: 100%;
-    margin-top: 1rem;
-  }
-
-  .target-val {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--primary);
-    background: #eff6ff;
-    padding: 6px 12px;
-    border-radius: 6px;
-  }
-
-  .result-hero {
-    text-align: center;
-    padding: 2rem;
-    background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
-  }
-
-  .hero-label {
-    font-size: 0.9rem;
-    color: var(--text-sub);
+  .mb-2 {
     margin-bottom: 0.5rem;
   }
-
-  .cost-value {
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: #111827;
+  .mb-4 {
+    margin-bottom: 1rem;
+  }
+  .mb-6 {
+    margin-bottom: 1.5rem;
+  }
+  .mt-2 {
+    margin-top: 0.5rem;
+  }
+  .mt-6 {
+    margin-top: 1.5rem;
+  }
+  .mt-auto {
+    margin-top: auto;
+  }
+  .pb-2 {
+    padding-bottom: 0.5rem;
+  }
+  .pt-6 {
+    padding-top: 1.5rem;
+  }
+  .p-2 {
+    padding: 0.5rem;
+  }
+  .p-3 {
+    padding: 0.75rem;
+  }
+  .p-8 {
+    padding: 2rem;
+  }
+  .mr-2 {
+    margin-right: 0.5rem;
   }
 
-  .hero-stats {
+  .text-center {
+    text-align: center;
+  }
+  .block {
+    display: block;
+  }
+  .inline-block {
+    display: inline-block;
+  }
+
+  .font-bold {
+    font-weight: bold;
+  }
+  .font-black {
+    font-weight: 900;
+  }
+  .font-mono {
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .text-xs {
+    font-size: 0.75rem;
+  }
+  .text-sm {
+    font-size: 0.875rem;
+  }
+  .text-lg {
+    font-size: 1.125rem;
+  }
+  .text-xl {
+    font-size: 1.25rem;
+  }
+  .text-2xl {
+    font-size: 1.5rem;
+  }
+  .text-3xl {
+    font-size: 1.875rem;
+  }
+  .text-6xl {
+    font-size: 3.75rem;
+  }
+
+  .border-t-4 {
+    border-top: 4px solid #111;
+  }
+  .border-b-3 {
+    border-bottom: 3px solid #111;
+  }
+  .border-3 {
+    border: 3px solid #111;
+  }
+  .border-4 {
+    border: 4px solid #111;
+  }
+  .border-black {
+    border-color: #111;
+  }
+  .border-dashed {
+    border-style: dashed;
+  }
+
+  .huge {
+    font-size: 4rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .drop-shadow-black {
+    text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
+  }
+  .drop-shadow-red {
+    text-shadow: 4px 4px 0px #111;
+  }
+  .text-pink {
+    color: #ff4b4b;
+  }
+  .text-green {
+    color: #00e572;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .opacity-90 {
+    opacity: 0.9;
+  }
+  .opacity-80 {
+    opacity: 0.8;
+  }
+  .opacity-70 {
+    opacity: 0.7;
+  }
+
+  .bg-yellow {
+    background-color: #ffd900;
+  }
+  .bg-cyan {
+    background-color: #00ffff;
+  }
+  .bg-pink {
+    background-color: #ff4b4b;
+  }
+  .bg-white {
+    background-color: #fff;
+  }
+
+  .details-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
-    margin-top: 2rem;
-    border-top: 1px dashed #e5e7eb;
-    padding-top: 1.5rem;
   }
 
-  .h-stat .l {
-    font-size: 0.75rem;
-    color: #9ca3af;
-    margin-bottom: 4px;
+  .badge {
+    border: 2px solid #111;
+    font-weight: 800;
+    font-size: 0.95rem;
+    box-shadow: 2px 2px 0px #111;
+  }
+  .brutal-shadow {
+    box-shadow: 4px 4px 0px #111;
+    transition: transform 0.1s;
+  }
+  .brutal-shadow-sm {
+    box-shadow: 3px 3px 0px #111;
   }
 
-  .h-stat .v {
-    font-weight: 600;
-    font-size: 1rem;
-  }
-
-  .detail-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .d-item {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.875rem;
-  }
-
-  .text-red {
-    color: var(--red) !important;
-  }
-
-  .text-green {
-    color: var(--green) !important;
-  }
-
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 300px;
-    text-align: center;
-    color: #9ca3af;
-  }
-
-  .empty-state .el-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    opacity: 0.3;
-  }
-
-  .empty-state p {
-    font-size: 0.85rem;
-    line-height: 1.6;
-    max-width: 240px;
-  }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #9ca3af;
-    font-size: 0.85rem;
-  }
-
-  @media (max-width: 800px) {
-    .layout-container {
+  @media (max-width: 768px) {
+    .brutal-grid {
       grid-template-columns: 1fr;
     }
+    .hidden-xs {
+      display: none;
+    }
+    .w-1\/2 {
+      width: 100%;
+    }
+  }
+
+  /* Dark mode */
+  [data-theme='dark'] .brutal-wrapper {
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+  }
+  [data-theme='dark'] .bg-yellow {
+    background-color: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-cyan {
+    background-color: #008080;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background-color: #cc0000;
+  }
+  [data-theme='dark'] .bg-white {
+    background-color: #1a1a1a;
+    color: #eee;
+  }
+  [data-theme='dark'] .mode-tabs {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .text-pink {
+    color: #ff6b6b;
+  }
+  [data-theme='dark'] .text-green {
+    color: #10b981;
+  }
+  [data-theme='dark'] .drop-shadow-red {
+    text-shadow: 4px 4px 0px #111;
+  }
+  [data-theme='dark'] .border-black,
+  [data-theme='dark'] .border-t-4,
+  [data-theme='dark'] .border-b-3,
+  [data-theme='dark'] .border-3,
+  [data-theme='dark'] .border-4 {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-shadow,
+  [data-theme='dark'] .brutal-shadow-sm,
+  [data-theme='dark'] .badge {
+    box-shadow: 3px 3px 0px #eee;
   }
 </style>

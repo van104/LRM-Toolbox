@@ -1,182 +1,157 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="$router.back()">
-          <el-icon><ArrowLeft /></el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">Web 网页转 PDF</h1>
-        <span class="tool-subtitle">Web to PDF Converter</span>
-      </div>
-      <div class="header-right">
-        <!-- 占位，保持布局平衡 -->
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">WEB<span>.转PDF()</span></h1>
+      </header>
 
-    <main class="tool-content">
-      <div class="converter-card">
-        <el-tabs v-model="activeTab" class="custom-tabs">
-          <el-tab-pane label="网页链接 (演示)" name="url">
-            <el-alert
-              title="纯前端限制"
-              type="info"
-              description="由于浏览器同源策略 (CORS) 限制，纯前端无法直接抓取并转换任意外部网页。此功能仅为演示，建议使用下方的 HTML 代码转换功能。"
-              show-icon
-              :closable="false"
-              style="margin-bottom: 20px"
-            />
-            <div class="input-section">
-              <el-input
-                v-model="url"
-                placeholder="请输入网页地址 (例如: https://example.com)"
-                size="large"
-                clearable
-                @keyup.enter="startConversion"
-              >
-                <template #prefix>
-                  <el-icon><Link /></el-icon>
-                </template>
-              </el-input>
+      <div class="brutal-pane">
+        <div class="pane-header bg-yellow"><span>网页转 PDF 转换器</span></div>
+        <div class="pane-body">
+          <div class="tab-switch">
+            <button
+              class="brutal-action-btn"
+              :class="{ primary: activeTab === 'url' }"
+              @click="activeTab = 'url'"
+            >
+              🔗 网页链接 (演示)
+            </button>
+            <button
+              class="brutal-action-btn"
+              :class="{ primary: activeTab === 'html' }"
+              @click="activeTab = 'html'"
+            >
+              📝 HTML 代码 (真实)
+            </button>
+          </div>
+
+          <div v-if="activeTab === 'url'">
+            <div class="info-box warn">
+              <strong>⚠️ 纯前端限制</strong>
+              <p>
+                由于浏览器同源策略 (CORS)
+                限制，纯前端无法直接抓取任意外部网页。此功能仅为演示，建议使用 HTML 代码转换。
+              </p>
             </div>
-          </el-tab-pane>
-
-          <el-tab-pane label="HTML 代码转换 (真实)" name="html">
-            <div class="input-section">
-              <el-input
-                v-model="htmlContent"
-                type="textarea"
-                :rows="10"
-                placeholder="请输入或粘贴 HTML 代码..."
-                class="html-textarea"
+            <div class="form-item">
+              <label>网页地址</label>
+              <input
+                v-model="url"
+                class="brutal-input"
+                placeholder="https://example.com"
+                @keyup.enter="startConversion"
               />
             </div>
-          </el-tab-pane>
-        </el-tabs>
-
-        <div class="input-section" style="margin-top: 20px">
-          <div class="options-row">
-            <el-select v-model="paperSize" placeholder="纸张大小" style="width: 120px">
-              <el-option label="A4" value="a4" />
-              <el-option label="Letter" value="letter" />
-              <el-option label="Legal" value="legal" />
-            </el-select>
-
-            <el-select v-model="orientation" placeholder="方向" style="width: 120px">
-              <el-option label="纵向" value="portrait" />
-              <el-option label="横向" value="landscape" />
-            </el-select>
-
-            <el-checkbox v-model="removeAds" label="移除广告" border disabled />
-            <el-checkbox v-model="background" label="包含背景" border />
           </div>
 
-          <el-button
-            type="primary"
-            size="large"
-            class="convert-btn"
-            :loading="isConverting"
-            :disabled="activeTab === 'url' ? !isValidUrl : !htmlContent"
+          <div v-else>
+            <div class="form-item">
+              <label>HTML 代码</label>
+              <textarea
+                v-model="htmlContent"
+                class="brutal-textarea"
+                rows="8"
+                placeholder="输入或粘贴 HTML 代码..."
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="param-box">
+            <div class="params-row">
+              <div class="form-item">
+                <label>纸张</label>
+                <select v-model="paperSize" class="brutal-select">
+                  <option value="a4">A4</option>
+                  <option value="letter">Letter</option>
+                  <option value="legal">Legal</option>
+                </select>
+              </div>
+              <div class="form-item">
+                <label>方向</label>
+                <select v-model="orientation" class="brutal-select">
+                  <option value="portrait">纵向</option>
+                  <option value="landscape">横向</option>
+                </select>
+              </div>
+              <div class="form-item">
+                <label>选项</label>
+                <div class="radio-wrap">
+                  <label><input v-model="background" type="checkbox" /> 包含背景</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button
+            class="brutal-action-btn primary large"
+            :disabled="isConverting || (activeTab === 'url' ? !isValidUrl : !htmlContent)"
             @click="startConversion"
           >
-            {{ isConverting ? '转换中...' : '开始转换' }}
-          </el-button>
-        </div>
+            {{ isConverting ? 'CONVERTING...' : 'COMMIT.开始转换' }}
+          </button>
 
-        <div v-if="conversionStatus !== 'idle'" class="status-section">
-          <div v-if="conversionStatus === 'converting'" class="progress-area">
-            <el-progress
-              type="circle"
-              :percentage="progress"
-              :status="progress === 100 ? 'success' : ''"
-            />
-            <p class="status-text">{{ statusText }}</p>
+          <!-- Status -->
+          <div v-if="conversionStatus === 'converting'" class="status-box">
+            <p>⏳ {{ statusText }}</p>
+            <div class="progress-bar">
+              <div class="progress-fill" :style="{ width: progress + '%' }"></div>
+            </div>
           </div>
 
-          <div v-else-if="conversionStatus === 'completed'" class="result-area">
-            <el-result icon="success" title="转换成功" sub-title="您的网页已成功转换为 PDF">
-              <template #extra>
-                <div class="file-preview-card">
-                  <div class="pdf-icon-wrapper">
-                    <el-icon><Document /></el-icon>
-                    <span class="pdf-tag">PDF</span>
-                  </div>
-                  <div class="file-meta">
-                    <div class="file-name">{{ fileName }}</div>
-                    <div class="file-info">
-                      {{ paperSize }} • {{ orientation === 'portrait' ? '纵向' : '横向' }} • 2.4 MB
-                    </div>
-                  </div>
-                </div>
-                <div class="action-buttons">
-                  <el-button type="primary" @click="downloadFile">
-                    <el-icon><Download /></el-icon> 下载文件
-                  </el-button>
-                  <el-button @click="reset">转换其他网页</el-button>
-                </div>
-              </template>
-            </el-result>
+          <div v-else-if="conversionStatus === 'completed'" class="success-box">
+            <h3>✅ 转换成功</h3>
+            <p>您的网页已成功转换为 PDF</p>
+            <div class="result-badge">
+              <strong>{{ fileName }}</strong>
+              <span>{{ paperSize }} · {{ orientation === 'portrait' ? '纵向' : '横向' }}</span>
+            </div>
+            <div class="success-actions">
+              <button class="brutal-action-btn primary" @click="downloadFile">⬇ 下载文件</button>
+              <button class="brutal-action-btn" @click="reset">转换其他</button>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="features-grid">
-        <div class="feature-item">
-          <el-icon class="feature-icon"><Monitor /></el-icon>
-          <h3>原样保留</h3>
-          <p>精确保留网页排版、字体和图片，所见即所得。</p>
+      <div class="features-row">
+        <div class="feature-card">
+          <h4>🖥️ 原样保留</h4>
+          <p>精确保留网页排版、字体和图片</p>
         </div>
-        <div class="feature-item">
-          <el-icon class="feature-icon"><Setting /></el-icon>
-          <h3>自定义设置</h3>
-          <p>支持调整纸张大小、方向、页边距等参数。</p>
+        <div class="feature-card">
+          <h4>⚙️ 自定义设置</h4>
+          <p>支持调整纸张大小和方向</p>
         </div>
-        <div class="feature-item">
-          <el-icon class="feature-icon"><Lock /></el-icon>
-          <h3>安全隐私</h3>
-          <p>所有转换在本地完成（模拟），不上传服务器。</p>
+        <div class="feature-card">
+          <h4>🔒 安全隐私</h4>
+          <p>所有转换在本地完成</p>
         </div>
       </div>
-    </main>
-
-    <footer class="footer">© 2026 LRM工具箱 - Web 网页转 PDF</footer>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, computed } from 'vue';
-  import {
-    Link,
-    Document,
-    Download,
-    Monitor,
-    Setting,
-    Lock,
-    ArrowLeft
-  } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
   import html2canvas from 'html2canvas';
   import jsPDF from 'jspdf';
 
-  const activeTab = ref('url'); // 'url' or 'html'
+  const activeTab = ref('url');
   const url = ref('');
   const htmlContent = ref(
-    '<h1 style="text-align: center; color: #333;">我的 PDF 文档</h1><p>这是一段示例文本。您可以在这里编辑内容，然后将其转换为 PDF。</p><hr/><p>支持 HTML 标签和内联样式。</p>'
+    '<h1 style="text-align:center;color:#333">我的 PDF 文档</h1><p>这是一段示例文本。</p><hr/><p>支持 HTML 标签和内联样式。</p>'
   );
   const paperSize = ref('a4');
   const orientation = ref('portrait');
-  const removeAds = ref(true);
   const background = ref(true);
-
   const isConverting = ref(false);
   const conversionStatus = ref<'idle' | 'converting' | 'completed'>('idle');
   const progress = ref(0);
-  const statusText = ref('正在分析网页...');
+  const statusText = ref('正在分析...');
   const fileName = ref('');
   const pdfBlob = ref<Blob | null>(null);
-
   const isValidUrl = computed(() => {
     if (!url.value) return false;
     try {
@@ -190,13 +165,9 @@
   const startConversion = async () => {
     if (activeTab.value === 'url') {
       if (!isValidUrl.value) return;
-
-      // Mock conversion for URL mode (due to CORS limitations)
       isConverting.value = true;
       conversionStatus.value = 'converting';
       progress.value = 0;
-
-      // Extract domain for filename
       try {
         const urlObj = new URL(url.value);
         const domain = urlObj.hostname.replace('www.', '');
@@ -205,89 +176,63 @@
       } catch {
         fileName.value = 'web-convert.pdf';
       }
-
       const steps = [
         { pct: 20, text: '正在加载资源...' },
         { pct: 45, text: '渲染页面布局...' },
         { pct: 70, text: '生成 PDF 文档...' },
-        { pct: 90, text: '正在优化文件大小...' },
+        { pct: 90, text: '正在优化...' },
         { pct: 100, text: '完成!' }
       ];
-
-      let currentStep = 0;
+      let cs = 0;
       const timer = setInterval(() => {
-        if (currentStep >= steps.length) {
+        if (cs >= steps.length) {
           clearInterval(timer);
           isConverting.value = false;
           conversionStatus.value = 'completed';
-
-          // Generate mock content
-          const content = `Mock PDF Content for ${url.value}\nGenerated by LRM Toolbox`;
-          pdfBlob.value = new Blob([content], { type: 'application/pdf' });
-
+          pdfBlob.value = new Blob([`Mock PDF for ${url.value}`], { type: 'application/pdf' });
           ElMessage.success('转换成功');
           return;
         }
-        const step = steps[currentStep];
-        progress.value = step.pct;
-        statusText.value = step.text;
-        currentStep++;
+        progress.value = steps[cs].pct;
+        statusText.value = steps[cs].text;
+        cs++;
       }, 800);
     } else {
-      // Real conversion for HTML mode
       if (!htmlContent.value) {
         ElMessage.warning('请输入 HTML 内容');
         return;
       }
-
       isConverting.value = true;
       conversionStatus.value = 'converting';
       progress.value = 10;
       statusText.value = '正在渲染 HTML...';
       fileName.value = `html-export-${new Date().toISOString().slice(0, 10)}.pdf`;
-
       try {
-        // Create a temporary container
         const container = document.createElement('div');
         container.innerHTML = htmlContent.value;
-        container.style.width = '794px'; // A4 width at 96dpi approx
+        container.style.width = '794px';
         container.style.padding = '40px';
         container.style.background = 'white';
         container.style.position = 'absolute';
         container.style.left = '-9999px';
         container.style.top = '0';
         document.body.appendChild(container);
-
         progress.value = 30;
-
-        const canvas = await html2canvas(container, {
-          scale: 2,
-          useCORS: true,
-          logging: false
-        });
-
+        const canvas = await html2canvas(container, { scale: 2, useCORS: true, logging: false });
         progress.value = 60;
-        statusText.value = '生成 PDF 文件...';
-
+        statusText.value = '生成 PDF...';
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF({
           orientation: orientation.value as 'p' | 'portrait' | 'l' | 'landscape',
           unit: 'mm',
           format: paperSize.value
         });
-
         const imgProps = pdf.getImageProperties(imgData);
         const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, (imgProps.height * pdfWidth) / imgProps.width);
         progress.value = 90;
-
         pdfBlob.value = pdf.output('blob');
-
         document.body.removeChild(container);
-
         progress.value = 100;
         isConverting.value = false;
         conversionStatus.value = 'completed';
@@ -296,14 +241,12 @@
         console.error(error);
         isConverting.value = false;
         conversionStatus.value = 'idle';
-        ElMessage.error('转换失败，请检查 HTML 内容');
+        ElMessage.error('转换失败');
       }
     }
   };
-
   const downloadFile = () => {
     if (!pdfBlob.value) return;
-
     const downloadUrl = URL.createObjectURL(pdfBlob.value);
     const link = document.createElement('a');
     link.href = downloadUrl;
@@ -312,10 +255,7 @@
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(downloadUrl);
-
-    ElMessage.success('文件已开始下载');
   };
-
   const reset = () => {
     url.value = '';
     conversionStatus.value = 'idle';
@@ -324,210 +264,406 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
     min-height: 100vh;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 900px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    background-color: var(--el-bg-color-page);
   }
-
-  .tool-header {
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    margin-bottom: 2rem;
   }
-
-  .header-left,
-  .header-right {
-    width: 140px;
-  }
-
-  .header-center {
-    text-align: center;
-    flex: 1;
-  }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
     margin: 0;
-  }
+    text-transform: uppercase;
+    letter-spacing: -2px;
 
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
+    flex: 1;
+    text-align: center;
+  }
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0 #111;
+    letter-spacing: 0;
+  }
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0 #111;
+    transition: all 0.1s;
     text-transform: uppercase;
   }
-
-  .tool-content {
-    flex: 1;
-    max-width: 900px;
-    margin: 0 auto;
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0 0 0 #111;
+  }
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0 #111;
+    margin-bottom: 2.5rem;
+  }
+  .pane-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .pane-body {
     padding: 2rem;
+  }
+  .tab-switch {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .brutal-action-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.6rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-action-btn.primary {
+    background: #ffd900;
+  }
+  .brutal-action-btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #111;
+  }
+  .brutal-action-btn:active:not(:disabled) {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 #111;
+  }
+  .brutal-action-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: 4px 4px 0 #666;
+    border-color: #666;
+  }
+  .brutal-action-btn.large {
+    padding: 1.25rem 3rem;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
     width: 100%;
+  }
+  .info-box {
+    border: 4px solid #111;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+  }
+  .info-box.warn {
+    background: #fff8e0;
+  }
+  .info-box strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem;
+  }
+  .info-box p {
+    margin: 0;
+  }
+  .form-item {
+    margin-bottom: 1.5rem;
+  }
+  .form-item label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  .brutal-input {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 3px solid #111;
+    background: #fff;
+    font-weight: bold;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .brutal-input:focus {
+    outline: none;
+    box-shadow: 6px 6px 0 #4b7bff;
+    border-color: #4b7bff;
+  }
+  .brutal-textarea {
+    width: 100%;
+    border: 3px solid #111;
+    padding: 1rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    resize: none;
+    background: #fff;
     box-sizing: border-box;
   }
-
-  .html-textarea :deep(.el-textarea__inner) {
-    font-family: monospace;
+  .brutal-textarea:focus {
+    outline: none;
+    box-shadow: 4px 4px 0 #4b7bff;
+    border-color: #4b7bff;
   }
-
-  .converter-card {
-    background: var(--el-bg-color);
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    margin-bottom: 3rem;
+  .param-box {
+    border: 4px dashed #111;
+    padding: 1.5rem;
+    background: #fafafa;
+    margin-bottom: 2rem;
   }
-
-  .input-section {
+  .params-row {
     display: flex;
-    flex-direction: column;
     gap: 1.5rem;
-  }
-
-  .options-row {
-    display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
-    align-items: center;
+    align-items: flex-end;
   }
-
-  .convert-btn {
+  .params-row .form-item {
+    margin-bottom: 0;
+    flex: 1;
+    min-width: 120px;
+  }
+  .brutal-select {
     width: 100%;
-    margin-top: 1rem;
-    font-size: 1.1rem;
-    padding: 1.2rem;
+    padding: 0.6rem;
+    font-size: 0.95rem;
+    border: 3px solid #111;
+    background: #fff;
+    font-weight: bold;
+    box-sizing: border-box;
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
   }
-
-  .status-section {
-    margin-top: 3rem;
-    text-align: center;
-    border-top: 1px solid var(--el-border-color-light);
-    padding-top: 2rem;
-  }
-
-  .progress-area {
+  .radio-wrap {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
   }
-
-  .status-text {
-    color: var(--el-text-color-regular);
-    font-size: 1.1rem;
-  }
-
-  .file-preview-card {
+  .radio-wrap label {
     display: flex;
     align-items: center;
-    background: var(--el-bg-color-page);
-    border: 1px solid var(--el-border-color);
-    border-radius: 8px;
-    padding: 1rem;
-    margin: 1rem auto;
-    max-width: 400px;
-    text-align: left;
-  }
-
-  .pdf-icon-wrapper {
-    position: relative;
-    margin-right: 1rem;
-    color: var(--el-color-danger);
-    font-size: 2.5rem;
-    display: flex;
-    align-items: center;
-  }
-
-  .pdf-tag {
-    position: absolute;
-    bottom: 0;
-    right: -5px;
-    background: var(--el-color-danger);
-    color: white;
-    font-size: 0.6rem;
-    padding: 1px 3px;
-    border-radius: 2px;
+    gap: 0.5rem;
+    cursor: pointer;
     font-weight: bold;
+    font-family: 'Noto Sans SC', sans-serif;
   }
-
-  .file-meta {
-    flex: 1;
+  .status-box {
+    text-align: center;
+    padding: 2rem;
+    border: 4px solid #111;
+    margin-top: 2rem;
+    background: #fafafa;
   }
-
-  .file-name {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
+  .status-box p {
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+  .progress-bar {
+    height: 16px;
+    border: 3px solid #111;
+    background: #fff;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #ffd900;
+    transition: width 0.3s;
+  }
+  .success-box {
+    text-align: center;
+    padding: 2rem;
+    border: 4px solid #111;
+    margin-top: 2rem;
+    background: #e8ffe8;
+  }
+  .success-box h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .success-box p {
+    color: #555;
+    margin-bottom: 1.5rem;
+  }
+  .result-badge {
+    border: 3px solid #111;
+    padding: 0.75rem 1rem;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    background: #fff;
+    box-shadow: 4px 4px 0 #111;
+    font-family: 'IBM Plex Mono', monospace;
     word-break: break-all;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
   }
-
-  .file-info {
+  .result-badge strong {
+    display: block;
+    font-size: 1rem;
+  }
+  .result-badge span {
     font-size: 0.85rem;
-    color: var(--el-text-color-secondary);
+    color: #666;
   }
-
-  .action-buttons {
+  .success-actions {
     display: flex;
     gap: 1rem;
     justify-content: center;
-    margin-top: 1.5rem;
   }
-
-  .features-grid {
+  .features-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
+    gap: 1.5rem;
   }
-
-  .feature-item {
-    text-align: center;
+  .feature-card {
+    border: 4px solid #111;
     padding: 1.5rem;
+    background: #fff;
+    text-align: center;
+    box-shadow: 6px 6px 0 #111;
+    transition: all 0.1s;
   }
-
-  .feature-icon {
-    font-size: 2.5rem;
-    color: var(--el-color-primary);
-    margin-bottom: 1rem;
-    background: var(--el-color-primary-light-9);
-    padding: 1rem;
-    border-radius: 50%;
+  .feature-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 #111;
   }
-
-  .feature-item h3 {
-    margin-bottom: 0.5rem;
-    color: var(--el-text-color-primary);
+  .feature-card h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    margin: 0 0 0.5rem;
   }
-
-  .feature-item p {
-    color: var(--el-text-color-secondary);
-    font-size: 0.9rem;
+  .feature-card p {
+    font-size: 0.85rem;
+    color: #555;
+    margin: 0;
     line-height: 1.6;
   }
-
   @media (max-width: 768px) {
-    .features-grid {
+    .features-row {
       grid-template-columns: 1fr;
+    }
+    .brutal-title {
+      font-size: 2.5rem;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
       gap: 1rem;
+      justify-content: center;
     }
   }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .feature-card,
+  [data-theme='dark'] .brutal-input,
+  [data-theme='dark'] .brutal-textarea,
+  [data-theme='dark'] .brutal-select,
+  [data-theme='dark'] .param-box,
+  [data-theme='dark'] .result-badge {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0 #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn {
+    box-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover:not(:disabled) {
+    box-shadow: 6px 6px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #b28f00;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .pane-body {
+    background: #1a1a1a;
+  }
+  [data-theme='dark'] .info-box.warn {
+    background: #2a2a1a;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .status-box {
+    background: #222;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .success-box {
+    background: #1a2a1a;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .feature-card {
+    box-shadow: 6px 6px 0 #eee;
+  }
+  [data-theme='dark'] .feature-card:hover {
+    box-shadow: 9px 9px 0 #eee;
+  }
+  [data-theme='dark'] .progress-bar {
+    border-color: #eee;
+    background: #333;
+  }
+  [data-theme='dark'] .result-badge {
+    box-shadow: 4px 4px 0 #eee;
   }
 </style>

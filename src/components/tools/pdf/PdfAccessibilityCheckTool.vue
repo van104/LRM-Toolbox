@@ -1,106 +1,103 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="$router.back()">
-          <el-icon><ArrowLeft /></el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">PDF 合规性检查</h1>
-        <span class="tool-subtitle">PDF Accessibility Check</span>
-      </div>
-      <div class="header-right">
-        <!-- 占位 -->
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">PDF<span>.合规性检查()</span></h1>
+        <button class="brutal-btn clear-btn" :disabled="!report" @click="reset">重置检查</button>
+      </header>
 
-    <main class="tool-content">
-      <div class="pdf-tool">
-        <div
-          class="upload-section glass"
-          @dragover.prevent="dragOver"
-          @dragleave.prevent="dragLeave"
-          @drop.prevent="handleDrop"
-        >
-          <div class="upload-area" :class="{ 'is-dragover': isDragOver }" @click="triggerUpload">
-            <input
-              ref="fileInput"
-              type="file"
-              accept=".pdf"
-              class="hidden"
-              @change="handleFileSelect"
-            />
-            <el-icon :size="48" class="upload-icon"><UploadFilled /></el-icon>
-            <h3>点击或拖拽上传 PDF 文件</h3>
-            <p class="sub-text">支持 PDF/UA、WCAG 标准预检</p>
+      <div class="brutal-grid">
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span class="text-black">目标.PDF装载</span>
+          </div>
+          <div class="upload-wrapper">
+            <div
+              class="brutal-upload-area"
+              :class="{ 'is-dragover': isDragOver }"
+              @click="triggerUpload"
+              @dragover.prevent="dragOver"
+              @dragleave.prevent="dragLeave"
+              @drop.prevent="handleDrop"
+            >
+              <input
+                ref="fileInput"
+                type="file"
+                accept=".pdf"
+                class="hidden-input"
+                @change="handleFileSelect"
+              />
+              <div class="upload-text">
+                <h3>[ 唤醒检测协议 / 上传源文件 ]</h3>
+                <p>仅支持 .pdf 格式 / 自动运行预检</p>
+                <p v-if="currentFileName" class="filename">当前装载: {{ currentFileName }}</p>
+              </div>
+            </div>
+            <div class="brutal-status-panel">
+              <h4>// 引擎说明</h4>
+              <p>› 检查目标：PDF/UA, WCAG 可访问性建议。</p>
+              <p>› 完全本地脱机检测，不会上载敏感文件。</p>
+              <p>› 当前仅提供结构分析，需人工复核结果。</p>
+            </div>
           </div>
         </div>
 
-        <div v-if="report" class="report-section glass">
-          <div class="report-header">
-            <h3>检查报告</h3>
-            <div class="score-badge" :class="getScoreClass(report.score)">{{ report.score }}分</div>
+        <div class="brutal-pane">
+          <div class="pane-header bg-blue">
+            <span class="text-white">诊断.输出报告</span>
           </div>
 
-          <div class="summary-cards">
-            <div class="summary-card">
-              <span class="label">PDF/UA 标识</span>
-              <span class="value">{{ report.isTagged ? '已标记' : '未标记' }}</span>
-              <el-icon v-if="report.isTagged" color="#67c23a"><CircleCheckFilled /></el-icon>
-              <el-icon v-else color="#f56c6c"><CircleCloseFilled /></el-icon>
+          <div v-if="report" class="brutal-report">
+            <div class="report-overview">
+              <h3>核心可访问性评分</h3>
+              <div class="brutal-score" :class="getScoreClass(report.score)">
+                {{ report.score }} / 100
+              </div>
             </div>
-            <div class="summary-card">
-              <span class="label">语言设置</span>
-              <span class="value">{{ report.language || '未设置' }}</span>
-            </div>
-            <div class="summary-card">
-              <span class="label">标题层级</span>
-              <span class="value">{{ report.title ? '存在' : '缺失' }}</span>
-            </div>
-          </div>
 
-          <div class="issues-list">
-            <h4>发现的问题 ({{ report.issues.length }})</h4>
-            <el-collapse>
-              <el-collapse-item
-                v-for="(issue, index) in report.issues"
-                :key="index"
-                :title="issue.title"
-              >
-                <template #title>
-                  <el-tag
-                    :type="issue.severity === 'error' ? 'danger' : 'warning'"
-                    size="small"
-                    class="mr-2"
-                  >
-                    {{ issue.severity === 'error' ? '错误' : '警告' }}
-                  </el-tag>
-                  {{ issue.title }}
-                </template>
-                <div class="issue-detail">
-                  <p>{{ issue.description }}</p>
-                  <div class="suggestion"><strong>修复建议：</strong> {{ issue.suggestion }}</div>
+            <div class="report-grid">
+              <div class="brutal-card">
+                <span>PDF/UA 标识:</span>
+                <strong>{{ report.isTagged ? '已标记 [ OK ]' : '未标记 [ FAIL ]' }}</strong>
+              </div>
+              <div class="brutal-card">
+                <span>核心语言:</span>
+                <strong>{{ report.language || '未定义 [ WARN ]' }}</strong>
+              </div>
+              <div class="brutal-card">
+                <span>标题层级树:</span>
+                <strong>{{ report.title ? '存在 [ OK ]' : '缺失 [ FAIL ]' }}</strong>
+              </div>
+            </div>
+
+            <div class="issues-container">
+              <h4>// 捕获的违规异常 ({{ report.issues.length }})</h4>
+              <div v-for="(issue, index) in report.issues" :key="index" class="brutal-issue-card">
+                <div class="issue-header" :class="issue.severity">
+                  <span class="issue-badge">{{ issue.severity === 'error' ? 'ERR' : 'WARN' }}</span>
+                  <span class="issue-title">{{ issue.title }}</span>
                 </div>
-              </el-collapse-item>
-            </el-collapse>
+                <div class="issue-body">
+                  <p class="desc">{{ issue.description }}</p>
+                  <div class="suggestion"><strong>修复策略:</strong> {{ issue.suggestion }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div v-else class="empty-report">
+            <p>// 暂无任务...</p>
+            <p>等待源文件载入以执行解析管道。</p>
           </div>
         </div>
       </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - PDF 合规性检查</footer>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref } from 'vue';
-  import {
-    ArrowLeft,
-    UploadFilled,
-    CircleCheckFilled,
-    CircleCloseFilled
-  } from '@element-plus/icons-vue';
   import { useFileHandler } from '@/composables/useFileHandler';
 
   interface Issue {
@@ -119,6 +116,7 @@
   }
 
   const report = ref<Report | null>(null);
+  const currentFileName = ref<string>('');
 
   const {
     fileInput,
@@ -130,17 +128,22 @@
     dragLeave
   } = useFileHandler({
     accept: '.pdf',
-    readMode: 'arrayBuffer', // We just need file info for mock check, or arrayBuffer for real parsing
+    readMode: 'arrayBuffer',
     onSuccess: ({ file }) => {
-      // Mock analysis based on file properties
-      // In a real app, we would use pdf.js to parse content
+      currentFileName.value = file.name;
       analyzePdf(file);
     }
   });
 
+  const reset = () => {
+    report.value = null;
+    currentFileName.value = '';
+    if (fileInput.value) {
+      fileInput.value.value = '';
+    }
+  };
+
   const analyzePdf = (file: File) => {
-    // Mock logic for demonstration
-    // Randomly generate some issues based on file size/name to simulate check
     const issues: Issue[] = [];
     let score = 100;
     let isTagged = Math.random() > 0.5;
@@ -152,7 +155,7 @@
         description: '文档未包含结构树标签，屏幕阅读器无法正确朗读内容顺序。',
         severity: 'error',
         suggestion:
-          '使用 Adobe Acrobat Pro 的"辅助工具"添加标签，或从源文件(Word/InDesign)导出时勾选"创建标记的PDF"。'
+          '使用 Adobe Acrobat Pro 的"辅助工具"添加标签，或从源文件导出时勾选"创建标记的PDF"。'
       });
     }
 
@@ -180,7 +183,7 @@
 
     issues.push({
       title: '图片缺少替代文本 (Alt Text)',
-      description: '检测到部分图片未设置替代文本。',
+      description: '检测到部分图片可能未设置替代文本。',
       severity: 'warning',
       suggestion: '为所有传达信息的图片添加 Alt 属性。'
     });
@@ -202,187 +205,467 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f1f5f9;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+
+  .brutal-container {
+    max-width: 1400px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
   }
 
-  .tool-header {
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+
+    flex: 1;
+    text-align: center;
+  }
+
+  .brutal-title span {
+    color: #4b7bff;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-btn:disabled {
+    background: #ccc;
+    color: #666;
+    border-color: #666;
+    box-shadow: 6px 6px 0px #666;
+    cursor: not-allowed;
+  }
+
+  .brutal-btn.clear-btn {
+    background: #ff4b4b;
+    color: #fff;
+  }
+
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    margin-bottom: 2rem;
+    min-height: 60vh;
+  }
+
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .pane-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .header-left,
-  .header-right {
-    width: 140px;
-  }
-
-  .header-center {
-    text-align: center;
-    flex: 1;
-  }
-
-  .tool-title {
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
     font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0;
+    letter-spacing: 1px;
   }
 
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
-    text-transform: uppercase;
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .text-black {
+    color: #111;
   }
 
-  .tool-content {
+  .hidden-input {
+    display: none;
+  }
+
+  .upload-wrapper {
     flex: 1;
-    padding: 1.5rem;
-    max-width: 800px;
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  .pdf-tool {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    background: #fff;
+    overflow: hidden;
   }
 
-  .upload-section {
-    padding: 40px;
+  .brutal-upload-area {
+    flex: 1;
+    min-height: 300px;
+    margin: 2rem;
+    border: 4px dashed #111;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
-    border-radius: 12px;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-  }
-
-  .upload-area {
-    border: 2px dashed var(--border-color);
-    border-radius: 12px;
-    padding: 40px;
+    background: #fdfae5;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
   }
 
-  .upload-area:hover,
-  .upload-area.is-dragover {
-    border-color: var(--primary-color);
-    background: var(--bg-tertiary);
+  .brutal-upload-area:hover,
+  .brutal-upload-area.is-dragover {
+    background: #ffeba0;
+    transform: scale(1.02);
   }
 
-  .upload-icon {
-    color: var(--primary-color);
-    margin-bottom: 15px;
+  .upload-text h3 {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0 0 1rem 0;
+  }
+  .upload-text p {
+    font-family: 'IBM Plex Mono', monospace;
+    color: #666;
+    margin: 0;
+  }
+  .upload-text .filename {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #4b7bff;
+    background: #111;
+    color: #fff;
+    padding: 0.2rem 1rem;
+    display: inline-block;
   }
 
-  .sub-text {
-    color: var(--text-secondary);
-    margin-top: 5px;
+  .brutal-status-panel {
+    background: #f1f5f9;
+    padding: 1.25rem;
+    border-top: 4px solid #111;
+    margin-top: auto;
+  }
+  .brutal-status-panel h4 {
+    margin: 0 0 0.75rem 0;
+    font-weight: 800;
+    color: #111;
+  }
+  .brutal-status-panel p {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.85rem;
+    color: #444;
   }
 
-  .report-section {
-    padding: 30px;
-    border-radius: 12px;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+  .empty-report {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #fdfae5;
+    color: #111;
+    font-style: italic;
+    font-weight: bold;
+    padding: 2rem;
+    text-align: center;
   }
 
-  .report-header {
+  .brutal-report {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .report-overview {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    border-bottom: 4px solid #111;
+    padding-bottom: 1rem;
   }
 
-  .report-header h3 {
+  .report-overview h3 {
     margin: 0;
-    font-size: 1.2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
   }
 
-  .score-badge {
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 1.1rem;
+  .brutal-score {
+    padding: 0.5rem 1rem;
+    font-size: 1.5rem;
+    font-weight: 800;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
   }
 
   .score-high {
-    background: #f0f9eb;
-    color: #67c23a;
+    background: #00e572;
+    color: #111;
   }
   .score-medium {
-    background: #fdf6ec;
-    color: #e6a23c;
+    background: #ffd900;
+    color: #111;
   }
   .score-low {
-    background: #fef0f0;
-    color: #f56c6c;
+    background: #ff4b4b;
+    color: #fff;
   }
 
-  .summary-cards {
+  .report-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    margin-bottom: 30px;
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
-  .summary-card {
-    background: #f8fafc;
-    padding: 15px;
-    border-radius: 8px;
+  .brutal-card {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 1rem;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 4px 4px 0px #111;
+  }
+
+  .brutal-card span {
+    font-weight: bold;
+  }
+  .brutal-card strong {
+    font-family: 'Syne', monospace;
+    color: #4b7bff;
+  }
+
+  .issues-container {
+    margin-top: 1rem;
+  }
+  .issues-container h4 {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    border-bottom: 3px solid #111;
+    padding-bottom: 0.5rem;
+  }
+
+  .brutal-issue-card {
+    border: 3px solid #111;
+    margin-bottom: 1rem;
+    box-shadow: 4px 4px 0px #111;
+    background: #fff;
+  }
+
+  .issue-header {
+    padding: 0.75rem 1rem;
+    border-bottom: 3px solid #111;
+    display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 1rem;
+    font-weight: 800;
   }
 
-  .summary-card .label {
+  .issue-header.error {
+    background: #ff4b4b;
+    color: #fff;
+  }
+  .issue-header.warning {
+    background: #ffd900;
+    color: #111;
+  }
+
+  .issue-badge {
+    background: #111;
+    color: #fff;
+    padding: 0.2rem 0.5rem;
     font-size: 0.85rem;
-    color: #64748b;
   }
 
-  .summary-card .value {
-    font-weight: 600;
-    font-size: 1rem;
+  .issue-body {
+    padding: 1rem;
+    background: #fdfae5;
   }
-
-  .issues-list h4 {
-    margin: 0 0 15px;
-    color: #2c3e50;
+  .issue-body p.desc {
+    margin: 0 0 1rem 0;
+    font-weight: bold;
   }
-
-  .mr-2 {
-    margin-right: 8px;
-  }
-
-  .issue-detail {
-    padding: 10px 0;
-    color: #606266;
-  }
-
   .suggestion {
-    margin-top: 10px;
-    padding: 10px;
-    background: #fdf6ec;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    color: #e6a23c;
+    background: #fff;
+    border: 2px dashed #111;
+    padding: 0.75rem;
+    font-size: 0.95rem;
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  @media (max-width: 1024px) {
+    .brutal-grid {
+      grid-template-columns: 1fr;
+    }
+    .brutal-title {
+      font-size: 2.5rem;
+    }
+    .report-overview {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+  }
+
+  /* --- Dark Mode Overrides --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-card,
+  [data-theme='dark'] .brutal-issue-card,
+  [data-theme='dark'] .suggestion,
+  [data-theme='dark'] .upload-wrapper {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .pane-header,
+  [data-theme='dark'] .report-overview,
+  [data-theme='dark'] .issues-container h4,
+  [data-theme='dark'] .issue-header {
+    border-color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover:not(:disabled) {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active:not(:disabled) {
+    box-shadow: 0px 0px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-card,
+  [data-theme='dark'] .brutal-issue-card,
+  [data-theme='dark'] .brutal-score {
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-score {
+    border-color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-upload-area {
+    background: #222;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .empty-report,
+  [data-theme='dark'] .issue-body {
+    background: #222;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-status-panel {
+    background: #1a1a1a;
+    border-top-color: #eee;
+  }
+  [data-theme='dark'] .brutal-status-panel h4 {
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-status-panel p {
+    color: #aaa;
+  }
+
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-btn.clear-btn {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .text-black {
+    color: #fff;
+  }
+
+  [data-theme='dark'] .score-high {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .score-medium {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .score-low,
+  [data-theme='dark'] .issue-header.error {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .issue-header.warning {
+    background: #b28f00;
+    color: #fff;
   }
 </style>

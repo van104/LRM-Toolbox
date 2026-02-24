@@ -1,145 +1,139 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">PDF 电子签名</h1>
-        <span class="tool-subtitle">PDF Signature</span>
-      </div>
-      <div class="header-right"></div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">PDF<span>.电子签名()</span></h1>
+      </header>
 
-    <main class="tool-content">
-      <div class="layout-container">
-        <div class="workbench glass-card">
-          <div v-if="!pdfFile" class="upload-placeholder" @click="triggerUpload">
-            <el-icon class="upload-icon">
-              <EditPen />
-            </el-icon>
-            <h3>选择 PDF 添加签名</h3>
-            <p class="hint">手写绘制或上传签名图片</p>
+      <div v-if="!pdfFile" class="brutal-pane">
+        <div class="pane-header bg-yellow"><span>1. 载入 PDF</span></div>
+        <div class="brutal-upload-area" @click="triggerUpload">
+          <div class="upload-text">
+            <h3>[ 选择 PDF 添加签名 ]</h3>
+            <p>手写绘制或上传签名图片</p>
           </div>
-
-          <div v-else class="workspace">
-            <div class="file-info">
-              <el-icon>
-                <Document />
-              </el-icon>
-              <span>{{ pdfFile.name }} ({{ totalPages }} 页)</span>
-              <el-button text type="danger" @click="clearFile">移除</el-button>
-            </div>
-
-            <div class="main-area">
-              <div class="preview-section">
-                <div class="page-nav">
-                  <el-button :disabled="currentPage <= 1" @click="currentPage--">上一页</el-button>
-                  <span>{{ currentPage }} / {{ totalPages }}</span>
-                  <el-button :disabled="currentPage >= totalPages" @click="currentPage++"
-                    >下一页</el-button
-                  >
-                </div>
-                <div ref="previewContainer" class="pdf-preview" @click="handlePreviewClick">
-                  <canvas ref="pdfCanvas"></canvas>
-                  <div
-                    v-if="signaturePosition"
-                    class="signature-overlay"
-                    :style="{ left: signaturePosition.x + 'px', top: signaturePosition.y + 'px' }"
-                  >
-                    <img :src="signatureDataUrl" alt="签名" />
-                    <el-button
-                      class="remove-btn"
-                      type="danger"
-                      size="small"
-                      circle
-                      @click.stop="removeSignature"
-                    >
-                      <el-icon>
-                        <Close />
-                      </el-icon>
-                    </el-button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="signature-panel glass-card">
-                <h4>签名区域</h4>
-                <el-tabs v-model="signatureTab">
-                  <el-tab-pane label="手写绘制" name="draw">
-                    <div class="draw-area">
-                      <canvas
-                        ref="drawCanvas"
-                        @mousedown="startDraw"
-                        @mousemove="draw"
-                        @mouseup="endDraw"
-                        @mouseleave="endDraw"
-                        @touchstart="startDrawTouch"
-                        @touchmove="drawTouch"
-                        @touchend="endDraw"
-                      ></canvas>
-                      <div class="draw-actions">
-                        <el-button size="small" @click="clearDraw">清除</el-button>
-                        <el-button size="small" type="primary" @click="confirmDraw"
-                          >确认签名</el-button
-                        >
-                      </div>
-                    </div>
-                  </el-tab-pane>
-                  <el-tab-pane label="上传图片" name="upload">
-                    <div class="upload-area" @click="triggerSignatureUpload">
-                      <el-icon>
-                        <Upload />
-                      </el-icon>
-                      <span>点击上传签名图片</span>
-                      <input
-                        ref="signatureFileInput"
-                        type="file"
-                        hidden
-                        accept="image/*"
-                        @change="handleSignatureSelect"
-                      />
-                    </div>
-                  </el-tab-pane>
-                </el-tabs>
-
-                <div v-if="signatureDataUrl" class="signature-preview">
-                  <p>当前签名：</p>
-                  <img :src="signatureDataUrl" alt="签名预览" />
-                  <p class="hint">点击左侧 PDF 预览图放置签名</p>
-                </div>
-              </div>
-            </div>
-
-            <el-button
-              type="primary"
-              size="large"
-              class="action-btn"
-              :loading="processing"
-              :disabled="!signaturePosition || !signatureDataUrl"
-              @click="applySignature"
-            >
-              应用签名并下载
-            </el-button>
-          </div>
-
-          <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
         </div>
       </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - PDF 电子签名</footer>
+
+      <div v-else>
+        <div class="file-badge">
+          <strong>{{ pdfFile.name }}</strong> <span>({{ totalPages }} 页)</span>
+          <button
+            class="brutal-action-btn"
+            style="padding: 0.2rem 0.8rem; font-size: 0.85rem; margin-left: auto"
+            @click="clearFile"
+          >
+            移除
+          </button>
+        </div>
+
+        <div class="brutal-grid">
+          <!-- Preview -->
+          <div class="brutal-pane">
+            <div class="pane-header bg-blue">
+              <span class="text-white">PDF 预览</span>
+              <div class="pane-actions">
+                <button :disabled="currentPage <= 1" @click="currentPage--">上一页</button>
+                <span style="color: #fff; font-size: 0.9rem"
+                  >{{ currentPage }}/{{ totalPages }}</span
+                >
+                <button :disabled="currentPage >= totalPages" @click="currentPage++">下一页</button>
+              </div>
+            </div>
+            <div ref="previewContainer" class="preview-area" @click="handlePreviewClick">
+              <canvas ref="pdfCanvas"></canvas>
+              <div
+                v-if="signaturePosition"
+                class="sig-overlay"
+                :style="{ left: signaturePosition.x + 'px', top: signaturePosition.y + 'px' }"
+              >
+                <img :src="signatureDataUrl" alt="sig" />
+                <button class="sig-remove" @click.stop="removeSignature">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Signature Panel -->
+          <div class="brutal-pane">
+            <div class="pane-header bg-yellow"><span>签名区域</span></div>
+            <div class="pane-body">
+              <div class="tab-switch">
+                <button
+                  class="brutal-action-btn"
+                  :class="{ primary: signatureTab === 'draw' }"
+                  @click="signatureTab = 'draw'"
+                >
+                  手写绘制
+                </button>
+                <button
+                  class="brutal-action-btn"
+                  :class="{ primary: signatureTab === 'upload' }"
+                  @click="signatureTab = 'upload'"
+                >
+                  上传图片
+                </button>
+              </div>
+
+              <div v-if="signatureTab === 'draw'" class="draw-section">
+                <canvas
+                  ref="drawCanvas"
+                  class="draw-canvas"
+                  @mousedown="startDraw"
+                  @mousemove="draw"
+                  @mouseup="endDraw"
+                  @mouseleave="endDraw"
+                  @touchstart="startDrawTouch"
+                  @touchmove="drawTouch"
+                  @touchend="endDraw"
+                ></canvas>
+                <div class="draw-actions">
+                  <button class="brutal-action-btn" @click="clearDraw">清除</button>
+                  <button class="brutal-action-btn primary" @click="confirmDraw">确认签名</button>
+                </div>
+              </div>
+
+              <div
+                v-if="signatureTab === 'upload'"
+                class="upload-sig-area"
+                @click="triggerSignatureUpload"
+              >
+                <p>[ 点击上传签名图片 ]</p>
+                <input
+                  ref="signatureFileInput"
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  @change="handleSignatureSelect"
+                />
+              </div>
+
+              <div v-if="signatureDataUrl" class="sig-preview-box">
+                <p>当前签名：</p>
+                <img :src="signatureDataUrl" alt="签名预览" />
+                <p class="hint">点击左侧 PDF 预览图放置签名</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          class="brutal-action-btn primary large"
+          :disabled="!signaturePosition || !signatureDataUrl || processing"
+          @click="applySignature"
+        >
+          {{ processing ? 'SIGNING...' : 'COMMIT.应用签名并下载' }}
+        </button>
+      </div>
+
+      <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, shallowRef, watch, nextTick } from 'vue';
   import { useRouter } from 'vue-router';
-  import { ArrowLeft, EditPen, Document, Upload, Close } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
   import pdfjsLib from '@/utils/pdf';
   import { PDFDocument } from 'pdf-lib';
@@ -154,12 +148,11 @@
   const { fileInput, triggerFileInput, handleFileSelect } = useFileHandler({
     accept: '.pdf',
     readMode: 'none',
-    onSuccess: result => {
-      pdfFile.value = result.file;
-      loadPdf(result.file);
+    onSuccess: r => {
+      pdfFile.value = r.file;
+      loadPdf(r.file);
     }
   });
-
   const {
     fileInput: signatureFileInput,
     triggerFileInput: triggerSignatureUpload,
@@ -167,9 +160,9 @@
   } = useFileHandler({
     accept: 'image/*',
     readMode: 'dataURL',
-    onSuccess: result => {
-      signatureDataUrl.value = result.data;
-      ElMessage.success('签名图片已加载，请在 PDF 上点击放置位置');
+    onSuccess: r => {
+      signatureDataUrl.value = r.data;
+      ElMessage.success('签名图片已加载');
     }
   });
 
@@ -178,21 +171,16 @@
   const totalPages = ref(0);
   const currentPage = ref(1);
   const processing = ref(false);
-
   const pdfCanvas = ref(null);
   const drawCanvas = ref(null);
   const previewContainer = ref(null);
-
   const signatureTab = ref('draw');
   const signatureDataUrl = ref('');
   const signaturePosition = ref(null);
-
   let isDrawing = false;
   let drawCtx = null;
   let canvasScale = 1;
-
   const triggerUpload = () => triggerFileInput();
-
   const pdfFile = ref(null);
 
   const clearFile = () => {
@@ -209,11 +197,9 @@
       pdfFile.value = file;
       const buffer = await file.arrayBuffer();
       pdfBytes.value = new Uint8Array(buffer);
-
       const loadingTask = pdfjsLib.getDocument(pdfBytes.value.slice());
       pdfDocProxy.value = await loadingTask.promise;
       totalPages.value = pdfDocProxy.value.numPages;
-
       nextTick(() => renderPage());
     } catch (e) {
       console.error(e);
@@ -223,23 +209,16 @@
 
   const renderPage = async () => {
     if (!pdfDocProxy.value || !pdfCanvas.value) return;
-
     const page = await pdfDocProxy.value.getPage(currentPage.value);
     const viewport = page.getViewport({ scale: 1 });
-
     const container = previewContainer.value;
     const maxWidth = container.clientWidth - 20;
     const maxHeight = 500;
     canvasScale = Math.min(maxWidth / viewport.width, maxHeight / viewport.height);
-
-    const scaledViewport = page.getViewport({ scale: canvasScale });
-    pdfCanvas.value.width = scaledViewport.width;
-    pdfCanvas.value.height = scaledViewport.height;
-
-    await page.render({
-      canvasContext: pdfCanvas.value.getContext('2d'),
-      viewport: scaledViewport
-    }).promise;
+    const sv = page.getViewport({ scale: canvasScale });
+    pdfCanvas.value.width = sv.width;
+    pdfCanvas.value.height = sv.height;
+    await page.render({ canvasContext: pdfCanvas.value.getContext('2d'), viewport: sv }).promise;
   };
 
   watch(currentPage, () => {
@@ -258,18 +237,11 @@
     }
   };
 
-  watch(drawCanvas, newVal => {
-    if (newVal) {
-      nextTick(initDrawCanvas);
-    }
+  watch(drawCanvas, v => {
+    if (v) nextTick(initDrawCanvas);
   });
-
-  watch(pdfFile, newVal => {
-    if (newVal) {
-      nextTick(() => {
-        setTimeout(initDrawCanvas, 100);
-      });
-    }
+  watch(pdfFile, v => {
+    if (v) nextTick(() => setTimeout(initDrawCanvas, 100));
   });
 
   const startDraw = e => {
@@ -279,99 +251,80 @@
     drawCtx.beginPath();
     drawCtx.moveTo(e.offsetX, e.offsetY);
   };
-
   const draw = e => {
     if (!isDrawing || !drawCtx) return;
     drawCtx.lineTo(e.offsetX, e.offsetY);
     drawCtx.stroke();
   };
-
   const endDraw = () => {
     isDrawing = false;
   };
-
   const startDrawTouch = e => {
     initDrawCanvas();
     if (!drawCtx || !drawCanvas.value) return;
     e.preventDefault();
-    const touch = e.touches[0];
-    const rect = drawCanvas.value.getBoundingClientRect();
+    const t = e.touches[0];
+    const r = drawCanvas.value.getBoundingClientRect();
     isDrawing = true;
     drawCtx.beginPath();
-    drawCtx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    drawCtx.moveTo(t.clientX - r.left, t.clientY - r.top);
   };
-
   const drawTouch = e => {
     if (!isDrawing || !drawCtx || !drawCanvas.value) return;
     e.preventDefault();
-    const touch = e.touches[0];
-    const rect = drawCanvas.value.getBoundingClientRect();
-    drawCtx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    const t = e.touches[0];
+    const r = drawCanvas.value.getBoundingClientRect();
+    drawCtx.lineTo(t.clientX - r.left, t.clientY - r.top);
     drawCtx.stroke();
   };
-
   const clearDraw = () => {
     if (!drawCtx || !drawCanvas.value) return;
     drawCtx.clearRect(0, 0, drawCanvas.value.width, drawCanvas.value.height);
     signatureDataUrl.value = '';
   };
-
   const confirmDraw = () => {
     if (!drawCanvas.value) return;
     signatureDataUrl.value = drawCanvas.value.toDataURL('image/png');
-    ElMessage.success('签名已确认，请在 PDF 上点击放置位置');
+    ElMessage.success('签名已确认');
   };
-
   const handlePreviewClick = e => {
     if (!signatureDataUrl.value) {
       ElMessage.warning('请先创建或上传签名');
       return;
     }
-
     const rect = pdfCanvas.value.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    signaturePosition.value = { x, y, page: currentPage.value };
+    signaturePosition.value = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+      page: currentPage.value
+    };
   };
-
   const removeSignature = () => {
     signaturePosition.value = null;
   };
 
   const applySignature = async () => {
     if (!pdfBytes.value || !signatureDataUrl.value || !signaturePosition.value) return;
-
     processing.value = true;
     try {
       const pdfDoc = await PDFDocument.load(pdfBytes.value);
       const pngImageBytes = await fetch(signatureDataUrl.value).then(res => res.arrayBuffer());
       const pngImage = await pdfDoc.embedPng(pngImageBytes);
-
       const page = pdfDoc.getPages()[signaturePosition.value.page - 1];
       const { height } = page.getSize();
-
       const sigWidth = 100;
       const sigHeight = 50;
       const pdfX = signaturePosition.value.x / canvasScale;
       const pdfY = height - signaturePosition.value.y / canvasScale - sigHeight;
-
-      page.drawImage(pngImage, {
-        x: pdfX,
-        y: pdfY,
-        width: sigWidth,
-        height: sigHeight
-      });
-
-      const modifiedPdfBytes = await pdfDoc.save();
-      const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
+      page.drawImage(pngImage, { x: pdfX, y: pdfY, width: sigWidth, height: sigHeight });
+      const mb = await pdfDoc.save();
+      const blob = new Blob([mb], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = `signed_${pdfFile.value.name}`;
       a.click();
       URL.revokeObjectURL(url);
-
       ElMessage.success('签名应用成功');
     } catch (e) {
       console.error(e);
@@ -383,136 +336,221 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
     min-height: 100vh;
-    background: #f8fafc;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 1400px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    color: #1e293b;
   }
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
 
-  .tool-header {
+    flex: 1;
+    text-align: center;
+  }
+  .brutal-title span {
+    color: #4b7bff;
+    text-shadow: 4px 4px 0 #111;
+    letter-spacing: 0;
+  }
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0 #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0 0 0 #111;
+  }
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0 #111;
+    margin-bottom: 2rem;
+  }
+  .pane-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  }
-
-  .header-left,
-  .header-right {
-    width: 100px;
-    display: flex;
-    align-items: center;
-  }
-
-  .header-center {
-    flex: 1;
-    text-align: center;
-  }
-
-  .tool-title {
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
     font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .pane-body {
+    padding: 2rem;
+  }
+  .pane-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+  .pane-actions button {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    font-family: 'IBM Plex Mono', monospace;
     font-weight: 600;
-    margin: 0;
-  }
-
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
-    text-transform: uppercase;
-  }
-
-  .tool-content {
-    flex: 1;
-    padding: 2rem;
-    display: flex;
-    justify-content: center;
-  }
-
-  .layout-container {
-    width: 100%;
-    max-width: 1100px;
-  }
-
-  .workbench {
-    padding: 2rem;
-    border-radius: 16px;
-    min-height: 500px;
-  }
-
-  .upload-placeholder {
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
-    height: 300px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    font-size: 0.9rem;
+    padding: 0.35rem 0.75rem;
     cursor: pointer;
-    transition: all 0.3s;
-    color: #64748b;
+    box-shadow: 3px 3px 0 #111;
+    transition: all 0.1s;
   }
-
-  .upload-placeholder:hover {
-    border-color: #3b82f6;
-    background: #eff6ff;
-    color: #3b82f6;
+  .pane-actions button:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 #111;
   }
-
-  .upload-icon {
-    font-size: 4rem;
+  .pane-actions button:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: 0 0 0 #111;
+  }
+  .pane-actions button:disabled {
+    background: #eee;
+    color: #aaa;
+    border-color: #aaa;
+    box-shadow: 2px 2px 0 #aaa;
+    cursor: not-allowed;
+  }
+  .brutal-upload-area {
+    min-height: 300px;
+    margin: 2rem;
+    border: 4px dashed #111;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: #fdfae5;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .brutal-upload-area:hover {
+    background: #ffeba0;
+    transform: scale(1.02);
+  }
+  .upload-text h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
     margin-bottom: 1rem;
   }
-
-  .hint {
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
-    opacity: 0.7;
+  .upload-text p {
+    font-size: 0.95rem;
+    color: #555;
   }
-
-  .file-info {
+  .file-badge {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: #f1f5f9;
-    padding: 0.75rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.75rem 1rem;
+    box-shadow: 4px 4px 0 #111;
+    margin-bottom: 2rem;
+    word-break: break-all;
+    flex-wrap: wrap;
+    font-family: 'IBM Plex Mono', monospace;
   }
-
-  .file-info .el-icon {
-    font-size: 1.5rem;
-    color: #3b82f6;
+  .file-badge strong {
+    font-size: 1.1rem;
   }
-
-  .file-info span {
-    flex: 1;
-    font-weight: 500;
+  .file-badge span {
+    color: #666;
   }
-
-  .main-area {
-    display: flex;
-    gap: 1.5rem;
-    min-height: 400px;
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2.5rem;
+    margin-bottom: 2rem;
   }
-
-  .preview-section {
-    flex: 2;
+  .brutal-action-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.6rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+    text-transform: uppercase;
   }
-
-  .page-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
+  .brutal-action-btn.primary {
+    background: #ffd900;
   }
-
-  .pdf-preview {
-    background: #e2e8f0;
-    border-radius: 8px;
+  .brutal-action-btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #111;
+  }
+  .brutal-action-btn:active:not(:disabled) {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 #111;
+  }
+  .brutal-action-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: 4px 4px 0 #666;
+    border-color: #666;
+  }
+  .brutal-action-btn.large {
+    padding: 1.25rem 3rem;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+  .preview-area {
+    background: #eee;
     padding: 10px;
     position: relative;
     overflow: hidden;
@@ -522,110 +560,178 @@
     justify-content: center;
     cursor: crosshair;
   }
-
-  .pdf-preview canvas {
+  .preview-area canvas {
     max-width: 100%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 4px 4px 0 #111;
+    border: 2px solid #111;
   }
-
-  .signature-overlay {
+  .sig-overlay {
     position: absolute;
-    border: 2px dashed #3b82f6;
+    border: 3px dashed #4b7bff;
     padding: 4px;
     background: rgba(255, 255, 255, 0.9);
     cursor: move;
   }
-
-  .signature-overlay img {
+  .sig-overlay img {
     max-width: 100px;
     max-height: 50px;
     display: block;
   }
-
-  .remove-btn {
+  .sig-remove {
     position: absolute;
-    top: -10px;
-    right: -10px;
+    top: -12px;
+    right: -12px;
+    width: 24px;
+    height: 24px;
+    border: 3px solid #111;
+    background: #ff4b4b;
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    box-shadow: 2px 2px 0 #111;
   }
-
-  .signature-panel {
-    flex: 1;
-    padding: 1rem;
-    min-width: 320px;
+  .tab-switch {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
   }
-
-  .signature-panel h4 {
-    margin: 0 0 1rem;
-    font-size: 1rem;
-  }
-
-  .draw-area {
+  .draw-section {
     text-align: center;
   }
-
-  .draw-area canvas {
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
+  .draw-canvas {
+    border: 3px solid #111;
     background: #fff;
     touch-action: none;
+    display: block;
+    margin: 0 auto;
   }
-
   .draw-actions {
     margin-top: 0.75rem;
     display: flex;
-    gap: 0.5rem;
+    gap: 0.75rem;
     justify-content: center;
   }
-
-  .upload-area {
-    border: 2px dashed #cbd5e1;
-    border-radius: 8px;
+  .upload-sig-area {
+    border: 4px dashed #111;
     padding: 2rem;
     text-align: center;
     cursor: pointer;
-    color: #64748b;
-    transition: all 0.3s;
+    background: #fdfae5;
+    transition: all 0.2s;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
   }
-
-  .upload-area:hover {
-    border-color: #3b82f6;
-    color: #3b82f6;
+  .upload-sig-area:hover {
+    background: #ffeba0;
   }
-
-  .upload-area .el-icon {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .signature-preview {
-    margin-top: 1rem;
+  .sig-preview-box {
+    margin-top: 1.5rem;
     text-align: center;
     padding: 1rem;
-    background: #f1f5f9;
-    border-radius: 8px;
+    background: #fafafa;
+    border: 3px solid #111;
   }
-
-  .signature-preview img {
+  .sig-preview-box img {
     max-width: 150px;
     max-height: 60px;
-    border: 1px solid #e2e8f0;
+    border: 2px solid #111;
   }
-
-  .action-btn {
-    width: 100%;
-    margin-top: 1.5rem;
-  }
-
-  .glass-card {
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
+  .hint {
     font-size: 0.85rem;
+    color: #555;
+    margin-top: 0.5rem;
+  }
+  @media (max-width: 1024px) {
+    .brutal-title {
+      font-size: 2.5rem;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .brutal-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-upload-area,
+  [data-theme='dark'] .file-badge,
+  [data-theme='dark'] .upload-sig-area,
+  [data-theme='dark'] .sig-preview-box,
+  [data-theme='dark'] .pane-actions button,
+  [data-theme='dark'] .draw-canvas {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0 #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn {
+    box-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover:not(:disabled) {
+    box-shadow: 6px 6px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #b28f00;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .pane-body {
+    background: #1a1a1a;
+  }
+  [data-theme='dark'] .preview-area {
+    background: #333;
+  }
+  [data-theme='dark'] .preview-area canvas {
+    box-shadow: 4px 4px 0 #eee;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .file-badge {
+    box-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .pane-actions button {
+    box-shadow: 3px 3px 0 #eee;
+  }
+  [data-theme='dark'] .pane-actions button:hover:not(:disabled) {
+    box-shadow: 5px 5px 0 #eee;
+  }
+  [data-theme='dark'] .sig-remove {
+    border-color: #eee;
+    box-shadow: 2px 2px 0 #eee;
   }
 </style>

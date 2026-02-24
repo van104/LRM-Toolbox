@@ -200,6 +200,18 @@
       indicatorRef.value.style.width = `${el.offsetWidth}px`;
       indicatorRef.value.style.left = `${el.offsetLeft}px`;
       indicatorRef.value.style.opacity = '1';
+
+      // 滚动导航栏使当前激活分类可见
+      if (navMenuRef.value) {
+        const navRect = navMenuRef.value.getBoundingClientRect();
+        const elRect = el.getBoundingClientRect();
+        // 如果元素不在可视区域内，滚动到居中位置
+        if (elRect.left < navRect.left || elRect.right > navRect.right) {
+          const scrollTarget =
+            el.offsetLeft - navMenuRef.value.offsetWidth / 2 + el.offsetWidth / 2;
+          navMenuRef.value.scrollTo({ left: scrollTarget, behavior: 'instant' });
+        }
+      }
     }
   };
 

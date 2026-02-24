@@ -1,30 +1,26 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="$router.back()">
-          <el-icon><ArrowLeft /></el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">PDF 转 EPUB</h1>
-        <span class="tool-subtitle">PDF to EPUB Converter</span>
-      </div>
-      <div class="header-right">
-        <!-- 占位 -->
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">PDF<span>.转EPUB()</span></h1>
+      </header>
 
-    <main class="tool-content">
-      <div class="pdf-tool">
-        <div
-          class="upload-section glass"
-          @dragover.prevent="dragOver"
-          @dragleave.prevent="dragLeave"
-          @drop.prevent="handleDrop"
-        >
-          <div class="upload-area" :class="{ 'is-dragover': isDragOver }" @click="triggerUpload">
+      <div class="brutal-pane">
+        <div class="pane-header bg-yellow"><span>PDF 转电子书</span></div>
+        <div class="pane-body">
+          <div
+            v-if="!file"
+            class="brutal-upload-area"
+            @click="triggerUpload"
+            @dragover.prevent="dragOver"
+            @dragleave.prevent="dragLeave"
+            @drop.prevent="handleDrop"
+          >
+            <div class="upload-text">
+              <h3>[ 点击或拖拽上传 PDF ]</h3>
+              <p>支持自动识别章节、重排版面，适合电子书阅读</p>
+            </div>
             <input
               ref="fileInput"
               type="file"
@@ -32,77 +28,88 @@
               class="hidden"
               @change="handleFileSelect"
             />
-            <el-icon :size="48" class="upload-icon"><UploadFilled /></el-icon>
-            <h3>点击或拖拽上传 PDF 文件</h3>
-            <p class="sub-text">支持自动识别章节、重排版面，适合电子书阅读</p>
           </div>
-        </div>
 
-        <div v-if="file" class="preview-section glass">
-          <div class="file-info">
-            <el-icon :size="32" color="#f56c6c"><Document /></el-icon>
-            <div class="info-text">
-              <h4>{{ file.name }}</h4>
-              <p>{{ formatSize(file.size) }}</p>
+          <div v-else-if="!converted">
+            <div class="file-badge">
+              <strong>{{ file.name }}</strong> <span>({{ formatSize(file.size) }})</span>
+              <button
+                class="brutal-action-btn primary"
+                style="padding: 0.4rem 1rem; font-size: 0.9rem; margin-left: auto"
+                :disabled="converting"
+                @click="startConversion"
+              >
+                {{ converting ? '转换中...' : '开始转换' }}
+              </button>
             </div>
-            <el-button type="primary" :loading="converting" @click="startConversion">
-              开始转换
-            </el-button>
+
+            <div class="param-box">
+              <div class="form-item">
+                <label>标题识别</label>
+                <div class="radio-wrap">
+                  <label
+                    ><input v-model="settings.detectTitles" type="checkbox" />
+                    自动检测章节标题</label
+                  >
+                </div>
+              </div>
+              <div class="form-item">
+                <label>排版优化</label>
+                <div class="radio-wrap">
+                  <label
+                    ><input v-model="settings.removeHeaders" type="checkbox" /> 移除页眉页脚</label
+                  >
+                  <label
+                    ><input v-model="settings.mergeParagraphs" type="checkbox" />
+                    合并断行段落</label
+                  >
+                </div>
+              </div>
+              <div class="form-item">
+                <label>封面设置</label>
+                <div class="radio-wrap">
+                  <label
+                    ><input v-model="settings.coverType" type="radio" value="first" />
+                    使用第一页</label
+                  >
+                  <label
+                    ><input v-model="settings.coverType" type="radio" value="none" /> 无封面</label
+                  >
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div class="settings-form">
-            <el-form label-position="top">
-              <el-form-item label="标题识别">
-                <el-checkbox v-model="settings.detectTitles">自动检测章节标题</el-checkbox>
-              </el-form-item>
-              <el-form-item label="排版优化">
-                <el-checkbox v-model="settings.removeHeaders">移除页眉页脚</el-checkbox>
-                <el-checkbox v-model="settings.mergeParagraphs">合并断行段落</el-checkbox>
-              </el-form-item>
-              <el-form-item label="封面设置">
-                <el-radio-group v-model="settings.coverType">
-                  <el-radio label="first">使用第一页</el-radio>
-                  <el-radio label="none">无封面</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-form>
+          <div v-else class="success-box">
+            <h3>✅ 转换成功</h3>
+            <p>您的 EPUB 电子书已准备就绪</p>
+            <div class="success-actions">
+              <button class="brutal-action-btn primary" @click="downloadEpub">⬇ 下载 EPUB</button>
+              <button class="brutal-action-btn" @click="reset">转换其他文件</button>
+            </div>
           </div>
-        </div>
-
-        <div v-if="converted" class="result-section glass">
-          <el-result icon="success" title="转换成功" sub-title="您的 EPUB 电子书已准备就绪">
-            <template #extra>
-              <el-button type="primary" @click="downloadEpub">下载 EPUB</el-button>
-              <el-button @click="reset">转换其他文件</el-button>
-            </template>
-          </el-result>
         </div>
       </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - PDF 转 EPUB</footer>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref } from 'vue';
-  import { ArrowLeft, UploadFilled, Document } from '@element-plus/icons-vue';
   import { useFileHandler } from '@/composables/useFileHandler';
   import { ElMessage } from 'element-plus';
 
   const file = ref<File | null>(null);
   const converting = ref(false);
   const converted = ref(false);
-
   const settings = ref({
     detectTitles: true,
     removeHeaders: true,
     mergeParagraphs: true,
     coverType: 'first'
   });
-
   const {
     fileInput,
-    isDragOver,
     formatSize,
     triggerUpload,
     handleFileSelect,
@@ -117,21 +124,16 @@
       converted.value = false;
     }
   });
-
   const startConversion = () => {
     if (!file.value) return;
     converting.value = true;
-
-    // Simulate conversion process
     setTimeout(() => {
       converting.value = false;
       converted.value = true;
       ElMessage.success('转换完成');
     }, 2000);
   };
-
   const downloadEpub = () => {
-    // Mock download
     if (!file.value) return;
     const link = document.createElement('a');
     link.download = file.value.name.replace('.pdf', '.epub');
@@ -140,7 +142,6 @@
     );
     link.click();
   };
-
   const reset = () => {
     file.value = null;
     converted.value = false;
@@ -148,136 +149,281 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
     min-height: 100vh;
-    background: #f1f5f9;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 900px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
   }
-
-  .tool-header {
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    margin-bottom: 2rem;
   }
-
-  .header-left,
-  .header-right {
-    width: 140px;
-  }
-
-  .header-center {
-    text-align: center;
-    flex: 1;
-  }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
     margin: 0;
-  }
+    text-transform: uppercase;
+    letter-spacing: -2px;
 
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
+    flex: 1;
+    text-align: center;
+  }
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0 #111;
+    letter-spacing: 0;
+  }
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0 #111;
+    transition: all 0.1s;
     text-transform: uppercase;
   }
-
-  .tool-content {
-    flex: 1;
-    padding: 1.5rem;
-    max-width: 800px;
-    margin: 0 auto;
-    width: 100%;
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 #111;
   }
-
-  .pdf-tool {
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0 0 0 #111;
+  }
+  .brutal-pane {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0 #111;
+    margin-bottom: 2rem;
   }
-
-  .upload-section {
-    padding: 40px;
+  .pane-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .pane-body {
+    padding: 2rem;
+  }
+  .brutal-upload-area {
+    min-height: 280px;
+    border: 4px dashed #111;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
-    border-radius: 12px;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-  }
-
-  .upload-area {
-    border: 2px dashed var(--border-color);
-    border-radius: 12px;
-    padding: 40px;
+    background: #fdfae5;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
   }
-
-  .upload-area:hover,
-  .upload-area.is-dragover {
-    border-color: var(--primary-color);
-    background: var(--bg-tertiary);
+  .brutal-upload-area:hover {
+    background: #ffeba0;
+    transform: scale(1.02);
   }
-
-  .upload-icon {
-    color: var(--primary-color);
-    margin-bottom: 15px;
+  .upload-text h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
   }
-
-  .sub-text {
-    color: var(--text-secondary);
-    margin-top: 5px;
+  .upload-text p {
+    font-size: 0.95rem;
+    color: #555;
   }
-
-  .preview-section {
-    padding: 30px;
-    border-radius: 12px;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+  .hidden {
+    display: none;
   }
-
-  .file-info {
+  .file-badge {
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #eee;
-    margin-bottom: 20px;
-  }
-
-  .info-text h4 {
-    margin: 0 0 5px;
-    color: #2c3e50;
-  }
-
-  .info-text p {
-    margin: 0;
-    font-size: 0.85rem;
-    color: #64748b;
-  }
-
-  .file-info .el-button {
-    margin-left: auto;
-  }
-
-  .result-section {
-    padding: 30px;
-    border-radius: 12px;
+    gap: 0.5rem;
     background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 3px solid #111;
+    padding: 0.75rem 1rem;
+    box-shadow: 4px 4px 0 #111;
+    margin-bottom: 2rem;
+    word-break: break-all;
+    flex-wrap: wrap;
+    font-family: 'IBM Plex Mono', monospace;
   }
-
-  .footer {
+  .file-badge strong {
+    font-size: 1.1rem;
+  }
+  .file-badge span {
+    color: #666;
+  }
+  .param-box {
+    border: 4px dashed #111;
+    padding: 1.5rem;
+    background: #fafafa;
+    margin-bottom: 2rem;
+  }
+  .form-item {
+    margin-bottom: 1.5rem;
+  }
+  .form-item:last-child {
+    margin-bottom: 0;
+  }
+  .form-item label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  .radio-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .radio-wrap label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: 'Noto Sans SC', sans-serif;
+  }
+  .brutal-action-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.6rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-action-btn.primary {
+    background: #ffd900;
+  }
+  .brutal-action-btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #111;
+  }
+  .brutal-action-btn:active:not(:disabled) {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 #111;
+  }
+  .brutal-action-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: 4px 4px 0 #666;
+    border-color: #666;
+  }
+  .success-box {
     text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+    padding: 3rem;
+    border: 4px solid #111;
+    background: #e8ffe8;
+  }
+  .success-box h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .success-box p {
+    color: #555;
+    margin-bottom: 2rem;
+  }
+  .success-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+  }
+  @media (max-width: 1024px) {
+    .brutal-title {
+      font-size: 2.5rem;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+  }
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-upload-area,
+  [data-theme='dark'] .file-badge,
+  [data-theme='dark'] .param-box {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0 #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn {
+    box-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover:not(:disabled) {
+    box-shadow: 6px 6px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #b28f00;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .pane-body {
+    background: #1a1a1a;
+  }
+  [data-theme='dark'] .file-badge {
+    box-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .success-box {
+    background: #1a2a1a;
+    border-color: #eee;
   }
 </style>

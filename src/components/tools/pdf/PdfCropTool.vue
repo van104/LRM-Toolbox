@@ -1,144 +1,176 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">PDF 页面裁剪</h1>
-        <span class="tool-subtitle">PDF Crop</span>
-      </div>
-      <div class="header-right"></div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">PDF<span>.物理裁切()</span></h1>
+        <button class="brutal-btn clear-btn" :disabled="!pdfFile" @click="clearFile">
+          重置画布
+        </button>
+      </header>
 
-    <main class="tool-content">
-      <div class="layout-container">
-        <div class="workbench glass-card">
-          <div v-if="!pdfFile" class="upload-placeholder" @click="triggerUpload">
-            <el-icon class="upload-icon">
-              <Crop />
-            </el-icon>
-            <h3>选择 PDF 裁剪页面</h3>
-            <p class="hint">可视化框选裁剪区域，去除多余白边</p>
+      <div class="brutal-grid">
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span class="text-black">1. 载入目标源</span>
           </div>
 
-          <div v-else class="workspace">
-            <div class="file-info">
-              <el-icon>
-                <Document />
-              </el-icon>
-              <span>{{ pdfFile.name }} ({{ totalPages }} 页)</span>
-              <el-button text type="danger" @click="clearFile">移除</el-button>
+          <div v-if="!pdfFile" class="brutal-upload-area" @click="triggerUpload">
+            <div class="upload-text">
+              <h3>[ 导入投喂材料 ]</h3>
+              <p>可视化框选去除白边和水印等不需要的区域</p>
             </div>
-
-            <div class="main-area">
-              <div class="preview-section">
-                <div class="page-nav">
-                  <el-button :disabled="currentPage <= 1" @click="currentPage--">上一页</el-button>
-                  <span>{{ currentPage }} / {{ totalPages }}</span>
-                  <el-button :disabled="currentPage >= totalPages" @click="currentPage++"
-                    >下一页</el-button
-                  >
-                </div>
-
-                <div ref="previewContainer" class="pdf-preview">
-                  <div ref="canvasWrapper" class="canvas-wrapper">
-                    <canvas ref="pdfCanvas"></canvas>
-
-                    <div
-                      v-if="showCropIndicators"
-                      class="crop-border crop-left"
-                      :style="{ width: cropBox.left + 'px' }"
-                    ></div>
-                    <div
-                      v-if="showCropIndicators"
-                      class="crop-border crop-right"
-                      :style="{ width: cropBox.right + 'px' }"
-                    ></div>
-                    <div
-                      v-if="showCropIndicators"
-                      class="crop-border crop-top"
-                      :style="{ height: cropBox.top + 'px' }"
-                    ></div>
-                    <div
-                      v-if="showCropIndicators"
-                      class="crop-border crop-bottom"
-                      :style="{ height: cropBox.bottom + 'px' }"
-                    ></div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="settings-panel glass-card">
-                <h4>裁剪设置</h4>
-
-                <div class="crop-inputs">
-                  <div class="input-group">
-                    <label>左边距 (pt)</label>
-                    <el-input-number v-model="cropMargins.left" :min="0" :max="300" size="small" />
-                  </div>
-                  <div class="input-group">
-                    <label>右边距 (pt)</label>
-                    <el-input-number v-model="cropMargins.right" :min="0" :max="300" size="small" />
-                  </div>
-                  <div class="input-group">
-                    <label>上边距 (pt)</label>
-                    <el-input-number v-model="cropMargins.top" :min="0" :max="300" size="small" />
-                  </div>
-                  <div class="input-group">
-                    <label>下边距 (pt)</label>
-                    <el-input-number
-                      v-model="cropMargins.bottom"
-                      :min="0"
-                      :max="300"
-                      size="small"
-                    />
-                  </div>
-                </div>
-
-                <div class="apply-scope">
-                  <label>应用范围</label>
-                  <el-radio-group v-model="applyScope">
-                    <el-radio value="current">仅当前页</el-radio>
-                    <el-radio value="all">所有页面</el-radio>
-                  </el-radio-group>
-                </div>
-
-                <el-button style="margin-top: 1rem" @click="resetCrop">重置裁剪</el-button>
-              </div>
-            </div>
-
-            <el-button
-              type="primary"
-              size="large"
-              class="action-btn"
-              :loading="processing"
-              @click="applyCrop"
-            >
-              裁剪并下载
-            </el-button>
           </div>
-
+          <div v-else class="file-loaded-info">
+            <div class="status-badge success">FILE MOUNTED</div>
+            <p class="filename">{{ pdfFile.name }} ({{ totalPages }} P)</p>
+            <div style="margin-top: 1rem">
+              <button class="brutal-action-btn" @click="clearFile">卸载对象</button>
+            </div>
+          </div>
           <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
+
+          <div v-if="pdfFile" class="settings-panel param-area">
+            <div
+              class="pane-header bg-black"
+              style="margin: 0 0 1.5rem 0; border-bottom: 4px solid #111"
+            >
+              <span class="text-white">2. 控制参数</span>
+            </div>
+
+            <div class="controls-content" style="padding: 0 1.5rem 1.5rem">
+              <div class="crop-inputs">
+                <div class="input-group">
+                  <label>左极点 (pt)</label>
+                  <input
+                    v-model.number="cropMargins.left"
+                    type="number"
+                    min="0"
+                    max="300"
+                    class="brutal-input"
+                  />
+                </div>
+                <div class="input-group">
+                  <label>右极点 (pt)</label>
+                  <input
+                    v-model.number="cropMargins.right"
+                    type="number"
+                    min="0"
+                    max="300"
+                    class="brutal-input"
+                  />
+                </div>
+                <div class="input-group">
+                  <label>天顶距 (pt)</label>
+                  <input
+                    v-model.number="cropMargins.top"
+                    type="number"
+                    min="0"
+                    max="300"
+                    class="brutal-input"
+                  />
+                </div>
+                <div class="input-group">
+                  <label>地心距 (pt)</label>
+                  <input
+                    v-model.number="cropMargins.bottom"
+                    type="number"
+                    min="0"
+                    max="300"
+                    class="brutal-input"
+                  />
+                </div>
+              </div>
+
+              <div class="apply-scope param-box">
+                <label>// 作用域覆盖层级</label>
+                <div class="radio-wrap">
+                  <label
+                    ><input v-model="applyScope" type="radio" value="current" /> 仅单页穿透</label
+                  >
+                  <label><input v-model="applyScope" type="radio" value="all" /> 全局递归</label>
+                </div>
+              </div>
+
+              <button
+                class="brutal-action-btn action-btn primary large"
+                style="margin-top: 2rem"
+                :disabled="processing"
+                @click="applyCrop"
+              >
+                {{ processing ? 'EXECUTING...' : 'COMMIT.裁切并提取' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="brutal-pane">
+          <div class="pane-header bg-blue">
+            <span class="text-white">实时渲染沙盒</span>
+          </div>
+
+          <div v-if="pdfFile" class="preview-section">
+            <div class="page-nav">
+              <button
+                class="brutal-btn nav-btn"
+                :disabled="currentPage <= 1"
+                @click="currentPage--"
+              >
+                &lt; PREV
+              </button>
+              <span class="page-indicator">[{{ currentPage }} / {{ totalPages }}]</span>
+              <button
+                class="brutal-btn nav-btn"
+                :disabled="currentPage >= totalPages"
+                @click="currentPage++"
+              >
+                NEXT &gt;
+              </button>
+            </div>
+
+            <div ref="previewContainer" class="pdf-preview-box">
+              <div ref="canvasWrapper" class="canvas-wrapper">
+                <canvas ref="pdfCanvas"></canvas>
+
+                <div
+                  v-if="showCropIndicators"
+                  class="crop-border crop-left"
+                  :style="{ width: cropBox.left + 'px' }"
+                ></div>
+                <div
+                  v-if="showCropIndicators"
+                  class="crop-border crop-right"
+                  :style="{ width: cropBox.right + 'px' }"
+                ></div>
+                <div
+                  v-if="showCropIndicators"
+                  class="crop-border crop-top"
+                  :style="{ height: cropBox.top + 'px' }"
+                ></div>
+                <div
+                  v-if="showCropIndicators"
+                  class="crop-border crop-bottom"
+                  :style="{ height: cropBox.bottom + 'px' }"
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          <div v-else class="empty-state warn">
+            <p>// 渲染引擎异常</p>
+            <p>缺源材料输入，无法生成坐标轴</p>
+          </div>
         </div>
       </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - PDF 页面裁剪</footer>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, reactive, shallowRef, computed, watch, nextTick } from 'vue';
   import { useRouter } from 'vue-router';
-  import { ArrowLeft, Crop, Document } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
   import pdfjsLib from '@/utils/pdf';
-
   import { PDFDocument } from 'pdf-lib';
   import { useFileHandler } from '@/composables';
 
@@ -294,244 +326,499 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f8fafc;
-    display: flex;
-    flex-direction: column;
-    color: #1e293b;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .tool-header {
+  .brutal-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
   }
 
-  .header-left,
-  .header-right {
-    width: 100px;
-    display: flex;
-    align-items: center;
-  }
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
 
-  .header-center {
     flex: 1;
     text-align: center;
   }
 
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0;
+  .brutal-title span {
+    color: #4b7bff;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
   }
 
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
     text-transform: uppercase;
   }
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  .brutal-btn.clear-btn {
+    background: #ff4b4b;
+    color: #fff;
+  }
 
-  .tool-content {
-    flex: 1;
-    padding: 2rem;
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 2.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+  }
+
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+  }
+  .bg-black {
+    background: #111;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .text-black {
+    color: #111;
+  }
+
+  .brutal-upload-area {
+    min-height: 250px;
+    margin: 2rem;
+    border: 4px dashed #111;
     display: flex;
     justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: #fdfae5;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .brutal-upload-area:hover {
+    background: #ffeba0;
+    transform: scale(1.02);
   }
 
-  .layout-container {
-    width: 100%;
-    max-width: 1000px;
+  .upload-text h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+  .upload-text p {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.95rem;
+    color: #555;
+    padding: 0 1rem;
   }
 
-  .workbench {
-    padding: 2rem;
-    border-radius: 16px;
-    min-height: 500px;
-  }
-
-  .upload-placeholder {
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
-    height: 300px;
+  .file-loaded-info {
+    min-height: 200px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    color: #64748b;
+    text-align: center;
+    padding: 2rem;
+    background: #fdfae5;
   }
-
-  .upload-placeholder:hover {
-    border-color: #3b82f6;
-    background: #eff6ff;
-    color: #3b82f6;
-  }
-
-  .upload-icon {
-    font-size: 4rem;
+  .status-badge {
+    background: #111;
+    color: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: bold;
+    padding: 0.2rem 1rem;
     margin-bottom: 1rem;
+    letter-spacing: 2px;
+  }
+  .status-badge.success {
+    background: #00e572;
+    color: #111;
   }
 
-  .hint {
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
-    opacity: 0.7;
+  .file-loaded-info .filename {
+    font-weight: bold;
+    font-size: 1.2rem;
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.5rem 1rem;
+    box-shadow: 4px 4px 0px #111;
+    margin-bottom: 0.5rem;
+    word-break: break-all;
   }
 
-  .file-info {
+  .brutal-action-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.6rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+    text-transform: uppercase;
+    margin: 0;
+    width: 100%;
+  }
+  .brutal-action-btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+  .brutal-action-btn:active:not(:disabled) {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-action-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: 4px 4px 0px #666;
+    border-color: #666;
+  }
+  .brutal-action-btn.primary {
+    background: #ffd900;
+  }
+  .brutal-action-btn.large {
+    padding: 1.25rem 3rem;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+
+  /* 控制栏 */
+  .param-area {
+    flex: 1;
+    border-top: 4px solid #111;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+  .param-box {
+    border: 3px solid #111;
+    padding: 1rem;
+  }
+
+  .crop-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .input-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .brutal-input {
+    width: 100%;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    box-sizing: border-box;
+  }
+
+  .apply-scope label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .radio-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .radio-wrap label {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: #f1f5f9;
-    padding: 0.75rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
+    cursor: pointer;
+    font-weight: normal;
+    margin-bottom: 0;
+    font-family: 'Noto Sans SC', sans-serif;
   }
 
-  .file-info .el-icon {
-    font-size: 1.5rem;
-    color: #3b82f6;
-  }
-
-  .file-info span {
-    flex: 1;
-    font-weight: 500;
-  }
-
-  .main-area {
-    display: flex;
-    gap: 1.5rem;
-  }
-
+  /* 预览和沙盒 */
   .preview-section {
-    flex: 2;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
   }
 
   .page-nav {
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     gap: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
+    width: 100%;
+  }
+  .nav-btn {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+  }
+  .page-indicator {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: bold;
+    font-size: 1.2rem;
   }
 
-  .pdf-preview {
+  .pdf-preview-box {
     background: #e2e8f0;
-    border-radius: 8px;
-    padding: 10px;
-    position: relative;
-    overflow: hidden;
-    min-height: 300px;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 2rem;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    background-image: radial-gradient(#ccc 2px, transparent 2px);
+    background-size: 20px 20px;
+    min-height: 50vh;
+    overflow: auto;
   }
 
   .canvas-wrapper {
     position: relative;
     display: inline-block;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+    border: 2px solid #111;
   }
-
   .canvas-wrapper canvas {
     display: block;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
   .crop-border {
     position: absolute;
-    background: rgba(239, 68, 68, 0.3);
+    background: rgba(0, 0, 0, 0.4);
     pointer-events: none;
     z-index: 2;
+    transition: all 0.1s;
   }
-
   .crop-border.crop-left {
     left: 0;
     top: 0;
     bottom: 0;
-    border-right: 2px dashed #ef4444;
+    border-right: 3px dashed #ff4b4b;
   }
-
   .crop-border.crop-right {
     right: 0;
     top: 0;
     bottom: 0;
-    border-left: 2px dashed #ef4444;
+    border-left: 3px dashed #ff4b4b;
   }
-
   .crop-border.crop-top {
     left: 0;
     right: 0;
     top: 0;
-    border-bottom: 2px dashed #ef4444;
+    border-bottom: 3px dashed #ff4b4b;
   }
-
   .crop-border.crop-bottom {
     left: 0;
     right: 0;
     bottom: 0;
-    border-top: 2px dashed #ef4444;
+    border-top: 3px dashed #ff4b4b;
   }
 
-  .settings-panel {
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     flex: 1;
-    padding: 1rem;
-    min-width: 250px;
-    border-radius: 12px;
+    min-height: 400px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .empty-state p {
+    margin: 0.5rem 0;
+    color: #555;
+  }
+  .empty-state.warn p {
+    font-weight: bold;
+    color: #cc0000;
   }
 
-  .settings-panel h4 {
-    margin: 0 0 1rem;
-    font-size: 1rem;
+  @media (max-width: 1024px) {
+    .brutal-grid {
+      grid-template-columns: 1fr;
+    }
+    .brutal-title {
+      font-size: 2.5rem;
+    }
   }
 
-  .crop-inputs {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
+  /* --- Dark Mode Overrides --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .param-area,
+  [data-theme='dark'] .param-box,
+  [data-theme='dark'] .brutal-input {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
   }
 
-  .input-group {
-    margin-bottom: 0.25rem;
+  [data-theme='dark'] .pane-header {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
   }
 
-  .input-group label {
-    display: block;
-    font-size: 0.8rem;
-    color: #64748b;
-    margin-bottom: 0.25rem;
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-input {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover:not(:disabled),
+  [data-theme='dark'] .brutal-action-btn:hover:not(:disabled) {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active:not(:disabled),
+  [data-theme='dark'] .brutal-action-btn:active:not(:disabled) {
+    box-shadow: 0px 0px 0px #eee;
   }
 
-  .apply-scope {
-    margin-top: 1rem;
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
   }
 
-  .apply-scope label {
-    display: block;
-    font-size: 0.85rem;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
+  [data-theme='dark'] .brutal-upload-area {
+    background: #222;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .file-loaded-info {
+    background: #222;
+  }
+  [data-theme='dark'] .file-loaded-info .filename {
+    background: #1a1a1a;
+    color: #eee;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
   }
 
-  .action-btn {
-    width: 100%;
-    margin-top: 1.5rem;
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #b28f00;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn.clear-btn,
+  [data-theme='dark'] .bg-danger {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .status-badge.success {
+    background: #00994c;
+    color: #fff;
   }
 
-  .glass-card {
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  [data-theme='dark'] .pdf-preview-box {
+    background-color: #333;
+    background-image: radial-gradient(#555 2px, transparent 2px);
+    border-color: #eee;
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .canvas-wrapper {
+    border-color: #eee;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.8);
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  [data-theme='dark'] .crop-border.crop-left,
+  [data-theme='dark'] .crop-border.crop-right,
+  [data-theme='dark'] .crop-border.crop-top,
+  [data-theme='dark'] .crop-border.crop-bottom {
+    border-color: #ff8080;
   }
 </style>

@@ -1,121 +1,162 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">PDF 元数据编辑</h1>
-        <span class="tool-subtitle">PDF Metadata Editor</span>
-      </div>
-      <div class="header-right"></div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">PDF<span>.元数据()</span></h1>
+        <button class="brutal-btn clear-btn" :disabled="!pdfFile" @click="clearFile">
+          清空内存
+        </button>
+      </header>
 
-    <main class="tool-content">
-      <div class="layout-container">
-        <div class="workbench glass-card">
-          <div v-if="!pdfFile" class="upload-placeholder" @click="triggerUpload">
-            <el-icon class="upload-icon">
-              <InfoFilled />
-            </el-icon>
-            <h3>选择 PDF 编辑元数据</h3>
-            <p class="hint">修改标题、作者、主题等属性信息</p>
+      <div class="brutal-grid">
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span class="text-black">1. 载入原始图层</span>
           </div>
 
-          <div v-else class="workspace">
-            <div class="file-info">
-              <el-icon>
-                <Document />
-              </el-icon>
-              <span>{{ pdfFile.name }}</span>
-              <el-button text type="danger" @click="clearFile">移除</el-button>
+          <div v-if="!pdfFile" class="brutal-upload-area" @click="triggerUpload">
+            <div class="upload-text">
+              <h3>[ 放入文档材料 ]</h3>
+              <p>提取标题/作者/主题等属性信息</p>
             </div>
+          </div>
+          <div v-else class="file-loaded-info">
+            <div class="status-badge success">DATA RECEIVED</div>
+            <p class="filename">{{ pdfFile.name }}</p>
+            <div style="margin-top: 1rem">
+              <button class="brutal-action-btn" @click="clearFile">销毁对象</button>
+            </div>
+          </div>
+          <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
 
+          <div v-if="pdfFile" style="padding: 1.5rem">
+            <div class="original-info param-box">
+              <h4
+                style="
+                  margin: 0 0 0.75rem;
+                  font-family: monospace;
+                  font-size: 1.1rem;
+                  border-bottom: 2px solid #111;
+                  padding-bottom: 0.5rem;
+                "
+              >
+                / / 原始元数据
+              </h4>
+              <div class="info-grid">
+                <div v-for="(value, key) in originalMetadata" :key="key" class="info-item">
+                  <span class="info-label">[{{ key }}]</span>
+                  <span class="info-value">{{ value || 'N/A' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="brutal-pane">
+          <div class="pane-header bg-black">
+            <span class="text-white">2. 编辑数据</span>
+          </div>
+
+          <div v-if="pdfFile" class="param-area" style="padding: 1.5rem">
             <div class="metadata-form">
               <div class="form-item">
                 <label>标题 (Title)</label>
-                <el-input v-model="metadata.title" placeholder="文档标题" />
+                <input
+                  v-model="metadata.title"
+                  type="text"
+                  class="brutal-input"
+                  placeholder="文档标题"
+                />
               </div>
               <div class="form-item">
                 <label>作者 (Author)</label>
-                <el-input v-model="metadata.author" placeholder="文档作者" />
+                <input
+                  v-model="metadata.author"
+                  type="text"
+                  class="brutal-input"
+                  placeholder="文档作者"
+                />
               </div>
               <div class="form-item">
                 <label>主题 (Subject)</label>
-                <el-input v-model="metadata.subject" placeholder="文档主题" />
+                <input
+                  v-model="metadata.subject"
+                  type="text"
+                  class="brutal-input"
+                  placeholder="文档主题"
+                />
               </div>
               <div class="form-item">
                 <label>关键词 (Keywords)</label>
-                <el-input v-model="metadata.keywords" placeholder="用逗号分隔的关键词" />
+                <input
+                  v-model="metadata.keywords"
+                  type="text"
+                  class="brutal-input"
+                  placeholder="用逗号分隔的关键词"
+                />
               </div>
               <div class="form-item">
                 <label>创建者 (Creator)</label>
-                <el-input v-model="metadata.creator" placeholder="创建此文档的程序" />
+                <input
+                  v-model="metadata.creator"
+                  type="text"
+                  class="brutal-input"
+                  placeholder="创建此文档的程序"
+                />
               </div>
               <div class="form-item">
                 <label>生成器 (Producer)</label>
-                <el-input v-model="metadata.producer" placeholder="生成此 PDF 的程序" />
+                <input
+                  v-model="metadata.producer"
+                  type="text"
+                  class="brutal-input"
+                  placeholder="生成此 PDF 的程序"
+                />
               </div>
+
               <div class="form-row">
                 <div class="form-item">
-                  <label>创建日期 (Creation Date)</label>
-                  <el-date-picker
-                    v-model="metadata.creationDate"
-                    type="datetime"
-                    placeholder="选择日期"
-                    style="width: 100%"
+                  <label>创建日期</label>
+                  <input
+                    v-model="metadata.creationDateStr"
+                    type="datetime-local"
+                    class="brutal-input"
                   />
                 </div>
                 <div class="form-item">
-                  <label>修改日期 (Modification Date)</label>
-                  <el-date-picker
-                    v-model="metadata.modificationDate"
-                    type="datetime"
-                    placeholder="选择日期"
-                    style="width: 100%"
+                  <label>修改日期</label>
+                  <input
+                    v-model="metadata.modificationDateStr"
+                    type="datetime-local"
+                    class="brutal-input"
                   />
                 </div>
               </div>
             </div>
 
-            <div class="original-info glass-card">
-              <h4>原始元数据</h4>
-              <div class="info-grid">
-                <div v-for="(value, key) in originalMetadata" :key="key" class="info-item">
-                  <span class="info-label">{{ key }}</span>
-                  <span class="info-value">{{ value || '(空)' }}</span>
-                </div>
-              </div>
-            </div>
-
-            <el-button
-              type="primary"
-              size="large"
-              class="action-btn"
-              :loading="processing"
+            <button
+              class="brutal-action-btn action-btn primary large"
+              :disabled="processing"
               @click="saveMetadata"
             >
-              保存元数据并下载
-            </el-button>
+              {{ processing ? 'EXECUTING...' : 'COMMIT.保存并下载' }}
+            </button>
           </div>
 
-          <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
+          <div v-else class="empty-state warn">
+            <p>// 视图渲染失败</p>
+            <p>等待目标输入，请先装载材料</p>
+          </div>
         </div>
       </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - PDF 元数据编辑</footer>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, reactive } from 'vue';
   import { useRouter } from 'vue-router';
-  import { ArrowLeft, InfoFilled, Document } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
   import { PDFDocument } from 'pdf-lib';
   import { useFileHandler } from '@/composables';
@@ -133,6 +174,7 @@
       loadPdf(result.file);
     }
   });
+
   const pdfFile = ref(null);
   const pdfBytes = ref(null);
   const processing = ref(false);
@@ -144,8 +186,8 @@
     keywords: '',
     creator: '',
     producer: '',
-    creationDate: null,
-    modificationDate: null
+    creationDateStr: '',
+    modificationDateStr: ''
   });
 
   const originalMetadata = ref({});
@@ -155,8 +197,16 @@
   const clearFile = () => {
     pdfFile.value = null;
     pdfBytes.value = null;
-    Object.keys(metadata).forEach(key => (metadata[key] = key.includes('Date') ? null : ''));
+    Object.keys(metadata).forEach(key => (metadata[key] = ''));
     originalMetadata.value = {};
+  };
+
+  const formatDateForInput = date => {
+    if (!date) return '';
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return '';
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().slice(0, 16);
   };
 
   const loadPdf = async file => {
@@ -173,8 +223,8 @@
       metadata.keywords = (pdfDoc.getKeywords() || []).join(', ');
       metadata.creator = pdfDoc.getCreator() || '';
       metadata.producer = pdfDoc.getProducer() || '';
-      metadata.creationDate = pdfDoc.getCreationDate() || null;
-      metadata.modificationDate = pdfDoc.getModificationDate() || null;
+      metadata.creationDateStr = formatDateForInput(pdfDoc.getCreationDate());
+      metadata.modificationDateStr = formatDateForInput(pdfDoc.getModificationDate());
 
       originalMetadata.value = {
         标题: pdfDoc.getTitle(),
@@ -202,19 +252,22 @@
       if (metadata.title) pdfDoc.setTitle(metadata.title);
       if (metadata.author) pdfDoc.setAuthor(metadata.author);
       if (metadata.subject) pdfDoc.setSubject(metadata.subject);
-      if (metadata.keywords) {
-        pdfDoc.setKeywords(
-          metadata.keywords
-            .split(',')
-            .map(k => k.trim())
-            .filter(k => k)
-        );
+
+      const newKw = metadata.keywords
+        .split(',')
+        .map(k => k.trim())
+        .filter(k => k);
+      if (newKw.length) {
+        pdfDoc.setKeywords(newKw);
+      } else {
+        pdfDoc.setKeywords([]);
       }
+
       if (metadata.creator) pdfDoc.setCreator(metadata.creator);
       if (metadata.producer) pdfDoc.setProducer(metadata.producer);
-      if (metadata.creationDate) pdfDoc.setCreationDate(new Date(metadata.creationDate));
-      if (metadata.modificationDate)
-        pdfDoc.setModificationDate(new Date(metadata.modificationDate));
+      if (metadata.creationDateStr) pdfDoc.setCreationDate(new Date(metadata.creationDateStr));
+      if (metadata.modificationDateStr)
+        pdfDoc.setModificationDate(new Date(metadata.modificationDateStr));
 
       const modifiedBytes = await pdfDoc.save();
       const blob = new Blob([modifiedBytes], { type: 'application/pdf' });
@@ -236,182 +289,414 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f8fafc;
-    display: flex;
-    flex-direction: column;
-    color: #1e293b;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .tool-header {
+  .brutal-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
   }
 
-  .header-left,
-  .header-right {
-    width: 100px;
-    display: flex;
-    align-items: center;
-  }
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
 
-  .header-center {
     flex: 1;
     text-align: center;
   }
 
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0;
+  .brutal-title span {
+    color: #4b7bff;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
   }
 
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
     text-transform: uppercase;
   }
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  .brutal-btn.clear-btn {
+    background: #ff4b4b;
+    color: #fff;
+  }
 
-  .tool-content {
-    flex: 1;
-    padding: 2rem;
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 2.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+  }
+
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+  }
+  .bg-black {
+    background: #111;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .text-black {
+    color: #111;
+  }
+  .font-mono {
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .brutal-upload-area {
+    min-height: 250px;
+    margin: 2rem;
+    border: 4px dashed #111;
     display: flex;
     justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: #fdfae5;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .brutal-upload-area:hover {
+    background: #ffeba0;
+    transform: scale(1.02);
   }
 
-  .layout-container {
-    width: 100%;
-    max-width: 700px;
+  .upload-text h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+  .upload-text p {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.95rem;
+    color: #555;
+    padding: 0 1rem;
   }
 
-  .workbench {
-    padding: 2rem;
-    border-radius: 16px;
-    min-height: 400px;
-  }
-
-  .upload-placeholder {
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
-    height: 300px;
+  .file-loaded-info {
+    min-height: 200px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    color: #64748b;
+    text-align: center;
+    padding: 2rem;
+    background: #fdfae5;
   }
-
-  .upload-placeholder:hover {
-    border-color: #3b82f6;
-    background: #eff6ff;
-    color: #3b82f6;
-  }
-
-  .upload-icon {
-    font-size: 4rem;
+  .status-badge {
+    background: #111;
+    color: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: bold;
+    padding: 0.2rem 1rem;
     margin-bottom: 1rem;
+    letter-spacing: 2px;
+  }
+  .status-badge.success {
+    background: #00e572;
+    color: #111;
   }
 
-  .hint {
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
-    opacity: 0.7;
+  .file-loaded-info .filename {
+    font-weight: bold;
+    font-size: 1.2rem;
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.5rem 1rem;
+    box-shadow: 4px 4px 0px #111;
+    margin-bottom: 0.5rem;
+    word-break: break-all;
   }
 
-  .file-info {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: #f1f5f9;
-    padding: 0.75rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
+  .brutal-action-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.6rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+    text-transform: uppercase;
+    margin: 0;
+    width: 100%;
+  }
+  .brutal-action-btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+  .brutal-action-btn:active:not(:disabled) {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-action-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: 4px 4px 0px #666;
+    border-color: #666;
+  }
+  .brutal-action-btn.primary {
+    background: #ffd900;
+  }
+  .brutal-action-btn.large {
+    padding: 1.25rem 3rem;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
   }
 
-  .file-info .el-icon {
-    font-size: 1.5rem;
-    color: #3b82f6;
-  }
-
-  .file-info span {
+  /* 控制栏 */
+  .param-area {
     flex: 1;
-    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+  }
+  .param-box {
+    border: 4px dashed #111;
+    padding: 1.5rem;
+    background: #fafafa;
   }
 
   .metadata-form {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
-
-  .form-item {
-    margin-bottom: 1rem;
-  }
-
   .form-item label {
     display: block;
+    font-weight: bold;
     margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #334155;
+    font-family: 'IBM Plex Mono', monospace;
   }
-
+  .brutal-input {
+    width: 100%;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    box-sizing: border-box;
+    transition: all 0.2s;
+  }
+  .brutal-input:focus {
+    outline: none;
+    box-shadow: 6px 6px 0px #4b7bff;
+    border-color: #4b7bff;
+  }
   .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
   }
 
-  .original-info {
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 8px;
-  }
-
-  .original-info h4 {
-    margin: 0 0 0.75rem;
-    font-size: 0.9rem;
-    color: #64748b;
-  }
-
   .info-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem 1rem;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
   }
-
   .info-item {
-    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
   }
-
   .info-label {
-    color: #64748b;
+    font-weight: bold;
+    min-width: 80px;
   }
-
   .info-value {
-    color: #1e293b;
-    margin-left: 0.5rem;
+    color: #555;
+    word-break: break-all;
   }
 
-  .action-btn {
-    width: 100%;
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    min-height: 400px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .empty-state p {
+    margin: 0.5rem 0;
+    color: #555;
+  }
+  .empty-state.warn p {
+    font-weight: bold;
+    color: #cc0000;
   }
 
-  .glass-card {
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  @media (max-width: 1024px) {
+    .brutal-grid {
+      grid-template-columns: 1fr;
+    }
+    .brutal-title {
+      font-size: 2.5rem;
+    }
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  /* --- Dark Mode Overrides --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .param-box,
+  [data-theme='dark'] .brutal-input {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .pane-header {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-input {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover:not(:disabled),
+  [data-theme='dark'] .brutal-action-btn:hover:not(:disabled) {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active:not(:disabled),
+  [data-theme='dark'] .brutal-action-btn:active:not(:disabled) {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-input:focus {
+    box-shadow: 6px 6px 0px #4b7bff;
+    border-color: #4b7bff;
+  }
+
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-upload-area {
+    background: #222;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .file-loaded-info {
+    background: #222;
+  }
+  [data-theme='dark'] .file-loaded-info .filename {
+    background: #1a1a1a;
+    color: #eee;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #b28f00;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn.clear-btn,
+  [data-theme='dark'] .bg-danger {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .status-badge.success {
+    background: #00994c;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .info-value {
+    color: #ccc;
   }
 </style>

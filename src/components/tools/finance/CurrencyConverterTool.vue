@@ -1,170 +1,140 @@
 <template>
-  <div class="currency-converter-tool">
-    <div class="nav-header">
-      <button class="back-btn" @click="$router.back()">
-        <el-icon>
-          <Back />
-        </el-icon>
-        <span>返回</span>
-      </button>
-    </div>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">汇率<span>.换算()</span></h1>
+        <div style="width: 100px"></div>
+      </header>
 
-    <div class="tool-header">
-      <h1 class="font-display">货币汇率换算</h1>
-      <p class="summary">实时汇率查询与换算，支持30+货币，含历史趋势图表</p>
-    </div>
+      <main class="brutal-grid">
+        <div class="left-column">
+          <section class="brutal-pane">
+            <h2 class="pane-title mb-4">实时换算.CONVERT</h2>
+            <div class="convert-box">
+              <div class="currency-row">
+                <label class="form-label">源货币 / 金额</label>
+                <div class="input-with-select">
+                  <input
+                    v-model.number="fromAmount"
+                    type="number"
+                    placeholder="输入金额"
+                    class="brutal-input flex-2 text-2xl"
+                    @input="handleFromAmountChange"
+                  />
+                  <select
+                    v-model="fromCurrency"
+                    class="brutal-input currency-select"
+                    @change="handleCurrencyChange"
+                  >
+                    <optgroup label="常用货币">
+                      <option v-for="code in popularCurrencies" :key="code" :value="code">
+                        {{ code }} - {{ getCurrencyName(code) }}
+                      </option>
+                    </optgroup>
+                    <optgroup label="更多货币">
+                      <option v-for="code in otherCurrencies" :key="code" :value="code">
+                        {{ code }} - {{ getCurrencyName(code) }}
+                      </option>
+                    </optgroup>
+                  </select>
+                </div>
+              </div>
 
-    <div class="tool-content">
-      <div class="converter-card glass-card">
-        <div class="currency-row">
-          <div class="currency-input-group">
-            <label>源货币</label>
-            <div class="input-with-select">
-              <input
-                v-model.number="fromAmount"
-                type="number"
-                placeholder="输入金额"
-                class="amount-input"
-                @input="handleFromAmountChange"
-              />
-              <select v-model="fromCurrency" class="currency-select" @change="handleCurrencyChange">
-                <optgroup label="常用货币">
-                  <option v-for="code in popularCurrencies" :key="code" :value="code">
-                    {{ code }} - {{ getCurrencyName(code) }}
-                  </option>
-                </optgroup>
-                <optgroup label="更多货币">
-                  <option v-for="code in otherCurrencies" :key="code" :value="code">
-                    {{ code }} - {{ getCurrencyName(code) }}
-                  </option>
-                </optgroup>
-              </select>
+              <div class="swap-row">
+                <button class="swap-btn brutal-btn" title="互换货币" @click="swapCurrencies">
+                  ⇅
+                </button>
+                <div v-if="currentRate && !loading" class="rate-display">
+                  <span class="font-bold"
+                    >1 {{ fromCurrency }} = {{ currentRate.toFixed(4) }} {{ toCurrency }}</span
+                  >
+                  <span v-if="rateDate" class="rate-date">更新于 {{ rateDate }}</span>
+                </div>
+                <div v-else-if="loading" class="rate-display">
+                  <span class="font-bold">获取汇率中...</span>
+                </div>
+              </div>
+
+              <div class="currency-row">
+                <label class="form-label">目标货币 / 结果</label>
+                <div class="input-with-select">
+                  <input
+                    v-model.number="toAmount"
+                    type="number"
+                    placeholder="换算结果"
+                    class="brutal-input flex-2 text-2xl result-input"
+                    @input="handleToAmountChange"
+                  />
+                  <select
+                    v-model="toCurrency"
+                    class="brutal-input currency-select"
+                    @change="handleCurrencyChange"
+                  >
+                    <optgroup label="常用货币">
+                      <option v-for="code in popularCurrencies" :key="code" :value="code">
+                        {{ code }} - {{ getCurrencyName(code) }}
+                      </option>
+                    </optgroup>
+                    <optgroup label="更多货币">
+                      <option v-for="code in otherCurrencies" :key="code" :value="code">
+                        {{ code }} - {{ getCurrencyName(code) }}
+                      </option>
+                    </optgroup>
+                  </select>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+            <button class="brutal-btn w-full mt-6 bg-yellow" @click="shareResult">
+              📤 分享换算结果
+            </button>
+          </section>
 
-        <div class="swap-row">
-          <button class="swap-btn" title="互换货币" @click="swapCurrencies">
-            <el-icon>
-              <Sort />
-            </el-icon>
-          </button>
-          <div v-if="currentRate && !loading" class="rate-display">
-            <span>1 {{ fromCurrency }} = {{ currentRate.toFixed(4) }} {{ toCurrency }}</span>
-            <span v-if="rateDate" class="rate-date">更新于 {{ rateDate }}</span>
-          </div>
-          <div v-else-if="loading" class="rate-display loading">
-            <el-icon class="is-loading">
-              <Loading />
-            </el-icon>
-            <span>获取汇率中...</span>
-          </div>
-        </div>
-
-        <div class="currency-row">
-          <div class="currency-input-group">
-            <label>目标货币</label>
-            <div class="input-with-select">
-              <input
-                v-model.number="toAmount"
-                type="number"
-                placeholder="换算结果"
-                class="amount-input result"
-                @input="handleToAmountChange"
-              />
-              <select v-model="toCurrency" class="currency-select" @change="handleCurrencyChange">
-                <optgroup label="常用货币">
-                  <option v-for="code in popularCurrencies" :key="code" :value="code">
-                    {{ code }} - {{ getCurrencyName(code) }}
-                  </option>
-                </optgroup>
-                <optgroup label="更多货币">
-                  <option v-for="code in otherCurrencies" :key="code" :value="code">
-                    {{ code }} - {{ getCurrencyName(code) }}
-                  </option>
-                </optgroup>
-              </select>
+          <section class="brutal-pane mt-6 bg-cyan">
+            <h3 class="pane-title mb-4">快捷换算.QUICK</h3>
+            <div class="pairs-grid">
+              <button
+                v-for="pair in quickPairs"
+                :key="pair.from + pair.to"
+                class="brutal-btn quick-pair-btn"
+                :class="{ active: fromCurrency === pair.from && toCurrency === pair.to }"
+                @click="selectPair(pair)"
+              >
+                {{ pair.from }} / {{ pair.to }}
+              </button>
             </div>
-          </div>
+          </section>
         </div>
-      </div>
 
-      <div class="quick-pairs glass-card">
-        <h3>快捷换算</h3>
-        <div class="pairs-grid">
-          <button
-            v-for="pair in quickPairs"
-            :key="pair.from + pair.to"
-            class="pair-btn"
-            :class="{ active: fromCurrency === pair.from && toCurrency === pair.to }"
-            @click="selectPair(pair)"
-          >
-            {{ pair.from }}/{{ pair.to }}
-          </button>
-        </div>
-      </div>
+        <div class="right-column">
+          <section class="brutal-pane h-full flex-col">
+            <div class="pane-header flex justify-between items-center mb-4 pb-2 border-b-3">
+              <h3 class="font-bold text-lg m-0">
+                {{ fromCurrency }}/{{ toCurrency }} 趋势 (近30天)
+              </h3>
+              <button class="brutal-btn sm-btn" :disabled="historyLoading" @click="fetchHistory">
+                <span :class="{ 'spin-ani': historyLoading }">🔄</span>
+              </button>
+            </div>
 
-      <div class="chart-section glass-card">
-        <div class="chart-header">
-          <h3>{{ fromCurrency }}/{{ toCurrency }} 汇率趋势 (近30天)</h3>
-          <button class="refresh-btn" :disabled="historyLoading" @click="fetchHistory">
-            <el-icon :class="{ 'is-loading': historyLoading }">
-              <Refresh />
-            </el-icon>
-          </button>
+            <div class="chart-container brutal-shadow border-black bg-white flex-1 p-2">
+              <canvas ref="chartCanvas"></canvas>
+              <div
+                v-if="historyError"
+                class="chart-error bg-pink text-white font-bold p-2 border-black"
+              >
+                ⚠️ {{ historyError }}
+              </div>
+            </div>
+          </section>
         </div>
-        <div class="chart-container">
-          <canvas ref="chartCanvas"></canvas>
-        </div>
-        <div v-if="historyError" class="chart-error">
-          <el-icon>
-            <WarningFilled />
-          </el-icon>
-          <span>{{ historyError }}</span>
-        </div>
-      </div>
-
-      <div class="scenarios glass-card">
-        <h3>使用场景</h3>
-        <div class="scenario-tags">
-          <span class="tag"
-            ><el-icon>
-              <ShoppingCart />
-            </el-icon>
-            海淘购物</span
-          >
-          <span class="tag"
-            ><el-icon>
-              <Plane />
-            </el-icon>
-            出国旅行</span
-          >
-          <span class="tag"
-            ><el-icon>
-              <Money />
-            </el-icon>
-            跨境结算</span
-          >
-        </div>
-      </div>
-
-      <div class="share-section">
-        <button class="share-btn" @click="shareResult">
-          <el-icon>
-            <Share />
-          </el-icon>
-          分享换算结果
-        </button>
-      </div>
+      </main>
     </div>
-
-    <footer class="footer">© 2026 LRM工具箱 - 汇率换算</footer>
   </div>
 </template>
 
 <script setup>
   import { ref, computed, onMounted, watch, nextTick } from 'vue';
-  import { Back, Sort, Loading, Refresh } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
   import { Chart, registerables } from 'chart.js';
   import {
@@ -179,10 +149,6 @@
 
   import { useCopy } from '@/composables/useCopy';
   const { copyToClipboard } = useCopy();
-
-  const Plane = {
-    template: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>`
-  };
 
   const fromAmount = ref(100);
   const toAmount = ref(0);
@@ -214,9 +180,7 @@
     { from: 'EUR', to: 'GBP' }
   ];
 
-  const getCurrencyName = code => {
-    return currencyNames[code] || code;
-  };
+  const getCurrencyName = code => currencyNames[code] || code;
 
   const fetchRate = async () => {
     if (fromCurrency.value === toCurrency.value) {
@@ -230,7 +194,6 @@
       const data = await getLatestRate(fromCurrency.value, toCurrency.value, 1);
       currentRate.value = data.rates[toCurrency.value];
       rateDate.value = data.date;
-
       toAmount.value = parseFloat((fromAmount.value * currentRate.value).toFixed(2));
     } catch {
       ElMessage.error('获取汇率失败，请稍后重试');
@@ -261,10 +224,11 @@
 
   const renderChart = data => {
     if (!chartCanvas.value) return;
+    if (chartInstance) chartInstance.destroy();
 
-    if (chartInstance) {
-      chartInstance.destroy();
-    }
+    Chart.defaults.font.family = "'IBM Plex Mono', 'Noto Sans SC', monospace";
+    Chart.defaults.font.weight = 'bold';
+    Chart.defaults.color = '#111';
 
     const ctx = chartCanvas.value.getContext('2d');
     chartInstance = new Chart(ctx, {
@@ -275,12 +239,15 @@
           {
             label: `1 ${fromCurrency.value} = ? ${toCurrency.value}`,
             data: data.values,
-            borderColor: 'rgb(139, 92, 246)',
-            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+            borderColor: '#ff4b4b',
+            backgroundColor: 'rgba(255, 75, 75, 0.2)',
+            borderWidth: 3,
             fill: true,
-            tension: 0.3,
-            pointRadius: 2,
-            pointHoverRadius: 5
+            tension: 0,
+            pointRadius: 0,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#111',
+            pointBorderColor: '#111'
           }
         ]
       },
@@ -288,31 +255,32 @@
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: {
-            display: false
-          },
+          legend: { display: false },
           tooltip: {
-            callbacks: {
-              label: context => `${context.parsed.y.toFixed(4)} ${toCurrency.value}`
-            }
+            backgroundColor: '#111',
+            titleFont: { size: 12 },
+            bodyFont: { size: 14, weight: 'bold' },
+            cornerRadius: 0,
+            padding: 10,
+            displayColors: false,
+            callbacks: { label: context => `${context.parsed.y.toFixed(4)} ${toCurrency.value}` }
           }
         },
         scales: {
           x: {
-            grid: { display: false }
+            grid: { display: false },
+            ticks: { maxTicksLimit: 6 },
+            border: { color: '#111', width: 2 }
           },
-          y: {
-            grid: { color: 'rgba(0,0,0,0.05)' }
-          }
+          y: { grid: { color: 'rgba(0,0,0,0.1)' }, border: { color: '#111', width: 2 } }
         }
       }
     });
   };
 
   const handleFromAmountChange = () => {
-    if (currentRate.value) {
+    if (currentRate.value)
       toAmount.value = parseFloat((fromAmount.value * currentRate.value).toFixed(2));
-    }
   };
 
   const handleToAmountChange = () => {
@@ -329,13 +297,10 @@
   const swapCurrencies = () => {
     const tempCurrency = fromCurrency.value;
     const tempAmount = fromAmount.value;
-
     fromCurrency.value = toCurrency.value;
     toCurrency.value = tempCurrency;
-
     fromAmount.value = toAmount.value;
     toAmount.value = tempAmount;
-
     fetchRate();
     fetchHistory();
   };
@@ -350,11 +315,8 @@
   const shareResult = async () => {
     const text = `汇率换算：${fromAmount.value} ${fromCurrency.value} = ${toAmount.value} ${toCurrency.value} (汇率: ${currentRate.value?.toFixed(4) || 'N/A'})`;
     try {
-      if (navigator.share) {
-        await navigator.share({ title: '货币汇率换算', text });
-      } else {
-        copyToClipboard(text, { success: '换算结果已复制到剪贴板' });
-      }
+      if (navigator.share) await navigator.share({ title: '货币汇率换算', text });
+      else copyToClipboard(text, { success: '换算结果已复制到剪贴板' });
     } catch {
       ElMessage.error('分享失败');
     }
@@ -374,76 +336,44 @@
 </script>
 
 <style scoped>
-  .currency-converter-tool {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 40px 20px;
+  @import '@/assets/styles/brutalism.css';
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
   }
 
-  .nav-header {
-    margin-bottom: 20px;
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
   }
 
-  .back-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-    font-size: 1rem;
-    padding: 8px 16px;
-    border-radius: 8px;
-    transition: all 0.2s;
+  .pane-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin: 0;
+    border-bottom: 3px solid #111;
+    padding-bottom: 8px;
   }
 
-  .back-btn:hover {
-    background: rgba(0, 0, 0, 0.05);
-    color: var(--text-primary);
-  }
-
-  .tool-header {
-    text-align: center;
-    margin-bottom: 40px;
-  }
-
-  .tool-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 16px;
-    background: var(--accent-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .summary {
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-  }
-
-  .tool-content {
+  .convert-box {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 1.5rem;
   }
 
-  .converter-card {
-    padding: 32px;
-    background: white;
-    border-radius: 16px;
-  }
-
-  .currency-row {
-    margin-bottom: 16px;
-  }
-
-  .currency-input-group label {
+  .form-label {
     display: block;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    margin-bottom: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #111;
   }
 
   .input-with-select {
@@ -451,102 +381,49 @@
     gap: 12px;
   }
 
-  .amount-input {
-    flex: 1;
-    padding: 14px 16px;
+  .flex-2 {
+    flex: 2;
+  }
+  .text-2xl {
     font-size: 1.5rem;
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    transition: border-color 0.2s;
-    background: var(--bg-secondary);
+    font-family: 'IBM Plex Mono', monospace;
   }
-
-  .amount-input:focus {
-    outline: none;
-    border-color: var(--accent-purple);
-  }
-
-  .amount-input.result {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(99, 102, 241, 0.05));
-    font-weight: 600;
+  .result-input {
+    background: #ffd900;
   }
 
   .currency-select {
-    width: 180px;
-    padding: 14px 12px;
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    font-size: 1rem;
-    background: white;
+    flex: 1;
     cursor: pointer;
-  }
-
-  .currency-select:focus {
-    outline: none;
-    border-color: var(--accent-purple);
   }
 
   .swap-row {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 16px 0;
-    border-top: 1px dashed var(--border-color);
-    border-bottom: 1px dashed var(--border-color);
-    margin: 16px 0;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-top: 3px dashed #111;
+    border-bottom: 3px dashed #111;
   }
 
   .swap-btn {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 2px solid var(--accent-purple);
-    background: white;
-    color: var(--accent-purple);
-    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
-    transition: all 0.2s;
-  }
-
-  .swap-btn:hover {
-    background: var(--accent-purple);
-    color: white;
-    transform: rotate(180deg);
+    font-size: 1.2rem;
+    font-weight: 900;
   }
 
   .rate-display {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    font-size: 1rem;
-    color: var(--text-primary);
   }
-
-  .rate-display.loading {
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-    color: var(--text-secondary);
-  }
-
   .rate-date {
     font-size: 0.8rem;
-    color: var(--text-muted);
-  }
-
-  .quick-pairs {
-    padding: 24px;
-    background: white;
-    border-radius: 16px;
-  }
-
-  .quick-pairs h3 {
-    margin-bottom: 16px;
-    font-size: 1rem;
-    color: var(--text-secondary);
+    color: #555;
   }
 
   .pairs-grid {
@@ -555,178 +432,159 @@
     gap: 12px;
   }
 
-  .pair-btn {
-    padding: 10px 16px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    background: var(--bg-secondary);
-    cursor: pointer;
-    font-size: 0.95rem;
-    transition: all 0.2s;
+  .quick-pair-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    padding: 6px 12px;
+    white-space: nowrap;
+  }
+  .quick-pair-btn.active {
+    background: #111;
+    color: #fff;
   }
 
-  .pair-btn:hover {
-    border-color: var(--accent-purple);
-    color: var(--accent-purple);
-  }
-
-  .pair-btn.active {
-    background: var(--accent-purple);
-    color: white;
-    border-color: var(--accent-purple);
-  }
-
-  .chart-section {
-    padding: 24px;
-    background: white;
-    border-radius: 16px;
-  }
-
-  .chart-header {
+  .flex-col {
     display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 400px;
+  }
+  .flex-1 {
+    flex: 1;
+  }
+  .border-b-3 {
+    border-bottom: 3px solid #111;
+  }
+  .m-0 {
+    margin: 0;
+  }
+  .p-2 {
+    padding: 0.5rem;
+  }
+  .w-full {
+    width: 100%;
+  }
+  .mt-6 {
+    margin-top: 1.5rem;
+  }
+  .mb-4 {
+    margin-bottom: 1rem;
+  }
+  .pb-2 {
+    padding-bottom: 0.5rem;
+  }
+  .flex {
+    display: flex;
+  }
+  .justify-between {
     justify-content: space-between;
+  }
+  .items-center {
     align-items: center;
-    margin-bottom: 16px;
   }
-
-  .chart-header h3 {
-    font-size: 1rem;
-    color: var(--text-primary);
+  .border-black {
+    border: 3px solid #111;
   }
-
-  .refresh-btn {
-    width: 32px;
-    height: 32px;
-    border: none;
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-secondary);
+  .font-bold {
+    font-weight: bold;
   }
-
-  .refresh-btn:hover {
-    background: var(--accent-purple);
-    color: white;
+  .text-lg {
+    font-size: 1.125rem;
+  }
+  .h-full {
+    height: 100%;
+  }
+  .sm-btn {
+    padding: 4px 8px;
+    font-size: 0.9rem;
   }
 
   .chart-container {
-    height: 250px;
     position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
   }
-
   .chart-error {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: center;
-    padding: 20px;
-    color: var(--text-muted);
-  }
-
-  .scenarios {
-    padding: 24px;
-    background: white;
-    border-radius: 16px;
-  }
-
-  .scenarios h3 {
-    margin-bottom: 16px;
-    font-size: 1rem;
-    color: var(--text-secondary);
-  }
-
-  .scenario-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .tag {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(99, 102, 241, 0.1));
-    border-radius: 20px;
-    font-size: 0.9rem;
-    color: var(--accent-purple);
-  }
-
-  .share-section {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    right: 1rem;
     text-align: center;
   }
 
-  .share-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 24px;
-    background: var(--accent-gradient);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition:
-      transform 0.2s,
-      box-shadow 0.2s;
+  .spin-ani {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    100% {
+      transform: rotate(360deg);
+    }
   }
 
-  .share-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+  .bg-yellow {
+    background-color: #ffd900;
   }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-    border-top: 1px solid var(--border-color);
-    margin-top: 40px;
+  .bg-cyan {
+    background-color: #00ffff;
+  }
+  .bg-pink {
+    background-color: #ff4b4b;
+  }
+  .text-white {
+    color: #fff;
   }
 
   @media (max-width: 768px) {
-    .tool-header h1 {
-      font-size: 1.8rem;
+    .brutal-grid {
+      grid-template-columns: 1fr;
     }
-
     .input-with-select {
       flex-direction: column;
     }
-
-    .currency-select {
-      width: 100%;
-    }
-
-    .amount-input {
-      font-size: 1.2rem;
-    }
-
-    .swap-row {
-      flex-direction: column;
-      text-align: center;
-    }
-
-    .pairs-grid {
-      justify-content: center;
+    .chart-container {
+      min-height: 250px;
     }
   }
 
-  .is-loading {
-    animation: spin 1s linear infinite;
+  /* Dark mode */
+  [data-theme='dark'] .brutal-wrapper {
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
   }
-
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-
-    to {
-      transform: rotate(360deg);
-    }
+  [data-theme='dark'] .bg-yellow {
+    background-color: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-cyan {
+    background-color: #008080;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background-color: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .quick-pair-btn.active {
+    background: #eee;
+    color: #111;
+    box-shadow: 4px 4px 0px #1a1a1a;
+  }
+  [data-theme='dark'] .swap-row {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .result-input {
+    background: #333;
+    color: #ffd900;
+  }
+  [data-theme='dark'] .rate-date {
+    color: #aaa;
+  }
+  [data-theme='dark'] .form-label {
+    color: #eee;
+  }
+  [data-theme='dark'] .chart-container {
+    background: #1a1a1a;
+    border-color: #eee;
   }
 </style>

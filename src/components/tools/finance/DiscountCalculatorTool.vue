@@ -1,199 +1,208 @@
 <template>
-  <div class="discount-calculator-tool">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="$router.back()">
-        <el-icon>
-          <Back />
-        </el-icon>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>折扣计算器</h1>
-        <span class="nav-subtitle">Discount Calculator</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">折扣<span>.计算()</span></h1>
+        <div style="width: 100px"></div>
+      </header>
 
-    <main class="main-content">
-      <div class="mode-tabs glass-card">
-        <button :class="['tab-btn', { active: mode === 'single' }]" @click="mode = 'single'">
-          <el-icon>
-            <PriceTag />
-          </el-icon>
-          单品折扣
-        </button>
-        <button :class="['tab-btn', { active: mode === 'pool' }]" @click="mode = 'pool'">
-          <el-icon>
-            <ShoppingCart />
-          </el-icon>
-          满减凑单
-        </button>
-      </div>
-
-      <section v-if="mode === 'single'" class="calculator-card glass-card">
-        <div class="input-form">
-          <div class="form-group">
-            <label>原价 (¥)</label>
-            <input
-              v-model.number="originalPrice"
-              type="number"
-              placeholder="0.00"
-              class="main-input"
-            />
-          </div>
-
-          <div class="form-group">
-            <label>折扣力度</label>
-            <div class="discount-input-group">
-              <input
-                v-model.number="discountValue"
-                type="number"
-                placeholder="例如 8.5"
-                class="sub-input"
-              />
-              <div class="toggle-type">
-                <span :class="{ active: discountType === 'zhe' }" @click="discountType = 'zhe'"
-                  >折</span
-                >
-                <span
-                  :class="{ active: discountType === 'percent' }"
-                  @click="discountType = 'percent'"
-                  >% off</span
-                >
-              </div>
-            </div>
-            <div class="quick-select">
-              <span @click="setDiscount(9)">9折</span>
-              <span @click="setDiscount(8.5)">85折</span>
-              <span @click="setDiscount(8)">8折</span>
-              <span @click="setDiscount(7)">7折</span>
-              <span @click="setDiscount(5)">半价</span>
-            </div>
-          </div>
-        </div>
-
-        <div v-if="originalPrice > 0" class="result-display">
-          <div class="final-price-box">
-            <span class="label">折后价</span>
-            <div class="price">
-              <span class="symbol">¥</span>
-              {{ formatMoney(singleResult.final) }}
-            </div>
-          </div>
-
-          <div class="saved-info">
-            <div class="saved-badge">已省 ¥{{ formatMoney(singleResult.saved) }}</div>
-            <div class="real-rate">实付 {{ singleResult.realRate }}折</div>
-          </div>
-        </div>
-      </section>
-
-      <section v-else class="calculator-card glass-card">
-        <div class="pool-header">
-          <div class="form-group">
-            <label>活动规则</label>
-            <div class="rule-inputs">
-              <span class="prefix">满</span>
-              <input v-model.number="poolRule.threshold" type="number" placeholder="300" />
-              <span class="middle">减</span>
-              <input v-model.number="poolRule.reduce" type="number" placeholder="50" />
-            </div>
-
-            <div class="rule-option">
-              <label class="checkbox-label">
-                <input v-model="poolRule.isLoop" type="checkbox" /> 每满{{
-                  poolRule.threshold || 300
-                }}减{{ poolRule.reduce || 50 }}
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <div class="items-list">
-          <div class="list-label">商品列表</div>
-          <div v-for="(item, idx) in poolItems" :key="idx" class="item-row">
-            <input
-              v-model="item.name"
-              type="text"
-              :placeholder="`商品 ${idx + 1}`"
-              class="item-name"
-            />
-            <div class="item-price-wrapper">
-              <span>¥</span>
-              <input
-                v-model.number="item.price"
-                type="number"
-                placeholder="0"
-                @input="checkNewItem(idx)"
-              />
-            </div>
-            <button v-if="poolItems.length > 1" class="del-btn" @click="delItem(idx)">
-              <el-icon>
-                <Delete />
-              </el-icon>
+      <main
+        class="flex justify-center"
+        style="max-width: 1200px; width: 100%; margin: 0 auto; padding-bottom: 2rem"
+      >
+        <div class="center-card">
+          <div class="mode-tabs brutal-shadow mb-6">
+            <button
+              class="tab-btn brutal-input"
+              :class="{ active: mode === 'single' }"
+              @click="mode = 'single'"
+            >
+              🛒 单品折扣
+            </button>
+            <button
+              class="tab-btn brutal-input"
+              :class="{ active: mode === 'pool' }"
+              @click="mode = 'pool'"
+            >
+              📦 满减凑单
             </button>
           </div>
-          <button class="add-item-btn" @click="addItem">
-            <el-icon>
-              <Plus />
-            </el-icon>
-            添加商品
-          </button>
+
+          <!-- 单品模式 -->
+          <section v-if="mode === 'single'" class="brutal-pane bg-white">
+            <div class="form-group mb-6">
+              <label class="form-label">原价 (¥)</label>
+              <input
+                v-model.number="originalPrice"
+                type="number"
+                placeholder="0.00"
+                class="brutal-input w-full text-2xl h-14"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">折扣力度</label>
+              <div class="discount-input-group brutal-shadow mb-4">
+                <input
+                  v-model.number="discountValue"
+                  type="number"
+                  placeholder="如 8.5"
+                  class="brutal-input border-0 flex-1 text-xl"
+                  style="box-shadow: none"
+                />
+                <div class="toggle-type flex border-l-3 border-black">
+                  <span
+                    class="toggle-btn"
+                    :class="{ active: discountType === 'zhe' }"
+                    @click="discountType = 'zhe'"
+                    >折</span
+                  >
+                  <span
+                    class="toggle-btn"
+                    :class="{ active: discountType === 'percent' }"
+                    @click="discountType = 'percent'"
+                    >% off</span
+                  >
+                </div>
+              </div>
+
+              <div class="quick-select">
+                <button class="brutal-btn py-1 px-3 text-sm" @click="setDiscount(9)">9折</button>
+                <button class="brutal-btn py-1 px-3 text-sm" @click="setDiscount(8.5)">85折</button>
+                <button class="brutal-btn py-1 px-3 text-sm" @click="setDiscount(8)">8折</button>
+                <button class="brutal-btn py-1 px-3 text-sm" @click="setDiscount(7)">7折</button>
+                <button class="brutal-btn py-1 px-3 text-sm" @click="setDiscount(5)">半价</button>
+              </div>
+            </div>
+
+            <div v-if="originalPrice > 0" class="result-display mt-8 border-t-4 border-black pt-6">
+              <div class="final-price-box">
+                <span class="label font-bold text-gray-600">折后价 RESULT</span>
+                <div class="price highlight">
+                  <span class="symbol font-mono">¥</span>
+                  {{ formatMoney(singleResult.final) }}
+                </div>
+              </div>
+
+              <div class="saved-info flex justify-center gap-4 mt-6">
+                <div class="badge bg-pink text-white">
+                  🔥 已省 ¥{{ formatMoney(singleResult.saved) }}
+                </div>
+                <div class="badge bg-yellow">💡 实付 {{ singleResult.realRate }}折</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 满减模式 -->
+          <section v-else class="brutal-pane bg-cyan">
+            <div class="pool-header mb-6 p-4 bg-white border-3 border-black brutal-shadow">
+              <label class="form-label font-bold">活动规则.RULES</label>
+              <div class="rule-inputs flex items-center gap-2 mt-2">
+                <span class="font-bold">满</span>
+                <input
+                  v-model.number="poolRule.threshold"
+                  type="number"
+                  placeholder="300"
+                  class="brutal-input w-24 text-center"
+                />
+                <span class="font-bold">减</span>
+                <input
+                  v-model.number="poolRule.reduce"
+                  type="number"
+                  placeholder="50"
+                  class="brutal-input w-24 text-center"
+                />
+              </div>
+              <label class="brutal-checkbox mt-4">
+                <input v-model="poolRule.isLoop" type="checkbox" />
+                <span class="check-box"></span>
+                <strong>每满 {{ poolRule.threshold }} 减 {{ poolRule.reduce }} (循环计算)</strong>
+              </label>
+            </div>
+
+            <div class="items-list bg-white p-4 border-3 border-black brutal-shadow">
+              <label class="form-label font-bold border-b-3 border-black pb-2 mb-4 block"
+                >商品列表.ITEMS</label
+              >
+              <div v-for="(item, idx) in poolItems" :key="idx" class="item-row flex gap-2 mb-3">
+                <input
+                  v-model="item.name"
+                  type="text"
+                  :placeholder="`商品 ${idx + 1}`"
+                  class="brutal-input flex-2"
+                />
+                <div
+                  class="item-price flex items-center bg-white border-3 border-black px-2 flex-1"
+                >
+                  <span class="font-bold mr-1">¥</span>
+                  <input
+                    v-model.number="item.price"
+                    type="number"
+                    placeholder="0"
+                    class="border-0 outline-none w-full font-mono font-bold"
+                  />
+                </div>
+                <button
+                  v-if="poolItems.length > 1"
+                  class="brutal-btn bg-pink text-white px-3"
+                  @click="delItem(idx)"
+                >
+                  ✕
+                </button>
+              </div>
+              <button class="brutal-btn w-full mt-2 bg-yellow" @click="addItem">
+                + 添加新商品
+              </button>
+            </div>
+
+            <div class="pool-result mt-6 bg-white p-4 border-3 border-black brutal-shadow">
+              <div class="flex justify-between mb-2">
+                <span class="font-bold">商品总额</span>
+                <span class="font-mono font-bold">¥{{ formatMoney(poolResult.total) }}</span>
+              </div>
+              <div class="flex justify-between mb-2 text-red">
+                <span class="font-bold text-pink">优惠金额</span>
+                <span class="font-mono font-bold text-pink"
+                  >- ¥{{ formatMoney(poolResult.discount) }}</span
+                >
+              </div>
+              <div class="flex justify-between pt-3 border-t-3 border-black text-xl">
+                <span class="font-black">实付总额</span>
+                <span class="font-mono font-black highlight"
+                  >¥{{ formatMoney(poolResult.final) }}</span
+                >
+              </div>
+
+              <div class="mt-6 pt-4 border-t-3 border-dashed border-black">
+                <div v-if="poolResult.nextThreshold > 0" class="tips-box bg-yellow">
+                  <div>
+                    ⚠️ 再凑
+                    <strong class="font-mono text-lg">¥{{ formatMoney(poolResult.diff) }}</strong>
+                  </div>
+                  <div>
+                    👉 可减
+                    <strong class="font-mono text-lg"
+                      >¥{{ formatMoney(poolResult.nextReduce) }}</strong
+                    >
+                  </div>
+                </div>
+                <div v-else-if="poolResult.total > 0" class="tips-box bg-green text-black">
+                  ✅ 已达成满减优惠！相当于 {{ poolResult.rate }} 折
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
-
-        <div class="pool-result">
-          <div class="pool-summary">
-            <div class="p-row">
-              <span>商品总额</span>
-              <span class="val">¥{{ formatMoney(poolResult.total) }}</span>
-            </div>
-            <div class="p-row highlight">
-              <span>优惠金额</span>
-              <span class="val">- ¥{{ formatMoney(poolResult.discount) }}</span>
-            </div>
-            <div class="p-row total">
-              <span>实付金额</span>
-              <span class="val">¥{{ formatMoney(poolResult.final) }}</span>
-            </div>
-          </div>
-
-          <div v-if="poolResult.nextThreshold > 0" class="pool-tips">
-            <el-icon>
-              <Warning />
-            </el-icon>
-            <span>
-              再凑 <b>¥{{ formatMoney(poolResult.diff) }}</b> 可减
-              <b>¥{{ formatMoney(poolResult.nextReduce) }}</b>
-            </span>
-          </div>
-          <div v-else-if="poolResult.total > 0" class="pool-tips success">
-            <el-icon>
-              <CircleCheck />
-            </el-icon>
-            <span>已达成满减优惠！相当于 {{ poolResult.rate }} 折</span>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="footer">© 2026 LRM工具箱 - 折扣计算器</footer>
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, computed } from 'vue';
-  import {
-    Back,
-    PriceTag,
-    ShoppingCart,
-    Delete,
-    Plus,
-    Warning,
-    CircleCheck
-  } from '@element-plus/icons-vue';
 
   const mode = ref('single');
-
   const originalPrice = ref('');
   const discountValue = ref(8);
   const discountType = ref('zhe');
@@ -208,27 +217,16 @@
     const d = parseFloat(discountValue.value) || 0;
 
     let final = 0;
-    if (discountType.value === 'zhe') {
-      final = p * (d / 10);
-    } else {
-      final = p * ((100 - d) / 100);
-    }
+    if (discountType.value === 'zhe') final = p * (d / 10);
+    else final = p * ((100 - d) / 100);
 
     const saved = p - final;
     const realRate = p > 0 ? ((final / p) * 10).toFixed(1) : '0';
-
     return { final, saved, realRate };
   });
 
-  const poolRule = ref({
-    threshold: 300,
-    reduce: 50,
-    isLoop: true
-  });
-
+  const poolRule = ref({ threshold: 300, reduce: 50, isLoop: true });
   const poolItems = ref([{ name: '', price: '' }]);
-
-  const checkNewItem = () => {};
 
   const addItem = () => poolItems.value.push({ name: '', price: '' });
   const delItem = idx => poolItems.value.splice(idx, 1);
@@ -247,7 +245,6 @@
       if (poolRule.value.isLoop) {
         const count = Math.floor(total / T);
         discount = count * R;
-
         nextThreshold = (count + 1) * T;
         diff = nextThreshold - total;
         nextReduce = R;
@@ -265,16 +262,7 @@
 
     const final = total - discount;
     const rate = total > 0 ? ((final / total) * 10).toFixed(1) : 0;
-
-    return {
-      total,
-      discount,
-      final,
-      nextThreshold,
-      diff,
-      nextReduce,
-      rate
-    };
+    return { total, discount, final, nextThreshold, diff, nextReduce, rate };
   });
 
   const formatMoney = val => {
@@ -284,408 +272,366 @@
 </script>
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap');
+  @import '@/assets/styles/brutalism.css';
 
-  .discount-calculator-tool {
-    --bg: #faf9f7;
-    --card: #ffffff;
-    --border: #e8e6e3;
-    --text: #1a1a1a;
-    --text-2: #6b6b6b;
-    --accent: #f59e0b;
-
-    --accent-light: #fffbeb;
-    --red: #ef4444;
-    --green: #10b981;
-
-    font-family: 'Noto Sans SC', sans-serif;
-    min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
   }
 
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
   }
-
-  .nav-back,
-  .nav-spacer {
-    width: 80px;
-  }
-
-  .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--text-2);
-    cursor: pointer;
-    font-size: 0.9rem;
-    padding: 0.5rem 0;
-  }
-
-  .nav-center h1 {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 1.25rem;
-    font-weight: 600;
-  }
-
-  .nav-subtitle {
-    font-size: 0.7rem;
-    color: var(--text-2);
-    text-transform: uppercase;
-    display: block;
-    text-align: center;
-  }
-
-  .main-content {
+  .center-card {
     max-width: 600px;
+    width: 100%;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
-  }
-
-  .glass-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   }
 
   .mode-tabs {
     display: flex;
-    padding: 0.5rem;
-    gap: 0.5rem;
+    background: #111;
+    border: 3px solid #111;
+    gap: 4px;
+    padding: 4px;
   }
 
   .tab-btn {
     flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.75rem;
     border: none;
     background: transparent;
-    color: var(--text-2);
-    border-radius: 8px;
+    color: #fff;
+    padding: 12px;
+    font-size: 1.1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
     cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.2s;
+    box-shadow: none;
   }
-
   .tab-btn.active {
-    background: var(--accent-light);
-    color: var(--accent);
-    font-weight: 600;
+    background: #ffd900;
+    color: #111;
+  }
+  .tab-btn:hover:not(.active) {
+    background: #333;
   }
 
-  .input-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-
-  .form-group label {
+  .form-label {
     display: block;
-    font-size: 0.9rem;
-    color: var(--text-2);
+    font-size: 1.1rem;
+    font-weight: 800;
     margin-bottom: 0.5rem;
-  }
-
-  .main-input {
-    width: 100%;
-    padding: 1rem;
-    font-size: 1.5rem;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    font-weight: 600;
+    color: #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
   }
 
   .discount-input-group {
     display: flex;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-
-  .sub-input {
-    flex: 1;
-    border: none;
-    padding: 1rem;
-    font-size: 1.2rem;
-    outline: none;
+    border: 3px solid #111;
+    background: #fff;
   }
 
   .toggle-type {
     display: flex;
-    background: var(--bg);
   }
-
-  .toggle-type span {
+  .toggle-btn {
     padding: 0 1rem;
     display: flex;
     align-items: center;
     cursor: pointer;
-    color: var(--text-2);
-    font-size: 0.9rem;
-    border-left: 1px solid var(--border);
+    font-weight: 800;
+    background: #fff;
+    color: #111;
+    border-left: 3px solid #111;
+    transition: all 0.1s;
   }
-
-  .toggle-type span.active {
-    background: var(--accent);
-    color: white;
+  .toggle-btn:first-child {
+    border-left: none;
+  }
+  .toggle-btn.active {
+    background: #ff4b4b;
+    color: #fff;
   }
 
   .quick-select {
     display: flex;
     gap: 0.5rem;
-    margin-top: 0.75rem;
     flex-wrap: wrap;
-  }
-
-  .quick-select span {
-    padding: 4px 12px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    color: var(--text-2);
-  }
-
-  .quick-select span:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  .result-display {
-    text-align: center;
-    border-top: 1px solid var(--border);
-    padding-top: 2rem;
-  }
-
-  .final-price-box .label {
-    font-size: 0.9rem;
-    color: var(--text-2);
-  }
-
-  .final-price-box .price {
-    font-size: 3rem;
-    font-weight: 700;
-    color: var(--red);
-    line-height: 1.1;
-    margin: 0.5rem 0;
-  }
-
-  .final-price-box .symbol {
-    font-size: 1.5rem;
-    font-weight: 400;
-    margin-right: 4px;
-  }
-
-  .saved-info {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
     margin-top: 1rem;
   }
 
-  .saved-badge {
-    background: #fef2f2;
-    color: var(--red);
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
-
-  .real-rate {
-    background: #fffbeb;
-    color: var(--accent);
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-size: 0.9rem;
-  }
-
-  .pool-header {
-    margin-bottom: 2rem;
-  }
-
-  .rule-inputs {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 1rem;
-  }
-
-  .rule-inputs input {
-    width: 80px;
-    padding: 0.5rem;
+  .final-price-box {
     text-align: center;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-weight: 600;
+  }
+  .highlight {
+    font-size: 4rem;
+    font-weight: 900;
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+  }
+  .text-pink {
+    color: #ff4b4b;
   }
 
-  .rule-option {
-    margin-top: 0.75rem;
+  .badge {
+    padding: 6px 12px;
+    border: 3px solid #111;
+    font-weight: 800;
+    font-size: 0.95rem;
+    box-shadow: 3px 3px 0px #111;
   }
 
-  .checkbox-label {
-    display: flex;
+  .items-center {
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-    color: var(--text-2);
-    cursor: pointer;
   }
-
-  .items-list {
-    margin-bottom: 2rem;
+  .justify-center {
+    justify-content: center;
   }
-
-  .list-label {
-    font-size: 0.9rem;
-    color: var(--text-2);
-    margin-bottom: 0.5rem;
+  .text-center {
+    text-align: center;
   }
-
-  .item-row {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
+  .w-full {
+    width: 100%;
   }
-
-  .item-name {
-    flex: 2;
-    padding: 0.5rem;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 0.9rem;
+  .w-24 {
+    width: 6rem;
   }
-
-  .item-price-wrapper {
+  .h-14 {
+    height: 3.5rem;
+  }
+  .flex-1 {
     flex: 1;
+  }
+  .flex-2 {
+    flex: 2;
+  }
+  .text-xl {
+    font-size: 1.25rem;
+  }
+  .text-2xl {
+    font-size: 1.5rem;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .text-sm {
+    font-size: 0.875rem;
+  }
+  .text-lg {
+    font-size: 1.125rem;
+  }
+  .font-bold {
+    font-weight: bold;
+  }
+  .font-black {
+    font-weight: 900;
+  }
+  .font-mono {
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .block {
+    display: block;
+  }
+  .flex {
     display: flex;
-    align-items: center;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0 0.5rem;
-    background: white;
   }
-
-  .item-price-wrapper span {
-    color: var(--text-2);
-    margin-right: 4px;
+  .justify-between {
+    justify-content: space-between;
   }
-
-  .item-price-wrapper input {
-    width: 100%;
-    border: none;
-    outline: none;
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-
-  .del-btn {
-    width: 36px;
-    background: white;
-    border: 1px solid var(--border);
-    color: var(--text-2);
-    border-radius: 6px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .add-item-btn {
-    width: 100%;
-    margin-top: 0.5rem;
-    padding: 0.5rem;
-    background: var(--bg);
-    border: 1px dashed var(--border);
-    color: var(--text-2);
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .gap-2 {
     gap: 0.5rem;
-    transition: all 0.2s;
   }
-
-  .add-item-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+  .gap-4 {
+    gap: 1rem;
   }
-
-  .pool-result {
-    border-top: 1px solid var(--border);
+  .mb-2 {
+    margin-bottom: 0.5rem;
+  }
+  .mb-3 {
+    margin-bottom: 0.75rem;
+  }
+  .mb-4 {
+    margin-bottom: 1rem;
+  }
+  .mb-6 {
+    margin-bottom: 1.5rem;
+  }
+  .mt-2 {
+    margin-top: 0.5rem;
+  }
+  .mt-4 {
+    margin-top: 1rem;
+  }
+  .mt-6 {
+    margin-top: 1.5rem;
+  }
+  .mt-8 {
+    margin-top: 2rem;
+  }
+  .pb-2 {
+    padding-bottom: 0.5rem;
+  }
+  .pt-3 {
+    padding-top: 0.75rem;
+  }
+  .pt-4 {
+    padding-top: 1rem;
+  }
+  .pt-6 {
     padding-top: 1.5rem;
   }
+  .p-4 {
+    padding: 1rem;
+  }
+  .px-2 {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .px-3 {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  .py-1 {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+  .mr-1 {
+    margin-right: 0.25rem;
+  }
 
-  .pool-summary {
+  .border-0 {
+    border: none !important;
+  }
+  .border-3 {
+    border: 3px solid #111;
+  }
+  .border-black {
+    border-color: #111;
+  }
+  .border-b-3 {
+    border-bottom: 3px solid #111;
+  }
+  .border-t-3 {
+    border-top: 3px solid #111;
+  }
+  .border-t-4 {
+    border-top: 4px solid #111;
+  }
+  .border-dashed {
+    border-style: dashed;
+  }
+  .outline-none {
+    outline: none;
+  }
+
+  .bg-white {
+    background-color: #fff;
+  }
+  .bg-black {
+    background-color: #111;
+  }
+  .bg-yellow {
+    background-color: #ffd900;
+  }
+  .bg-cyan {
+    background-color: #00ffff;
+  }
+  .bg-pink {
+    background-color: #ff4b4b;
+  }
+  .bg-green {
+    background-color: #00e572;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .text-black {
+    color: #111;
+  }
+
+  .tips-box {
+    padding: 12px;
+    border: 3px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 8px;
+    box-shadow: 4px 4px 0px #111;
+    text-align: center;
   }
 
-  .p-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.95rem;
-    color: var(--text-2);
-  }
-
-  .p-row.highlight .val {
-    color: var(--red);
-  }
-
-  .p-row.total {
-    margin-top: 0.5rem;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--text);
-    padding-top: 0.5rem;
-    border-top: 1px dashed var(--border);
-  }
-
-  .pool-tips {
-    margin-top: 1.5rem;
-    background: #fffbeb;
-    color: var(--accent);
-    padding: 0.75rem;
-    border-radius: 8px;
-    font-size: 0.9rem;
+  .brutal-checkbox {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .brutal-checkbox input {
+    display: none;
+  }
+  .check-box {
+    width: 20px;
+    height: 20px;
+    border: 3px solid #111;
+    display: inline-block;
+    background: #fff;
+    transition: all 0.1s;
+    position: relative;
+  }
+  .brutal-checkbox input:checked + .check-box {
+    background: #111;
+  }
+  .brutal-checkbox input:checked + .check-box::after {
+    content: '✔';
+    color: #fff;
+    position: absolute;
+    left: 2px;
+    top: -2px;
+    font-size: 14px;
   }
 
-  .pool-tips.success {
-    background: #ecfdf5;
-    color: var(--green);
+  /* Dark mode */
+  [data-theme='dark'] .brutal-wrapper {
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
   }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-2);
-    font-size: 0.85rem;
-    border-top: 1px solid var(--border);
-    margin-top: 2rem;
+  [data-theme='dark'] .bg-white {
+    background-color: #1a1a1a;
+    color: #eee;
+  }
+  [data-theme='dark'] .bg-cyan {
+    background-color: #008080;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background-color: #b28f00;
+    color: #ebecf0;
+  }
+  [data-theme='dark'] .mode-tabs {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .border-black {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .border-t-4 {
+    border-top-color: #eee;
+  }
+  [data-theme='dark'] .badge,
+  [data-theme='dark'] .tips-box {
+    box-shadow: 3px 3px 0px #eee;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .form-label {
+    color: #eee;
+  }
+  [data-theme='dark'] .highlight {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .text-pink {
+    color: #ff6b6b;
   }
 </style>

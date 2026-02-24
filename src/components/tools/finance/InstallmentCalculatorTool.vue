@@ -1,111 +1,113 @@
 <template>
-  <div class="tool-container">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="$router.back()">
-        <el-icon><Back /></el-icon>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>信用卡分期计算器</h1>
-        <span class="nav-subtitle">Installment Loan Calculator</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">分期<span>.计算()</span></h1>
+        <div style="width: 100px"></div>
+      </header>
 
-    <main class="main-content">
-      <div class="glass-card">
-        <el-form label-position="top">
-          <el-form-item label="分期总金额 (Total Amount)">
-            <el-input-number
-              v-model="amount"
-              :min="100"
-              :step="1000"
-              controls-position="right"
-              style="width: 100%"
-            />
-          </el-form-item>
-
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item label="分期期数 (Periods)">
-                <el-select v-model="periods" placeholder="Select">
-                  <el-option :value="3" label="3期" />
-                  <el-option :value="6" label="6期" />
-                  <el-option :value="9" label="9期" />
-                  <el-option :value="12" label="12期" />
-                  <el-option :value="18" label="18期" />
-                  <el-option :value="24" label="24期" />
-                  <el-option :value="36" label="36期" />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="每期费率/手续费 (%)">
-                <el-input-number
-                  v-model="ratePerPeriod"
-                  :min="0"
-                  :max="5"
-                  :step="0.01"
-                  controls-position="right"
-                  style="width: 100%"
+      <main class="brutal-grid">
+        <div class="left-column">
+          <section class="brutal-pane mb-6">
+            <h2 class="pane-title mb-4">输入参数.PARAMS</h2>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>分期总金额 (¥)</label>
+                <input
+                  v-model.number="amount"
+                  type="number"
+                  min="100"
+                  step="1000"
+                  class="brutal-input w-full"
                 />
-                <span class="input-suffix">%</span>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <div class="result-section">
-            <div class="main-info">
-              <div class="info-row">
-                <span class="label">每期还款 (Monthly Pay)</span>
-                <span class="value huge">¥ {{ result.monthlyPay }}</span>
               </div>
-              <div class="sub-info">
-                (本金 ¥{{ result.monthlyPrincipal }} + 手续费 ¥{{ result.monthlyFee }})
+
+              <div class="flex-row gap-4">
+                <div class="form-group flex-1">
+                  <label>分期期数</label>
+                  <select v-model.number="periods" class="brutal-input w-full">
+                    <option :value="3">3期</option>
+                    <option :value="6">6期</option>
+                    <option :value="9">9期</option>
+                    <option :value="12">12期</option>
+                    <option :value="18">18期</option>
+                    <option :value="24">24期</option>
+                    <option :value="36">36期</option>
+                  </select>
+                </div>
+                <div class="form-group flex-1">
+                  <label>每期手续费率 (%)</label>
+                  <input
+                    v-model.number="ratePerPeriod"
+                    type="number"
+                    min="0"
+                    max="5"
+                    step="0.01"
+                    class="brutal-input w-full"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="brutal-pane bg-cyan hidden-xs">
+            <div class="info-card">
+              <h4 class="font-bold mb-2">💡 分期陷阱提示</h4>
+              <p class="text-sm">
+                很多银行宣传的“免息分期”实际上会收取“手续费”。<br />
+                虽然表面上看每个月只扣零点几，但因为您的本金在每个月都在减少，而手续费却是按照总本金收取的，因此<strong>实际年化利率(IRR)</strong>往往远高于表面费率！
+              </p>
+            </div>
+          </section>
+        </div>
+
+        <div class="right-column">
+          <section class="brutal-pane bg-yellow h-full flex-col">
+            <h2 class="pane-title mb-4">计算结果.RESULT</h2>
+            <div class="main-result text-center mb-6 pt-4 pb-6 border-b-4 border-black">
+              <span class="label font-bold block mb-2">每期定额还款</span>
+              <div class="value huge highlight">¥ {{ result.monthlyPay }}</div>
+              <div class="sub-info mt-2 text-sm font-bold">
+                (本金 ¥{{ result.monthlyPrincipal }} + 手费 ¥{{ result.monthlyFee }})
               </div>
             </div>
 
-            <el-divider />
-
-            <div class="irr-card">
-              <div class="irr-header">
-                <el-icon><TrendCharts /></el-icon>
-                <span>实际年化利率 (IRR)</span>
-              </div>
-              <div class="irr-value">{{ result.irr }}%</div>
-              <p class="irr-desc">
-                相比名义年费率 ({{
-                  (ratePerPeriod * 12).toFixed(2)
-                }}%)，实际年化通常更高，因为本金在不断减少但手续费不变。
+            <div class="irr-box bg-white border-3 border-black brutal-shadow p-4 mb-6 text-center">
+              <div class="font-bold text-pink mb-1">📈 实际年化利率 (IRR)</div>
+              <div class="irr-value text-3xl font-black font-mono text-pink">{{ result.irr }}%</div>
+              <p class="text-xs font-bold mt-2">
+                表面年化仅为 {{ (ratePerPeriod * 12).toFixed(2) }}%，其实暗藏玄机！
               </p>
             </div>
 
-            <div class="details-grid">
-              <div class="detail">
-                <span class="label">总还款额</span>
-                <span class="val">¥ {{ result.totalRepayment }}</span>
+            <div class="details-grid mt-auto">
+              <div class="detail-item bg-white border-3 border-black brutal-shadow p-3 text-center">
+                <span class="block text-sm font-bold mb-1">总还款额</span>
+                <span class="block font-mono font-black text-xl"
+                  >¥ {{ result.totalRepayment }}</span
+                >
               </div>
-              <div class="detail">
-                <span class="label">总手续费</span>
-                <span class="val highlight">¥ {{ result.totalFee }}</span>
+              <div
+                class="detail-item bg-white border-3 border-black brutal-shadow p-3 text-center bg-pink text-white"
+              >
+                <span class="block text-sm font-bold mb-1">总计手续费</span>
+                <span class="block font-mono font-black text-xl">¥ {{ result.totalFee }}</span>
               </div>
             </div>
-          </div>
-        </el-form>
-      </div>
-    </main>
-
-    <footer class="footer">© 2026 LRM工具箱 - 金融理财系列</footer>
+          </section>
+        </div>
+      </main>
+    </div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
   import { ref, computed } from 'vue';
-  import { Back, TrendCharts } from '@element-plus/icons-vue';
 
   const amount = ref(10000);
   const periods = ref(12);
-  const ratePerPeriod = ref(0.6); // 0.6% per month is common
+  const ratePerPeriod = ref(0.6);
 
   const result = computed(() => {
     const principal = amount.value;
@@ -119,31 +121,15 @@
     const totalRepayment = monthlyPay * n;
     const totalFee = monthlyFee * n;
 
-    // Calculate IRR (Internal Rate of Return)
-    // Cash flow:
-    // Month 0: +Principal
-    // Month 1..n: -MonthlyPay
-    // Approximation for installment loan (flat rate):
-    // APR ≈ (n * rate * 24) / (n + 1) ? No this is for total interest?
-    // Let's use Newton-Raphson to solve for monthly rate i such that:
-    // P = M * (1 - (1+i)^-n) / i  where M is monthly pay.
-    // P * i = M * (1 - (1+i)^-n)
-
-    // Using binary search for i (monthly rate)
     let low = 0;
-    let high = 1; // 100% per month, unlikely
+    let high = 1;
     let i = 0;
 
     for (let k = 0; k < 20; k++) {
       const mid = (low + high) / 2;
       const fv = (monthlyPay * (1 - Math.pow(1 + mid, -n))) / mid;
-      if (fv > principal) {
-        low = mid; // rate too low, PV of payments > Principal ?? Wait.
-        // If assumed rate is low, PV of M is high. So if PV > P, we need higher rate to discount more.
-        // Yes, low = mid.
-      } else {
-        high = mid;
-      }
+      if (fv > principal) low = mid;
+      else high = mid;
       i = mid;
     }
 
@@ -161,140 +147,172 @@
 </script>
 
 <style scoped>
-  .tool-container {
-    min-height: 100vh;
-    background: #f8fafc;
-    font-family: 'Inter', system-ui, sans-serif;
-    color: #334155;
+  @import '@/assets/styles/brutalism.css';
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
   }
 
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
   }
 
-  .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #64748b;
-    width: 80px;
-  }
-
-  .nav-center {
-    flex: 1;
-    text-align: center;
-  }
-
-  .nav-center h1 {
-    margin: 0;
+  .pane-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
     font-size: 1.25rem;
-    font-weight: 600;
+    font-weight: 800;
+    margin: 0;
+    border-bottom: 3px solid #111;
+    padding-bottom: 8px;
   }
 
-  .nav-subtitle {
-    font-size: 0.8rem;
-    color: #64748b;
-  }
-
-  .nav-spacer {
-    width: 80px;
-  }
-
-  .main-content {
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 0 1.5rem;
-  }
-
-  .glass-card {
-    background: white;
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e2e8f0;
-  }
-
-  .input-suffix {
-    margin-left: 10px;
-    color: #64748b;
-  }
-
-  .result-section {
-    margin-top: 2rem;
-    background: #f8fafc;
-    border-radius: 12px;
-    padding: 1.5rem;
-    border: 1px solid #e2e8f0;
-  }
-
-  .main-info {
-    text-align: center;
-  }
-
-  .info-row {
+  .form-grid {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1.25rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+  }
+
+  .flex-row {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .gap-4 {
+    gap: 1rem;
+  }
+  .flex-1 {
+    flex: 1;
+    min-width: 0;
+  }
+  .w-full {
+    width: 100%;
+    min-width: 0;
+  }
+  .mb-1 {
+    margin-bottom: 0.25rem;
+  }
+  .mb-2 {
     margin-bottom: 0.5rem;
   }
-
-  .info-row .label {
-    color: #64748b;
-    font-size: 0.9rem;
+  .mb-4 {
+    margin-bottom: 1rem;
   }
-
-  .info-row .value.huge {
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: #0f172a;
+  .mb-6 {
+    margin-bottom: 1.5rem;
   }
-
-  .sub-info {
-    color: #94a3b8;
-    font-size: 0.85rem;
+  .mt-2 {
+    margin-top: 0.5rem;
   }
-
-  .irr-card {
-    background: #fffbeb;
-    border: 1px solid #fcd34d;
-    border-radius: 8px;
+  .mt-auto {
+    margin-top: auto;
+  }
+  .pt-4 {
+    padding-top: 1rem;
+  }
+  .pb-6 {
+    padding-bottom: 1.5rem;
+  }
+  .p-3 {
+    padding: 0.75rem;
+  }
+  .p-4 {
     padding: 1rem;
-    margin: 1.5rem 0;
+  }
+  .block {
+    display: block;
+  }
+  .text-center {
     text-align: center;
   }
 
-  .irr-header {
+  .font-bold {
+    font-weight: bold;
+  }
+  .font-black {
+    font-weight: 900;
+  }
+  .font-mono {
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .text-xs {
+    font-size: 0.75rem;
+  }
+  .text-sm {
+    font-size: 0.875rem;
+  }
+  .text-xl {
+    font-size: 1.25rem;
+  }
+  .text-3xl {
+    font-size: 1.875rem;
+  }
+
+  .border-b-4 {
+    border-bottom: 4px solid #111;
+  }
+  .border-3 {
+    border: 3px solid #111;
+  }
+  .border-black {
+    border-color: #111;
+  }
+
+  .huge {
+    font-size: 3rem;
+    font-weight: 900;
+  }
+  .highlight {
+    color: #ff4b4b;
+    font-family: 'IBM Plex Mono', monospace;
+    text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
+  }
+  .text-pink {
+    color: #ff4b4b;
+  }
+  .text-white {
+    color: #fff;
+  }
+
+  .bg-yellow {
+    background-color: #ffd900;
+  }
+  .bg-cyan {
+    background-color: #00ffff;
+  }
+  .bg-pink {
+    background-color: #ff4b4b;
+  }
+  .bg-white {
+    background-color: #fff;
+  }
+
+  .flex-col {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-    color: #b45309;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+    flex-direction: column;
   }
-
-  .irr-value {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #d97706;
-  }
-
-  .irr-desc {
-    font-size: 0.8rem;
-    color: #92400e;
-    margin: 0.5rem 0 0;
-    line-height: 1.4;
+  .h-full {
+    height: 100%;
   }
 
   .details-grid {
@@ -303,32 +321,46 @@
     gap: 1rem;
   }
 
-  .detail {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    align-items: center;
+  @media (max-width: 768px) {
+    .brutal-grid {
+      grid-template-columns: 1fr;
+    }
+    .hidden-xs {
+      display: none;
+    }
   }
 
-  .detail .label {
-    font-size: 0.85rem;
-    color: #64748b;
+  /* Dark mode */
+  [data-theme='dark'] .brutal-wrapper {
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
   }
-
-  .detail .val {
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: #334155;
+  [data-theme='dark'] .bg-yellow {
+    background-color: #b28f00;
+    color: #fff;
   }
-
-  .detail .val.highlight {
-    color: #ef4444;
+  [data-theme='dark'] .bg-cyan {
+    background-color: #008080;
+    color: #fff;
   }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #94a3b8;
-    font-size: 0.875rem;
+  [data-theme='dark'] .bg-white {
+    background-color: #1a1a1a;
+    color: #eee;
+  }
+  [data-theme='dark'] .text-pink {
+    color: #ff6b6b;
+  }
+  [data-theme='dark'] .highlight {
+    color: #ff6b6b;
+    text-shadow: 4px 4px 0px #111;
+  }
+  [data-theme='dark'] .border-black {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .border-b-4 {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .bg-pink {
+    background-color: #cc0000;
   }
 </style>

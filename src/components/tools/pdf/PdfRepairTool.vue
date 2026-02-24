@@ -1,133 +1,113 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">PDF 损坏修复</h1>
-        <span class="tool-subtitle">PDF Repair</span>
-      </div>
-      <div class="header-right"></div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">PDF<span>.损坏修复()</span></h1>
+        <button v-if="pdfFile" class="brutal-btn clear-btn" @click="clearFile">清除文件</button>
+      </header>
 
-    <main class="tool-content">
-      <div class="layout-container">
-        <div class="workbench glass-card">
-          <div v-if="!pdfFile" class="upload-placeholder" @click="triggerUpload">
-            <el-icon class="upload-icon">
-              <FirstAidKit />
-            </el-icon>
-            <h3>选择损坏的 PDF 文件</h3>
-            <p class="hint">尝试修复无法正常打开的 PDF</p>
+      <div class="brutal-grid" style="grid-template-columns: 1fr">
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span class="text-black">1. 载入损坏的 PDF</span>
           </div>
 
-          <div v-else class="workspace">
-            <div class="file-info">
-              <el-icon>
-                <Document />
-              </el-icon>
-              <span>{{ pdfFile.name }} ({{ formatSize(pdfFile.size) }})</span>
-              <el-button text type="danger" @click="clearFile">移除</el-button>
+          <div class="pane-body">
+            <div v-if="!pdfFile" class="brutal-upload-area" @click="triggerUpload">
+              <div class="upload-text">
+                <h3>[ 选择损坏的 PDF 文件 ]</h3>
+                <p>尝试修复无法正常打开的 PDF</p>
+              </div>
             </div>
 
-            <div class="repair-status glass-card">
-              <div class="status-header">
-                <el-icon :class="statusClass">
-                  <component :is="statusIcon" />
-                </el-icon>
-                <h3>{{ statusTitle }}</h3>
+            <div v-else>
+              <div class="file-badge">
+                <strong>{{ pdfFile.name }}</strong>
+                <span>({{ formatSize(pdfFile.size) }})</span>
               </div>
-              <p class="status-message">{{ statusMessage }}</p>
 
-              <div v-if="repairLog.length > 0" class="repair-log">
-                <p class="log-title">修复日志：</p>
-                <div class="log-content">
-                  <div
-                    v-for="(log, idx) in repairLog"
-                    :key="idx"
-                    class="log-item"
-                    :class="log.type"
-                  >
-                    <el-icon>
-                      <component :is="getLogIcon(log.type)" />
-                    </el-icon>
-                    <span>{{ log.message }}</span>
+              <div class="repair-status-box" :class="'status-' + status">
+                <div class="status-header-text">
+                  <span class="status-icon">{{ statusEmoji }}</span>
+                  <h3>{{ statusTitle }}</h3>
+                </div>
+                <p class="status-msg">{{ statusMessage }}</p>
+
+                <div v-if="repairLog.length > 0" class="repair-log">
+                  <p class="log-title">// 修复日志：</p>
+                  <div class="log-content">
+                    <div
+                      v-for="(log, idx) in repairLog"
+                      :key="idx"
+                      class="log-item"
+                      :class="log.type"
+                    >
+                      <span class="log-prefix">{{ getLogPrefix(log.type) }}</span>
+                      <span>{{ log.message }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div class="action-buttons">
-              <el-button
-                v-if="status === 'ready'"
-                type="primary"
-                size="large"
-                :loading="processing"
-                @click="startRepair"
-              >
-                <el-icon>
-                  <FirstAidKit />
-                </el-icon>
-                开始修复
-              </el-button>
+              <div class="action-buttons">
+                <button
+                  v-if="status === 'ready'"
+                  class="brutal-action-btn primary large"
+                  :disabled="processing"
+                  @click="startRepair"
+                >
+                  {{ processing ? 'REPAIRING...' : 'COMMIT.开始修复' }}
+                </button>
 
-              <el-button
-                v-if="status === 'success'"
-                type="success"
-                size="large"
-                @click="downloadRepaired"
-              >
-                <el-icon>
-                  <Download />
-                </el-icon>
-                下载修复后的 PDF
-              </el-button>
+                <button
+                  v-if="status === 'success'"
+                  class="brutal-action-btn primary large"
+                  @click="downloadRepaired"
+                >
+                  DOWNLOAD.下载修复后的 PDF
+                </button>
 
-              <el-button
-                v-if="status === 'failed'"
-                type="warning"
-                size="large"
-                @click="retryRepair"
-              >
-                重试修复
-              </el-button>
+                <button
+                  v-if="status === 'failed'"
+                  class="brutal-action-btn large"
+                  @click="retryRepair"
+                >
+                  RETRY.重试修复
+                </button>
+              </div>
             </div>
           </div>
-
-          <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
         </div>
 
-        <div class="info-card glass-card">
-          <h4>关于 PDF 修复</h4>
-          <p>此工具尝试通过以下方式修复损坏的 PDF：</p>
-          <ul>
-            <li>重建 PDF 对象索引 (xref)</li>
-            <li>修复页面引用错误</li>
-            <li>清理无效的对象引用</li>
-            <li>重新序列化文档结构</li>
-          </ul>
-          <el-alert type="info" :closable="false">
-            <p style="margin: 0; font-size: 0.85rem">
-              注意：严重损坏的 PDF 可能无法完全修复。建议修复后检查文档内容完整性。
-            </p>
-          </el-alert>
+        <div class="brutal-pane">
+          <div class="pane-header bg-black">
+            <span class="text-white">README :: 关于 PDF 修复</span>
+          </div>
+          <div class="pane-body info-section">
+            <p>此工具尝试通过以下方式修复损坏的 PDF：</p>
+            <ul>
+              <li>重建 PDF 对象索引 (xref)</li>
+              <li>修复页面引用错误</li>
+              <li>清理无效的对象引用</li>
+              <li>重新序列化文档结构</li>
+            </ul>
+            <div class="info-box warn">
+              <strong>⚠️ 注意</strong>
+              <p>严重损坏的 PDF 可能无法完全修复。建议修复后检查文档内容完整性。</p>
+            </div>
+          </div>
         </div>
       </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - PDF 损坏修复</footer>
+
+      <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, computed, shallowRef } from 'vue';
   import { useRouter } from 'vue-router';
-  import { ArrowLeft, FirstAidKit, Document, Download } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
   import { PDFDocument } from 'pdf-lib';
   import { useFileHandler } from '@/composables';
@@ -153,69 +133,34 @@
   const status = ref('ready');
   const repairLog = ref([]);
 
-  const statusClass = computed(() => ({
-    'status-ready': status.value === 'ready',
-    'status-repairing': status.value === 'repairing',
-    'status-success': status.value === 'success',
-    'status-failed': status.value === 'failed'
-  }));
-
-  const statusIcon = computed(() => {
-    switch (status.value) {
-      case 'ready':
-        return 'FirstAidKit';
-      case 'repairing':
-        return 'Loading';
-      case 'success':
-        return 'Check';
-      case 'failed':
-        return 'Close';
-      default:
-        return 'FirstAidKit';
-    }
+  const statusEmoji = computed(() => {
+    const map = { ready: '🔧', repairing: '⏳', success: '✅', failed: '❌' };
+    return map[status.value] || '🔧';
   });
 
   const statusTitle = computed(() => {
-    switch (status.value) {
-      case 'ready':
-        return '准备修复';
-      case 'repairing':
-        return '正在修复...';
-      case 'success':
-        return '修复成功';
-      case 'failed':
-        return '修复失败';
-      default:
-        return '准备修复';
-    }
+    const map = {
+      ready: '准备修复',
+      repairing: '正在修复...',
+      success: '修复成功',
+      failed: '修复失败'
+    };
+    return map[status.value] || '准备修复';
   });
 
   const statusMessage = computed(() => {
-    switch (status.value) {
-      case 'ready':
-        return '点击下方按钮开始尝试修复此 PDF 文件';
-      case 'repairing':
-        return '正在分析和修复文件结构，请稍候...';
-      case 'success':
-        return 'PDF 已成功修复！您可以下载修复后的文件。';
-      case 'failed':
-        return '无法修复此 PDF 文件，可能损坏过于严重。';
-      default:
-        return '';
-    }
+    const map = {
+      ready: '点击下方按钮开始尝试修复此 PDF 文件',
+      repairing: '正在分析和修复文件结构，请稍候...',
+      success: 'PDF 已成功修复！您可以下载修复后的文件。',
+      failed: '无法修复此 PDF 文件，可能损坏过于严重。'
+    };
+    return map[status.value] || '';
   });
 
-  const getLogIcon = type => {
-    switch (type) {
-      case 'success':
-        return 'Check';
-      case 'error':
-        return 'Close';
-      case 'warning':
-        return 'Warning';
-      default:
-        return 'Loading';
-    }
+  const getLogPrefix = type => {
+    const map = { success: '[OK]', error: '[ERR]', warning: '[WARN]', info: '[INFO]' };
+    return map[type] || '[LOG]';
   };
 
   const triggerUpload = () => triggerFileInput();
@@ -351,214 +296,279 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f8fafc;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 1400px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    color: #1e293b;
   }
 
-  .tool-header {
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+
+    flex: 1;
+    text-align: center;
+  }
+  .brutal-title span {
+    color: #00e572;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-btn.clear-btn {
+    background: #ff4b4b;
+    color: #fff;
+  }
+
+  .brutal-grid {
+    display: grid;
+    gap: 2.5rem;
+    margin-bottom: 2rem;
+  }
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .pane-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  }
-
-  .header-left,
-  .header-right {
-    width: 100px;
-    display: flex;
-    align-items: center;
-  }
-
-  .header-center {
-    flex: 1;
-    text-align: center;
-  }
-
-  .tool-title {
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
     font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0;
+    letter-spacing: 1px;
   }
-
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
-    text-transform: uppercase;
+  .bg-yellow {
+    background: #ffd900;
   }
-
-  .tool-content {
-    flex: 1;
+  .bg-blue {
+    background: #4b7bff;
+  }
+  .bg-black {
+    background: #111;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .text-black {
+    color: #111;
+  }
+  .pane-body {
     padding: 2rem;
+  }
+
+  .brutal-upload-area {
+    min-height: 280px;
+    border: 4px dashed #111;
     display: flex;
     justify-content: center;
-  }
-
-  .layout-container {
-    width: 100%;
-    max-width: 700px;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .workbench {
-    padding: 2rem;
-    border-radius: 16px;
-  }
-
-  .upload-placeholder {
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
-    height: 250px;
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    text-align: center;
+    background: #fdfae5;
     cursor: pointer;
-    transition: all 0.3s;
-    color: #64748b;
+    transition: all 0.2s;
   }
-
-  .upload-placeholder:hover {
-    border-color: #10b981;
-    background: #ecfdf5;
-    color: #10b981;
+  .brutal-upload-area:hover {
+    background: #ffeba0;
+    transform: scale(1.02);
   }
-
-  .upload-icon {
-    font-size: 4rem;
+  .upload-text h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
     margin-bottom: 1rem;
   }
-
-  .hint {
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
-    opacity: 0.7;
+  .upload-text p {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.95rem;
+    color: #555;
   }
 
-  .file-info {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: #f1f5f9;
-    padding: 0.75rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
+  .file-badge {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.75rem 1.5rem;
+    box-shadow: 4px 4px 0px #111;
+    margin-bottom: 2rem;
+    font-family: 'IBM Plex Mono', monospace;
+    word-break: break-all;
   }
 
-  .file-info .el-icon {
-    font-size: 1.5rem;
-    color: #10b981;
+  .brutal-action-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.6rem 2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-action-btn.primary {
+    background: #00e572;
+  }
+  .brutal-action-btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+  .brutal-action-btn:active:not(:disabled) {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-action-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: 4px 4px 0px #666;
+    border-color: #666;
+  }
+  .brutal-action-btn.large {
+    padding: 1.25rem 3rem;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+    width: 100%;
   }
 
-  .file-info span {
-    flex: 1;
-    font-weight: 500;
-  }
-
-  .repair-status {
-    padding: 1.5rem;
-    border-radius: 12px;
+  /* Repair Status */
+  .repair-status-box {
+    border: 4px solid #111;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    background: #fafafa;
     text-align: center;
-    margin-bottom: 1.5rem;
   }
-
-  .status-header {
+  .repair-status-box.status-ready {
+    border-left: 8px solid #4b7bff;
+  }
+  .repair-status-box.status-repairing {
+    border-left: 8px solid #ffd900;
+  }
+  .repair-status-box.status-success {
+    border-left: 8px solid #00e572;
+  }
+  .repair-status-box.status-failed {
+    border-left: 8px solid #ff4b4b;
+  }
+  .status-header-text {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.75rem;
     margin-bottom: 0.5rem;
   }
-
-  .status-header .el-icon {
+  .status-icon {
     font-size: 2rem;
   }
-
-  .status-header h3 {
+  .status-header-text h3 {
     margin: 0;
-    font-size: 1.25rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 800;
   }
-
-  .status-message {
-    color: #64748b;
+  .status-msg {
+    color: #555;
     margin: 0;
-  }
-
-  .status-ready .el-icon {
-    color: #3b82f6;
-  }
-
-  .status-repairing .el-icon {
-    color: #f59e0b;
-    animation: spin 1s linear infinite;
-  }
-
-  .status-success .el-icon {
-    color: #10b981;
-  }
-
-  .status-failed .el-icon {
-    color: #ef4444;
-  }
-
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-
-    to {
-      transform: rotate(360deg);
-    }
+    font-size: 0.95rem;
   }
 
   .repair-log {
     margin-top: 1.5rem;
     text-align: left;
   }
-
   .log-title {
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: bold;
     margin-bottom: 0.5rem;
+    font-size: 0.9rem;
   }
-
   .log-content {
-    max-height: 200px;
+    max-height: 250px;
     overflow-y: auto;
-    background: #f8fafc;
-    border-radius: 8px;
-    padding: 0.75rem;
+    background: #fff;
+    border: 3px solid #111;
+    padding: 1rem;
+    font-size: 0.85rem;
   }
-
   .log-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.85rem;
     padding: 0.25rem 0;
   }
-
+  .log-prefix {
+    font-weight: 800;
+    min-width: 60px;
+  }
   .log-item.success {
-    color: #10b981;
+    color: #00994c;
   }
-
   .log-item.error {
-    color: #ef4444;
+    color: #cc0000;
   }
-
   .log-item.warning {
-    color: #f59e0b;
+    color: #b28f00;
   }
-
   .log-item.info {
-    color: #64748b;
+    color: #555;
   }
 
   .action-buttons {
@@ -566,47 +576,132 @@
     justify-content: center;
   }
 
-  .action-buttons .el-button {
-    min-width: 200px;
+  .info-section {
+    font-size: 0.95rem;
   }
-
-  .info-card {
-    padding: 1.5rem;
-    border-radius: 12px;
-  }
-
-  .info-card h4 {
+  .info-section p {
     margin: 0 0 0.75rem;
-    font-size: 1rem;
   }
-
-  .info-card p {
-    margin: 0 0 0.5rem;
-    font-size: 0.9rem;
-    color: #64748b;
-  }
-
-  .info-card ul {
-    margin: 0 0 1rem;
+  .info-section ul {
+    margin: 0 0 1.5rem;
     padding-left: 1.25rem;
+    line-height: 2;
+  }
+
+  .info-box {
+    border: 4px solid #111;
+    padding: 1rem 1.5rem;
+    background: #e8ffe8;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 0.9rem;
-    color: #64748b;
+  }
+  .info-box.warn {
+    background: #fff8e0;
+  }
+  .info-box strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem;
+  }
+  .info-box p {
+    margin: 0;
   }
 
-  .info-card li {
-    margin-bottom: 0.25rem;
+  @media (max-width: 1024px) {
+    .brutal-title {
+      font-size: 2.5rem;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
   }
 
-  .glass-card {
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  /* --- Dark Mode --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
   }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-upload-area,
+  [data-theme='dark'] .file-badge,
+  [data-theme='dark'] .brutal-input {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn {
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover:not(:disabled) {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:active:not(:disabled) {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #00994c;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn.clear-btn {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .pane-body {
+    background: #1a1a1a;
+  }
+  [data-theme='dark'] .repair-status-box {
+    background: #222;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .log-content {
+    background: #1a1a1a;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .info-box {
+    background: #1a2a1a;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .info-box.warn {
+    background: #2a2a1a;
+  }
+  [data-theme='dark'] .file-badge {
+    box-shadow: 4px 4px 0px #eee;
   }
 </style>

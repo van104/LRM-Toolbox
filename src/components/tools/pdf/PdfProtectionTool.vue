@@ -1,166 +1,150 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">PDF 密码保护与移除</h1>
-        <span class="tool-subtitle">PDF Protection & Unlock</span>
-      </div>
-      <div class="header-right"></div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">PDF<span>.密码防护()</span></h1>
+        <button v-if="pdfFile" class="brutal-btn clear-btn" @click="clearFile">清除文件</button>
+      </header>
 
-    <main class="tool-content">
-      <div class="layout-container center-layout">
-        <div class="workbench glass-card">
-          <el-tabs v-model="activeTab" class="action-tabs">
-            <el-tab-pane label="加密保护" name="encrypt">
-              <div class="tab-content">
-                <div v-if="!pdfFile" class="upload-placeholder" @click="triggerUpload">
-                  <el-icon class="upload-icon">
-                    <Lock />
-                  </el-icon>
-                  <h3>选择 PDF 进行加密</h3>
-                  <p class="hint">支持设置打开密码和权限密码</p>
-                </div>
-                <div v-else class="file-ready">
-                  <div class="file-info">
-                    <el-icon>
-                      <Document />
-                    </el-icon>
-                    <span
-                      >{{ pdfFile.name }} ({{ (pdfFile.size / 1024 / 1024).toFixed(2) }} MB)</span
-                    >
-                    <el-button text type="danger" @click="clearFile">移除</el-button>
-                  </div>
-
-                  <div class="form-section">
-                    <div class="form-item">
-                      <span class="label"
-                        >打开密码 (User Password)
-                        <el-tag size="small" type="danger">必填</el-tag></span
-                      >
-                      <el-input
-                        v-model="encryptConfig.userPassword"
-                        type="password"
-                        show-password
-                        placeholder="设置文件打开密码"
-                      />
-                    </div>
-                    <div class="form-item">
-                      <span class="label">权限密码 (Owner Password)</span>
-                      <el-input
-                        v-model="encryptConfig.ownerPassword"
-                        type="password"
-                        show-password
-                        placeholder="可选，用于限制编辑/打印权限"
-                      />
-                    </div>
-                  </div>
-
-                  <div class="security-tips">
-                    <el-alert type="info" :closable="false" show-icon>
-                      <template #title>
-                        <span class="tip-title">🔒 安全说明</span>
-                      </template>
-                      <ul class="tip-list">
-                        <li>
-                          <strong>本地处理</strong>：文件仅在您的浏览器中处理，不会上传到服务器
-                        </li>
-                        <li><strong>加密算法</strong>：使用 RC4 128-bit 加密（PDF 标准）</li>
-                        <li><strong>密码建议</strong>：建议使用 8 位以上包含字母和数字的强密码</li>
-                      </ul>
-                    </el-alert>
-                  </div>
-
-                  <el-button
-                    type="primary"
-                    size="large"
-                    class="action-btn"
-                    :loading="processing"
-                    :disabled="!encryptConfig.userPassword"
-                    @click="handleEncrypt"
-                  >
-                    加密并下载
-                  </el-button>
-                </div>
-              </div>
-            </el-tab-pane>
-
-            <el-tab-pane label="移除密码" name="decrypt">
-              <div class="tab-content">
-                <div v-if="!pdfFile" class="upload-placeholder" @click="triggerUpload">
-                  <el-icon class="upload-icon">
-                    <Unlock />
-                  </el-icon>
-                  <h3>选择 PDF 移除密码</h3>
-                  <p class="hint">输入正确的密码后可移除保护</p>
-                </div>
-                <div v-else class="file-ready">
-                  <div class="file-info">
-                    <el-icon>
-                      <Document />
-                    </el-icon>
-                    <span>{{ pdfFile.name }}</span>
-                    <el-button text type="danger" @click="clearFile">移除</el-button>
-                  </div>
-
-                  <div class="form-section">
-                    <div class="form-item">
-                      <span class="label">当前密码</span>
-                      <el-input
-                        v-model="decryptPassword"
-                        type="password"
-                        show-password
-                        placeholder="输入当前打开密码以解锁"
-                      />
-                    </div>
-                  </div>
-
-                  <div class="security-tips">
-                    <el-alert type="warning" :closable="false" show-icon>
-                      <template #title>
-                        <span class="tip-title">⚠️ 注意事项</span>
-                      </template>
-                      <ul class="tip-list">
-                        <li>移除密码后，PDF 中的<strong>文本将转为图片</strong></li>
-                        <li>仅在您拥有合法访问权限时使用此功能</li>
-                        <li>处理完全在本地进行，密码不会被记录</li>
-                      </ul>
-                    </el-alert>
-                  </div>
-
-                  <el-button
-                    type="success"
-                    size="large"
-                    class="action-btn"
-                    :loading="processing"
-                    @click="handleDecrypt"
-                  >
-                    移除密码并下载
-                  </el-button>
-                </div>
-              </div>
-            </el-tab-pane>
-          </el-tabs>
-          <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
+      <div class="brutal-toolbar">
+        <div class="tools-left">
+          <button
+            class="brutal-action-btn"
+            :class="{ primary: activeTab === 'encrypt' }"
+            @click="activeTab = 'encrypt'"
+          >
+            🔒 加密保护
+          </button>
+          <button
+            class="brutal-action-btn"
+            :class="{ primary: activeTab === 'decrypt' }"
+            @click="activeTab = 'decrypt'"
+          >
+            🔓 移除密码
+          </button>
         </div>
       </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - PDF 密码工具</footer>
+
+      <div class="brutal-grid" style="grid-template-columns: 1fr">
+        <div class="brutal-pane">
+          <div class="pane-header" :class="activeTab === 'encrypt' ? 'bg-yellow' : 'bg-blue'">
+            <span :class="activeTab === 'encrypt' ? 'text-black' : 'text-white'">{{
+              activeTab === 'encrypt' ? '加密保护模式' : '密码移除模式'
+            }}</span>
+          </div>
+
+          <div class="pane-body">
+            <!-- Upload Area -->
+            <div v-if="!pdfFile" class="brutal-upload-area" @click="triggerUpload">
+              <div class="upload-text">
+                <h3>
+                  [
+                  {{ activeTab === 'encrypt' ? '选择 PDF 进行加密' : '选择 PDF 移除密码' }}
+                  ]
+                </h3>
+                <p>
+                  {{
+                    activeTab === 'encrypt'
+                      ? '支持设置打开密码和权限密码'
+                      : '输入正确的密码后可移除保护'
+                  }}
+                </p>
+              </div>
+            </div>
+
+            <!-- File loaded -->
+            <div v-else>
+              <div class="file-badge">
+                <strong>{{ pdfFile.name }}</strong>
+                <span>({{ (pdfFile.size / 1024 / 1024).toFixed(2) }} MB)</span>
+              </div>
+
+              <!-- Encrypt Tab -->
+              <div v-if="activeTab === 'encrypt'" class="form-section">
+                <div class="param-box">
+                  <div class="form-item">
+                    <label>打开密码 (User Password) <span class="tag-required">必填</span></label>
+                    <input
+                      v-model="encryptConfig.userPassword"
+                      type="password"
+                      class="brutal-input"
+                      placeholder="设置文件打开密码"
+                    />
+                  </div>
+                  <div class="form-item">
+                    <label>权限密码 (Owner Password)</label>
+                    <input
+                      v-model="encryptConfig.ownerPassword"
+                      type="password"
+                      class="brutal-input"
+                      placeholder="可选，用于限制编辑/打印权限"
+                    />
+                  </div>
+                </div>
+
+                <div class="info-box">
+                  <strong>🔒 安全说明</strong>
+                  <ul>
+                    <li><b>本地处理</b>：文件仅在您的浏览器中处理，不会上传到服务器</li>
+                    <li><b>加密算法</b>：使用 RC4 128-bit 加密（PDF 标准）</li>
+                    <li><b>密码建议</b>：建议使用 8 位以上包含字母和数字的强密码</li>
+                  </ul>
+                </div>
+
+                <button
+                  class="brutal-action-btn primary large"
+                  :disabled="!encryptConfig.userPassword || processing"
+                  @click="handleEncrypt"
+                >
+                  {{ processing ? 'ENCRYPTING...' : 'COMMIT.加密并下载' }}
+                </button>
+              </div>
+
+              <!-- Decrypt Tab -->
+              <div v-if="activeTab === 'decrypt'" class="form-section">
+                <div class="param-box">
+                  <div class="form-item">
+                    <label>当前密码</label>
+                    <input
+                      v-model="decryptPassword"
+                      type="password"
+                      class="brutal-input"
+                      placeholder="输入当前打开密码以解锁"
+                    />
+                  </div>
+                </div>
+
+                <div class="info-box warn">
+                  <strong>⚠️ 注意事项</strong>
+                  <ul>
+                    <li>移除密码后，PDF 中的<b>文本将转为图片</b></li>
+                    <li>仅在您拥有合法访问权限时使用此功能</li>
+                    <li>处理完全在本地进行，密码不会被记录</li>
+                  </ul>
+                </div>
+
+                <button
+                  class="brutal-action-btn primary large"
+                  :disabled="processing"
+                  @click="handleDecrypt"
+                >
+                  {{ processing ? 'DECRYPTING...' : 'COMMIT.移除密码并下载' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, reactive } from 'vue';
   import { useRouter } from 'vue-router';
-  import { ArrowLeft, Lock, Unlock, Document } from '@element-plus/icons-vue';
   import { PDFDocument } from 'pdf-lib';
   import { encryptPDF } from '@pdfsmaller/pdf-encrypt-lite';
   import { ElMessage } from 'element-plus';
@@ -176,7 +160,6 @@
     accept: '.pdf',
     readMode: 'none',
     onSuccess: result => {
-      // Manual check as handleUpload did
       if (result.file.type !== 'application/pdf') {
         return ElMessage.error('请上传 PDF 文件');
       }
@@ -304,188 +287,390 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f8fafc;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 1400px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    color: #1e293b;
   }
 
-  .tool-header {
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+
+    flex: 1;
+    text-align: center;
+  }
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-btn.clear-btn {
+    background: #ff4b4b;
+    color: #fff;
+  }
+
+  .brutal-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    border: 4px solid #111;
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 8px 8px 0px #111;
+  }
+  .tools-left {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .brutal-action-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.6rem 2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-action-btn.primary {
+    background: #ffd900;
+  }
+  .brutal-action-btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+  .brutal-action-btn:active:not(:disabled) {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-action-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: 4px 4px 0px #666;
+    border-color: #666;
+  }
+  .brutal-action-btn.large {
+    padding: 1.25rem 3rem;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+    width: 100%;
+  }
+
+  .brutal-grid {
+    display: grid;
+    gap: 2.5rem;
+    margin-bottom: 2rem;
+  }
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .pane-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  }
-
-  .header-left,
-  .header-right {
-    width: 100px;
-    display: flex;
-    align-items: center;
-  }
-
-  .header-center {
-    flex: 1;
-    text-align: center;
-  }
-
-  .tool-title {
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
     font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0;
+    letter-spacing: 1px;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .text-black {
+    color: #111;
   }
 
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
-    text-transform: uppercase;
-  }
-
-  .tool-content {
-    flex: 1;
+  .pane-body {
     padding: 2rem;
-    width: 100%;
+  }
+
+  .brutal-upload-area {
+    min-height: 300px;
+    border: 4px dashed #111;
     display: flex;
     justify-content: center;
-  }
-
-  .layout-container {
-    width: 100%;
-    max-width: 600px;
-  }
-
-  .workbench {
-    background: #fff;
-    padding: 2rem;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    min-height: 400px;
-  }
-
-  .upload-placeholder {
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
-    height: 300px;
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    text-align: center;
+    background: #fdfae5;
     cursor: pointer;
-    transition: all 0.3s;
-    color: #64748b;
+    transition: all 0.2s;
   }
-
-  .upload-placeholder:hover {
-    border-color: #3b82f6;
-    background: #eff6ff;
-    color: #3b82f6;
+  .brutal-upload-area:hover {
+    background: #ffeba0;
+    transform: scale(1.02);
   }
-
-  .upload-icon {
-    font-size: 4rem;
+  .upload-text h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
     margin-bottom: 1rem;
   }
-
-  .hint {
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
-    opacity: 0.7;
+  .upload-text p {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.95rem;
+    color: #555;
   }
 
-  .file-ready {
-    animation: fadeIn 0.3s ease;
-  }
-
-  .file-info {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: #f1f5f9;
-    padding: 0.75rem;
-    border-radius: 8px;
+  .file-badge {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.75rem 1.5rem;
+    box-shadow: 4px 4px 0px #111;
     margin-bottom: 2rem;
+    font-family: 'IBM Plex Mono', monospace;
+    word-break: break-all;
   }
-
-  .file-info .el-icon {
-    font-size: 1.5rem;
-    color: #3b82f6;
+  .file-badge strong {
+    font-size: 1.1rem;
   }
-
-  .file-info span {
-    flex: 1;
-    font-weight: 500;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  .file-badge span {
+    color: #666;
+    margin-left: 0.5rem;
   }
 
   .form-section {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    margin-bottom: 2rem;
   }
-
-  .form-item .label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #334155;
+  .param-box {
+    border: 4px dashed #111;
+    padding: 1.5rem;
+    background: #fafafa;
   }
-
-  .action-btn {
-    width: 100%;
-    font-weight: 600;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .security-tips {
+  .form-item {
     margin-bottom: 1.5rem;
   }
-
-  .security-tips .tip-title {
-    font-weight: 600;
+  .form-item:last-child {
+    margin-bottom: 0;
+  }
+  .form-item label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .tag-required {
+    background: #ff4b4b;
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 0.1rem 0.4rem;
+    border: 2px solid #111;
+    font-family: 'Syne', sans-serif;
   }
 
-  .security-tips .tip-list {
-    margin: 0.5rem 0 0 0;
+  .brutal-input {
+    width: 100%;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    box-sizing: border-box;
+    transition: all 0.2s;
+  }
+  .brutal-input:focus {
+    outline: none;
+    box-shadow: 6px 6px 0px #4b7bff;
+    border-color: #4b7bff;
+  }
+
+  .info-box {
+    border: 4px solid #111;
+    padding: 1.5rem;
+    background: #e8ffe8;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+  }
+  .info-box.warn {
+    background: #fff8e0;
+  }
+  .info-box strong {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+  .info-box ul {
+    margin: 0;
     padding-left: 1.2rem;
-    font-size: 0.85rem;
     line-height: 1.8;
   }
 
-  .security-tips .tip-list li {
-    color: #475569;
+  @media (max-width: 1024px) {
+    .brutal-title {
+      font-size: 2.5rem;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .brutal-toolbar {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+    }
   }
 
-  .glass-card {
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+  /* --- Dark Mode Overrides --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
   }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-toolbar,
+  [data-theme='dark'] .brutal-upload-area,
+  [data-theme='dark'] .param-box,
+  [data-theme='dark'] .brutal-input,
+  [data-theme='dark'] .file-badge {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-toolbar {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn {
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover:not(:disabled) {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:active:not(:disabled) {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-input:focus {
+    box-shadow: 6px 6px 0px #4b7bff;
+    border-color: #4b7bff;
+  }
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #b28f00;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn.clear-btn {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .pane-body {
+    background: #1a1a1a;
+  }
+  [data-theme='dark'] .info-box {
+    background: #1a2a1a;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .info-box.warn {
+    background: #2a2a1a;
+  }
+  [data-theme='dark'] .file-badge {
+    box-shadow: 4px 4px 0px #eee;
   }
 </style>

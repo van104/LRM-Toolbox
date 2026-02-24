@@ -1,109 +1,125 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">PDF 水印</h1>
-        <span class="tool-subtitle">PDF Watermark Tool</span>
-      </div>
-      <div class="header-right">
-        <el-button
-          type="primary"
-          :disabled="!pdfFile"
-          :loading="processing"
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">PDF<span>.水印工具()</span></h1>
+        <button
+          v-if="pdfFile"
+          class="brutal-action-btn primary"
+          :disabled="processing"
           @click="applyWatermark"
         >
-          <el-icon>
-            <Download />
-          </el-icon>
-          添加水印并下载
-        </el-button>
-      </div>
-    </header>
+          {{ processing ? 'APPLYING...' : 'COMMIT.添加水印' }}
+        </button>
+      </header>
 
-    <main class="tool-content">
-      <div class="layout-container">
-        <div class="workbench glass-card">
-          <div
-            v-if="!pdfFile"
-            class="upload-placeholder"
-            @click="triggerUpload"
-            @dragover.prevent="dragOver"
-            @dragleave.prevent="dragLeave"
-            @drop.prevent="handleFileDrop"
-          >
-            <div class="upload-icon">
-              <el-icon>
-                <Document />
-              </el-icon>
-            </div>
-            <h3>上传 PDF 文件</h3>
-            <p>添加文字或图片水印</p>
-            <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
-          </div>
-          <div v-else class="preview-area">
-            <div class="file-info-bar">
-              <el-icon class="pdf-icon">
-                <Document />
-              </el-icon>
-              <div class="file-details">
-                <span class="file-name">{{ pdfFile.name }}</span>
-                <span class="file-meta">{{ pageCount }} 页</span>
+      <div class="brutal-grid">
+        <!-- Preview -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow"><span>PDF 预览</span></div>
+          <div class="pane-body">
+            <div
+              v-if="!pdfFile"
+              class="brutal-upload-area"
+              @click="triggerUpload"
+              @dragover.prevent
+              @drop.prevent="handleFileDrop"
+            >
+              <div class="upload-text">
+                <h3>[ 上传 PDF 文件 ]</h3>
+                <p>添加文字或图片水印</p>
               </div>
-              <el-button text type="primary" @click="triggerUpload">重新选择</el-button>
               <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
             </div>
-            <div class="preview-canvas-wrap">
-              <canvas ref="previewCanvas"></canvas>
-              <div class="page-nav">
-                <el-button :disabled="currentPage <= 1" circle @click="currentPage--"
-                  ><el-icon> <ArrowLeft /> </el-icon
-                ></el-button>
-                <span>{{ currentPage }} / {{ pageCount }}</span>
-                <el-button :disabled="currentPage >= pageCount" circle @click="currentPage++"
-                  ><el-icon> <ArrowRight /> </el-icon
-                ></el-button>
+            <div v-else>
+              <div class="file-badge">
+                <strong>{{ pdfFile.name }}</strong> <span>({{ pageCount }} 页)</span>
+                <button
+                  class="brutal-action-btn"
+                  style="padding: 0.2rem 0.8rem; font-size: 0.85rem; margin-left: auto"
+                  @click="triggerUpload"
+                >
+                  重新选择
+                </button>
+                <input
+                  ref="fileInput"
+                  type="file"
+                  hidden
+                  accept=".pdf"
+                  @change="handleFileSelect"
+                />
+              </div>
+              <div class="canvas-wrap">
+                <canvas ref="previewCanvas"></canvas>
+                <div class="page-nav">
+                  <button :disabled="currentPage <= 1" @click="currentPage--">◀</button>
+                  <span>{{ currentPage }} / {{ pageCount }}</span>
+                  <button :disabled="currentPage >= pageCount" @click="currentPage++">▶</button>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="settings-panel glass-card">
-          <h3 class="panel-title">水印设置</h3>
-          <el-tabs v-model="watermarkType">
-            <el-tab-pane label="文字水印" name="text">
-              <div class="settings-group">
-                <div class="label">水印文字</div>
-                <el-input
+        <!-- Settings -->
+        <div class="brutal-pane settings-pane">
+          <div class="pane-header bg-black"><span class="text-white">水印设置</span></div>
+          <div class="pane-body">
+            <div class="tab-switch">
+              <button
+                class="brutal-action-btn"
+                :class="{ primary: watermarkType === 'text' }"
+                @click="watermarkType = 'text'"
+              >
+                文字水印
+              </button>
+              <button
+                class="brutal-action-btn"
+                :class="{ primary: watermarkType === 'image' }"
+                @click="watermarkType = 'image'"
+              >
+                图片水印
+              </button>
+            </div>
+
+            <div v-if="watermarkType === 'text'">
+              <div class="form-item">
+                <label>水印文字</label
+                ><input
                   v-model="config.text"
+                  class="brutal-input"
                   placeholder="请输入水印文字"
                   @input="renderPreview"
                 />
               </div>
-              <div class="settings-group">
-                <div class="label">字体大小 ({{ config.fontSize }})</div>
-                <el-slider v-model="config.fontSize" :min="10" :max="100" @input="renderPreview" />
+              <div class="form-item">
+                <label>字体大小 ({{ config.fontSize }})</label
+                ><input
+                  v-model.number="config.fontSize"
+                  type="range"
+                  class="brutal-range"
+                  min="10"
+                  max="100"
+                  @input="renderPreview"
+                />
               </div>
-              <div class="settings-group">
-                <div class="label">文字颜色</div>
-                <el-color-picker v-model="config.color" show-alpha @change="renderPreview" />
+              <div class="form-item">
+                <label>文字颜色</label
+                ><input
+                  v-model="config.color"
+                  type="color"
+                  class="brutal-color"
+                  @input="renderPreview"
+                />
               </div>
-            </el-tab-pane>
-            <el-tab-pane label="图片水印" name="image">
-              <div class="settings-group">
-                <div class="label">水印图片</div>
+            </div>
+            <div v-else>
+              <div class="form-item">
+                <label>水印图片</label>
                 <div class="logo-upload" @click="triggerLogoUpload">
                   <img v-if="config.logoUrl" :src="config.logoUrl" class="logo-preview" />
-                  <div v-else class="logo-placeholder">
-                    <el-icon> <Plus /> </el-icon><span>选择图片</span>
-                  </div>
+                  <span v-else>[ 选择图片 ]</span>
                   <input
                     ref="logoFileInput"
                     type="file"
@@ -113,62 +129,90 @@
                   />
                 </div>
               </div>
-              <div class="settings-group">
-                <div class="label">图片缩放 ({{ config.logoScale }}%)</div>
-                <el-slider v-model="config.logoScale" :min="5" :max="100" @input="renderPreview" />
+              <div class="form-item">
+                <label>图片缩放 ({{ config.logoScale }}%)</label
+                ><input
+                  v-model.number="config.logoScale"
+                  type="range"
+                  class="brutal-range"
+                  min="5"
+                  max="100"
+                  @input="renderPreview"
+                />
               </div>
-            </el-tab-pane>
-          </el-tabs>
-
-          <el-divider />
-          <div class="settings-group">
-            <div class="label">水印模式</div>
-            <el-radio-group v-model="config.mode" @change="renderPreview">
-              <el-radio-button value="single">单位置</el-radio-button>
-              <el-radio-button value="tile">平铺</el-radio-button>
-            </el-radio-group>
-          </div>
-          <div v-if="config.mode === 'single'" class="settings-group">
-            <div class="label">位置</div>
-            <div class="position-grid">
-              <div
-                v-for="p in positions"
-                :key="p"
-                class="pos-dot"
-                :class="{ active: config.position === p }"
-                @click="
-                  config.position = p;
-                  renderPreview();
-                "
-              ></div>
             </div>
-          </div>
-          <div class="settings-group">
-            <div class="label">透明度 ({{ config.opacity }})</div>
-            <el-slider
-              v-model="config.opacity"
-              :min="0.1"
-              :max="1"
-              :step="0.1"
-              @input="renderPreview"
-            />
-          </div>
-          <div class="settings-group">
-            <div class="label">旋转角度 ({{ config.rotate }}°)</div>
-            <el-slider v-model="config.rotate" :min="-180" :max="180" @input="renderPreview" />
-          </div>
 
-          <div class="tips-section">
-            <h4>提示</h4>
-            <ul>
-              <li>预览仅供参考</li>
-              <li>本地处理，隐私安全</li>
-            </ul>
+            <div class="divider"></div>
+
+            <div class="form-item">
+              <label>水印模式</label>
+              <div class="format-btns">
+                <button
+                  class="brutal-action-btn"
+                  :class="{ primary: config.mode === 'single' }"
+                  @click="
+                    config.mode = 'single';
+                    renderPreview();
+                  "
+                >
+                  单位置
+                </button>
+                <button
+                  class="brutal-action-btn"
+                  :class="{ primary: config.mode === 'tile' }"
+                  @click="
+                    config.mode = 'tile';
+                    renderPreview();
+                  "
+                >
+                  平铺
+                </button>
+              </div>
+            </div>
+
+            <div v-if="config.mode === 'single'" class="form-item">
+              <label>位置</label>
+              <div class="position-grid">
+                <div
+                  v-for="p in positions"
+                  :key="p"
+                  class="pos-dot"
+                  :class="{ active: config.position === p }"
+                  @click="
+                    config.position = p;
+                    renderPreview();
+                  "
+                ></div>
+              </div>
+            </div>
+
+            <div class="form-item">
+              <label>透明度 ({{ config.opacity }})</label
+              ><input
+                v-model.number="config.opacity"
+                type="range"
+                class="brutal-range"
+                min="0.1"
+                max="1"
+                step="0.1"
+                @input="renderPreview"
+              />
+            </div>
+            <div class="form-item">
+              <label>旋转角度 ({{ config.rotate }}°)</label
+              ><input
+                v-model.number="config.rotate"
+                type="range"
+                class="brutal-range"
+                min="-180"
+                max="180"
+                @input="renderPreview"
+              />
+            </div>
           </div>
         </div>
       </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - PDF 水印</footer>
+    </div>
   </div>
 </template>
 
@@ -176,7 +220,6 @@
   import { ref, reactive, watch } from 'vue';
   import { useRouter } from 'vue-router';
   import { ElMessage, ElLoading } from 'element-plus';
-  import { ArrowLeft, ArrowRight, Document, Download, Plus } from '@element-plus/icons-vue';
   import pdfjsLib from '@/utils/pdf';
   import { PDFDocument } from 'pdf-lib';
   import { useFileHandler } from '@/composables';
@@ -186,7 +229,6 @@
     if (window.history.length > 1) router.back();
     else router.push('/');
   };
-
   const previewCanvas = ref(null);
   const pdfFile = ref(null);
   const pdfDoc = ref(null);
@@ -198,11 +240,8 @@
   const { fileInput, triggerFileInput, handleFileSelect, handleFileDrop } = useFileHandler({
     accept: '.pdf',
     readMode: 'none',
-    onSuccess: result => {
-      loadPdf(result.file);
-    }
+    onSuccess: r => loadPdf(r.file)
   });
-
   const {
     fileInput: logoFileInput,
     triggerFileInput: triggerLogoUpload,
@@ -210,8 +249,8 @@
   } = useFileHandler({
     accept: 'image/*',
     readMode: 'dataURL',
-    onSuccess: result => {
-      config.logoUrl = result.data;
+    onSuccess: r => {
+      config.logoUrl = r.data;
       const img = new Image();
       img.onload = () => {
         config.logoImg = img;
@@ -222,11 +261,10 @@
   });
 
   const positions = ['tl', 'tc', 'tr', 'ml', 'center', 'mr', 'bl', 'bc', 'br'];
-
   const config = reactive({
     text: 'LRM工具箱',
     fontSize: 40,
-    color: 'rgba(128, 128, 128, 0.5)',
+    color: '#808080',
     logoUrl: '',
     logoImg: null,
     logoScale: 30,
@@ -235,17 +273,12 @@
     opacity: 0.3,
     rotate: -30
   });
-
   const triggerUpload = () => triggerFileInput();
-
   const pdfBytes = ref(null);
-
   let isRendering = false;
   let currentRenderTask = null;
   let renderTimeout = null;
-
   let renderPreview;
-
   const debouncedRender = () => {
     if (renderTimeout) clearTimeout(renderTimeout);
     renderTimeout = setTimeout(() => renderPreview(), 100);
@@ -264,14 +297,12 @@
   renderPreview = async () => {
     if (!pdfBytes.value || !previewCanvas.value) return;
     if (isRendering) return;
-
     isRendering = true;
     try {
       if (currentRenderTask) {
         currentRenderTask.cancel();
         currentRenderTask = null;
       }
-
       const loadingTask = pdfjsLib.getDocument({ data: pdfBytes.value.slice(0) });
       const doc = await loadingTask.promise;
       const page = await doc.getPage(currentPage.value);
@@ -280,16 +311,12 @@
       canvas.width = viewport.width;
       canvas.height = viewport.height;
       const ctx = canvas.getContext('2d');
-
       currentRenderTask = page.render({ canvasContext: ctx, viewport });
       await currentRenderTask.promise;
       currentRenderTask = null;
-
       drawWatermarkPreview(ctx, canvas.width, canvas.height);
     } catch (e) {
-      if (e.name !== 'RenderingCancelledException') {
-        console.error('Preview error:', e);
-      }
+      if (e.name !== 'RenderingCancelledException') console.error('Preview error:', e);
     } finally {
       isRendering = false;
     }
@@ -353,25 +380,21 @@
     const ctx = canvas.getContext('2d');
     ctx.font = `${config.fontSize}px sans-serif`;
     const metrics = ctx.measureText(config.text);
-    const textWidth = metrics.width;
-    const textHeight = config.fontSize * 1.2;
-
+    const tw = metrics.width,
+      th = config.fontSize * 1.2;
     const rad = Math.abs((config.rotate * Math.PI) / 180);
-    const rotatedWidth = Math.ceil(textWidth * Math.cos(rad) + textHeight * Math.sin(rad)) + 20;
-    const rotatedHeight = Math.ceil(textWidth * Math.sin(rad) + textHeight * Math.cos(rad)) + 20;
-
-    canvas.width = rotatedWidth;
-    canvas.height = rotatedHeight;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.translate(canvas.width / 2, canvas.height / 2);
+    const rw = Math.ceil(tw * Math.cos(rad) + th * Math.sin(rad)) + 20;
+    const rh = Math.ceil(tw * Math.sin(rad) + th * Math.cos(rad)) + 20;
+    canvas.width = rw;
+    canvas.height = rh;
+    ctx.clearRect(0, 0, rw, rh);
+    ctx.translate(rw / 2, rh / 2);
     ctx.rotate((config.rotate * Math.PI) / 180);
     ctx.font = `${config.fontSize}px sans-serif`;
     ctx.fillStyle = config.color;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(config.text, 0, 0);
-
     return canvas.toDataURL('image/png');
   };
 
@@ -382,10 +405,7 @@
     try {
       const doc = await PDFDocument.load(pdfBytes.value.slice(0));
       const pages = doc.getPages();
-
-      let watermarkImg;
-      let imgW, imgH;
-
+      let watermarkImg, imgW, imgH;
       if (watermarkType.value === 'text') {
         const textImgDataUrl = createTextWatermarkImage();
         const textImgBytes = await fetch(textImgDataUrl).then(r => r.arrayBuffer());
@@ -402,19 +422,14 @@
         imgW = watermarkImg.width * (config.logoScale / 100);
         imgH = watermarkImg.height * (config.logoScale / 100);
       }
-
-      if (!watermarkImg) {
-        throw new Error('无法创建水印');
-      }
-
+      if (!watermarkImg) throw new Error('无法创建水印');
       for (const page of pages) {
         const { width, height } = page.getSize();
-
         if (config.mode === 'tile') {
-          const stepX = imgW + 60;
-          const stepY = imgH + 60;
-          for (let y = 0; y < height; y += stepY) {
-            for (let x = 0; x < width; x += stepX) {
+          const stepX = imgW + 60,
+            stepY = imgH + 60;
+          for (let y = 0; y < height; y += stepY)
+            for (let x = 0; x < width; x += stepX)
               page.drawImage(watermarkImg, {
                 x,
                 y,
@@ -422,11 +437,9 @@
                 height: imgH,
                 opacity: config.opacity
               });
-            }
-          }
         } else {
-          let x = (width - imgW) / 2;
-          let y = (height - imgH) / 2;
+          let x = (width - imgW) / 2,
+            y = (height - imgH) / 2;
           const p = config.position;
           if (p.includes('l')) x = 30;
           if (p.includes('r')) x = width - imgW - 30;
@@ -441,7 +454,6 @@
           });
         }
       }
-
       const savedBytes = await doc.save();
       const blob = new Blob([savedBytes], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
@@ -464,201 +476,301 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
     min-height: 100vh;
-    background: #f1f5f9;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 1400px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
   }
-
-  .tool-header {
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
 
-  .header-center {
+    flex: 1;
     text-align: center;
   }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0;
+  .brutal-title span {
+    color: #4b7bff;
+    text-shadow: 4px 4px 0 #111;
+    letter-spacing: 0;
   }
-
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0 #111;
+    transition: all 0.1s;
     text-transform: uppercase;
   }
-
-  .tool-content {
-    flex: 1;
-    padding: 1.5rem;
-    max-width: 1400px;
-    margin: 0 auto;
-    width: 100%;
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 #111;
   }
-
-  .layout-container {
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0 0 0 #111;
+  }
+  .brutal-grid {
     display: grid;
     grid-template-columns: 1fr 340px;
-    gap: 1.5rem;
-    min-height: calc(100vh - 200px);
+    gap: 2.5rem;
+    margin-bottom: 2rem;
   }
-
-  .workbench {
+  .brutal-pane {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    background: #f8fafc;
-    padding: 1rem;
-  }
-
-  .upload-placeholder {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s;
-    min-height: 400px;
-  }
-
-  .upload-placeholder:hover {
-    border-color: #3b82f6;
-    background: #eff6ff;
-  }
-
-  .upload-icon {
-    font-size: 4rem;
-    color: #ef4444;
-    margin-bottom: 1rem;
-  }
-
-  .preview-area {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .file-info-bar {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
     background: #fff;
-    border-radius: 12px;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0 #111;
+  }
+  .pane-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-black {
+    background: #111;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .pane-body {
+    padding: 2rem;
+    flex: 1;
+  }
+  .brutal-upload-area {
+    min-height: 350px;
+    border: 4px dashed #111;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: #fdfae5;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .brutal-upload-area:hover {
+    background: #ffeba0;
+    transform: scale(1.02);
+  }
+  .upload-text h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
     margin-bottom: 1rem;
   }
-
-  .pdf-icon {
-    font-size: 2rem;
-    color: #ef4444;
+  .upload-text p {
+    font-size: 0.95rem;
+    color: #555;
   }
-
-  .file-details {
-    flex: 1;
+  .file-badge {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.75rem 1rem;
+    box-shadow: 4px 4px 0 #111;
+    margin-bottom: 1.5rem;
+    word-break: break-all;
+    flex-wrap: wrap;
+    font-family: 'IBM Plex Mono', monospace;
   }
-
-  .file-name {
-    font-weight: 600;
-    color: #1e293b;
+  .file-badge strong {
+    font-size: 1rem;
   }
-
-  .file-meta {
-    font-size: 0.85rem;
-    color: #64748b;
+  .file-badge span {
+    color: #666;
   }
-
-  .preview-canvas-wrap {
-    flex: 1;
+  .canvas-wrap {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    background: #e5e7eb;
-    border-radius: 8px;
+    background: #eee;
+    border: 3px solid #111;
     padding: 1rem;
     overflow: hidden;
   }
-
-  .preview-canvas-wrap canvas {
+  .canvas-wrap canvas {
     max-width: 100%;
     max-height: 500px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 4px 4px 0 #111;
+    border: 2px solid #111;
   }
-
   .page-nav {
     display: flex;
     align-items: center;
     gap: 1rem;
     margin-top: 1rem;
   }
-
-  .settings-panel {
-    padding: 1.5rem;
-    overflow-y: auto;
+  .page-nav button {
     background: #fff;
-  }
-
-  .panel-title {
+    border: 3px solid #111;
+    font-weight: 800;
+    padding: 0.4rem 0.75rem;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 #111;
+    transition: all 0.1s;
     font-size: 1rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0 0 1rem;
   }
-
-  .settings-group {
+  .page-nav button:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 #111;
+  }
+  .page-nav button:disabled {
+    background: #eee;
+    color: #aaa;
+    border-color: #aaa;
+    box-shadow: 2px 2px 0 #aaa;
+    cursor: not-allowed;
+  }
+  .tab-switch {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .brutal-action-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.6rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-action-btn.primary {
+    background: #ffd900;
+  }
+  .brutal-action-btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #111;
+  }
+  .brutal-action-btn:active:not(:disabled) {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 #111;
+  }
+  .brutal-action-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: 4px 4px 0 #666;
+    border-color: #666;
+  }
+  .form-item {
     margin-bottom: 1.25rem;
   }
-
-  .label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #475569;
+  .form-item label {
+    display: block;
+    font-weight: bold;
     margin-bottom: 0.5rem;
+    font-size: 0.9rem;
   }
-
+  .brutal-input {
+    width: 100%;
+    padding: 0.6rem;
+    font-size: 0.95rem;
+    border: 3px solid #111;
+    background: #fff;
+    font-weight: bold;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .brutal-input:focus {
+    outline: none;
+    box-shadow: 4px 4px 0 #4b7bff;
+    border-color: #4b7bff;
+  }
+  .brutal-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 10px;
+    background: #fff;
+    border: 2px solid #111;
+    outline: none;
+  }
+  .brutal-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #ffd900;
+    border: 3px solid #111;
+    cursor: pointer;
+  }
+  .brutal-color {
+    width: 48px;
+    height: 36px;
+    border: 3px solid #111;
+    padding: 0;
+    cursor: pointer;
+    background: none;
+  }
   .logo-upload {
     height: 80px;
-    border: 1px dashed #cbd5e1;
-    border-radius: 8px;
+    border: 3px dashed #111;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     overflow: hidden;
-    background: #f8fafc;
+    background: #fafafa;
+    font-weight: 800;
+    font-family: 'Syne', sans-serif;
   }
-
   .logo-preview {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
   }
-
-  .logo-placeholder {
+  .format-btns {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #94a3b8;
-    font-size: 0.8rem;
+    gap: 0.5rem;
   }
-
+  .format-btns .brutal-action-btn {
+    flex: 1;
+    text-align: center;
+    padding: 0.4rem;
+  }
   .position-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -666,62 +778,113 @@
     width: 100px;
     margin: 0 auto;
   }
-
   .pos-dot {
     aspect-ratio: 1;
     background: #e2e8f0;
-    border-radius: 4px;
+    border: 2px solid #111;
     cursor: pointer;
     transition: all 0.2s;
   }
-
   .pos-dot:hover {
-    background: #cbd5e1;
+    background: #ffd900;
   }
-
   .pos-dot.active {
-    background: #3b82f6;
-    transform: scale(1.1);
+    background: #4b7bff;
+    transform: scale(1.15);
   }
-
-  .tips-section {
-    margin-top: 2rem;
-    padding: 1rem;
-    background: #f8fafc;
-    border-radius: 8px;
+  .divider {
+    border-top: 3px dashed #111;
+    margin: 1.25rem 0;
   }
-
-  .tips-section h4 {
-    font-size: 0.9rem;
-    margin: 0 0 0.5rem;
-    color: #475569;
-  }
-
-  .tips-section ul {
-    margin: 0;
-    padding-left: 1.25rem;
-    font-size: 0.8rem;
-    color: #64748b;
-    line-height: 1.8;
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  }
-
   @media (max-width: 992px) {
-    .layout-container {
+    .brutal-grid {
       grid-template-columns: 1fr;
     }
+    .brutal-title {
+      font-size: 2.5rem;
+    }
   }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-upload-area,
+  [data-theme='dark'] .file-badge,
+  [data-theme='dark'] .brutal-input,
+  [data-theme='dark'] .brutal-range,
+  [data-theme='dark'] .logo-upload,
+  [data-theme='dark'] .page-nav button {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0 #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn {
+    box-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover:not(:disabled) {
+    box-shadow: 6px 6px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #b28f00;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .pane-body {
+    background: #1a1a1a;
+  }
+  [data-theme='dark'] .file-badge {
+    box-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .canvas-wrap {
+    background: #333;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .canvas-wrap canvas {
+    box-shadow: 4px 4px 0 #eee;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .page-nav button {
+    box-shadow: 3px 3px 0 #eee;
+  }
+  [data-theme='dark'] .pos-dot {
+    background: #333;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .pos-dot:hover {
+    background: #b28f00;
+  }
+  [data-theme='dark'] .pos-dot.active {
+    background: #4b7bff;
+  }
+  [data-theme='dark'] .divider {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-range::-webkit-slider-thumb {
+    background: #b28f00;
+    border-color: #eee;
   }
 </style>

@@ -1,113 +1,68 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">PDF 页面旋转</h1>
-        <span class="tool-subtitle">PDF Page Rotation</span>
-      </div>
-      <div class="header-right">
-        <el-button type="primary" :disabled="!pdfFile" :loading="processing" @click="saveRotation">
-          <el-icon>
-            <Download />
-          </el-icon>
-          保存并下载
-        </el-button>
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">PDF<span>.旋转引擎()</span></h1>
+        <button v-if="pdfFile" class="brutal-btn clear-btn" @click="clearFile">清除文件</button>
+      </header>
 
-    <main class="tool-content">
-      <div
-        v-if="!pdfFile"
-        class="upload-container glass-card"
-        @click="triggerUpload"
-        @dragover.prevent
-        @drop.prevent="handleFileDrop"
-      >
-        <el-icon class="upload-icon">
-          <RefreshRight />
-        </el-icon>
-        <h3>上传 PDF 文件</h3>
-        <p>支持 90° / 180° 旋转任意页面</p>
-        <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
-      </div>
-
-      <div v-else class="workspace">
-        <div class="toolbar glass-card">
-          <div class="tool-group">
-            <span class="label">全部页面：</span>
-            <el-button @click="rotateAll(-90)"
-              ><el-icon>
-                <RefreshLeft />
-              </el-icon>
-              左转 90°</el-button
-            >
-            <el-button @click="rotateAll(90)"
-              ><el-icon>
-                <RefreshRight />
-              </el-icon>
-              右转 90°</el-button
-            >
-            <el-button @click="rotateAll(180)"
-              ><el-icon>
-                <Refresh />
-              </el-icon>
-              180°</el-button
-            >
+      <div v-if="!pdfFile" class="brutal-pane">
+        <div class="pane-header bg-yellow">
+          <span class="text-black">1. 载入 PDF</span>
+        </div>
+        <div
+          class="brutal-upload-area"
+          @click="triggerUpload"
+          @dragover.prevent
+          @drop.prevent="handleFileDrop"
+        >
+          <div class="upload-text">
+            <h3>[ 拖拽或选择文件 ]</h3>
+            <p>支持 90° / 180° 旋转任意页面</p>
           </div>
-          <div class="tool-group right">
-            <el-button type="danger" text @click="resetAll">重置所有</el-button>
-            <el-button text @click="clearFile">更换文件</el-button>
+          <input ref="fileInput" type="file" hidden accept=".pdf" @change="handleFileSelect" />
+        </div>
+      </div>
+
+      <div v-else>
+        <div class="brutal-toolbar">
+          <div class="tools-left">
+            <span class="toolbar-label">全部页面：</span>
+            <button class="brutal-action-btn" @click="rotateAll(-90)">↺ 左转90°</button>
+            <button class="brutal-action-btn" @click="rotateAll(90)">↻ 右转90°</button>
+            <button class="brutal-action-btn" @click="rotateAll(180)">↕ 180°</button>
+          </div>
+          <div class="tools-right">
+            <button class="brutal-action-btn" @click="resetAll">重置所有</button>
+            <button class="brutal-action-btn primary" :disabled="processing" @click="saveRotation">
+              {{ processing ? 'COMPUTING...' : 'COMMIT.保存下载' }}
+            </button>
           </div>
         </div>
 
-        <div class="pages-grid">
-          <div v-for="(page, index) in pages" :key="index" class="page-card glass-card">
+        <div class="brutal-pages-grid">
+          <div v-for="(page, index) in pages" :key="index" class="page-card">
+            <div class="page-num">{{ index + 1 }}</div>
             <div class="page-preview" :style="{ transform: `rotate(${page.rotation}deg)` }">
               <canvas :ref="el => setCanvasRef(el, index)"></canvas>
-              <div v-if="!page.rendered" class="loading-mask">
-                <el-icon class="is-loading">
-                  <Loading />
-                </el-icon>
-              </div>
+              <div v-if="!page.rendered" class="loading-indicator">LOADING...</div>
             </div>
             <div class="page-footer">
-              <span class="page-num">第 {{ index + 1 }} 页</span>
-              <div class="page-actions">
-                <el-button size="small" circle @click="rotatePage(index, -90)"
-                  ><el-icon> <RefreshLeft /> </el-icon
-                ></el-button>
-                <el-button size="small" circle @click="rotatePage(index, 90)"
-                  ><el-icon> <RefreshRight /> </el-icon
-                ></el-button>
-              </div>
+              <button class="rotate-btn" @click="rotatePage(index, -90)">↺</button>
+              <span class="rotation-label">{{ page.rotation }}°</span>
+              <button class="rotate-btn" @click="rotatePage(index, 90)">↻</button>
             </div>
           </div>
         </div>
       </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - PDF 页面旋转</footer>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, shallowRef, nextTick } from 'vue';
   import { useRouter } from 'vue-router';
-  import {
-    ArrowLeft,
-    RefreshRight,
-    RefreshLeft,
-    Refresh,
-    Download,
-    Loading
-  } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
   import pdfjsLib from '@/utils/pdf';
   import { PDFDocument, degrees } from 'pdf-lib';
@@ -236,184 +191,380 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f8fafc;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 1400px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    color: #1e293b;
   }
 
-  .tool-header {
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+
+    flex: 1;
+    text-align: center;
+  }
+  .brutal-title span {
+    color: #4b7bff;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-btn.clear-btn {
+    background: #ff4b4b;
+    color: #fff;
+  }
+
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    margin-bottom: 2rem;
+  }
+  .pane-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  }
-
-  .header-left,
-  .header-right {
-    width: 100px;
-    display: flex;
-    align-items: center;
-  }
-
-  .header-center {
-    flex: 1;
-    text-align: center;
-  }
-
-  .tool-title {
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
     font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0;
+    letter-spacing: 1px;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .text-black {
+    color: #111;
   }
 
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
-    text-transform: uppercase;
-  }
-
-  .tool-content {
-    flex: 1;
-    padding: 2rem;
-    width: 100%;
+  .brutal-upload-area {
+    min-height: 350px;
+    margin: 2rem;
+    border: 4px dashed #111;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .upload-container {
-    width: 100%;
-    max-width: 600px;
-    height: 300px;
-    border: 2px dashed #cbd5e1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: #fdfae5;
     cursor: pointer;
-    transition: all 0.3s;
-    margin-top: 2rem;
+    transition: all 0.2s;
   }
-
-  .upload-container:hover {
-    border-color: #3b82f6;
-    background: #eff6ff;
+  .brutal-upload-area:hover {
+    background: #ffeba0;
+    transform: scale(1.02);
   }
-
-  .upload-icon {
-    font-size: 4rem;
-    color: #94a3b8;
+  .upload-text h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
     margin-bottom: 1rem;
   }
-
-  .workspace {
-    width: 100%;
-    max-width: 1200px;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+  .upload-text p {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.95rem;
+    color: #555;
   }
 
-  .toolbar {
-    padding: 1rem;
+  .brutal-toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: #fff;
+    border: 4px solid #111;
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 8px 8px 0px #111;
     flex-wrap: wrap;
     gap: 1rem;
   }
-
-  .tool-group {
+  .tools-left,
+  .tools-right {
     display: flex;
+    gap: 1rem;
     align-items: center;
-    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .toolbar-label {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
   }
 
-  .tool-group.right {
-    margin-left: auto;
+  .brutal-action-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.6rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-action-btn.primary {
+    background: #ffd900;
+  }
+  .brutal-action-btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+  .brutal-action-btn:active:not(:disabled) {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-action-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: 4px 4px 0px #666;
+    border-color: #666;
   }
 
-  .label {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #334155;
-  }
-
-  .pages-grid {
+  .brutal-pages-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 1.5rem;
   }
-
   .page-card {
-    padding: 0.75rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    transition: all 0.2s;
+    border: 4px solid #111;
+    background: #fff;
+    position: relative;
+    box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.1);
+    transition: all 0.1s;
   }
-
   .page-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0px #111;
+  }
+  .page-num {
+    position: absolute;
+    top: -12px;
+    left: -12px;
+    background: #ffd900;
+    border: 3px solid #111;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 800;
+    font-family: 'IBM Plex Mono', monospace;
+    z-index: 10;
+    box-shadow: 2px 2px 0px #111;
+    font-size: 1.1rem;
+    color: #111;
   }
 
   .page-preview {
-    aspect-ratio: 0.7;
-    background: #e2e8f0;
+    aspect-ratio: 1 / 1.414;
+    background: #eee;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    border-radius: 4px;
     position: relative;
+    border-bottom: 4px solid #111;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-
   .page-preview canvas {
     max-width: 100%;
     max-height: 100%;
+    display: block;
     object-fit: contain;
   }
-
-  .loading-mask {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .loading-indicator {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: bold;
+    color: #111;
     background: rgba(255, 255, 255, 0.8);
+    padding: 0.5rem;
+    position: absolute;
+    border: 2px solid #111;
   }
 
   .page-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0.5rem 0.75rem;
+    background: #fdfae5;
   }
-
-  .page-num {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #475569;
+  .rotation-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 800;
+    font-size: 1rem;
   }
-
-  .glass-card {
+  .rotate-btn {
+    width: 36px;
+    height: 36px;
+    border: 3px solid #111;
     background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    font-size: 1.2rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px #111;
+    transition: all 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .rotate-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px #111;
+    background: #ffd900;
+  }
+  .rotate-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px #111;
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  @media (max-width: 1024px) {
+    .brutal-title {
+      font-size: 2.5rem;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .brutal-toolbar {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  /* --- Dark Mode --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-toolbar,
+  [data-theme='dark'] .brutal-upload-area,
+  [data-theme='dark'] .page-card,
+  [data-theme='dark'] .rotate-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-toolbar {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn {
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover:not(:disabled) {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:active:not(:disabled) {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #b28f00;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn.clear-btn {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .page-preview {
+    border-bottom-color: #eee;
+    background: #333;
+  }
+  [data-theme='dark'] .page-footer {
+    background: #111;
+  }
+  [data-theme='dark'] .page-num {
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .rotate-btn {
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .rotate-btn:hover {
+    background: #b28f00;
+    box-shadow: 3px 3px 0px #eee;
+    color: #fff;
   }
 </style>

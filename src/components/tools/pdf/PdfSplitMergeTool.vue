@@ -1,181 +1,162 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">PDF 拆分与合并</h1>
-        <span class="tool-subtitle">PDF Split & Merge</span>
-      </div>
-      <div class="header-right"></div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">PDF<span>.拆分合并()</span></h1>
+      </header>
 
-    <main class="tool-content">
-      <el-tabs v-model="activeTab" class="main-tabs">
-        <el-tab-pane label="拆分 PDF" name="split">
-          <div class="tab-content">
-            <div class="workbench glass-card">
-              <div
-                v-if="!splitFile"
-                class="upload-placeholder"
+      <div class="brutal-toolbar">
+        <div class="tools-left">
+          <button
+            class="brutal-action-btn"
+            :class="{ primary: activeTab === 'split' }"
+            @click="activeTab = 'split'"
+          >
+            ✂ 拆分 PDF
+          </button>
+          <button
+            class="brutal-action-btn"
+            :class="{ primary: activeTab === 'merge' }"
+            @click="activeTab = 'merge'"
+          >
+            🔗 合并 PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- SPLIT TAB -->
+      <div v-if="activeTab === 'split'" class="brutal-pane">
+        <div class="pane-header bg-yellow"><span>拆分 PDF</span></div>
+        <div class="pane-body">
+          <div
+            v-if="!splitFile"
+            class="brutal-upload-area"
+            @click="triggerSplitUpload"
+            @dragover.prevent
+            @drop.prevent="handleSplitDrop"
+          >
+            <div class="upload-text">
+              <h3>[ 上传需要拆分的 PDF ]</h3>
+              <p>选择要提取的页面范围</p>
+            </div>
+            <input
+              ref="splitFileInput"
+              type="file"
+              hidden
+              accept=".pdf"
+              @change="handleSplitSelect"
+            />
+          </div>
+          <div v-else>
+            <div class="file-badge">
+              <strong>{{ splitFile.name }}</strong> <span>({{ splitPageCount }} 页)</span>
+              <button
+                class="brutal-action-btn"
+                style="padding: 0.2rem 0.8rem; font-size: 0.85rem; margin-left: auto"
                 @click="triggerSplitUpload"
-                @dragover.prevent
-                @drop.prevent="handleSplitDrop"
               >
-                <div class="upload-icon">
-                  <el-icon>
-                    <Document />
-                  </el-icon>
+                重新选择
+              </button>
+              <input
+                ref="splitFileInput"
+                type="file"
+                hidden
+                accept=".pdf"
+                @change="handleSplitSelect"
+              />
+            </div>
+            <div class="param-box">
+              <div class="form-item">
+                <label>提取方式</label>
+                <div class="radio-wrap">
+                  <label><input v-model="splitMode" type="radio" value="range" /> 页面范围</label>
+                  <label><input v-model="splitMode" type="radio" value="single" /> 逐页拆分</label>
                 </div>
-                <h3>上传需要拆分的 PDF</h3>
-                <p>选择要提取的页面范围</p>
-                <input
-                  ref="splitFileInput"
-                  type="file"
-                  hidden
-                  accept=".pdf"
-                  @change="handleSplitSelect"
-                />
               </div>
-              <div v-else class="file-loaded">
-                <div class="file-info-card">
-                  <el-icon class="pdf-icon">
-                    <Document />
-                  </el-icon>
-                  <div class="file-details">
-                    <span class="file-name">{{ splitFile.name }}</span>
-                    <span class="file-meta">{{ splitPageCount }} 页</span>
-                  </div>
-                  <el-button text type="primary" @click="triggerSplitUpload">重新选择</el-button>
-                  <input
-                    ref="splitFileInput"
-                    type="file"
-                    hidden
-                    accept=".pdf"
-                    @change="handleSplitSelect"
-                  />
-                </div>
-                <div class="split-options">
-                  <div class="option-group">
-                    <div class="label">提取方式</div>
-                    <el-radio-group v-model="splitMode">
-                      <el-radio value="range">页面范围</el-radio>
-                      <el-radio value="single">逐页拆分</el-radio>
-                    </el-radio-group>
-                  </div>
-                  <div v-if="splitMode === 'range'" class="option-group">
-                    <div class="label">页面范围 (如: 1-3,5,7-9)</div>
-                    <el-input v-model="splitRange" placeholder="1-3,5,7-9" />
-                  </div>
-                  <el-button
-                    type="primary"
-                    size="large"
-                    :loading="splitLoading"
-                    style="width: 100%; margin-top: 1rem"
-                    @click="executeSplit"
-                  >
-                    <el-icon>
-                      <Scissor />
-                    </el-icon>
-                    {{ splitMode === 'single' ? '逐页拆分' : '提取选定页面' }}
-                  </el-button>
-                </div>
+              <div v-if="splitMode === 'range'" class="form-item">
+                <label>页面范围 (如: 1-3,5,7-9)</label>
+                <input v-model="splitRange" class="brutal-input" placeholder="1-3,5,7-9" />
               </div>
             </div>
+            <button
+              class="brutal-action-btn primary large"
+              :disabled="splitLoading"
+              @click="executeSplit"
+            >
+              {{
+                splitLoading
+                  ? 'SPLITTING...'
+                  : splitMode === 'single'
+                    ? 'COMMIT.逐页拆分'
+                    : 'COMMIT.提取选定页'
+              }}
+            </button>
           </div>
-        </el-tab-pane>
+        </div>
+      </div>
 
-        <el-tab-pane label="合并 PDF" name="merge">
-          <div class="tab-content">
-            <div class="workbench glass-card">
-              <div
-                v-if="!mergeFiles.length"
-                class="upload-placeholder"
-                @click="triggerMergeUpload"
-                @dragover.prevent
-                @drop.prevent="handleMergeDrop"
+      <!-- MERGE TAB -->
+      <div v-if="activeTab === 'merge'" class="brutal-pane">
+        <div class="pane-header bg-blue"><span class="text-white">合并 PDF</span></div>
+        <div class="pane-body">
+          <div
+            v-if="!mergeFiles.length"
+            class="brutal-upload-area"
+            @click="triggerMergeUpload"
+            @dragover.prevent
+            @drop.prevent="handleMergeDrop"
+          >
+            <div class="upload-text">
+              <h3>[ 上传多个 PDF 文件 ]</h3>
+              <p>文件将按顺序合并为一个 PDF</p>
+            </div>
+            <input
+              ref="mergeFileInput"
+              type="file"
+              multiple
+              hidden
+              accept=".pdf"
+              @change="handleMergeSelect"
+            />
+          </div>
+          <div v-else>
+            <div class="merge-toolbar">
+              <button class="brutal-action-btn" @click="triggerMergeUpload">+ 添加更多</button>
+              <input
+                ref="mergeFileInput"
+                type="file"
+                multiple
+                hidden
+                accept=".pdf"
+                @change="handleMergeSelect"
+              />
+              <button
+                class="brutal-action-btn"
+                style="background: #ff4b4b; color: #fff"
+                @click="clearMergeFiles"
               >
-                <div class="upload-icon">
-                  <el-icon>
-                    <FolderOpened />
-                  </el-icon>
-                </div>
-                <h3>上传多个 PDF 文件</h3>
-                <p>文件将按顺序合并为一个 PDF</p>
-                <input
-                  ref="mergeFileInput"
-                  type="file"
-                  multiple
-                  hidden
-                  accept=".pdf"
-                  @change="handleMergeSelect"
-                />
-              </div>
-              <div v-else class="files-loaded">
-                <div class="files-toolbar">
-                  <el-button type="primary" text @click="triggerMergeUpload"
-                    ><el-icon>
-                      <Plus />
-                    </el-icon>
-                    添加更多</el-button
-                  >
-                  <input
-                    ref="mergeFileInput"
-                    type="file"
-                    multiple
-                    hidden
-                    accept=".pdf"
-                    @change="handleMergeSelect"
-                  />
-                  <el-button type="danger" text @click="clearMergeFiles"
-                    ><el-icon>
-                      <Delete />
-                    </el-icon>
-                    清空</el-button
-                  >
-                </div>
-                <div class="files-list">
-                  <div v-for="(f, i) in mergeFiles" :key="f.id" class="file-item">
-                    <div class="drag-handle">
-                      <el-icon>
-                        <Rank />
-                      </el-icon>
-                    </div>
-                    <el-icon class="pdf-icon-sm">
-                      <Document />
-                    </el-icon>
-                    <span class="file-index">{{ i + 1 }}</span>
-                    <span class="file-name">{{ f.name }}</span>
-                    <el-button type="danger" text circle size="small" @click="removeMergeFile(i)"
-                      ><el-icon> <Delete /> </el-icon
-                    ></el-button>
-                  </div>
-                </div>
-                <el-button
-                  type="primary"
-                  size="large"
-                  :loading="mergeLoading"
-                  style="width: 100%; margin-top: 1rem"
-                  @click="executeMerge"
-                >
-                  <el-icon>
-                    <Connection />
-                  </el-icon>
-                  合并 {{ mergeFiles.length }} 个 PDF
-                </el-button>
+                清空
+              </button>
+            </div>
+            <div class="merge-list">
+              <div v-for="(f, i) in mergeFiles" :key="f.id" class="merge-item">
+                <span class="merge-index">{{ i + 1 }}</span>
+                <span class="merge-name">{{ f.name }}</span>
+                <button class="merge-remove" @click="removeMergeFile(i)">✕</button>
               </div>
             </div>
+            <button
+              class="brutal-action-btn primary large"
+              :disabled="mergeLoading || mergeFiles.length < 2"
+              @click="executeMerge"
+            >
+              {{ mergeLoading ? 'MERGING...' : `COMMIT.合并 ${mergeFiles.length} 个 PDF` }}
+            </button>
           </div>
-        </el-tab-pane>
-      </el-tabs>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - PDF 拆分与合并</footer>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -183,16 +164,6 @@
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { ElMessage } from 'element-plus';
-  import {
-    ArrowLeft,
-    Document,
-    FolderOpened,
-    Plus,
-    Delete,
-    Rank,
-    Scissor,
-    Connection
-  } from '@element-plus/icons-vue';
   import { PDFDocument } from 'pdf-lib';
   import { useFileHandler } from '@/composables';
 
@@ -201,33 +172,22 @@
     if (window.history.length > 1) router.back();
     else router.push('/');
   };
-
   const activeTab = ref('split');
-
   const splitFile = ref(null);
   const splitPdfDoc = ref(null);
   const splitPageCount = ref(0);
   const splitMode = ref('range');
   const splitRange = ref('');
   const splitLoading = ref(false);
-
   const {
     fileInput: splitFileInput,
     triggerFileInput: triggerSplitUpload,
     handleFileSelect: handleSplitSelect,
     handleFileDrop: handleSplitDrop
-  } = useFileHandler({
-    accept: '.pdf',
-    readMode: 'none',
-    onSuccess: result => {
-      loadSplitFile(result.file);
-    }
-  });
-
+  } = useFileHandler({ accept: '.pdf', readMode: 'none', onSuccess: r => loadSplitFile(r.file) });
   const mergeFiles = ref([]);
   const mergeLoading = ref(false);
   let mergeId = 0;
-
   const {
     fileInput: mergeFileInput,
     triggerFileInput: triggerMergeUpload,
@@ -237,9 +197,7 @@
     accept: '.pdf',
     readMode: 'none',
     multiple: true,
-    onSuccess: result => {
-      addMergeFiles([result.file]);
-    }
+    onSuccess: r => addMergeFiles([r.file])
   });
 
   const loadSplitFile = async file => {
@@ -249,14 +207,13 @@
     splitPageCount.value = splitPdfDoc.value.getPageCount();
     splitRange.value = `1-${splitPageCount.value}`;
   };
-
   const parseRange = (rangeStr, max) => {
     const pages = new Set();
     rangeStr.split(',').forEach(part => {
       part = part.trim();
       if (part.includes('-')) {
-        const [start, end] = part.split('-').map(Number);
-        for (let i = Math.max(1, start); i <= Math.min(max, end); i++) pages.add(i);
+        const [s, e] = part.split('-').map(Number);
+        for (let i = Math.max(1, s); i <= Math.min(max, e); i++) pages.add(i);
       } else {
         const n = parseInt(part);
         if (n >= 1 && n <= max) pages.add(n);
@@ -264,17 +221,16 @@
     });
     return Array.from(pages).sort((a, b) => a - b);
   };
-
   const executeSplit = async () => {
     if (!splitPdfDoc.value) return;
     splitLoading.value = true;
     try {
       if (splitMode.value === 'single') {
         for (let i = 0; i < splitPageCount.value; i++) {
-          const newPdf = await PDFDocument.create();
-          const [page] = await newPdf.copyPages(splitPdfDoc.value, [i]);
-          newPdf.addPage(page);
-          const bytes = await newPdf.save();
+          const np = await PDFDocument.create();
+          const [p] = await np.copyPages(splitPdfDoc.value, [i]);
+          np.addPage(p);
+          const bytes = await np.save();
           downloadBlob(
             new Blob([bytes], { type: 'application/pdf' }),
             `${splitFile.value.name.replace('.pdf', '')}_page${i + 1}.pdf`
@@ -288,13 +244,13 @@
           ElMessage.warning('请输入有效的页面范围');
           return;
         }
-        const newPdf = await PDFDocument.create();
-        const copiedPages = await newPdf.copyPages(
+        const np = await PDFDocument.create();
+        const cp = await np.copyPages(
           splitPdfDoc.value,
           pages.map(p => p - 1)
         );
-        copiedPages.forEach(p => newPdf.addPage(p));
-        const bytes = await newPdf.save();
+        cp.forEach(p => np.addPage(p));
+        const bytes = await np.save();
         downloadBlob(
           new Blob([bytes], { type: 'application/pdf' }),
           `${splitFile.value.name.replace('.pdf', '')}_extracted.pdf`
@@ -308,17 +264,15 @@
       splitLoading.value = false;
     }
   };
-
   const addMergeFiles = files =>
     files.forEach(f => mergeFiles.value.push({ id: ++mergeId, file: f, name: f.name }));
   const removeMergeFile = i => mergeFiles.value.splice(i, 1);
   const clearMergeFiles = () => {
     mergeFiles.value = [];
   };
-
   const executeMerge = async () => {
     if (mergeFiles.value.length < 2) {
-      ElMessage.warning('至少需要2个PDF文件');
+      ElMessage.warning('至少需要2个PDF');
       return;
     }
     mergeLoading.value = true;
@@ -340,7 +294,6 @@
       mergeLoading.value = false;
     }
   };
-
   const downloadBlob = (blob, filename) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -352,204 +305,381 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
     min-height: 100vh;
-    background: #f1f5f9;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 900px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
   }
-
-  .tool-header {
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    margin-bottom: 2rem;
   }
-
-  .header-center {
-    text-align: center;
-    flex: 1;
-  }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
     margin: 0;
-  }
+    text-transform: uppercase;
+    letter-spacing: -2px;
 
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
+    flex: 1;
+    text-align: center;
+  }
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0 #111;
+    letter-spacing: 0;
+  }
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0 #111;
+    transition: all 0.1s;
     text-transform: uppercase;
   }
-
-  .tool-content {
-    flex: 1;
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0 0 0 #111;
+  }
+  .brutal-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    border: 4px solid #111;
     padding: 1.5rem;
-    max-width: 900px;
-    margin: 0 auto;
+    margin-bottom: 2.5rem;
+    box-shadow: 8px 8px 0 #111;
+  }
+  .tools-left {
+    display: flex;
+    gap: 1.5rem;
+  }
+  .brutal-action-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.6rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #111;
+    transition:
+      transform 0.1s,
+      box-shadow 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-action-btn.primary {
+    background: #ffd900;
+  }
+  .brutal-action-btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #111;
+  }
+  .brutal-action-btn:active:not(:disabled) {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 #111;
+  }
+  .brutal-action-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: 4px 4px 0 #666;
+    border-color: #666;
+  }
+  .brutal-action-btn.large {
+    padding: 1.25rem 3rem;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
     width: 100%;
   }
-
-  .main-tabs :deep(.el-tabs__header) {
-    margin-bottom: 1.5rem;
-  }
-
-  .tab-content {
-    min-height: 500px;
-  }
-
-  .workbench {
-    min-height: 450px;
-    padding: 1.5rem;
-  }
-
-  .upload-placeholder {
-    height: 100%;
-    min-height: 380px;
+  .brutal-pane {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0 #111;
+    margin-bottom: 2rem;
+  }
+  .pane-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .pane-body {
+    padding: 2rem;
+  }
+  .brutal-upload-area {
+    min-height: 280px;
+    border: 4px dashed #111;
+    display: flex;
     justify-content: center;
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
+    align-items: center;
+    text-align: center;
+    background: #fdfae5;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
   }
-
-  .upload-placeholder:hover {
-    border-color: #3b82f6;
-    background: #eff6ff;
+  .brutal-upload-area:hover {
+    background: #ffeba0;
+    transform: scale(1.02);
   }
-
-  .upload-icon {
-    font-size: 4rem;
-    color: #ef4444;
+  .upload-text h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
     margin-bottom: 1rem;
   }
-
-  .file-loaded,
-  .files-loaded {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+  .upload-text p {
+    font-size: 0.95rem;
+    color: #555;
   }
-
-  .file-info-card {
+  .file-badge {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    background: #f8fafc;
-    border-radius: 12px;
+    gap: 0.5rem;
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.75rem 1rem;
+    box-shadow: 4px 4px 0 #111;
+    margin-bottom: 2rem;
+    word-break: break-all;
+    flex-wrap: wrap;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .file-badge strong {
+    font-size: 1.1rem;
+  }
+  .file-badge span {
+    color: #666;
+  }
+  .param-box {
+    border: 4px dashed #111;
+    padding: 1.5rem;
+    background: #fafafa;
+    margin-bottom: 2rem;
+  }
+  .form-item {
     margin-bottom: 1.5rem;
   }
-
-  .pdf-icon {
-    font-size: 2.5rem;
-    color: #ef4444;
+  .form-item:last-child {
+    margin-bottom: 0;
   }
-
-  .pdf-icon-sm {
-    font-size: 1.25rem;
-    color: #ef4444;
+  .form-item label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
   }
-
-  .file-details {
-    flex: 1;
+  .radio-wrap {
     display: flex;
     flex-direction: column;
+    gap: 0.75rem;
   }
-
-  .file-name {
+  .radio-wrap label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: 'Noto Sans SC', sans-serif;
+  }
+  .brutal-input {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .brutal-input:focus {
+    outline: none;
+    box-shadow: 6px 6px 0 #4b7bff;
+    border-color: #4b7bff;
+  }
+  .merge-toolbar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .merge-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 2rem;
+  }
+  .merge-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border: 3px solid #111;
+    padding: 0.75rem 1rem;
+    background: #fafafa;
+  }
+  .merge-index {
+    background: #ffd900;
+    border: 2px solid #111;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.9rem;
+    box-shadow: 2px 2px 0 #111;
+  }
+  .merge-name {
+    flex: 1;
     font-weight: 600;
-    color: #1e293b;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-
-  .file-meta {
-    font-size: 0.85rem;
-    color: #64748b;
-  }
-
-  .split-options {
-    background: #f8fafc;
-    border-radius: 12px;
-    padding: 1.5rem;
-  }
-
-  .option-group {
-    margin-bottom: 1rem;
-  }
-
-  .label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #475569;
-    margin-bottom: 0.5rem;
-  }
-
-  .files-toolbar {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-  }
-
-  .files-list {
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    max-height: 300px;
-  }
-
-  .file-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    background: #f8fafc;
-    border-radius: 8px;
-  }
-
-  .drag-handle {
-    cursor: grab;
-    color: #94a3b8;
-  }
-
-  .file-index {
-    width: 20px;
-    height: 20px;
+  .merge-remove {
+    width: 28px;
+    height: 28px;
+    border: 3px solid #111;
+    background: #ff4b4b;
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #3b82f6;
-    color: white;
-    font-size: 0.7rem;
-    font-weight: 600;
-    border-radius: 50%;
+    font-size: 0.8rem;
+    box-shadow: 2px 2px 0 #111;
+    transition: all 0.1s;
   }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  .merge-remove:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 #111;
   }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  @media (max-width: 1024px) {
+    .brutal-title {
+      font-size: 2.5rem;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .brutal-toolbar {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+  }
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-toolbar,
+  [data-theme='dark'] .brutal-upload-area,
+  [data-theme='dark'] .file-badge,
+  [data-theme='dark'] .param-box,
+  [data-theme='dark'] .brutal-input,
+  [data-theme='dark'] .merge-item {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-toolbar {
+    box-shadow: 8px 8px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn {
+    box-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover:not(:disabled) {
+    box-shadow: 6px 6px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0 #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #b28f00;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .pane-body {
+    background: #1a1a1a;
+  }
+  [data-theme='dark'] .file-badge {
+    box-shadow: 4px 4px 0 #eee;
+  }
+  [data-theme='dark'] .merge-index {
+    border-color: #eee;
+    box-shadow: 2px 2px 0 #eee;
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .merge-remove {
+    border-color: #eee;
+    box-shadow: 2px 2px 0 #eee;
   }
 </style>
