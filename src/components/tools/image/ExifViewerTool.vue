@@ -1,100 +1,123 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon><ArrowLeft /></el-icon><span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">图片 EXIF 查看/移除</h1>
-        <span class="tool-subtitle">EXIF Viewer & Remover</span>
-      </div>
-      <div class="header-right">
-        <el-button v-if="exifData" type="danger" @click="removeExif"> 擦除隐私信息 </el-button>
-      </div>
-    </header>
-
-    <main class="tool-content">
-      <div class="layout-container">
-        <div class="main-section glass-card">
-          <input
-            ref="fileInput"
-            type="file"
-            hidden
-            accept="image/jpeg,image/tiff"
-            @change="handleFileSelect"
-          />
-          <div
-            v-if="!imageUrl"
-            class="upload-area"
-            :class="{ 'is-dragover': isDragOver }"
-            @click="triggerFileInput"
-            @dragover.prevent="dragOver"
-            @dragleave.prevent="dragLeave"
-            @drop.prevent="handleFileDrop"
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <div class="header-action start">
+          <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        </div>
+        <h1 class="brutal-title">EXIF信息<span>.查杀()</span></h1>
+        <div class="header-action end">
+          <button
+            v-show="exifData && Object.keys(exifData).length > 0"
+            class="brutal-btn clear-btn"
+            @click="removeExif"
           >
-            <el-icon class="upload-icon"><UploadFilled /></el-icon>
-            <h3>点击或拖拽上传图片</h3>
-            <p>目前仅支持 JPG / JPEG / TIFF 格式（含 EXIF 信息）</p>
+            擦除隐私信息
+          </button>
+        </div>
+      </header>
+
+      <div class="brutal-grid">
+        <!-- Left Pane: Info & Preview -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span>图像矩阵.注入区</span>
+            <div class="pane-actions">
+              <button :disabled="!imageUrl" @click="triggerUpload">更换载荷</button>
+            </div>
           </div>
 
-          <div v-else class="preview-area">
-            <div class="image-wrapper">
+          <div class="control-panel-content">
+            <div
+              v-if="!imageUrl"
+              class="brutal-upload-area"
+              :class="{ 'is-dragover': isDragOver }"
+              @click="triggerUpload"
+              @dragover.prevent="dragOver"
+              @dragleave.prevent="dragLeave"
+              @drop.prevent="handleFileDrop"
+            >
+              <input
+                ref="fileInput"
+                type="file"
+                accept="image/jpeg,image/tiff"
+                style="display: none"
+                @change="handleFileSelect"
+              />
+              <div class="upload-placeholder">
+                <span class="upload-icon">⬇️</span>
+                <p>点击或拖拽上传图片以暴露元数据</p>
+                <small>(当前支持 JPG / JPEG / TIFF)</small>
+              </div>
+            </div>
+
+            <div v-else class="preview-thumbnail">
+              <input
+                ref="fileInput"
+                type="file"
+                accept="image/jpeg,image/tiff"
+                style="display: none"
+                @change="handleFileSelect"
+              />
               <img :src="imageUrl" alt="Preview" />
             </div>
-            <div class="actions">
-              <el-button @click="triggerFileInput">更换图片</el-button>
+
+            <div class="brutal-form-group channel-group group-pink mt-4">
+              <h4>🎯 说明与功能</h4>
+              <p style="font-size: 0.95rem; line-height: 1.5; font-weight: 500">
+                ▶ 图像一旦摄取，硬件参数即刻附着于 EXIF 块。<br />
+                ▶
+                本工具对所上传资源执行深层剥离，可完整窥探设备指纹、地理定位及拍摄时间等高度敏感之元数据。<br />
+                ▶ 点击顶部按钮可重组像素阵列，输出纯净的脱敏拷贝。
+              </p>
             </div>
           </div>
         </div>
 
-        <div class="info-section glass-card">
-          <h3>EXIF 元数据</h3>
-          <div v-if="loading" class="loading-state">
-            <el-icon class="is-loading"><Loading /></el-icon>
-            <span>正在解析数据...</span>
+        <!-- Right Pane: EXIF Data -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-blue">
+            <span class="text-white">元数据.转储栈</span>
           </div>
-          <div v-else-if="exifData" class="exif-list">
-            <div v-for="(value, key) in exifData" :key="key" class="exif-item">
-              <span class="exif-key">{{ key }}</span>
-              <span class="exif-value">{{ value }}</span>
+
+          <div class="preview-container">
+            <div v-if="loading" class="empty-state">
+              <span>解析核心转储中... (Loading)</span>
+            </div>
+            <div v-else-if="exifData && Object.keys(exifData).length > 0" class="exif-list">
+              <div v-for="(value, key) in exifData" :key="key" class="exif-item">
+                <span class="exif-key">{{ key }}</span>
+                <span class="exif-value">{{ value }}</span>
+              </div>
+            </div>
+            <div v-else-if="imageUrl" class="empty-state">
+              <span>[!] 未发现任何可用追踪的签名 (No EXIF Data)</span>
+            </div>
+            <div v-else class="empty-state">
+              <span>通道待命中... (Awaiting Input)</span>
             </div>
           </div>
-          <div v-else-if="imageUrl" class="empty-info">
-            <el-icon><InfoFilled /></el-icon>
-            <p>未在该图片中找到 EXIF 信息</p>
-          </div>
-          <div v-else class="empty-info">
-            <p>预览图片以查看 EXIF 信息</p>
-          </div>
         </div>
       </div>
 
-      <div class="tips-section glass-card">
-        <div class="tips-header">
-          <el-icon><InfoFilled /></el-icon>
-          <h4>工具说明</h4>
-        </div>
-        <div class="tips-content">
-          <p>EXIF 信息包含了图片的拍摄器材、时间、地理位置 (GPS) 等隐私数据。本工具可以帮助您：</p>
-          <ul class="premium-list">
-            <li>查看图片的完整拍摄参数（如光圈、快门、感光度等）。</li>
-            <li>清除隐私信息：通过重新编码图片，剥离所有 EXIF 元数据，保护您的隐私。</li>
-          </ul>
+      <!-- Global Status Bar -->
+      <div class="brutal-status" :class="statusClass">
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span>
+              <span v-for="i in 10" :key="i">{{ statusText }} // &nbsp;</span>
+            </span>
+          </div>
         </div>
       </div>
-    </main>
-
-    <footer class="footer">© 2026 LRM工具箱 - EXIF 查看/移除</footer>
+    </div>
   </div>
 </template>
 
-<script setup>
-  import { ref, onMounted } from 'vue';
+<script setup lang="ts">
+  import { ref, computed, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { ElMessage } from 'element-plus';
-  import { ArrowLeft, UploadFilled, Loading, InfoFilled } from '@element-plus/icons-vue';
   import { useFileHandler } from '@/composables';
 
   const router = useRouter();
@@ -104,57 +127,100 @@
   };
 
   const imageUrl = ref('');
-  const exifData = ref(null);
+  const exifData = ref<Record<string, string | number> | null>(null);
   const loading = ref(false);
+
+  const statusClass = computed(() => {
+    if (loading.value) return 'warn';
+    if (exifData.value && Object.keys(exifData.value).length > 0) return 'success';
+    if (imageUrl.value) return 'info';
+    return 'info';
+  });
+
+  const statusText = computed(() => {
+    if (loading.value) return '系统执行深度诊断 : 解析内核正在解压数据块';
+    if (exifData.value && Object.keys(exifData.value).length > 0)
+      return '高亮警报 : 已侦测到暴露的硬件踪迹与元数据池，随时可执行抹除指令';
+    if (imageUrl.value) return '结果输出 : 该序列已清洗，不存在可识别的隐藏标头';
+    return '主控台休眠 : 引流节点尚未接触物理媒介';
+  });
 
   const { fileInput, isDragOver, triggerFileInput, dragOver, dragLeave } = useFileHandler({
     accept: 'image/jpeg,image/tiff',
     readMode: 'dataURL',
     onSuccess: result => {
-      imageUrl.value = result.data;
+      imageUrl.value = result.data as string;
       readExif(result.file);
     }
   });
 
-  const handleFileSelect = event => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        imageUrl.value = e.target.result;
-        readExif(file);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleFileDrop = event => {
-    dragLeave();
-    const file = event.dataTransfer.files[0];
-    if (file && (file.type === 'image/jpeg' || file.type === 'image/tiff')) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        imageUrl.value = e.target.result;
-        readExif(file);
-      };
-      reader.readAsDataURL(file);
+  const triggerUpload = () => {
+    if (fileInput.value) {
+      fileInput.value.click();
     } else {
-      ElMessage.warning('仅支持 JPG/TIFF 格式');
+      triggerFileInput();
     }
   };
 
-  const readExif = file => {
-    if (!window.EXIF) return;
+  const handleFileSelect = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files.length > 0) {
+      const file = target.files[0];
+      const reader = new FileReader();
+      reader.onload = e => {
+        imageUrl.value = e.target?.result as string;
+        readExif(file);
+      };
+      reader.readAsDataURL(file);
+      target.value = '';
+    }
+  };
+
+  const handleFileDrop = (event: DragEvent) => {
+    dragLeave();
+    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
+      const file = event.dataTransfer.files[0];
+      if (file.type === 'image/jpeg' || file.type === 'image/tiff') {
+        const reader = new FileReader();
+        reader.onload = e => {
+          imageUrl.value = e.target?.result as string;
+          readExif(file);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        ElMessage.warning('目标结构拒绝：仅接受 JPG/TIFF 制式流');
+      }
+    }
+  };
+
+  interface ExifMeta {
+    numerator?: number;
+    denominator?: number;
+    [key: string]: unknown;
+  }
+
+  interface EXIFStatic {
+    getData(img: File | HTMLImageElement, callback: (this: unknown) => void): boolean;
+    getAllTags(img: unknown): Record<string, ExifMeta | string | number | unknown[]>;
+  }
+
+  interface GlobalWithEXIF extends Window {
+    EXIF?: EXIFStatic;
+  }
+
+  const readExif = (file: File) => {
+    const globalWin = window as unknown as GlobalWithEXIF;
+    if (!globalWin.EXIF) return;
 
     loading.value = true;
     exifData.value = null;
 
-    window.EXIF.getData(file, function () {
-      const allMetaData = window.EXIF.getAllTags(this);
-      if (Object.keys(allMetaData).length > 0) {
-        // 过滤和格式化一些常见信息
-        const formattedData = {};
-        const keyMap = {
+    globalWin.EXIF.getData(file, function (this: unknown) {
+      if (!globalWin.EXIF) return;
+      const allMetaData = globalWin.EXIF.getAllTags(this);
+      if (allMetaData && Object.keys(allMetaData).length > 0) {
+        const formattedData: Record<string, string | number> = {};
+        const keyMap: Record<string, string> = {
           Make: '制造厂商',
           Model: '设备型号',
           DateTime: '拍摄时间',
@@ -168,39 +234,43 @@
         };
 
         for (const [key, value] of Object.entries(allMetaData)) {
-          if (typeof value === 'object' && value.numerator !== undefined) {
-            formattedData[keyMap[key] || key] = value.numerator / (value.denominator || 1);
+          if (typeof value === 'object' && value !== null && 'numerator' in value) {
+            const meta = value as ExifMeta;
+            formattedData[keyMap[key] || key] = (meta.numerator || 0) / (meta.denominator || 1);
           } else if (Array.isArray(value)) {
             formattedData[keyMap[key] || key] = value.join(', ');
           } else {
-            formattedData[keyMap[key] || key] = value;
+            formattedData[keyMap[key] || key] = String(value);
           }
         }
         exifData.value = formattedData;
+      } else {
+        exifData.value = {};
       }
       loading.value = false;
     });
   };
 
   const removeExif = () => {
+    if (!imageUrl.value) return;
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement('canvas');
       canvas.width = img.width;
       canvas.height = img.height;
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
+      if (ctx) ctx.drawImage(img, 0, 0);
 
-      // Canvas.toBlob/toDataURL naturally strips EXIF data
       canvas.toBlob(
         blob => {
+          if (!blob) return;
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = 'cleaned_image.jpg';
+          a.download = `cleansed-${Date.now()}.jpg`;
           a.click();
           URL.revokeObjectURL(url);
-          ElMessage.success('已移除 EXIF 并保存图片');
+          ElMessage.success('已剥离全量 EXIF 轨道痕迹并重新装填为纯静止图像');
         },
         'image/jpeg',
         0.95
@@ -210,7 +280,8 @@
   };
 
   onMounted(() => {
-    if (!window.EXIF) {
+    const globalWin = window as unknown as GlobalWithEXIF;
+    if (!globalWin.EXIF) {
       const script = document.createElement('script');
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js';
       document.head.appendChild(script);
@@ -219,250 +290,465 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f1f5f9;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+
+  .brutal-container {
+    max-width: 1600px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
   }
 
-  .tool-header {
+  .brutal-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .header-action.start {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .header-action.end {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-btn:disabled {
+    background: #eee;
+    color: #aaa;
+    border-color: #aaa;
+    box-shadow: 2px 2px 0px #aaa;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .brutal-btn.clear-btn {
+    background: #ff4b4b;
+    color: #fff;
+  }
+
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 450px 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .pane-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .header-center {
-    text-align: center;
-    flex: 1;
-  }
-
-  .tool-title {
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
     font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .text-white {
+    color: #fff;
+  }
+
+  .pane-actions button {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
     font-weight: 600;
-    color: #1e293b;
-    margin: 0;
-  }
-
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
-    text-transform: uppercase;
-  }
-
-  .tool-content {
-    flex: 1;
-    padding: 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  .layout-container {
-    display: grid;
-    grid-template-columns: 1fr 400px;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .main-section {
-    padding: 1.5rem;
-    min-height: 400px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .upload-area {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
+    font-size: 0.9rem;
+    padding: 0.35rem 0.75rem;
     cursor: pointer;
-    transition: all 0.3s;
-    padding: 2rem;
-    text-align: center;
+    box-shadow: 3px 3px 0px #111;
   }
 
-  .upload-area:hover {
-    border-color: #3b82f6;
-    background: #eff6ff;
+  .pane-actions button:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+  }
+
+  .control-panel-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: #fdfdfd;
+  }
+
+  .brutal-upload-area {
+    border: 4px dashed #111;
+    background: #fff;
+    padding: 2.5rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .brutal-upload-area:hover,
+  .brutal-upload-area.is-dragover {
+    background: #ffd900;
+    border-style: solid;
   }
 
   .upload-icon {
-    font-size: 4rem;
-    color: #3b82f6;
+    font-size: 3rem;
+    display: block;
     margin-bottom: 1rem;
   }
 
-  .preview-area {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  .upload-placeholder p {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin: 0 0 0.5rem 0;
+  }
+  .upload-placeholder small {
+    font-weight: bold;
+    color: #666;
   }
 
-  .image-wrapper {
-    width: 100%;
-    max-height: 500px;
+  .preview-thumbnail {
     display: flex;
-    align-items: center;
     justify-content: center;
-    background: #000;
-    border-radius: 8px;
+    align-items: center;
+    border: 4px solid #111;
+    box-shadow: 6px 6px 0px #111;
+    height: 300px;
+    background: #eee;
     overflow: hidden;
   }
 
-  .image-wrapper img {
+  .preview-thumbnail img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
   }
 
-  .actions {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
+  .channel-group {
+    background: #fdfae5;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    padding: 1.25rem;
+  }
+  .channel-group h4 {
+    margin: 0 0 1rem 0;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+  .group-pink h4 {
+    color: #ff6bc9;
+    text-shadow: 1px 1px 0px #111;
+  }
+  .mt-4 {
+    margin-top: 1.5rem;
   }
 
-  .info-section {
-    padding: 1.5rem;
+  .preview-container {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    max-height: 600px;
-    overflow-y: auto;
+    background: #f8fafc;
+    background-image:
+      linear-gradient(45deg, #e5e5e5 25%, transparent 25%),
+      linear-gradient(135deg, #e5e5e5 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #e5e5e5 75%),
+      linear-gradient(135deg, transparent 75%, #e5e5e5 75%);
+    background-size: 20px 20px;
+    background-color: white;
+    position: relative;
+    padding: 1.5rem;
+    min-height: 480px;
+    overflow: auto;
   }
 
-  .info-section h3 {
-    margin: 0 0 1.5rem;
-    font-size: 1.1rem;
+  .empty-state {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: #444;
+    font-style: italic;
+    font-weight: bold;
   }
 
   .exif-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
 
   .exif-item {
     display: flex;
-    justify-content: space-between;
-    padding: 0.75rem;
-    background: #f8fafc;
-    border-radius: 6px;
-    border: 1px solid #e2e8f0;
-    font-size: 0.9rem;
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 3px 3px 0px #111;
+    font-size: 0.95rem;
   }
 
   .exif-key {
-    color: #64748b;
-    font-weight: 500;
+    background: #ffd900;
+    padding: 0.75rem 1rem;
+    font-weight: 800;
+    border-right: 3px solid #111;
+    min-width: 120px;
+    flex-shrink: 0;
   }
 
   .exif-value {
-    color: #1e293b;
+    padding: 0.75rem 1rem;
     font-weight: 600;
+    word-break: break-all;
   }
 
-  .loading-state,
-  .empty-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    color: #94a3b8;
-    height: 300px;
-  }
-
-  .loading-state .is-loading {
-    font-size: 2rem;
-    animation: rotate 1s linear infinite;
-  }
-
-  .tips-section {
-    padding: 1.5rem 2rem;
-    background: linear-gradient(to bottom right, #ffffff, #f8fafc);
-    border: 1px solid rgba(59, 130, 246, 0.1);
-  }
-
-  .tips-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    color: #3b82f6;
-  }
-
-  .tips-header h4 {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-
-  .tips-content p {
-    color: #475569;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin: 0;
-  }
-
-  .premium-list {
-    padding-left: 1.25rem;
-    margin: 1rem 0 0;
-  }
-
-  .premium-list li {
-    margin-bottom: 0.75rem;
-    color: #475569;
-    font-size: 0.9rem;
+  .brutal-status {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    overflow: hidden;
     position: relative;
-    list-style-type: none;
+    text-transform: uppercase;
   }
 
-  .premium-list li::before {
-    content: '•';
-    color: #3b82f6;
-    font-weight: bold;
+  .brutal-status.info {
+    background: #fff;
+  }
+  .brutal-status.success {
+    background: #ff4b4b;
+    color: #fff;
+  }
+  .brutal-status.warn {
+    background: #ffd900;
+    color: #111;
+  }
+
+  .marquee-wrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .marquee-content {
     display: inline-block;
-    width: 1em;
-    margin-left: -1em;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
   }
 
-  .glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  }
-
-  @keyframes rotate {
-    from {
-      transform: rotate(0deg);
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
     }
-    to {
-      transform: rotate(360deg);
+    100% {
+      transform: translateX(-50%);
     }
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
-  }
-
-  @media (max-width: 992px) {
-    .layout-container {
+  @media (max-width: 1024px) {
+    .brutal-grid {
       grid-template-columns: 1fr;
     }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+  }
+
+  /* --- Dark Mode Overrides --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .pane-actions button,
+  [data-theme='dark'] .brutal-status,
+  [data-theme='dark'] .brutal-status.info {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-upload-area {
+    box-shadow: 6px 6px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+
+  [data-theme='dark'] .brutal-upload-area {
+    background: #1a1a1a;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-upload-area:hover,
+  [data-theme='dark'] .brutal-upload-area.is-dragover {
+    background: #b28f00;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .preview-thumbnail {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+
+  [data-theme='dark'] .channel-group {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .group-pink h4 {
+    color: #ff9ecf;
+    text-shadow: 1px 1px 0px #eee;
+  }
+
+  [data-theme='dark'] .preview-container {
+    background: #222;
+    background-image:
+      linear-gradient(45deg, #333 25%, transparent 25%),
+      linear-gradient(135deg, #333 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #333 75%),
+      linear-gradient(135deg, transparent 75%, #333 75%);
+  }
+
+  [data-theme='dark'] .exif-item {
+    background: #111;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .exif-key {
+    background: #b28f00;
+    border-right-color: #eee;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .brutal-status {
+    border-color: #eee;
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn.clear-btn {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-status.success {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-status.warn {
+    background: #b28f00;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
   }
 </style>

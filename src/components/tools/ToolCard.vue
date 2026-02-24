@@ -1,12 +1,19 @@
 <template>
   <div class="brutal-card-wrapper" @click="handleCardClick">
     <div class="brutal-card">
+      <!-- 顶部色带 Header -->
       <div class="card-header" :class="getRandomColorClass(tool.id)">
-        <div class="card-icon-wrapper">
-          <img v-if="tool.customIcon" :src="tool.customIcon" class="custom-icon" alt="icon" />
-          <el-icon v-else :size="24">
-            <component :is="tool.icon" />
-          </el-icon>
+        <div class="header-left">
+          <div class="card-icon-wrapper">
+            <img v-if="tool.customIcon" :src="tool.customIcon" class="custom-icon" alt="icon" />
+            <el-icon v-else :size="32">
+              <component :is="tool.icon" />
+            </el-icon>
+          </div>
+          <span v-if="category" class="brutal-tag category-tag header-tag">
+            <el-icon class="opt-icon"><component :is="category.icon" /></el-icon>
+            {{ t('category.' + category.id) }}
+          </span>
         </div>
         <div class="card-actions">
           <button
@@ -30,24 +37,23 @@
         </div>
       </div>
 
+      <!-- 主体内容 Body -->
       <div class="card-body">
+        <div class="body-accent" :class="getRandomColorClass(tool.id)"></div>
         <h3 class="brutal-card-title">{{ tool.name }}</h3>
         <p class="brutal-card-summary">{{ tool.summary }}</p>
       </div>
 
+      <!-- 底部标签栏 Footer -->
       <div class="brutal-card-footer">
         <div class="tags-container">
-          <span v-if="category" class="brutal-tag category-tag">
-            <el-icon class="opt-icon"><component :is="category.icon" /></el-icon>
-            {{ t('category.' + category.id) }}
-          </span>
           <span v-if="tool.isAi" class="brutal-tag ai-tag">AI</span>
-          <span v-for="tag in tool.tags.slice(0, 2)" :key="tag" class="brutal-tag">
+          <span v-for="tag in tool.tags.slice(0, 4)" :key="tag" class="brutal-tag">
             {{ tag }}
           </span>
         </div>
         <div class="card-arrow-icon">
-          <el-icon :size="20"><ArrowRight /></el-icon>
+          <span class="arrow-circle">→</span>
         </div>
       </div>
     </div>
@@ -57,7 +63,7 @@
 <script setup>
   import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
-  import { ArrowRight, Star, StarFilled, InfoFilled } from '@element-plus/icons-vue';
+  import { Star, StarFilled, InfoFilled } from '@element-plus/icons-vue';
   import { categories } from '@/data/tools';
 
   const { t } = useI18n();
@@ -117,7 +123,7 @@
       box-shadow 0.15s ease;
     overflow: hidden;
     position: relative;
-    min-height: 200px;
+    min-height: 210px;
   }
 
   .brutal-card:hover {
@@ -130,12 +136,21 @@
     box-shadow: 0px 0px 0px #111;
   }
 
+  /* ======== Header ======== */
   .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 1rem;
+    padding: 0.65rem 1rem;
     border-bottom: 4px solid #111;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 0; /* Prevent overflow */
   }
 
   .bg-yellow {
@@ -164,42 +179,43 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
   }
 
   .custom-icon {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
     object-fit: contain;
   }
 
   .card-actions {
     display: flex;
-    gap: 0.5rem;
-    opacity: 1; /* Always visible in brutalism, or keep it raw */
+    gap: 0.35rem;
+    flex-shrink: 0;
   }
 
   .brutal-action-small {
     background: #fff;
     color: #111;
     border: 3px solid #111;
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 3px 3px 0px #111;
+    box-shadow: 2px 2px 0px #111;
     transition: all 0.1s;
     padding: 0;
   }
 
   .brutal-action-small:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 5px 5px 0px #111;
+    box-shadow: 4px 4px 0px #111;
   }
 
   .brutal-action-small:active {
-    transform: translate(3px, 3px);
+    transform: translate(2px, 2px);
     box-shadow: 0px 0px 0px #111;
   }
 
@@ -208,30 +224,42 @@
     color: #fff;
   }
 
+  /* ======== Body ======== */
   .card-body {
-    padding: 1.25rem 1rem;
+    padding: 1.1rem 1rem 1rem 1rem;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     background: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* 左侧色条点缀 */
+  .body-accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
   }
 
   .brutal-card-title {
     font-family: 'Syne', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', 'Heiti SC', sans-serif;
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     font-weight: 900;
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 0.4rem 0;
     color: #111;
-    text-transform: uppercase;
     letter-spacing: -0.5px;
-    -webkit-text-stroke: 0.5px #111;
+    -webkit-text-stroke: 0.3px #111;
+    line-height: 1.3;
   }
 
   .brutal-card-summary {
     font-family: 'IBM Plex Mono', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', monospace;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #444;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #555;
     line-height: 1.5;
     margin: 0;
     display: -webkit-box;
@@ -241,33 +269,38 @@
     overflow: hidden;
   }
 
+  /* ======== Footer ======== */
   .brutal-card-footer {
-    padding: 0.75rem 1rem;
+    padding: 0.6rem 0.75rem;
     border-top: 4px solid #111;
-    background: #f8f8f8;
+    background: #f5f5f0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 0.5rem;
   }
 
   .tags-container {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.35rem;
     overflow: hidden;
     flex-wrap: nowrap;
+    flex: 1;
+    min-width: 0;
   }
 
   .brutal-tag {
     font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 600;
-    padding: 0.2rem 0.5rem;
+    padding: 0.15rem 0.45rem;
     border: 2px solid #111;
     background: #fff;
     color: #111;
     white-space: nowrap;
-    box-shadow: 2px 2px 0px #111;
+    box-shadow: 1px 1px 0px #111;
     text-transform: uppercase;
+    letter-spacing: 0.3px;
   }
 
   .category-tag {
@@ -279,24 +312,68 @@
     box-shadow: 2px 2px 0px #ffd900;
   }
 
+  .category-tag.header-tag {
+    background: #111;
+    color: #fff;
+    box-shadow: 3px 3px 0px #ffd900;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 800;
+    padding: 0.3rem 0.65rem;
+    border: 3px solid #111;
+    letter-spacing: 0.5px;
+    transition: all 0.15s;
+  }
+
+  .brutal-card:hover .category-tag.header-tag {
+    background: #ffd900;
+    color: #111;
+    box-shadow: 3px 3px 0px #111;
+  }
+
   .ai-tag {
     background: #ff4b4b;
     color: #fff;
+    animation: ai-pulse 2s ease-in-out infinite;
   }
 
+  @keyframes ai-pulse {
+    0%,
+    100% {
+      box-shadow: 1px 1px 0px #111;
+    }
+    50% {
+      box-shadow: 1px 1px 6px #ff4b4b;
+    }
+  }
+
+  /* Arrow Button */
   .card-arrow-icon {
-    color: #111;
+    flex-shrink: 0;
+  }
+
+  .arrow-circle {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s;
+    width: 28px;
+    height: 28px;
+    border: 3px solid #111;
+    background: #fff;
+    font-weight: 900;
+    font-size: 1rem;
+    box-shadow: 2px 2px 0px #111;
+    transition: all 0.15s;
   }
 
-  .brutal-card:hover .card-arrow-icon {
-    transform: translateX(4px);
+  .brutal-card:hover .arrow-circle {
+    background: #111;
+    color: #fff;
+    transform: translateX(2px);
+    box-shadow: 0px 0px 0px #111;
   }
 
-  /* --- Dark Mode Overrides --- */
+  /* ======== Dark Mode ======== */
   [data-theme='dark'] .brutal-card,
   [data-theme='dark'] .card-body,
   [data-theme='dark'] .brutal-action-small,
@@ -325,10 +402,10 @@
   }
 
   [data-theme='dark'] .brutal-action-small {
-    box-shadow: 3px 3px 0px #eee;
+    box-shadow: 2px 2px 0px #eee;
   }
   [data-theme='dark'] .brutal-action-small:hover {
-    box-shadow: 5px 5px 0px #eee;
+    box-shadow: 4px 4px 0px #eee;
   }
   [data-theme='dark'] .brutal-action-small:active {
     box-shadow: 0px 0px 0px #eee;
@@ -340,14 +417,14 @@
 
   [data-theme='dark'] .brutal-card-title {
     color: #eee;
-    -webkit-text-stroke: 0.5px #eee;
+    -webkit-text-stroke: 0.3px #eee;
   }
   [data-theme='dark'] .brutal-card-summary {
     color: #aaa;
   }
 
   [data-theme='dark'] .brutal-tag {
-    box-shadow: 2px 2px 0px #eee;
+    box-shadow: 1px 1px 0px #eee;
   }
   [data-theme='dark'] .category-tag {
     background: #eee;
@@ -355,14 +432,36 @@
     box-shadow: 2px 2px 0px #b28f00;
     border-color: #eee;
   }
+  [data-theme='dark'] .category-tag.header-tag {
+    box-shadow: 2px 2px 0px rgba(255, 255, 255, 0.3);
+  }
   [data-theme='dark'] .ai-tag {
     background: #cc0000;
     color: #fff;
     border-color: #eee;
   }
+  @media (prefers-color-scheme: dark) {
+    @keyframes ai-pulse {
+      0%,
+      100% {
+        box-shadow: 1px 1px 0px #eee;
+      }
+      50% {
+        box-shadow: 1px 1px 6px #cc0000;
+      }
+    }
+  }
 
-  [data-theme='dark'] .card-arrow-icon {
+  [data-theme='dark'] .arrow-circle {
+    background: #1a1a1a;
     color: #eee;
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-card:hover .arrow-circle {
+    background: #eee;
+    color: #111;
+    box-shadow: 0px 0px 0px #eee;
   }
 
   [data-theme='dark'] .bg-yellow {

@@ -1,105 +1,116 @@
 <template>
-  <div class="barcode-generator-tool">
-    <div class="nav-header">
-      <button class="back-btn" @click="goBack">
-        <el-icon>
-          <Back />
-        </el-icon>
-        <span>返回</span>
-      </button>
-    </div>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">条形码<span>.生成()</span></h1>
+        <button class="brutal-btn clear-btn" @click="clearContent">清空内容</button>
+      </header>
 
-    <div class="tool-header">
-      <h1 class="font-display">条形码生成器</h1>
-      <p class="summary">生成多种格式的条形码，支持自定义样式和实时预览</p>
-    </div>
+      <div class="brutal-grid">
+        <!-- Left Pane: Controls -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span>控制台.设定</span>
+            <div class="pane-actions">
+              <button :disabled="!isValid" @click="downloadBarcode">下载图片</button>
+            </div>
+          </div>
 
-    <div class="tool-content">
-      <div class="controls-panel glass-card">
-        <div class="form-group">
-          <label>条码内容</label>
-          <textarea
-            v-model="barcodeValue"
-            class="input-area"
-            placeholder="请输入条形码内容..."
-            rows="2"
-          ></textarea>
+          <div class="control-panel-content">
+            <div class="brutal-form-group">
+              <label>条码内容</label>
+              <textarea
+                v-model="barcodeValue"
+                class="brutal-editor"
+                placeholder="请输入条形码内容..."
+                rows="2"
+              ></textarea>
+            </div>
+
+            <div class="brutal-form-group">
+              <label>格式</label>
+              <select v-model="barcodeFormat" class="brutal-select">
+                <option value="CODE128">CODE128 (Auto)</option>
+                <option value="EAN13">EAN-13</option>
+                <option value="UPC">UPC</option>
+                <option value="EAN8">EAN-8</option>
+                <option value="EAN5">EAN-5</option>
+                <option value="EAN2">EAN-2</option>
+                <option value="CODE39">CODE39</option>
+                <option value="ITF14">ITF-14</option>
+                <option value="MSI">MSI</option>
+                <option value="pharmacode">Pharmacode</option>
+              </select>
+            </div>
+
+            <div class="brutal-settings-grid">
+              <div class="brutal-form-group">
+                <label>宽度 (Width)</label>
+                <input
+                  v-model.number="barcodeWidth"
+                  type="number"
+                  min="1"
+                  max="4"
+                  step="0.5"
+                  class="brutal-input"
+                />
+              </div>
+              <div class="brutal-form-group">
+                <label>高度 (Height)</label>
+                <input
+                  v-model.number="barcodeHeight"
+                  type="number"
+                  min="10"
+                  max="150"
+                  step="5"
+                  class="brutal-input"
+                />
+              </div>
+              <div class="brutal-form-group">
+                <label>条码颜色</label>
+                <input v-model="lineColor" type="color" class="brutal-input color-input" />
+              </div>
+              <div class="brutal-form-group">
+                <label>背景颜色</label>
+                <input v-model="background" type="color" class="brutal-input color-input" />
+              </div>
+            </div>
+
+            <div class="brutal-form-group checkbox-group">
+              <label class="brutal-checkbox-label">
+                <input v-model="displayValue" type="checkbox" class="brutal-checkbox" />
+                显示文本内容
+              </label>
+            </div>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>格式</label>
-          <select v-model="barcodeFormat" class="select-input">
-            <option value="CODE128">CODE128 (Auto)</option>
-            <option value="EAN13">EAN-13</option>
-            <option value="UPC">UPC</option>
-            <option value="EAN8">EAN-8</option>
-            <option value="EAN5">EAN-5</option>
-            <option value="EAN2">EAN-2</option>
-            <option value="CODE39">CODE39</option>
-            <option value="ITF14">ITF-14</option>
-            <option value="MSI">MSI</option>
-            <option value="pharmacode">Pharmacode</option>
-          </select>
-        </div>
+        <!-- Right Pane: Preview -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-blue">
+            <span class="text-white">实时预览.输出</span>
+          </div>
 
-        <div class="settings-grid">
-          <div class="form-group">
-            <label>宽度 (Width)</label>
-            <input
-              v-model.number="barcodeWidth"
-              type="number"
-              min="1"
-              max="4"
-              step="0.5"
-              class="number-input"
-            />
+          <div class="preview-container">
+            <div ref="barcodeContainer" class="barcode-wrapper">
+              <svg ref="barcodeSvg"></svg>
+            </div>
           </div>
-          <div class="form-group">
-            <label>高度 (Height)</label>
-            <input
-              v-model.number="barcodeHeight"
-              type="number"
-              min="10"
-              max="150"
-              step="5"
-              class="number-input"
-            />
-          </div>
-          <div class="form-group">
-            <label>条码颜色</label>
-            <input v-model="lineColor" type="color" class="color-input" />
-          </div>
-          <div class="form-group">
-            <label>背景颜色</label>
-            <input v-model="background" type="color" class="color-input" />
-          </div>
-        </div>
-
-        <div class="form-group checkbox-group">
-          <label class="checkbox-label">
-            <input v-model="displayValue" type="checkbox" />
-            显示文本内容
-          </label>
-        </div>
-
-        <div class="action-buttons">
-          <button class="btn-download" :disabled="!isValid" @click="downloadBarcode">
-            <el-icon>
-              <Download />
-            </el-icon>
-            下载图片
-          </button>
         </div>
       </div>
 
-      <div class="preview-panel glass-card">
-        <div class="preview-header">
-          <h3>实时预览</h3>
-        </div>
-        <div ref="barcodeContainer" class="barcode-container">
-          <svg ref="barcodeSvg"></svg>
-          <div v-if="!isValid && barcodeValue" class="error-msg">该内容不符合选定格式的要求</div>
-          <div v-if="!barcodeValue" class="empty-msg">请输入内容以生成条形码</div>
+      <!-- Global Status Bar -->
+      <div class="brutal-status" :class="isValid ? 'success' : 'error'">
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span v-if="isValid">
+              <span v-for="i in 10" :key="i">条码生成成功 : 系统正常运行 // &nbsp;</span>
+            </span>
+            <span v-else>
+              <span v-for="i in 10" :key="i">该内容不符合选定格式的要求或为空 // &nbsp;</span>
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -109,7 +120,6 @@
 <script setup>
   import { ref, watch, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
-  import { Back, Download } from '@element-plus/icons-vue';
   import JsBarcode from 'jsbarcode';
 
   const router = useRouter();
@@ -128,7 +138,6 @@
   const generateBarcode = () => {
     if (!barcodeValue.value) {
       isValid.value = false;
-
       if (barcodeSvg.value) barcodeSvg.value.innerHTML = '';
       return;
     }
@@ -141,12 +150,15 @@
         width: barcodeWidth.value,
         height: barcodeHeight.value,
         displayValue: displayValue.value,
-        margin: 10
+        margin: 10,
+        valid: valid => {
+          isValid.value = valid;
+        }
       });
-      isValid.value = true;
     } catch (e) {
       console.warn('Barcode generation failed:', e);
       isValid.value = false;
+      if (barcodeSvg.value) barcodeSvg.value.innerHTML = '';
     }
   };
 
@@ -161,6 +173,16 @@
     generateBarcode();
   });
 
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
+
+  const clearContent = () => {
+    barcodeValue.value = '';
+    generateBarcode();
+  };
+
   const downloadBarcode = () => {
     if (!barcodeSvg.value || !isValid.value) return;
 
@@ -174,12 +196,14 @@
       canvas.width = img.width;
       canvas.height = img.height;
       const ctx = canvas.getContext('2d');
+      ctx.fillStyle = background.value;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0);
 
       const pngUrl = canvas.toDataURL('image/png');
       const downloadLink = document.createElement('a');
       downloadLink.href = pngUrl;
-      downloadLink.download = `barcode-${barcodeValue.value}.png`;
+      downloadLink.download = `barcode-${barcodeValue.value || 'download'}.png`;
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
@@ -187,212 +211,483 @@
     };
     img.src = url;
   };
-
-  const goBack = () => {
-    if (window.history.length > 1) router.back();
-    else router.push('/');
-  };
 </script>
 
 <style scoped>
-  .barcode-generator-tool {
-    max-width: 1000px;
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
+    min-height: 100vh;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+
+  .brutal-container {
+    max-width: 1600px;
     margin: 0 auto;
-    padding: 40px 20px;
-  }
-
-  .nav-header {
-    margin-bottom: 20px;
-  }
-
-  .back-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-    font-size: 1rem;
-    padding: 8px 16px;
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-
-  .back-btn:hover {
-    background: rgba(0, 0, 0, 0.05);
-    color: var(--text-primary);
-  }
-
-  .tool-header {
-    text-align: center;
-    margin-bottom: 40px;
-  }
-
-  .tool-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 16px;
-    background: var(--accent-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .summary {
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-  }
-
-  .tool-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    align-items: start;
-  }
-
-  @media (max-width: 768px) {
-    .tool-content {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .glass-card {
-    background: white;
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  }
-
-  .form-group {
-    margin-bottom: 20px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
   }
 
-  .form-group label {
-    font-weight: 500;
-    color: var(--text-primary);
-    font-size: 0.95rem;
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
   }
 
-  .input-area,
-  .select-input,
-  .number-input {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 1rem;
-    background: var(--bg-secondary);
-    transition: all 0.2s;
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
   }
 
-  .input-area:focus,
-  .select-input:focus,
-  .number-input:focus {
-    outline: none;
-    border-color: var(--accent-purple);
-    background: white;
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
   }
 
-  .number-input {
-    padding-right: 4px;
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
   }
 
-  .settings-grid {
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-btn.clear-btn {
+    background: #ff4b4b;
+    color: #fff;
+  }
+
+  .brutal-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 3rem;
+    margin-bottom: 3rem;
+    min-height: 550px;
+  }
+
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .text-white {
+    color: #fff;
+  }
+
+  .pane-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .pane-actions button {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #111;
+    transition: all 0.1s;
+  }
+
+  .pane-actions button:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+  }
+
+  .pane-actions button:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .pane-actions button:disabled {
+    background: #eee;
+    color: #aaa;
+    border-color: #aaa;
+    box-shadow: 2px 2px 0px #aaa;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .control-panel-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    flex: 1;
+    background: #fdfdfd;
+  }
+
+  .brutal-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .brutal-form-group label {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+  }
+
+  .brutal-editor,
+  .brutal-input,
+  .brutal-select {
+    width: 100%;
+    border: 3px solid #111;
+    padding: 0.75rem;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-size: 1rem;
+    background: #fff;
+    color: #111;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.1s;
+    outline: none;
+    box-sizing: border-box;
+  }
+
+  .brutal-editor::placeholder {
+    color: #888;
+    font-style: italic;
+  }
+
+  .brutal-editor:focus,
+  .brutal-input:focus,
+  .brutal-select:focus {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+
+  .brutal-editor {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .brutal-select {
+    cursor: pointer;
+    background: #f8f8f8;
+  }
+
+  .brutal-settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
   }
 
   .color-input {
-    width: 100%;
-    height: 42px;
-    padding: 2px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
+    padding: 0;
+    height: 48px;
     cursor: pointer;
+  }
+
+  .color-input::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  .color-input::-webkit-color-swatch {
+    border: none;
   }
 
   .checkbox-group {
-    flex-direction: row;
+    margin-top: 0.5rem;
   }
 
-  .checkbox-label {
+  .brutal-checkbox-label {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.75rem;
     cursor: pointer;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
   }
 
-  .action-buttons {
-    margin-top: 30px;
-  }
-
-  .btn-download {
-    width: 100%;
-    padding: 12px;
-    background: var(--accent-gradient);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 1rem;
-    font-weight: 600;
+  .brutal-checkbox {
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 2px 2px 0px #111;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.3s;
+    position: relative;
+    margin: 0;
   }
 
-  .btn-download:hover:not(:disabled) {
-    opacity: 0.9;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  .brutal-checkbox:checked {
+    background: #00e572;
   }
 
-  .btn-download:disabled {
-    background: var(--bg-secondary);
-    color: var(--text-muted);
-    cursor: not-allowed;
+  .brutal-checkbox:checked::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 6px;
+    height: 12px;
+    border: solid #111;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
   }
 
-  .preview-panel {
-    min-height: 400px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .preview-header h3 {
-    margin-bottom: 20px;
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-  }
-
-  .barcode-container {
+  .preview-container {
     flex: 1;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--bg-secondary);
-    border-radius: 12px;
-    padding: 20px;
+    flex-direction: column;
+    padding: 0;
+    position: relative;
+    background: #f8fafc;
+  }
+
+  .barcode-wrapper {
+    flex: 1;
+    display: flex;
+    padding: 2rem;
+    min-height: 300px;
+    overflow: auto;
+  }
+
+  .barcode-wrapper svg {
+    margin: auto;
+    display: block;
+  }
+
+  .brutal-status {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
     overflow: hidden;
     position: relative;
+    text-transform: uppercase;
   }
 
-  .error-msg {
-    color: #ef4444;
-    font-size: 0.9rem;
-    text-align: center;
+  .brutal-status.info {
+    background: #fff;
+  }
+  .brutal-status.success {
+    background: #00e572;
+    color: #111;
+  }
+  .brutal-status.error {
+    background: #ff4b4b;
+    color: white;
   }
 
-  .empty-msg {
-    color: var(--text-muted);
-    font-size: 0.9rem;
+  .marquee-wrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .brutal-title {
+      font-size: 2.5rem;
+    }
+    .brutal-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      min-height: auto;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+  }
+
+  /* --- Dark Mode Overrides --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .pane-actions button,
+  [data-theme='dark'] .brutal-status,
+  [data-theme='dark'] .brutal-status.info {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+
+  [data-theme='dark'] .pane-actions button {
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .pane-actions button:hover:not(:disabled) {
+    box-shadow: 5px 5px 0px #eee;
+  }
+  [data-theme='dark'] .pane-actions button:active:not(:disabled) {
+    box-shadow: 0px 0px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+
+  [data-theme='dark'] .brutal-editor,
+  [data-theme='dark'] .brutal-input,
+  [data-theme='dark'] .brutal-select {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-editor:focus,
+  [data-theme='dark'] .brutal-input:focus,
+  [data-theme='dark'] .brutal-select:focus {
+    box-shadow: 6px 6px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-checkbox {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-checkbox:checked {
+    background: #00994c;
+  }
+
+  [data-theme='dark'] .brutal-checkbox:checked::after {
+    border-color: #eee;
+  }
+
+  [data-theme='dark'] .control-panel-content {
+    background: #111;
+  }
+
+  [data-theme='dark'] .preview-container {
+    background: #222;
+  }
+
+  [data-theme='dark'] .brutal-status {
+    border-color: #eee;
+    box-shadow: 8px 8px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn.clear-btn {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-status.error {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-status.success {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
   }
 </style>

@@ -40,6 +40,7 @@
                 </button>
               </div>
             </div>
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <div ref="previewRef" class="preview-wrapper markdown-body" v-html="renderedHtml"></div>
           </section>
         </div>

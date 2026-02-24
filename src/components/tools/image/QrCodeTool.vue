@@ -1,211 +1,217 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <h1 class="tool-title">二维码工具</h1>
-      <div class="header-right"></div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <div class="header-action start">
+          <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        </div>
+        <h1 class="brutal-title">信号矩阵<span>.二维码()</span></h1>
+        <div class="header-action end"></div>
+      </header>
 
-    <div class="tool-content">
-      <div class="tabs-header">
+      <!-- Tab 切换 -->
+      <div class="mode-tabs">
         <button
-          :class="['tab-btn', { active: currentTab === 'generate' }]"
+          :class="['mode-tab', currentTab === 'generate' ? 'active' : '']"
           @click="currentTab = 'generate'"
         >
-          📤 生成二维码
+          📤 信号编码 (生成)
         </button>
         <button
-          :class="['tab-btn', { active: currentTab === 'scan' }]"
+          :class="['mode-tab', currentTab === 'scan' ? 'active' : '']"
           @click="currentTab = 'scan'"
         >
-          📥 解析二维码
+          📥 信号解码 (解析)
         </button>
       </div>
 
-      <div v-if="currentTab === 'generate'" class="layout-container">
-        <aside class="settings-panel">
-          <div class="input-group">
-            <div class="label">内容输入</div>
-            <el-input
-              v-model="generate.content"
-              type="textarea"
-              :rows="5"
-              placeholder="输入文本或网址..."
-              resize="none"
-              @input="debouncedGenerate"
-            />
+      <!-- 生成模式 -->
+      <div v-if="currentTab === 'generate'" class="brutal-grid">
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span>数据注入.控制台</span>
           </div>
-
-          <div class="settings-group">
-            <div class="group-title">样式设置</div>
-
-            <div class="setting-item">
-              <span class="label">纠错等级</span>
-              <el-radio-group
-                v-model="generate.options.errorCorrectionLevel"
-                size="small"
-                @change="generateQRCode"
-              >
-                <el-radio-button label="L">低 (7%)</el-radio-button>
-                <el-radio-button label="M">中 (15%)</el-radio-button>
-                <el-radio-button label="Q">高 (25%)</el-radio-button>
-                <el-radio-button label="H">极高 (30%)</el-radio-button>
-              </el-radio-group>
+          <div class="control-panel-content">
+            <div class="brutal-form-group">
+              <label class="brutal-label">载荷内容 (Payload)</label>
+              <textarea
+                v-model="generate.content"
+                class="brutal-textarea mt-1"
+                rows="4"
+                placeholder="输入文本或网址..."
+                @input="debouncedGenerate"
+              ></textarea>
             </div>
 
-            <div class="setting-item">
-              <span class="label">尺寸 (px)</span>
-              <el-slider
-                v-model="generate.options.width"
-                :min="100"
-                :max="1000"
-                :step="10"
-                show-input
-                @change="generateQRCode"
+            <div class="brutal-form-group channel-group mt-4">
+              <h4>纠错屏障等级</h4>
+              <div class="ecl-grid mt-1">
+                <button
+                  v-for="level in eclLevels"
+                  :key="level.value"
+                  :class="[
+                    'ecl-btn',
+                    generate.options.errorCorrectionLevel === level.value ? 'active' : ''
+                  ]"
+                  @click="
+                    generate.options.errorCorrectionLevel = level.value;
+                    generateQRCode();
+                  "
+                >
+                  {{ level.label }}
+                </button>
+              </div>
+            </div>
+
+            <div class="brutal-form-group channel-group group-pink mt-4">
+              <h4>物理尺寸 [ {{ generate.options.width }}px ]</h4>
+              <input
+                v-model.number="generate.options.width"
+                type="range"
+                class="brutal-slider mt-1"
+                min="100"
+                max="1000"
+                step="10"
+                @input="generateQRCode"
+              />
+
+              <h4 class="mt-4">边距量级 [ {{ generate.options.margin }} ]</h4>
+              <input
+                v-model.number="generate.options.margin"
+                type="range"
+                class="brutal-slider mt-1"
+                min="0"
+                max="10"
+                @input="generateQRCode"
               />
             </div>
 
-            <div class="setting-item">
-              <span class="label">边距</span>
-              <el-input-number
-                v-model="generate.options.margin"
-                :min="0"
-                :max="10"
-                size="small"
-                @change="generateQRCode"
-              />
-            </div>
-
-            <div class="color-settings">
-              <div class="color-item">
-                <span class="label">前景色</span>
-                <el-color-picker
-                  v-model="generate.options.color.dark"
-                  size="default"
-                  @change="generateQRCode"
-                />
-              </div>
-              <div class="color-item">
-                <span class="label">背景色</span>
-                <el-color-picker
-                  v-model="generate.options.color.light"
-                  size="default"
-                  show-alpha
-                  @change="generateQRCode"
-                />
+            <div class="brutal-form-group channel-group mt-4">
+              <h4>漆色系统</h4>
+              <div class="color-row mt-1">
+                <div class="color-item">
+                  <span class="brutal-label">前景色</span>
+                  <input
+                    v-model="generate.options.color.dark"
+                    type="color"
+                    class="brutal-input color-picker"
+                    @input="generateQRCode"
+                  />
+                </div>
+                <div class="color-item">
+                  <span class="brutal-label">背景色</span>
+                  <input
+                    v-model="generate.options.color.light"
+                    type="color"
+                    class="brutal-input color-picker"
+                    @input="generateQRCode"
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        </aside>
-
-        <main class="preview-panel">
-          <div class="preview-card">
-            <div class="qr-container">
-              <img v-if="generate.qrUrl" :src="generate.qrUrl" alt="QR Code" class="qr-image" />
-              <div v-else class="placeholder">
-                <el-icon :size="48" color="#94a3b8">
-                  <Postcard />
-                </el-icon>
-                <span>输入内容生成二维码</span>
-              </div>
-            </div>
-
-            <div class="action-buttons">
-              <el-button
-                type="primary"
-                size="large"
-                :disabled="!generate.qrUrl"
-                @click="downloadQRCode"
-              >
-                <el-icon>
-                  <Download />
-                </el-icon>
-                下载图片
-              </el-button>
-            </div>
-          </div>
-        </main>
-      </div>
-
-      <div v-if="currentTab === 'scan'" class="layout-container vertical">
-        <div
-          class="upload-area"
-          @dragover.prevent="dragOver"
-          @dragleave.prevent="dragLeave"
-          @drop.prevent="handleFileDrop"
-          @paste="handlePaste"
-          @click="triggerFileInput"
-        >
-          <input
-            ref="fileInput"
-            type="file"
-            accept="image/*"
-            class="hidden-input"
-            @change="handleFileSelect"
-          />
-          <div v-if="scan.imageUrl" class="preview-wrapper">
-            <img :src="scan.imageUrl" class="scan-preview" />
-            <div class="overlay-hint">点击或粘贴更换图片</div>
-          </div>
-          <div v-else class="upload-placeholder">
-            <el-icon :size="64" class="upload-icon">
-              <Picture />
-            </el-icon>
-            <p>点击上传、拖入图片 或 <code>Ctrl+V</code> 粘贴</p>
           </div>
         </div>
 
-        <div class="scan-result-panel">
-          <div class="panel-header">
-            <span class="panel-title">解析结果</span>
-            <div class="panel-actions">
-              <el-button size="small" :disabled="!scan.result" @click="copyScanResult"
-                >复制</el-button
-              >
-              <el-button
-                size="small"
-                type="danger"
-                plain
-                :disabled="!scan.result"
-                @click="clearScan"
-                >清空</el-button
-              >
+        <div class="brutal-pane">
+          <div class="pane-header bg-blue">
+            <span class="text-white">出射信号.预览</span>
+          </div>
+          <div class="preview-content">
+            <div class="qr-display brutal-shadow">
+              <img v-if="generate.qrUrl" :src="generate.qrUrl" alt="QR Code" class="qr-image" />
+              <div v-else class="qr-placeholder">
+                <span class="placeholder-icon">📡</span>
+                <p>输入载荷生成矩阵信号</p>
+              </div>
+            </div>
+            <button
+              class="brutal-btn brutal-btn-block action-btn mt-4"
+              :disabled="!generate.qrUrl"
+              @click="downloadQRCode"
+            >
+              导出二维码图像
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 解析模式 -->
+      <div v-if="currentTab === 'scan'" class="brutal-grid scan-grid">
+        <div class="brutal-pane">
+          <div class="pane-header bg-pink">
+            <span>信号捕获.探针</span>
+          </div>
+          <div class="control-panel-content">
+            <input
+              ref="fileInput"
+              type="file"
+              accept="image/*"
+              style="display: none"
+              @change="handleFileSelect"
+            />
+            <div class="brutal-upload-area" @click="triggerFileInput" @paste="handlePaste">
+              <div v-if="scan.imageUrl" class="scan-img-wrapper">
+                <img :src="scan.imageUrl" class="scan-preview-img" />
+                <div class="scan-overlay-hint">点击或粘贴更换图片</div>
+              </div>
+              <div v-else class="upload-placeholder">
+                <span class="upload-icon">🔍</span>
+                <p>点击上传 / 拖入图片 / Ctrl+V 粘贴</p>
+                <small>(本地解析，数据不会上传)</small>
+              </div>
             </div>
           </div>
-          <textarea
-            v-model="scan.result"
-            class="scan-textarea"
-            readonly
-            placeholder="解析结果将显示在这里..."
-          ></textarea>
+        </div>
+
+        <div class="brutal-pane">
+          <div class="pane-header bg-green">
+            <span>解码结果.输出带</span>
+            <div class="pane-actions">
+              <button :disabled="!scan.result" @click="copyScanResult">复制</button>
+              <button :disabled="!scan.result" @click="clearScan">清空</button>
+            </div>
+          </div>
+          <div class="control-panel-content">
+            <textarea
+              v-model="scan.result"
+              class="brutal-textarea result-area"
+              readonly
+              placeholder="解析结果将显示在这里..."
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- 全局状态栏 -->
+      <div class="brutal-status" :class="statusClass">
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span>
+              <span v-for="i in 10" :key="i">{{ statusText }} // &nbsp;</span>
+            </span>
+          </div>
         </div>
       </div>
     </div>
-
-    <footer class="footer">© 2026 LRM工具箱 - 二维码工具</footer>
   </div>
 </template>
 
 <script setup>
-  import { ref, reactive } from 'vue';
+  import { ref, reactive, computed } from 'vue';
   import { useRouter } from 'vue-router';
   import { ElMessage } from 'element-plus';
-  import { ArrowLeft, Download, Postcard, Picture } from '@element-plus/icons-vue';
   import QRCode from 'qrcode';
   import jsQR from 'jsqr';
   import tinycolor from 'tinycolor2';
   import { useCopy, useFileHandler } from '@/composables';
 
   const { copyToClipboard } = useCopy();
-
   const router = useRouter();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
+
   const currentTab = ref('generate');
 
   const generate = reactive({
@@ -221,6 +227,13 @@
       }
     }
   });
+
+  const eclLevels = [
+    { value: 'L', label: '低 (7%)' },
+    { value: 'M', label: '中 (15%)' },
+    { value: 'Q', label: '高 (25%)' },
+    { value: 'H', label: '极 (30%)' }
+  ];
 
   let timeout = null;
   function debouncedGenerate() {
@@ -256,7 +269,6 @@
     link.href = generate.qrUrl;
     link.download = `qrcode-${Date.now()}.png`;
     link.click();
-    ElMessage.success('开始下载');
   }
 
   const scan = reactive({
@@ -264,14 +276,16 @@
     result: ''
   });
 
-  const { fileInput, triggerFileInput, handleFileSelect, handleFileDrop, dragOver, dragLeave } =
-    useFileHandler({
-      accept: 'image/*',
-      readMode: 'none',
-      onSuccess: result => {
-        processImage(result.file);
-      }
-    });
+  const { fileInput, triggerFileInput } = useFileHandler({
+    accept: 'image/*',
+    readMode: 'none'
+  });
+
+  const handleFileSelect = event => {
+    const file = event.target.files[0];
+    if (file) processImage(file);
+    event.target.value = '';
+  };
 
   function handlePaste(e) {
     const items = e.clipboardData.items;
@@ -312,7 +326,6 @@
   function clearScan() {
     scan.imageUrl = '';
     scan.result = '';
-    if (fileInput.value) fileInput.value.value = '';
   }
 
   function copyScanResult() {
@@ -320,366 +333,602 @@
     copyToClipboard(scan.result, { success: '已复制' });
   }
 
-  function goBack() {
-    if (window.history.length > 1) router.back();
-    else router.push('/');
-  }
+  const statusClass = computed(() => {
+    if (currentTab.value === 'generate' && generate.qrUrl) return 'success';
+    if (currentTab.value === 'scan' && scan.result) return 'success';
+    return 'info';
+  });
+
+  const statusText = computed(() => {
+    if (currentTab.value === 'generate') {
+      if (generate.qrUrl) return '编码完成 : 矩阵信号图谱已就绪等待下载!';
+      return '编码引擎待命 : 请注入载荷数据...';
+    }
+    if (scan.result) return '解码完成 : 已成功捕获隐藏在信号矩阵中的数据!';
+    return '解码探针扫描中 : 请投入二维码图片...';
+  });
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
     min-height: 100vh;
-    background: #f0f4f8;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 1600px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
   }
 
-  .tool-header {
-    display: flex;
+  .brutal-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: #ffffff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+  }
+  .header-action.start {
+    display: flex;
+    justify-content: flex-start;
+  }
+  .header-action.end {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
   }
 
-  .tool-title {
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
     font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
   }
-
-  .tool-content {
-    flex: 1;
+  .brutal-btn-block {
+    display: block;
     width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    text-align: center;
+  }
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-btn:disabled {
+    background: #e0e0e0;
+    color: #888;
+    border-color: #888;
+    box-shadow: 2px 2px 0px #888;
+    cursor: not-allowed;
+  }
+  .action-btn {
+    background: #00e572;
+    color: #111;
   }
 
-  .tabs-header {
-    display: flex;
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 0.5rem;
-    gap: 0.5rem;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    width: fit-content;
-    margin: 0 auto;
+  .mt-1 {
+    margin-top: 0.25rem;
+  }
+  .mt-4 {
+    margin-top: 1.5rem;
+  }
+  .mb-4 {
+    margin-bottom: 1.5rem;
   }
 
-  .tab-btn {
-    padding: 0.6rem 2rem;
+  .mode-tabs {
+    display: flex;
+    border: 4px solid #111;
+    background: #fff;
+    box-shadow: 8px 8px 0px #111;
+  }
+  .mode-tab {
+    flex: 1;
+    padding: 1rem;
     border: none;
     background: transparent;
-    border-radius: 8px;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.15rem;
     cursor: pointer;
-    font-weight: 600;
-    color: #64748b;
-    transition: all 0.2s;
+    border-right: 4px solid #111;
+    transition: 0.1s;
+  }
+  .mode-tab:last-child {
+    border-right: none;
+  }
+  .mode-tab:hover {
+    background: #eee;
+  }
+  .mode-tab.active {
+    background: #111;
+    color: white;
   }
 
-  .tab-btn.active {
-    background: #e2e8f0;
-    color: #0f172a;
-  }
-
-  .layout-container {
-    display: flex;
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 2rem;
-    align-items: flex-start;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+  .scan-grid {
+    grid-template-columns: 1fr 1fr;
   }
 
-  .layout-container.vertical {
+  .brutal-pane {
+    display: flex;
     flex-direction: column;
-    max-width: 800px;
-    margin: 0 auto;
-    width: 100%;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
   }
 
-  .settings-panel {
-    width: 400px;
-    background: #ffffff;
-    border-radius: 16px;
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+  }
+  .bg-pink {
+    background: #ff9ecf;
+  }
+  .bg-green {
+    background: #00e572;
+  }
+  .text-white {
+    color: #fff;
+    text-shadow: 1px 1px 0 #111;
+  }
+
+  .pane-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .pane-actions button {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.3rem 0.6rem;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px #111;
+  }
+  .pane-actions button:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0px #111;
+  }
+  .pane-actions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .control-panel-content {
     padding: 1.5rem;
-    border: 1px solid rgba(0, 0, 0, 0.08);
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    flex: 1;
   }
-
-  .input-group {
+  .preview-content {
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    background-image:
+      linear-gradient(#e5e5e5 1px, transparent 1px),
+      linear-gradient(90deg, #e5e5e5 1px, transparent 1px);
+    background-size: 20px 20px;
   }
 
-  .label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #64748b;
+  .brutal-label {
+    display: block;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #111;
+    margin-bottom: 0.5rem;
+  }
+  .brutal-textarea {
+    width: 100%;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.95rem;
+    padding: 0.75rem;
+    border: 3px solid #111;
+    border-radius: 0;
+    box-shadow: 3px 3px 0px #111;
+    outline: none;
+    resize: vertical;
+    background: #fff;
+    box-sizing: border-box;
+  }
+  .brutal-textarea:focus {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+  }
+  .result-area {
+    flex: 1;
+    min-height: 300px;
   }
 
-  .group-title {
+  .channel-group {
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    padding: 1.25rem;
+    background: #fdfdfd;
+  }
+  .channel-group.group-pink {
+    background: #fff0f5;
+  }
+  .channel-group h4 {
+    margin: 0;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
     font-size: 1rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #e2e8f0;
+    font-weight: 800;
   }
 
-  .settings-group {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .setting-item {
-    display: flex;
-    flex-direction: column;
+  .ecl-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 0.5rem;
   }
+  .ecl-btn {
+    padding: 0.5rem;
+    border: 3px solid #111;
+    background: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px #111;
+    transition: 0.1s;
+    text-align: center;
+  }
+  .ecl-btn:hover {
+    background: #eee;
+  }
+  .ecl-btn.active {
+    background: #111;
+    color: #fff;
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px #111;
+  }
 
-  .color-settings {
+  .brutal-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 12px;
+    background: #111;
+    border: 3px solid #111;
+    box-shadow: 2px 2px 0px #111;
+    margin: 5px 0;
+  }
+  .brutal-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: #ffd900;
+    border: 3px solid #111;
+    cursor: pointer;
+  }
+
+  .color-row {
     display: flex;
     gap: 2rem;
   }
-
   .color-item {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
+  }
+  .brutal-input.color-picker {
+    width: 50px;
+    height: 40px;
+    padding: 0;
+    border: 3px solid #111;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px #111;
+  }
+  .brutal-input.color-picker::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+  .brutal-input.color-picker::-webkit-color-swatch {
+    border: none;
   }
 
-  .preview-panel {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-  }
-
-  .preview-card {
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 2rem;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2rem;
-    min-width: 360px;
-  }
-
-  .qr-container {
+  .qr-display {
     width: 320px;
     height: 320px;
+    border: 4px solid #111;
+    background: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px dashed #cbd5e1;
-    border-radius: 12px;
-    background: #f8fafc;
-    overflow: hidden;
   }
-
   .qr-image {
     max-width: 100%;
     max-height: 100%;
   }
-
-  .placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    color: #94a3b8;
-    font-size: 0.875rem;
+  .qr-placeholder {
+    text-align: center;
+  }
+  .placeholder-icon {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+  .qr-placeholder p {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
   }
 
-  .action-buttons {
-    width: 100%;
-  }
-
-  .action-buttons .el-button {
-    width: 100%;
-  }
-
-  .upload-area {
-    width: 100%;
-    height: 240px;
-    border: 2px dashed #cbd5e1;
-    border-radius: 16px;
-    background: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  .brutal-upload-area {
+    border: 4px dashed #111;
+    background: #fff;
+    padding: 2rem;
+    text-align: center;
     cursor: pointer;
     transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .upload-area:hover {
-    border-color: #94a3b8;
-    background: #f8fafc;
-  }
-
-  .hidden-input {
-    display: none;
-  }
-
-  .upload-placeholder {
+    min-height: 300px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    color: #64748b;
-  }
-
-  .preview-wrapper {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    display: flex;
     justify-content: center;
     align-items: center;
-    background: #000;
+    flex: 1;
+  }
+  .brutal-upload-area:hover {
+    background: #ffd900;
+    border-style: solid;
+  }
+  .upload-icon {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+  .upload-placeholder p {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin: 0 0 0.5rem 0;
+  }
+  .upload-placeholder small {
+    font-weight: bold;
+    color: #666;
   }
 
-  .scan-preview {
+  .scan-img-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .scan-preview-img {
     max-width: 100%;
-    max-height: 100%;
+    max-height: 300px;
     object-fit: contain;
   }
-
-  .overlay-hint {
+  .scan-overlay-hint {
     position: absolute;
-    bottom: 1rem;
-    background: rgba(0, 0, 0, 0.6);
-    color: white;
+    bottom: 0;
+    background: #111;
+    color: #fff;
     padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    pointer-events: none;
+    font-weight: 800;
+    font-size: 0.85rem;
   }
 
-  .scan-result-panel {
-    background: #ffffff;
-    border-radius: 16px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    display: flex;
-    flex-direction: column;
+  .brutal-shadow {
+    box-shadow: 8px 8px 0px #111;
+  }
+
+  .brutal-status {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    overflow: hidden;
+    text-transform: uppercase;
+  }
+  .brutal-status.info {
+    background: #fff;
+  }
+  .brutal-status.success {
+    background: #00e572;
+    color: #111;
+  }
+  .marquee-wrapper {
+    width: 100%;
     overflow: hidden;
   }
-
-  .panel-header {
-    padding: 0.8rem 1.5rem;
-    background: #f8fafc;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
   }
-
-  .panel-title {
-    font-weight: 600;
-    color: #1e293b;
-  }
-
-  .scan-textarea {
-    width: 100%;
-    min-height: 150px;
-    border: none;
-    padding: 1.5rem;
-    resize: vertical;
-    outline: none;
-    font-size: 1rem;
-    color: #334155;
-    background: transparent;
-  }
-
-  @media (max-width: 800px) {
-    .layout-container {
-      flex-direction: column;
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
     }
-
-    .settings-panel {
-      width: 100%;
-    }
-
-    .preview-panel {
-      width: 100%;
-    }
-
-    .preview-card {
-      width: 100%;
+    100% {
+      transform: translateX(-50%);
     }
   }
 
-  [data-theme='dark'] .tool-page {
-    background: var(--bg-primary);
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
   }
-
-  [data-theme='dark'] .tool-header {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .pane-actions button,
+  [data-theme='dark'] .brutal-textarea,
+  [data-theme='dark'] .brutal-status,
+  [data-theme='dark'] .brutal-status.info {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 6px 6px 0px #eee;
   }
-
-  [data-theme='dark'] .tool-title {
-    color: var(--text-primary);
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
   }
-
-  [data-theme='dark'] .settings-panel,
-  [data-theme='dark'] .preview-card,
-  [data-theme='dark'] .scan-result-panel {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
   }
-
-  [data-theme='dark'] .qr-container {
-    background: #f8fafc;
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
   }
-
-  [data-theme='dark'] .group-title,
-  [data-theme='dark'] .panel-title {
-    color: var(--text-primary);
-    border-color: var(--border-color);
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
   }
-
-  [data-theme='dark'] .tabs-header {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
+  [data-theme='dark'] .channel-group {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
   }
-
-  [data-theme='dark'] .tab-btn.active {
-    background: #374151;
-    color: white;
+  [data-theme='dark'] .channel-group.group-pink {
+    background: #2a1a20;
   }
-
-  [data-theme='dark'] .tab-btn {
-    color: #9ca3af;
+  [data-theme='dark'] .preview-content {
+    background: #222;
+    background-image:
+      linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px);
   }
-
-  [data-theme='dark'] .upload-area {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
+  [data-theme='dark'] .mode-tabs {
+    border-color: #eee;
+    background: #333;
   }
-
-  [data-theme='dark'] .scan-textarea {
-    color: var(--text-primary);
+  [data-theme='dark'] .mode-tab {
+    border-right-color: #eee;
+    color: #eee;
   }
-
-  [data-theme='dark'] .panel-header {
-    background: #1f2937;
+  [data-theme='dark'] .mode-tab:hover {
+    background: #444;
   }
-
-  .footer {
-    text-align: center;
-    padding: 1rem 0;
-    color: var(--text-secondary, #64748b);
-    font-size: 0.85rem;
+  [data-theme='dark'] .mode-tab.active {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .ecl-btn {
+    background: #333;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .ecl-btn.active {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .qr-display {
+    border-color: #eee;
+    background: #fff;
+  }
+  [data-theme='dark'] .brutal-upload-area {
+    background: #1a1a1a;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-upload-area:hover {
+    background: #b28f00;
+  }
+  [data-theme='dark'] .brutal-shadow {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-status.success {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .action-btn {
+    background: #00994c;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #993366;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #00994c;
+  }
+  [data-theme='dark'] .brutal-input.color-picker {
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-slider {
+    background: #eee;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .scan-overlay-hint {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .brutal-btn.clear-btn {
+    background: #cc0000;
   }
 </style>

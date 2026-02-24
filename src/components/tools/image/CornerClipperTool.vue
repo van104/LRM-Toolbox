@@ -1,29 +1,29 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="$router.back()">
-          <el-icon><ArrowLeft /></el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">图片圆角裁切</h1>
-        <span class="tool-subtitle">Image Corner Clipper</span>
-      </div>
-      <div class="header-right">
-        <!-- 占位，保持布局平衡 -->
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <div class="header-action start">
+          <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        </div>
+        <h1 class="brutal-title">图片圆角<span>.裁切()</span></h1>
+        <div class="header-action end">
+          <button class="brutal-btn clear-btn" @click="resetFilters">重置参数</button>
+        </div>
+      </header>
 
-    <main class="tool-content">
-      <div class="corner-clipper-tool">
-        <div class="tool-layout">
-          <div class="settings-panel glass">
-            <h3 class="panel-title">设置</h3>
+      <div class="brutal-grid">
+        <!-- Left Pane: Controls -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span>几何切角.控制台</span>
+            <div class="pane-actions">
+              <button :disabled="!imageUrl" @click="downloadImage">保存图片</button>
+            </div>
+          </div>
 
+          <div class="control-panel-content">
             <div
-              class="upload-area"
+              class="brutal-upload-area"
               @click="triggerUpload"
               @drop.prevent="handleDrop"
               @dragover.prevent
@@ -32,98 +32,167 @@
                 ref="fileInput"
                 type="file"
                 accept="image/*"
-                class="hidden"
+                style="display: none"
                 @change="handleFileChange"
               />
               <div v-if="!imageUrl" class="upload-placeholder">
-                <el-icon :size="48"><UploadFilled /></el-icon>
-                <p>点击或拖拽上传图片</p>
+                <span class="upload-icon">⬆️</span>
+                <p>点击或拖拽上传需要裁切的图片</p>
               </div>
               <div v-else class="preview-thumbnail">
                 <img :src="imageUrl" alt="Preview" />
-                <button class="change-btn" @click.stop="triggerUpload">更换图片</button>
+                <button class="brutal-btn small-btn" @click.stop="triggerUpload">更换图片</button>
               </div>
             </div>
 
-            <div v-if="imageUrl" class="controls">
-              <div class="control-group">
-                <label>圆角半径 ({{ borderRadius }}px)</label>
-                <el-slider v-model="borderRadius" :min="0" :max="maxRadius" />
+            <!-- Radius -->
+            <div class="brutal-form-group channel-group group-pink">
+              <h4>🔻 基础圆角 (Radius)</h4>
+              <div class="slider-row">
+                <label>半径 : {{ borderRadius }}px</label>
+                <input
+                  v-model.number="borderRadius"
+                  type="range"
+                  :min="0"
+                  :max="maxRadius"
+                  class="brutal-slider thumb-pink"
+                />
+              </div>
+            </div>
+
+            <!-- Border -->
+            <div class="brutal-form-group channel-group group-green">
+              <div class="flex-between">
+                <h4>🔲 描边特效 (Border)</h4>
+                <label class="switch-label">
+                  <input v-model="enableBorder" type="checkbox" class="brutal-checkbox" />
+                  <span>启用描边</span>
+                </label>
               </div>
 
-              <div class="control-group">
-                <div class="flex justify-between items-center mb-2">
-                  <label>边框宽度</label>
-                  <el-switch v-model="enableBorder" />
+              <div v-if="enableBorder" class="toggled-controls mt-3">
+                <div class="slider-row">
+                  <label>宽度 : {{ borderWidth }}px</label>
+                  <input
+                    v-model.number="borderWidth"
+                    type="range"
+                    :min="0"
+                    :max="50"
+                    class="brutal-slider thumb-green"
+                  />
                 </div>
-                <template v-if="enableBorder">
-                  <el-slider v-model="borderWidth" :min="0" :max="50" />
-                  <div class="color-picker-row">
-                    <span>边框颜色</span>
-                    <el-color-picker v-model="borderColor" show-alpha />
-                  </div>
-                </template>
-              </div>
-
-              <div class="control-group">
-                <div class="flex justify-between items-center mb-2">
-                  <label>阴影效果</label>
-                  <el-switch v-model="enableShadow" />
+                <div class="control-row-color mt-3">
+                  <label class="font-bold">描边颜色 :</label>
+                  <input v-model="borderColor" type="color" class="brutal-color-picker" />
                 </div>
-                <template v-if="enableShadow">
-                  <div class="shadow-controls">
-                    <div class="control-item">
-                      <span>模糊</span>
-                      <el-slider v-model="shadowBlur" :min="0" :max="100" size="small" />
-                    </div>
-                    <div class="control-item">
-                      <span>扩散</span>
-                      <el-slider v-model="shadowSpread" :min="-20" :max="50" size="small" />
-                    </div>
-                    <div class="control-item">
-                      <span>X 偏移</span>
-                      <el-slider v-model="shadowX" :min="-50" :max="50" size="small" />
-                    </div>
-                    <div class="control-item">
-                      <span>Y 偏移</span>
-                      <el-slider v-model="shadowY" :min="-50" :max="50" size="small" />
-                    </div>
-                    <div class="color-picker-row">
-                      <span>阴影颜色</span>
-                      <el-color-picker v-model="shadowColor" show-alpha />
-                    </div>
-                  </div>
-                </template>
+              </div>
+            </div>
+
+            <!-- Shadow -->
+            <div class="brutal-form-group channel-group group-blue">
+              <div class="flex-between">
+                <h4>🌑 阴影特效 (Shadow)</h4>
+                <label class="switch-label">
+                  <input v-model="enableShadow" type="checkbox" class="brutal-checkbox" />
+                  <span>启用阴影</span>
+                </label>
               </div>
 
-              <el-button type="primary" class="w-full mt-4" @click="downloadImage">
-                <el-icon><Download /></el-icon>
-                下载图片
-              </el-button>
+              <div v-if="enableShadow" class="toggled-controls mt-3">
+                <div class="slider-row">
+                  <label>模糊 : {{ shadowBlur }}</label>
+                  <input
+                    v-model.number="shadowBlur"
+                    type="range"
+                    :min="0"
+                    :max="100"
+                    class="brutal-slider thumb-blue"
+                  />
+                </div>
+                <!-- Native shadow does not strictly need spread in basic canvas but handled roughly via padding -->
+                <div class="slider-row">
+                  <label>扩散 : {{ shadowSpread }}</label>
+                  <input
+                    v-model.number="shadowSpread"
+                    type="range"
+                    :min="-20"
+                    :max="50"
+                    class="brutal-slider thumb-blue"
+                  />
+                </div>
+                <div class="slider-row">
+                  <label>偏移X: {{ shadowX }}</label>
+                  <input
+                    v-model.number="shadowX"
+                    type="range"
+                    :min="-50"
+                    :max="50"
+                    class="brutal-slider thumb-blue"
+                  />
+                </div>
+                <div class="slider-row">
+                  <label>偏移Y: {{ shadowY }}</label>
+                  <input
+                    v-model.number="shadowY"
+                    type="range"
+                    :min="-50"
+                    :max="50"
+                    class="brutal-slider thumb-blue"
+                  />
+                </div>
+                <div class="control-row-color mt-3">
+                  <label class="font-bold">阴影颜色 :</label>
+                  <input v-model="shadowColor" type="color" class="brutal-color-picker" />
+                </div>
+              </div>
             </div>
           </div>
+        </div>
 
-          <div class="preview-panel glass">
-            <h3 class="panel-title">实时预览</h3>
-            <div class="canvas-container">
-              <div v-if="!imageUrl" class="empty-state">
-                <el-icon :size="64" color="#909399"><Picture /></el-icon>
-                <p>请先上传图片</p>
-              </div>
-              <canvas v-show="imageUrl" ref="canvasRef"></canvas>
+        <!-- Right Pane: Preview -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-blue">
+            <span class="text-white">透明背景.渲染层</span>
+          </div>
+
+          <div class="preview-container checkerboard">
+            <div v-show="!imageUrl" class="empty-state">
+              <span>等待灌入图像数据...</span>
+            </div>
+            <div v-show="imageUrl" class="canvas-wrapper">
+              <canvas ref="canvasRef"></canvas>
             </div>
           </div>
         </div>
       </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - 图片圆角裁切</footer>
+
+      <!-- Global Status Bar -->
+      <div class="brutal-status" :class="imageUrl ? 'success' : 'info'">
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span v-if="imageUrl">
+              <span v-for="i in 10" :key="i"
+                >图像已激活 : 像素级裁切系统与边缘平滑正在实时工作 // &nbsp;</span
+              >
+            </span>
+            <span v-else>
+              <span v-for="i in 10" :key="i"
+                >系统空闲中 : 期待注入光栅图像以执行圆角裁切算法 // &nbsp;</span
+              >
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, watch, onMounted } from 'vue';
-  import { UploadFilled, Download, Picture, ArrowLeft } from '@element-plus/icons-vue';
+  import { useRouter } from 'vue-router';
   import { ElMessage } from 'element-plus';
+
+  const router = useRouter();
 
   const fileInput = ref<HTMLInputElement | null>(null);
   const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -136,14 +205,32 @@
 
   const enableBorder = ref(false);
   const borderWidth = ref(0);
-  const borderColor = ref('#000000');
+  const borderColor = ref('#111111');
 
   const enableShadow = ref(false);
-  const shadowBlur = ref(20);
+  const shadowBlur = ref(0);
   const shadowSpread = ref(0);
-  const shadowX = ref(0);
-  const shadowY = ref(10);
-  const shadowColor = ref('rgba(0, 0, 0, 0.3)');
+  const shadowX = ref(6);
+  const shadowY = ref(6);
+  const shadowColor = ref('#111111');
+
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
+
+  const resetFilters = () => {
+    borderRadius.value = 20;
+    enableBorder.value = false;
+    borderWidth.value = 0;
+    borderColor.value = '#111111';
+    enableShadow.value = false;
+    shadowBlur.value = 0;
+    shadowSpread.value = 0;
+    shadowX.value = 6;
+    shadowY.value = 6;
+    shadowColor.value = '#111111';
+  };
 
   const triggerUpload = () => {
     fileInput.value?.click();
@@ -188,7 +275,6 @@
 
     const img = imageObj.value;
 
-    // Calculate padding needed for shadow and border
     const shadowPadding = enableShadow.value
       ? Math.max(
           Math.abs(shadowX.value) + shadowBlur.value + Math.abs(shadowSpread.value),
@@ -198,14 +284,11 @@
     const borderPadding = enableBorder.value ? borderWidth.value : 0;
     const totalPadding = Math.max(shadowPadding, borderPadding);
 
-    // Set canvas size
     canvas.width = img.width + totalPadding * 2;
     canvas.height = img.height + totalPadding * 2;
 
-    // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Calculate image position (centered)
     const x = totalPadding;
     const y = totalPadding;
     const w = img.width;
@@ -214,52 +297,35 @@
 
     ctx.save();
 
-    // Draw Shadow
     if (enableShadow.value) {
       ctx.shadowColor = shadowColor.value;
       ctx.shadowBlur = shadowBlur.value;
       ctx.shadowOffsetX = shadowX.value;
       ctx.shadowOffsetY = shadowY.value;
 
-      // Draw a shape for shadow
-      // We draw a filled rect with rounded corners to cast shadow
-      // Note: shadowSpread is simulated by increasing rect size, but native shadow doesn't support spread directly easily in 2d context for shapes
-      // Standard approach: draw shape, let shadow cast.
-      // For spread, we can just adjust the rect size slightly if needed, but standard CSS box-shadow spread is complex in canvas.
-      // Here we ignore spread for simplicity or treat it as extra padding?
-      // Let's just use standard shadow.
-
-      // To make shadow visible behind the image, we draw the shape first
-      ctx.fillStyle = 'white'; // Color doesn't matter much if covered, but white is safe
+      ctx.fillStyle = 'white';
       roundRect(ctx, x, y, w, h, r);
       ctx.fill();
     }
 
-    // Reset shadow for image clipping
     ctx.shadowColor = 'transparent';
     ctx.shadowBlur = 0;
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = 0;
 
-    // Clip for image
     ctx.beginPath();
     roundRect(ctx, x, y, w, h, r);
     ctx.clip();
 
-    // Draw Image
     ctx.drawImage(img, x, y, w, h);
 
     ctx.restore();
 
-    // Draw Border (Stroke)
     if (enableBorder.value && borderWidth.value > 0) {
       ctx.save();
       ctx.beginPath();
-      // Stroke is centered on path, so we might need to adjust path if we want inner/outer stroke
-      // Standard is centered. To keep image inside, we might stroke inside?
-      // Let's just draw on top.
       roundRect(ctx, x, y, w, h, r);
-      ctx.lineWidth = borderWidth.value;
+      ctx.lineWidth = borderWidth.value * 2; // the stroke is centered, doubling prevents it from being halved visually, though clipping may cut outer
       ctx.strokeStyle = borderColor.value;
       ctx.stroke();
       ctx.restore();
@@ -290,7 +356,7 @@
   const downloadImage = () => {
     if (!canvasRef.value) return;
     const link = document.createElement('a');
-    link.download = 'clipped-image.png';
+    link.download = `corner-clipped-${Date.now()}.png`;
     link.href = canvasRef.value.toDataURL('image/png');
     link.click();
   };
@@ -319,179 +385,613 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f1f5f9;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+
+  .brutal-container {
+    max-width: 1600px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
   }
 
-  .tool-header {
+  .brutal-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .header-action.start {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .header-action.end {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+
+  .brutal-btn.small-btn {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+  }
+
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+
+  .brutal-btn.small-btn:hover {
+    box-shadow: 7px 7px 0px #111;
+  }
+
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-btn.clear-btn {
+    background: #ff4b4b;
+    color: #fff;
+  }
+
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .pane-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .header-left,
-  .header-right {
-    width: 140px;
-  }
-
-  .header-center {
-    text-align: center;
-    flex: 1;
-  }
-
-  .tool-title {
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
     font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0;
+    letter-spacing: 1px;
   }
 
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
-    text-transform: uppercase;
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .text-white {
+    color: #fff;
   }
 
-  .tool-content {
-    flex: 1;
-    padding: 1.5rem;
-    max-width: 1280px;
-    margin: 0 auto;
-    width: 100%;
+  .pane-actions {
+    display: flex;
+    gap: 0.75rem;
   }
 
-  .corner-clipper-tool {
-    height: 100%;
-  }
-
-  .tool-layout {
-    display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 20px;
-    height: 100%;
-  }
-
-  .settings-panel,
-  .preview-panel {
-    padding: 20px;
-    border-radius: 12px;
+  .pane-actions button {
     background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-  }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
-  }
-
-  .panel-title {
-    margin-bottom: 20px;
-    font-size: 18px;
+    color: #111;
+    border: 3px solid #111;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
     font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #111;
+    transition: all 0.1s;
   }
 
-  .upload-area {
-    border: 2px dashed var(--border-color);
-    border-radius: 8px;
-    padding: 20px;
+  .pane-actions button:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+  }
+
+  .pane-actions button:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .pane-actions button:disabled {
+    background: #eee;
+    color: #aaa;
+    border-color: #aaa;
+    box-shadow: 2px 2px 0px #aaa;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .control-panel-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    flex: 1;
+    background: #fdfdfd;
+  }
+
+  .brutal-upload-area {
+    border: 4px dashed #111;
+    background: #fff;
+    padding: 2rem;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s;
-    margin-bottom: 20px;
+    transition: all 0.2s;
   }
 
-  .upload-area:hover {
-    border-color: var(--primary-color);
-    background: var(--bg-tertiary);
+  .brutal-upload-area:hover {
+    background: #ffd900;
+    border-style: solid;
+  }
+
+  .upload-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .upload-placeholder p {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin: 0;
   }
 
   .preview-thumbnail img {
     max-width: 100%;
-    max-height: 150px;
-    border-radius: 4px;
-    margin-bottom: 10px;
-  }
-
-  .control-group {
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border-color);
-  }
-
-  .control-group:last-child {
-    border-bottom: none;
-  }
-
-  .control-group label {
+    max-height: 180px;
+    border: 4px solid #111;
+    box-shadow: 6px 6px 0px #111;
+    margin-bottom: 1rem;
     display: block;
-    margin-bottom: 10px;
-    font-weight: 500;
+    margin-left: auto;
+    margin-right: auto;
   }
 
-  .color-picker-row {
+  .channel-group {
+    background: #fdfae5;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    padding: 1rem;
+  }
+
+  .channel-group h4 {
+    margin: 0 0 1rem 0;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+
+  .group-pink h4 {
+    color: #ff6bc9;
+    text-shadow: 1px 1px 0px #111;
+  }
+  .group-green h4 {
+    color: #00e572;
+    text-shadow: 1px 1px 0px #111;
+  }
+  .group-blue h4 {
+    color: #4b7bff;
+    text-shadow: 1px 1px 0px #111;
+  }
+
+  .flex-between {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 10px;
+    margin-bottom: 10px;
   }
 
-  .canvas-container {
-    width: 100%;
-    height: calc(100% - 60px);
+  .slider-row {
     display: flex;
-    justify-content: center;
     align-items: center;
-    background: repeating-conic-gradient(#f0f0f0 0% 25%, transparent 0% 50%) 50% / 20px 20px;
-    border-radius: 8px;
-    overflow: auto;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
   }
 
-  canvas {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  .slider-row label {
+    font-weight: 800;
+    min-width: 80px;
+  }
+
+  .control-row-color {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .mt-3 {
+    margin-top: 0.75rem;
+  }
+
+  .font-bold {
+    font-weight: 800;
+  }
+
+  .brutal-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 16px;
+    background: #fff;
+    border: 2px solid #111;
+    box-shadow: 2px 2px 0px #111;
+    outline: none;
+    border-radius: 0;
+  }
+
+  .brutal-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 24px;
+    border: 2px solid #111;
+    cursor: pointer;
+  }
+
+  .thumb-pink::-webkit-slider-thumb {
+    background: #ff6bc9;
+  }
+  .thumb-green::-webkit-slider-thumb {
+    background: #00e572;
+  }
+  .thumb-blue::-webkit-slider-thumb {
+    background: #4b7bff;
+  }
+
+  .switch-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 600;
+  }
+
+  .brutal-checkbox {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 2px 2px 0px #111;
+    cursor: pointer;
+    position: relative;
+    margin: 0;
+  }
+
+  .brutal-checkbox:checked {
+    background: #00e572;
+  }
+
+  .brutal-checkbox:checked::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 6px;
+    height: 12px;
+    border: solid #111;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+  }
+
+  .brutal-color-picker {
+    -webkit-appearance: none;
+    appearance: none;
+    border: 3px solid #111;
+    box-shadow: 3px 3px 0px #111;
+    width: 48px;
+    height: 32px;
+    padding: 0;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .brutal-color-picker::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  .brutal-color-picker::-webkit-color-swatch {
+    border: none;
+  }
+
+  .preview-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    position: relative;
+    background: #f8fafc;
+  }
+
+  .checkerboard {
+    background-image:
+      linear-gradient(45deg, #ccc 25%, transparent 25%),
+      linear-gradient(135deg, #ccc 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #ccc 75%),
+      linear-gradient(135deg, transparent 75%, #ccc 75%);
+    background-size: 20px 20px;
+    background-position:
+      0 0,
+      10px 0,
+      10px -10px,
+      0px 10px;
+    background-color: white;
   }
 
   .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: var(--text-secondary);
-    gap: 10px;
-  }
-
-  .shadow-controls {
-    padding-left: 10px;
-  }
-
-  .control-item {
+    flex: 1;
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 5px;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: #111;
+    font-style: italic;
+    font-weight: 600;
   }
 
-  .control-item span {
-    width: 50px;
-    font-size: 12px;
+  .canvas-wrapper {
+    flex: 1;
+    display: flex;
+    padding: 2rem;
+    min-height: 480px;
+    overflow: auto;
   }
 
-  @media (max-width: 768px) {
-    .tool-content {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto 1fr;
+  .canvas-wrapper canvas {
+    margin: auto;
+    display: block;
+    max-width: 100%;
+    /* No solid border here so the image shadow can be seen properly */
+  }
+
+  .brutal-status {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    overflow: hidden;
+    position: relative;
+    text-transform: uppercase;
+  }
+
+  .brutal-status.info {
+    background: #fff;
+  }
+  .brutal-status.success {
+    background: #00e572;
+    color: #111;
+  }
+
+  .marquee-wrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
     }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .brutal-title {
+      font-size: 2.5rem;
+    }
+    .brutal-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+  }
+
+  /* --- Dark Mode Overrides --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .pane-actions button,
+  [data-theme='dark'] .brutal-status,
+  [data-theme='dark'] .brutal-status.info {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .pane-actions button,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-upload-area {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+
+  [data-theme='dark'] .brutal-upload-area {
+    background: #1a1a1a;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-upload-area:hover {
+    background: #b28f00;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .channel-group {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .group-pink h4 {
+    color: #ff9ecf;
+    text-shadow: 1px 1px 0px #eee;
+  }
+  [data-theme='dark'] .group-green h4 {
+    color: #81e6b3;
+    text-shadow: 1px 1px 0px #eee;
+  }
+  [data-theme='dark'] .group-blue h4 {
+    color: #89b4f8;
+    text-shadow: 1px 1px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-slider,
+  [data-theme='dark'] .brutal-checkbox,
+  [data-theme='dark'] .brutal-color-picker {
+    background: #111;
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-slider::-webkit-slider-thumb {
+    border-color: #eee;
+  }
+
+  [data-theme='dark'] .thumb-pink::-webkit-slider-thumb {
+    background: #b2538f;
+  }
+  [data-theme='dark'] .thumb-green::-webkit-slider-thumb {
+    background: #3c9165;
+  }
+  [data-theme='dark'] .thumb-blue::-webkit-slider-thumb {
+    background: #405d9e;
+  }
+
+  [data-theme='dark'] .brutal-checkbox:checked {
+    background: #00994c;
+  }
+  [data-theme='dark'] .brutal-checkbox:checked::after {
+    border-color: #eee;
+  }
+
+  [data-theme='dark'] .control-panel-content {
+    background: #111;
+  }
+
+  [data-theme='dark'] .preview-container {
+    background: #222;
+  }
+  [data-theme='dark'] .checkerboard {
+    background-image:
+      linear-gradient(45deg, #333 25%, transparent 25%),
+      linear-gradient(135deg, #333 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #333 75%),
+      linear-gradient(135deg, transparent 75%, #333 75%);
+    background-color: #222;
+  }
+
+  [data-theme='dark'] .brutal-status {
+    border-color: #eee;
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn.clear-btn {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-status.success {
+    background: #00994c;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
   }
 </style>

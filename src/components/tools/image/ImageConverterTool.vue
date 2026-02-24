@@ -1,113 +1,164 @@
 <template>
-  <div class="image-converter-tool">
-    <div class="nav-header">
-      <button class="back-btn" @click="goBack">
-        <el-icon>
-          <Back />
-        </el-icon>
-        <span>返回</span>
-      </button>
-    </div>
-
-    <div class="tool-header">
-      <h1 class="font-display">图片格式转换</h1>
-      <p class="summary">批量图片格式转换，支持 PNG, JPG, WEBP 互转</p>
-    </div>
-
-    <div class="tool-content">
-      <div class="upload-section glass-card">
-        <div
-          class="upload-area"
-          :class="{ 'is-dragover': isDragOver }"
-          @click="triggerFileInput"
-          @dragover.prevent="dragOver"
-          @dragleave.prevent="dragLeave"
-          @drop.prevent="handleFileDrop"
-        >
-          <el-icon class="upload-icon">
-            <UploadFilled />
-          </el-icon>
-          <div class="upload-text">
-            <h3>拖拽图片到这里</h3>
-            <p>或 <span class="browse-btn">点击选择文件</span></p>
-          </div>
-          <input
-            ref="fileInput"
-            type="file"
-            multiple
-            accept="image/*"
-            class="hidden-input"
-            @change="handleFileSelect"
-          />
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <div class="header-action start">
+          <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
         </div>
-      </div>
-
-      <div v-if="fileList.length > 0" class="controls-section glass-card">
-        <div class="settings-group">
-          <div class="setting-item">
-            <label>目标格式</label>
-            <select v-model="targetFormat" class="select-input">
-              <option value="image/png">PNG</option>
-              <option value="image/jpeg">JPG</option>
-              <option value="image/webp">WEBP</option>
-            </select>
-          </div>
-
-          <div v-if="targetFormat !== 'image/png'" class="setting-item">
-            <label
-              >质量 <span class="quality-val">({{ Math.round(quality * 100) }}%)</span></label
-            >
-            <input
-              v-model.number="quality"
-              type="range"
-              min="0.1"
-              max="1"
-              step="0.1"
-              class="range-input"
-            />
-          </div>
-        </div>
-
-        <div class="action-buttons">
-          <button class="btn-primary" :disabled="isConverting" @click="startConversion">
-            <el-icon v-if="isConverting">
-              <Loading />
-            </el-icon>
-            <el-icon v-else>
-              <Refresh />
-            </el-icon>
-            {{ isConverting ? '转换中...' : '开始转换' }}
+        <h1 class="brutal-title">格式互换<span>.阵列()</span></h1>
+        <div class="header-action end">
+          <button
+            class="brutal-btn clear-btn"
+            :disabled="isConverting || fileList.length === 0"
+            @click="clearAll"
+          >
+            肃清队列
           </button>
-          <button class="btn-secondary" :disabled="isConverting" @click="clearAll">清空列表</button>
         </div>
-      </div>
+      </header>
 
-      <div v-if="fileList.length > 0" class="file-list">
-        <div v-for="(file, index) in fileList" :key="index" class="file-item glass-card">
-          <div class="file-info">
-            <div class="file-icon">
-              <el-icon>
-                <Picture />
-              </el-icon>
-            </div>
-            <div class="file-details">
-              <span class="file-name">{{ file.file.name }}</span>
-              <span class="file-size">{{ formatSize(file.file.size) }}</span>
+      <div class="brutal-grid">
+        <!-- 左侧: Upload & File List -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span>突变阵列.队列库</span>
+            <div class="pane-actions">
+              <button :disabled="isConverting" @click="triggerUpload">+ 注入位流</button>
             </div>
           </div>
 
-          <div class="conversion-status">
-            <span v-if="file.status === 'pending'" class="status-pending">等待转换</span>
-            <span v-if="file.status === 'processing'" class="status-processing">处理中...</span>
-            <div v-if="file.status === 'done'" class="status-done">
-              <span class="new-size">{{ formatSize(file.resultBlob.size) }}</span>
-              <button class="btn-download-sm" @click="downloadFile(file)">
-                <el-icon>
-                  <Download />
-                </el-icon>
-              </button>
+          <div class="control-panel-content">
+            <div
+              v-if="fileList.length === 0"
+              class="brutal-upload-area"
+              :class="{ 'is-dragover': isDragOver }"
+              @click="triggerUpload"
+              @dragover.prevent="dragOver"
+              @dragleave.prevent="dragLeave"
+              @drop.prevent="handleFileDrop"
+            >
+              <input
+                ref="fileInput"
+                type="file"
+                multiple
+                accept="image/*"
+                style="display: none"
+                @change="handleFileSelect"
+              />
+              <div class="upload-placeholder">
+                <span class="upload-icon">↘️</span>
+                <p>点击或拖拽投入大批量像素矩阵</p>
+                <small>(支持高并发读取与批量协议转换)</small>
+              </div>
             </div>
-            <span v-if="file.status === 'error'" class="status-error">失败</span>
+
+            <div v-else class="preview-area">
+              <input
+                ref="fileInput"
+                type="file"
+                multiple
+                accept="image/*"
+                style="display: none"
+                @change="handleFileSelect"
+              />
+
+              <div class="brutal-list">
+                <div
+                  v-for="(file, index) in fileList"
+                  :key="index"
+                  class="brutal-list-item brutal-shadow"
+                >
+                  <div class="item-info">
+                    <div class="item-icon">📦</div>
+                    <div class="item-details">
+                      <span class="item-name">{{ file.file.name }}</span>
+                      <span class="item-size">原生载荷: {{ formatSize(file.file.size) }}</span>
+                    </div>
+                  </div>
+                  <div class="item-status">
+                    <span v-if="file.status === 'pending'" class="badge bg-yellow text-black"
+                      >等待编译</span
+                    >
+                    <span v-if="file.status === 'processing'" class="badge bg-blue text-white blink"
+                      >重组中...</span
+                    >
+                    <div v-if="file.status === 'done'" class="done-actions">
+                      <span class="badge bg-green text-black"
+                        >生成: {{ formatSize(file.resultBlob?.size || 0) }}</span
+                      >
+                      <button class="brutal-btn small-btn extract-btn" @click="downloadFile(file)">
+                        提取
+                      </button>
+                    </div>
+                    <span v-if="file.status === 'error'" class="badge bg-red text-white"
+                      >堆栈崩溃</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="brutal-form-group channel-group group-pink mt-4" style="margin-top: auto">
+              <h4>🎯 运行原理备忘录</h4>
+              <p style="font-size: 0.95rem; line-height: 1.5; font-weight: 500">
+                本模块核心基于 HTML5 Canvas API
+                做底层格式转换渲染。全部运算流程均锁定在浏览器虚拟内存中进行，无需上传服务器。<br />
+                PNG格式强制保护原生Alpha透明度且无降级压缩；而
+                JPEG格式无法承载透明图层，其背景将被暴力覆盖为纯白防穿透色。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧: Controls -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-blue">
+            <span class="text-white">全局变换.控制台</span>
+          </div>
+
+          <div class="settings-content">
+            <div class="brutal-form-group channel-group bg-cyan">
+              <label class="brutal-label">终态封装协议 (Target Dto)</label>
+              <select v-model="targetFormat" class="brutal-input">
+                <option value="image/png">PNG [透明原色保护]</option>
+                <option value="image/jpeg">JPEG [绝对体积压缩]</option>
+                <option value="image/webp">WEBP [兼顾质量流媒体]</option>
+              </select>
+            </div>
+
+            <div v-if="targetFormat !== 'image/png'" class="brutal-form-group mt-4">
+              <label class="brutal-label">全局位流剥离比例 (Quality):</label>
+              <div class="slider-group mt-1">
+                <input
+                  v-model.number="quality"
+                  type="range"
+                  class="brutal-slider"
+                  min="0.1"
+                  max="1"
+                  step="0.1"
+                />
+                <span class="slider-value">[ {{ Math.round(quality * 100) }}% ]</span>
+              </div>
+            </div>
+
+            <button
+              class="brutal-btn brutal-btn-block action-btn mt-4"
+              :disabled="fileList.length === 0 || isConverting"
+              @click="startConversion"
+            >
+              {{ isConverting ? '中央引擎满载撕裂中...' : '启动列队无差别转换' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 全局状态栏 -->
+      <div class="brutal-status" :class="statusClass">
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span>
+              <span v-for="i in 10" :key="i">{{ statusText }} // &nbsp;</span>
+            </span>
           </div>
         </div>
       </div>
@@ -115,11 +166,17 @@
   </div>
 </template>
 
-<script setup>
-  import { ref } from 'vue';
+<script setup lang="ts">
+  import { ref, computed } from 'vue';
   import { useRouter } from 'vue-router';
-  import { Back, UploadFilled, Picture, Refresh, Loading, Download } from '@element-plus/icons-vue';
   import { useFileHandler } from '@/composables';
+
+  interface FileItem {
+    file: File;
+    status: 'pending' | 'processing' | 'done' | 'error';
+    resultUrl: string | null;
+    resultBlob: Blob | null;
+  }
 
   const router = useRouter();
   const goBack = () => {
@@ -127,10 +184,26 @@
     else router.push('/');
   };
 
-  const fileList = ref([]);
+  const fileList = ref<FileItem[]>([]);
   const targetFormat = ref('image/png');
   const quality = ref(0.9);
   const isConverting = ref(false);
+
+  const statusClass = computed(() => {
+    if (isConverting.value) return 'warn';
+    if (fileList.value.some(f => f.status === 'done')) return 'success';
+    return 'info';
+  });
+
+  const statusText = computed(() => {
+    if (isConverting.value)
+      return '线程全开 : 正在暴力剥离原图像素并重新封装管道，请勿断开页面连接...';
+    if (fileList.value.some(f => f.status === 'done'))
+      return '指令下达完毕 : 所属阵列已经发生突变，随时可以提取封装体';
+    if (fileList.value.length > 0)
+      return '高位待发 : 所有载荷已加载在缓冲池中，随时等待向下层引擎施压';
+    return '内核循环中 : 数据线无负荷，处于低功耗模式待命';
+  });
 
   const { fileInput, isDragOver, triggerFileInput, dragOver, dragLeave, formatSize } =
     useFileHandler({
@@ -138,21 +211,34 @@
       readMode: 'none'
     });
 
-  const handleFileSelect = event => {
-    const inputFiles = Array.from(event.target.files);
-    addFiles(inputFiles);
-    event.target.value = '';
+  const triggerUpload = () => {
+    if (fileInput.value) {
+      fileInput.value.click();
+    } else {
+      triggerFileInput();
+    }
   };
 
-  const handleFileDrop = event => {
+  const handleFileSelect = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    if (target.files) {
+      const inputFiles = Array.from(target.files);
+      addFiles(inputFiles);
+    }
+    target.value = '';
+  };
+
+  const handleFileDrop = (event: DragEvent) => {
     dragLeave();
-    const droppedFiles = Array.from(event.dataTransfer.files).filter(f =>
-      f.type.startsWith('image/')
-    );
-    addFiles(droppedFiles);
+    if (event.dataTransfer && event.dataTransfer.files) {
+      const droppedFiles = Array.from(event.dataTransfer.files).filter(f =>
+        f.type.startsWith('image/')
+      );
+      addFiles(droppedFiles);
+    }
   };
 
-  const addFiles = files => {
+  const addFiles = (files: File[]) => {
     for (let i = 0; i < files.length; i++) {
       if (files[i].type.startsWith('image/')) {
         fileList.value.push({
@@ -170,9 +256,12 @@
       if (f.resultUrl) URL.revokeObjectURL(f.resultUrl);
     });
     fileList.value = [];
+    if (fileInput.value) {
+      fileInput.value.value = '';
+    }
   };
 
-  const getExtension = mimeType => {
+  const getExtension = (mimeType: string) => {
     switch (mimeType) {
       case 'image/png':
         return 'png';
@@ -185,7 +274,7 @@
     }
   };
 
-  const convertFile = fileItem => {
+  const convertFile = (fileItem: FileItem): Promise<void> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = e => {
@@ -195,6 +284,7 @@
           canvas.width = img.width;
           canvas.height = img.height;
           const ctx = canvas.getContext('2d');
+          if (!ctx) return reject(new Error('Canvas Failed'));
 
           if (targetFormat.value === 'image/jpeg') {
             ctx.fillStyle = '#FFFFFF';
@@ -223,7 +313,7 @@
           fileItem.status = 'error';
           reject(new Error('Image load failed'));
         };
-        img.src = e.target.result;
+        img.src = e.target?.result as string;
       };
       reader.onerror = () => {
         fileItem.status = 'error';
@@ -238,7 +328,6 @@
     isConverting.value = true;
 
     const pendingFiles = fileList.value.filter(f => f.status !== 'done');
-
     for (const file of pendingFiles) {
       file.status = 'processing';
       try {
@@ -251,7 +340,7 @@
     isConverting.value = false;
   };
 
-  const downloadFile = fileItem => {
+  const downloadFile = (fileItem: FileItem) => {
     if (!fileItem.resultUrl) return;
     const ext = getExtension(targetFormat.value);
 
@@ -269,277 +358,553 @@
 </script>
 
 <style scoped>
-  .image-converter-tool {
-    max-width: 1000px;
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
+    min-height: 100vh;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+
+  .brutal-container {
+    max-width: 1600px;
     margin: 0 auto;
-    padding: 40px 20px;
-  }
-
-  .nav-header {
-    margin-bottom: 20px;
-  }
-
-  .back-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-    font-size: 1rem;
-    padding: 8px 16px;
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-
-  .back-btn:hover {
-    background: rgba(0, 0, 0, 0.05);
-    color: var(--text-primary);
-  }
-
-  .tool-header {
-    text-align: center;
-    margin-bottom: 40px;
-  }
-
-  .tool-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 16px;
-    background: var(--accent-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .summary {
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-  }
-
-  .upload-section {
-    margin-bottom: 30px;
-  }
-
-  .upload-area {
-    border: 2px dashed var(--border-color);
-    border-radius: 16px;
-    padding: 40px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    background: rgba(255, 255, 255, 0.5);
-  }
-
-  .upload-area:hover {
-    border-color: var(--accent-purple);
-    background: rgba(255, 255, 255, 0.8);
-  }
-
-  .upload-icon {
-    font-size: 48px;
-    color: var(--text-muted);
-    margin-bottom: 16px;
-  }
-
-  .upload-text h3 {
-    font-size: 1.1rem;
-    color: var(--text-primary);
-    margin-bottom: 8px;
-  }
-
-  .browse-btn {
-    color: var(--accent-purple);
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  .hidden-input {
-    display: none;
-  }
-
-  .controls-section {
-    padding: 20px;
-    margin-bottom: 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-    background: white;
-    border-radius: 16px;
-  }
-
-  .settings-group {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-
-  .setting-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .setting-item label {
-    font-weight: 500;
-    color: var(--text-primary);
-  }
-
-  .select-input {
-    padding: 8px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    background: var(--bg-secondary);
-  }
-
-  .range-input {
-    padding: 0;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    background: var(--bg-secondary);
-    height: 38px;
-    cursor: pointer;
-    width: 150px;
-  }
-
-  .quality-val {
-    display: inline-block;
-    width: 50px;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .action-buttons {
-    display: flex;
-    gap: 12px;
-  }
-
-  .btn-primary,
-  .btn-secondary {
-    padding: 10px 20px;
-    border-radius: 8px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s;
-  }
-
-  .btn-primary {
-    background: var(--accent-gradient);
-    color: white;
-  }
-
-  .btn-primary:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-
-  .btn-secondary {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-  }
-
-  .file-list {
-    display: grid;
-    gap: 16px;
-  }
-
-  .file-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px;
-    background: white;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-  }
-
-  .file-info {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .file-icon {
-    width: 40px;
-    height: 40px;
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-secondary);
-    font-size: 20px;
-  }
-
-  .file-details {
     display: flex;
     flex-direction: column;
   }
 
-  .file-name {
-    font-weight: 500;
-    color: var(--text-primary);
-  }
-
-  .file-size {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-  }
-
-  .conversion-status {
-    display: flex;
+  .brutal-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    gap: 16px;
+    margin-bottom: 2rem;
   }
-
-  .status-pending {
-    color: var(--text-muted);
-  }
-
-  .status-processing {
-    color: var(--accent-purple);
-    font-weight: 500;
-  }
-
-  .status-done {
+  .header-action.start {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    justify-content: flex-start;
+  }
+  .header-action.end {
+    display: flex;
+    justify-content: flex-end;
   }
 
-  .status-error {
-    color: #ef4444;
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
   }
 
-  .new-size {
-    font-size: 0.9rem;
-    color: #10b981;
-    font-weight: 500;
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
   }
 
-  .btn-download-sm {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    border: none;
-    background: #eff6ff;
-    color: var(--accent-purple);
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
   }
 
-  .btn-download-sm:hover {
-    background: var(--accent-purple);
-    color: white;
+  .brutal-btn-block {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 1.25rem;
+  }
+
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-btn:disabled {
+    background: #e0e0e0;
+    color: #888;
+    border-color: #888;
+    box-shadow: 2px 2px 0px #888;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .brutal-btn.clear-btn {
+    background: #ff4b4b;
+    color: #fff;
+  }
+
+  .brutal-btn.action-btn {
+    background: #00e572;
+    padding: 1.25rem;
+    border-color: #111;
+  }
+
+  .mt-1 {
+    margin-top: 0.25rem;
+  }
+  .mt-4 {
+    margin-top: 1.5rem;
+  }
+
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 1fr 450px;
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+  }
+  .bg-cyan {
+    background: #2dfdff;
+  }
+  .bg-pink {
+    background: #ff9ecf;
+  }
+  .bg-green {
+    background: #00e572;
+  }
+  .bg-red {
+    background: #ff4b4b;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .text-black {
+    color: #111;
+  }
+
+  .pane-actions button {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #111;
+  }
+  .pane-actions button:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+  }
+  .pane-actions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .control-panel-content,
+  .settings-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: #fdfdfd;
+  }
+
+  .settings-content {
+    background: #f8fafc;
+    background-image:
+      linear-gradient(#e5e5e5 1px, transparent 1px),
+      linear-gradient(90deg, #e5e5e5 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .brutal-upload-area {
+    border: 4px dashed #111;
+    background: #fff;
+    padding: 2.5rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .brutal-upload-area:hover,
+  .brutal-upload-area.is-dragover {
+    background: #ffd900;
+    border-style: solid;
+  }
+  .upload-icon {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+  .upload-placeholder p {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    margin: 0 0 0.5rem 0;
+  }
+  .upload-placeholder small {
+    font-weight: bold;
+    color: #666;
+  }
+
+  .preview-area {
+    display: flex;
+    flex-direction: column;
+    max-height: 600px;
+  }
+
+  .brutal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto;
+    padding: 0.5rem;
+    max-height: 500px;
+  }
+
+  .brutal-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: #fff;
+    border: 3px solid #111;
+  }
+
+  .item-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .item-icon {
+    font-size: 2rem;
+  }
+  .item-details {
+    display: flex;
+    flex-direction: column;
+  }
+  .item-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+  .item-size {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
+  }
+
+  .item-status {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .badge {
+    padding: 0.4rem 0.8rem;
+    border: 2px solid #111;
+    font-weight: 800;
+    font-size: 0.9rem;
+    box-shadow: 2px 2px 0px #111;
+  }
+
+  .done-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .extract-btn {
+    border-width: 2px;
+    box-shadow: 2px 2px 0px #111;
+    background: #2dfdff;
+    color: #111;
+  }
+  .extract-btn:hover:not(:disabled) {
+    box-shadow: 4px 4px 0px #111;
+  }
+
+  .blink {
+    animation: blinker 1s linear infinite;
+  }
+  @keyframes blinker {
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .brutal-shadow {
+    box-shadow: 6px 6px 0px #111;
+  }
+
+  .channel-group {
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    padding: 1.25rem;
+  }
+  .channel-group.group-pink {
+    background: #fdfae5;
+  }
+  .channel-group h4 {
+    margin: 0 0 1rem 0;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+  .group-pink h4 {
+    color: #ff6bc9;
+    text-shadow: 1px 1px 0px #111;
+  }
+
+  .brutal-label {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #111;
+  }
+  .brutal-input {
+    width: 100%;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-size: 1rem;
+    padding: 0.75rem;
+    border: 3px solid #111;
+    border-radius: 0;
+    box-shadow: 4px 4px 0px #111;
+    outline: none;
+    transition: all 0.1s;
+    background: #fff;
+    box-sizing: border-box;
+  }
+  .brutal-input:focus {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+
+  .slider-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .brutal-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 12px;
+    background: #111;
+    outline: none;
+    border: 3px solid #111;
+    box-shadow: 3px 3px 0px #111;
+  }
+  .brutal-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: #ffd900;
+    border: 3px solid #111;
+    cursor: pointer;
+  }
+  .slider-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    min-width: 60px;
+  }
+
+  .brutal-status {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    overflow: hidden;
+    position: relative;
+    text-transform: uppercase;
+  }
+  .brutal-status.info {
+    background: #fff;
+  }
+  .brutal-status.success {
+    background: #00e572;
+    color: #111;
+  }
+  .brutal-status.warn {
+    background: #ffd900;
+    color: #111;
+  }
+
+  .marquee-wrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+  }
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .pane-actions button,
+  [data-theme='dark'] .brutal-status,
+  [data-theme='dark'] .brutal-status.info,
+  [data-theme='dark'] .brutal-input {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .brutal-upload-area {
+    background: #1a1a1a;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-upload-area:hover,
+  [data-theme='dark'] .brutal-upload-area.is-dragover {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .channel-group {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .channel-group.group-pink,
+  [data-theme='dark'] .settings-content {
+    background: #222;
+  }
+  [data-theme='dark'] .settings-content {
+    background-image:
+      linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px);
+  }
+  [data-theme='dark'] .group-pink h4 {
+    color: #ff9ecf;
+    text-shadow: 1px 1px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn.clear-btn {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-btn.action-btn {
+    background: #00994c;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn.action-btn:disabled {
+    background: #333;
+    color: #888;
+    border-color: #888;
+  }
+  [data-theme='dark'] .brutal-status.success {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-status.warn {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-cyan {
+    background: #1a5e5f;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-list-item {
+    background: #222;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .item-size {
+    color: #aaa;
+  }
+  [data-theme='dark'] .badge {
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-shadow {
+    box-shadow: 6px 6px 0px #eee;
   }
 </style>

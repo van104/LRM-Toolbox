@@ -1,240 +1,178 @@
 <template>
-  <div class="batch-renamer">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="goBack">
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>图片重命名</h1>
-        <span class="nav-subtitle">Batch Image Renamer</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <div class="header-action start">
+          <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        </div>
+        <h1 class="brutal-title">图片批量<span>.重命名()</span></h1>
+        <div class="header-action end">
+          <button class="brutal-btn clear-btn" @click="clearAll">清空工作区</button>
+        </div>
+      </header>
 
-    <main class="main-content">
-      <section class="upload-section">
-        <div
-          class="upload-card"
-          :class="{ dragover: isDragOver }"
-          @click="triggerFileInput"
-          @dragover.prevent="dragOver"
-          @dragleave.prevent="dragLeave"
-          @drop.prevent="handleFileDrop"
-        >
-          <input
-            ref="fileInput"
-            type="file"
-            multiple
-            accept="image/*"
-            hidden
-            @change="handleFileSelect"
-          />
-          <div class="upload-icon">
-            <svg
-              width="48"
-              height="48"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
+      <div class="brutal-grid">
+        <!-- Left Pane: Controls -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span>重命名.参数池</span>
+            <div class="pane-actions">
+              <span class="file-stats">[{{ files.length }}] Nodes | {{ totalSize }}</span>
+            </div>
+          </div>
+
+          <div class="control-panel-content">
+            <div
+              class="brutal-upload-area"
+              :class="{ 'is-dragover': isDragOver }"
+              @click="triggerFileInput"
+              @dragover.prevent="dragOver"
+              @dragleave.prevent="dragLeave"
+              @drop.prevent="handleFileDrop"
             >
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="17 8 12 3 7 8"></polyline>
-              <line x1="12" y1="3" x2="12" y2="15"></line>
-            </svg>
-          </div>
-          <h3>点击或拖拽上传图片</h3>
-          <p class="upload-hint">支持 JPG, PNG, GIF, WebP, BMP 等格式</p>
-        </div>
-      </section>
-
-      <div v-if="files.length > 0" class="workspace">
-        <section class="settings-card">
-          <div class="card-header">
-            <h3>重命名设置</h3>
-            <div class="stats-badge">
-              <span>{{ files.length }} 个文件</span>
-              <span class="separator">|</span>
-              <span>{{ totalSize }}</span>
-            </div>
-          </div>
-
-          <div class="settings-grid">
-            <div class="form-group">
-              <label>新文件名前缀</label>
               <input
-                v-model="config.prefix"
-                type="text"
-                placeholder="留空使用原文件名"
-                class="form-input"
+                ref="fileInput"
+                type="file"
+                multiple
+                accept="image/*"
+                style="display: none"
+                @change="handleFileSelect"
               />
-            </div>
-
-            <div class="form-group">
-              <label>目标格式</label>
-              <select v-model="config.extension" class="form-select">
-                <option value="">保持原格式</option>
-                <option value="jpg">JPG</option>
-                <option value="png">PNG</option>
-                <option value="gif">GIF</option>
-                <option value="webp">WebP</option>
-                <option value="bmp">BMP</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="options-row">
-            <label class="checkbox-label">
-              <input v-model="config.keepOriginal" type="checkbox" />
-              <span class="check-box"></span>
-              保留原文件名
-            </label>
-            <label class="checkbox-label">
-              <input v-model="config.addNumbers" type="checkbox" />
-              <span class="check-box"></span>
-              添加序号
-            </label>
-            <label class="checkbox-label">
-              <input v-model="config.addTimestamp" type="checkbox" />
-              <span class="check-box"></span>
-              添加时间戳
-            </label>
-          </div>
-        </section>
-
-        <section class="preview-section">
-          <div class="section-header">
-            <h3>预览与处理</h3>
-            <div class="section-actions">
-              <button class="btn text-danger" @click="clearAll">清空列表</button>
-              <button class="btn primary" :disabled="isDownloading" @click="downloadAll">
-                <svg
-                  v-if="isDownloading"
-                  class="spinner"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                </svg>
-                <svg
-                  v-else
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
-                </svg>
-                {{ isDownloading ? `下载中 ${downloadProgress}%` : '批量下载' }}
-              </button>
-            </div>
-          </div>
-
-          <div class="preview-grid">
-            <div v-for="(file, index) in processedFiles" :key="index" class="preview-item">
-              <div class="preview-thumb">
-                <img :src="file.previewUrl" loading="lazy" />
-                <button class="remove-btn" title="移除" @click="removeFile(index)">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </button>
+              <div class="upload-placeholder">
+                <span class="upload-icon">⬇️</span>
+                <p>点击或拖拽上传多层图片实例</p>
               </div>
-              <div class="preview-info">
-                <div class="file-meta">
-                  <span class="original-name" :title="file.originalName">{{
-                    file.originalName
-                  }}</span>
-                  <span class="arrow">→</span>
-                </div>
+            </div>
 
-                <div class="name-edit-container">
-                  <input
-                    type="text"
-                    class="name-input"
-                    :value="file.customBase"
-                    :placeholder="file.generatedBase"
-                    @input="e => updateCustomBase(index, e.target.value)"
-                  />
-                  <span class="name-suffix">{{ file.previewSuffix }}</span>
+            <div class="brutal-form-group channel-group group-pink">
+              <h4>📋 命名生成序列规则</h4>
+
+              <div class="input-row mt-3">
+                <label>前缀特征词</label>
+                <input
+                  v-model="config.prefix"
+                  type="text"
+                  placeholder="留空即继承源映射"
+                  class="brutal-input text-box"
+                />
+              </div>
+
+              <div class="input-row mt-3">
+                <label>拓展标识符</label>
+                <div class="brutal-select-wrapper">
+                  <select v-model="config.extension" class="brutal-select text-box">
+                    <option value="">(继承源标识)</option>
+                    <option value="jpg">.JPG</option>
+                    <option value="png">.PNG</option>
+                    <option value="gif">.GIF</option>
+                    <option value="webp">.WEBP</option>
+                    <option value="bmp">.BMP</option>
+                  </select>
                 </div>
-                <button class="btn-icon" title="下载此文件" @click="downloadSingle(file)">
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
-                  </svg>
-                </button>
+              </div>
+
+              <div class="checkbox-options mt-3">
+                <label class="brutal-checkbox-label">
+                  <input v-model="config.keepOriginal" type="checkbox" class="brutal-checkbox" />
+                  附加源实例特征
+                </label>
+                <label class="brutal-checkbox-label mt-2">
+                  <input v-model="config.addNumbers" type="checkbox" class="brutal-checkbox" />
+                  挂载自增序列标号
+                </label>
+                <label class="brutal-checkbox-label mt-2">
+                  <input v-model="config.addTimestamp" type="checkbox" class="brutal-checkbox" />
+                  注入绝对时间戳
+                </label>
+              </div>
+            </div>
+
+            <button
+              class="brutal-btn brutal-btn-block action-btn"
+              :disabled="isDownloading || files.length === 0"
+              @click="downloadAll"
+            >
+              {{ isDownloading ? `打包装配中... [ ${downloadProgress}% ]` : '批量分发序列' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Pane: Preview -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-blue">
+            <span class="text-white">节点矩阵.预览器</span>
+          </div>
+
+          <div class="preview-container">
+            <div v-if="files.length === 0" class="empty-state">
+              <span>等待目标块装载...</span>
+            </div>
+
+            <div v-else class="preview-scroll">
+              <div class="brutal-card-grid">
+                <div v-for="(file, index) in processedFiles" :key="index" class="brutal-image-card">
+                  <div class="card-thumb">
+                    <img :src="file.previewUrl" loading="lazy" />
+                    <button class="brutal-btn remove-btn" @click="removeFile(index)">❌</button>
+                  </div>
+
+                  <div class="card-info">
+                    <div class="source-name" :title="file.originalName">
+                      {{ file.originalName }}
+                    </div>
+                    <div class="meta-separator">👇</div>
+                    <div class="edit-zone">
+                      <input
+                        type="text"
+                        class="brutal-input sm-input"
+                        :value="file.customBase"
+                        :placeholder="file.generatedBase"
+                        @input="e => updateCustomBase(index, (e.target as HTMLInputElement).value)"
+                      />
+                      <span class="suffix-label">{{ file.previewSuffix }}</span>
+                    </div>
+                    <button class="brutal-btn small-btn w-full mt-2" @click="downloadSingle(file)">
+                      提取样本
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </section>
+        </div>
       </div>
 
-      <section class="intro-section">
-        <h2>功能说明</h2>
-        <div class="features-list">
-          <div class="feature-item">
-            <div class="icon">🚀</div>
-            <div>
-              <h4>批量处理</h4>
-              <p>一次性重命名数百张图片，支持自动添加序号。</p>
-            </div>
-          </div>
-          <div class="feature-item">
-            <div class="icon">🖼️</div>
-            <div>
-              <h4>格式生成</h4>
-              <p>
-                不仅仅是重命名，更改后缀名可方便识别（注意：实际格式转换需要转换工具，本工具主要用于文件整理）。
-              </p>
-            </div>
-          </div>
-          <div class="feature-item">
-            <div class="icon">🔒</div>
-            <div>
-              <h4>本地安全</h4>
-              <p>所有操作均在浏览器本地完成，图片不会上传到服务器。</p>
-            </div>
+      <!-- Global Status Bar -->
+      <div
+        class="brutal-status"
+        :class="files.length > 0 ? (isDownloading ? 'warn' : 'success') : 'info'"
+      >
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span v-if="files.length > 0 && !isDownloading">
+              <span v-for="i in 10" :key="i"
+                >工作区已加载 : 队列容纳了 {{ files.length }} 个待命对象 // 资源占用
+                {{ totalSize }} // &nbsp;</span
+              >
+            </span>
+            <span v-else-if="isDownloading">
+              <span v-for="i in 10" :key="i"
+                >执行输出 : 提取队列中... 流式阻塞进程推进 {{ downloadProgress }}% // &nbsp;</span
+              >
+            </span>
+            <span v-else>
+              <span v-for="i in 10" :key="i"
+                >主控台就绪 : 监控线程空闲，可承接光栅矩阵输入动作 // &nbsp;</span
+              >
+            </span>
           </div>
         </div>
-      </section>
-    </main>
-
-    <footer class="footer">© 2026 LRM工具箱 - 图片重命名</footer>
+      </div>
+    </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { ref, reactive, computed, onUnmounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { ElMessage } from 'element-plus';
@@ -244,7 +182,21 @@
 
   const isDownloading = ref(false);
   const downloadProgress = ref(0);
-  const files = ref([]);
+  interface ProcessedFile {
+    file: File;
+    previewUrl: string;
+    originalName: string;
+    size: number;
+    customBase: string | null;
+  }
+
+  interface FullProcessedFile extends ProcessedFile {
+    generatedBase: string;
+    previewSuffix: string;
+    newName: string;
+  }
+
+  const files = ref<ProcessedFile[]>([]);
 
   const { fileInput, isDragOver, triggerFileInput, dragOver, dragLeave, formatSize } =
     useFileHandler({
@@ -252,16 +204,21 @@
       readMode: 'none'
     });
 
-  const handleFileSelect = event => {
-    const inputFiles = Array.from(event.target.files);
-    addFiles(inputFiles);
-    event.target.value = '';
+  const handleFileSelect = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    if (target && target.files) {
+      const inputFiles = Array.from(target.files);
+      addFiles(inputFiles);
+      target.value = '';
+    }
   };
 
-  const handleFileDrop = event => {
+  const handleFileDrop = (event: DragEvent) => {
     dragLeave();
-    const droppedFiles = Array.from(event.dataTransfer.files);
-    addFiles(droppedFiles);
+    if (event.dataTransfer && event.dataTransfer.files) {
+      const droppedFiles = Array.from(event.dataTransfer.files);
+      addFiles(droppedFiles);
+    }
   };
 
   const config = reactive({
@@ -289,7 +246,7 @@
     return formatSize(bytes);
   });
 
-  function generateBase(file) {
+  function generateBase(file: File) {
     let baseName = config.prefix.trim();
     const originalNameWithExt = file.name;
     const originalName =
@@ -306,7 +263,7 @@
     return baseName;
   }
 
-  function generateParts(item, index) {
+  function generateParts(item: ProcessedFile, index: number) {
     let base = generateBase(item.file);
 
     let suffix = '';
@@ -326,18 +283,18 @@
 
     let ext = config.extension;
     if (!ext) {
-      ext = item.originalName.split('.').pop().toLowerCase();
+      ext = item.originalName.split('.').pop()?.toLowerCase() || '';
     }
     suffix += `.${ext}`;
 
     return { base, suffix };
   }
 
-  async function addFiles(newFiles) {
+  async function addFiles(newFiles: File[]) {
     const validFiles = newFiles.filter(f => f.type.startsWith('image/'));
 
     if (validFiles.length === 0) {
-      ElMessage.error('请选择有效的图片文件');
+      ElMessage.error('请选择有效的图片区块');
       return;
     }
 
@@ -358,10 +315,10 @@
       });
     }
 
-    ElMessage.success(`已添加 ${validFiles.length} 个文件`);
+    ElMessage.success(`挂载 ${validFiles.length} 个虚拟节点完成`);
   }
 
-  function generateThumbnail(file) {
+  function generateThumbnail(file: File): Promise<string> {
     return new Promise(resolve => {
       const reader = new FileReader();
       reader.onload = e => {
@@ -386,22 +343,28 @@
 
           canvas.width = width;
           canvas.height = height;
-          ctx.drawImage(img, 0, 0, width, height);
-          canvas.toBlob(blob => resolve(URL.createObjectURL(blob)), 'image/jpeg', 0.8);
+          if (ctx) ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob(
+            blob => {
+              if (blob) resolve(URL.createObjectURL(blob));
+            },
+            'image/jpeg',
+            0.8
+          );
         };
-        img.src = e.target.result;
+        img.src = e.target?.result as string;
       };
       reader.readAsDataURL(file);
     });
   }
 
-  function removeFile(index) {
+  function removeFile(index: number) {
     const file = files.value[index];
     if (file.previewUrl) URL.revokeObjectURL(file.previewUrl);
     files.value.splice(index, 1);
   }
 
-  function updateCustomBase(index, value) {
+  function updateCustomBase(index: number, value: string) {
     files.value[index].customBase = value || null;
   }
 
@@ -409,10 +372,9 @@
     files.value.forEach(f => URL.revokeObjectURL(f.previewUrl));
     files.value = [];
     config.prefix = '';
-    ElMessage.info('已清空列表');
   }
 
-  function downloadSingle(processedFile) {
+  function downloadSingle(processedFile: FullProcessedFile) {
     const link = document.createElement('a');
     link.href = URL.createObjectURL(processedFile.file);
     link.download = processedFile.newName;
@@ -439,10 +401,10 @@
         if (count === total) {
           setTimeout(() => {
             isDownloading.value = false;
-            ElMessage.success(`成功下载 ${total} 个文件`);
+            ElMessage.success(`指令完成: ${total} 组序列重组完成`);
           }, 500);
         }
-      }, index * 200);
+      }, index * 200); // Stagger downloads slightly
     });
   }
 
@@ -457,504 +419,716 @@
 </script>
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
 
-  .batch-renamer {
-    --bg: #f8fafc;
-    --card: #ffffff;
-    --border: #e2e8f0;
-    --text: #1e293b;
-    --text-secondary: #64748b;
-    --primary: #2563eb;
-    --primary-hover: #1d4ed8;
-    --danger: #ef4444;
-    --success: #10b981;
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .nav-bar {
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-    padding: 1rem 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    flex-shrink: 0;
-  }
-
-  .nav-back {
-    background: none;
-    border: none;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--text-secondary);
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-
-  .nav-back:hover {
-    background: #f1f5f9;
-    color: var(--primary);
-  }
-
-  .nav-center h1 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0;
-  }
-
-  .nav-subtitle {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .main-content {
-    flex: 1;
-    max-width: 1200px;
-    width: 100%;
+  .brutal-container {
+    max-width: 1600px;
     margin: 0 auto;
-    padding: 2rem 1rem;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
   }
 
-  .upload-card {
-    background: var(--card);
-    border: 2px dashed var(--border);
-    border-radius: 12px;
-    padding: 3rem;
+  .brutal-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .header-action.start {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .header-action.end {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+
+  .brutal-btn-block {
+    display: block;
+    width: 100%;
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 1.25rem;
+    background: #00e572;
+    color: #111;
+    padding: 1rem;
+  }
+
+  .brutal-btn.small-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+  }
+
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+
+  .brutal-btn.small-btn:hover {
+    box-shadow: 7px 7px 0px #111;
+  }
+
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-btn:disabled,
+  .brutal-btn[disabled] {
+    background: #e0e0e0;
+    color: #888;
+    border-color: #888;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .brutal-btn.clear-btn {
+    background: #ff4b4b;
+    color: #fff;
+  }
+
+  .w-full {
+    width: 100%;
+  }
+  .mt-2 {
+    margin-top: 0.5rem;
+  }
+  .mt-3 {
+    margin-top: 1rem;
+  }
+  .mt-4 {
+    margin-top: 1.5rem;
+  }
+
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .text-white {
+    color: #fff;
+  }
+
+  .pane-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .file-stats {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    background: #111;
+    color: #fff;
+    padding: 0.35rem 0.75rem;
+  }
+
+  .control-panel-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    flex: 1;
+    background: #fdfdfd;
+  }
+
+  .brutal-upload-area {
+    border: 4px dashed #111;
+    background: #fff;
+    padding: 2.5rem 1rem;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 
-  .upload-card:hover,
-  .upload-card.dragover {
-    border-color: var(--primary);
-    background: #eff6ff;
+  .brutal-upload-area:hover,
+  .brutal-upload-area.is-dragover {
+    background: #ffd900;
+    border-style: solid;
   }
 
   .upload-icon {
-    color: var(--text-secondary);
+    font-size: 3rem;
+    display: block;
     margin-bottom: 1rem;
-    display: flex;
-    justify-content: center;
   }
 
-  .upload-card h3 {
+  .upload-placeholder p {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
     margin: 0 0 0.5rem 0;
+  }
+
+  .channel-group {
+    background: #fdfae5;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    padding: 1.25rem;
+  }
+
+  .channel-group h4 {
+    margin: 0 0 1rem 0;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
     font-size: 1.1rem;
+    font-weight: 800;
   }
 
-  .upload-hint {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin: 0;
+  .group-pink h4 {
+    color: #ff6bc9;
+    text-shadow: 1px 1px 0px #111;
   }
 
-  .settings-card {
-    background: var(--card);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    padding: 1.5rem;
-  }
-
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1.5rem;
-    align-items: center;
-  }
-
-  .card-header h3 {
-    margin: 0;
-    font-size: 1.1rem;
-  }
-
-  .stats-badge {
-    background: #f1f5f9;
-    padding: 0.25rem 0.75rem;
-    border-radius: 99px;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  .separator {
-    opacity: 0.3;
-  }
-
-  .settings-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .form-group {
+  .input-row {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
   }
 
-  .form-group label {
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
-
-  .form-input,
-  .form-select {
-    padding: 0.6rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
+  .input-row label {
+    font-weight: 800;
     font-size: 0.95rem;
   }
 
-  .form-input:focus,
-  .form-select:focus {
-    outline: 2px solid var(--primary);
-    outline-offset: -1px;
-    border-color: var(--primary);
+  .brutal-input {
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem;
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 3px 3px 0px #111;
+    outline: none;
+    transition: all 0.1s;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  .options-row {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
+  .brutal-input:focus {
+    box-shadow: 5px 5px 0px #111;
+    transform: translate(-2px, -2px);
   }
 
-  .checkbox-label {
+  .brutal-select-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .brutal-select {
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem;
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 3px 3px 0px #111;
+    outline: none;
+    cursor: pointer;
+    font-weight: 600;
+    box-sizing: border-box;
+  }
+
+  .brutal-select-wrapper::after {
+    content: '▼';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 0.8rem;
+    color: #111;
+  }
+
+  .brutal-checkbox-label {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
     cursor: pointer;
-    user-select: none;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 600;
     font-size: 0.95rem;
   }
 
-  .checkbox-label input {
-    display: none;
-  }
-
-  .check-box {
-    width: 18px;
-    height: 18px;
-    border: 2px solid var(--border);
-    border-radius: 4px;
+  .brutal-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 2px 2px 0px #111;
+    cursor: pointer;
     position: relative;
-    display: inline-block;
-    transition: all 0.2s;
+    margin: 0;
+    flex-shrink: 0;
   }
 
-  .checkbox-label input:checked + .check-box {
-    background: var(--primary);
-    border-color: var(--primary);
+  .brutal-checkbox:checked {
+    background: #00e572;
   }
 
-  .checkbox-label input:checked + .check-box::after {
+  .brutal-checkbox:checked::after {
     content: '';
     position: absolute;
-    left: 5px;
-    top: 1px;
-    width: 4px;
-    height: 9px;
-    border: solid white;
-    border-width: 0 2px 2px 0;
+    left: 6px;
+    top: 2px;
+    width: 6px;
+    height: 12px;
+    border: solid #111;
+    border-width: 0 3px 3px 0;
     transform: rotate(45deg);
   }
 
-  .preview-section {
-    background: var(--card);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    padding: 1.5rem;
-  }
-
-  .section-header {
+  .checkbox-options {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .section-header h3 {
-    margin: 0;
-    font-size: 1.1rem;
-  }
-
-  .section-actions {
-    display: flex;
-    gap: 1rem;
-  }
-
-  .btn {
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    border: none;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 0.5rem;
   }
 
-  .btn.primary {
-    background: var(--primary);
-    color: white;
-  }
-
-  .btn.primary:hover:not(:disabled) {
-    background: var(--primary-hover);
-  }
-
-  .btn.primary:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-
-  .btn.text-danger {
-    background: none;
-    color: var(--danger);
-    padding: 0.5rem;
-  }
-
-  .btn.text-danger:hover {
-    background: #fef2f2;
-  }
-
-  .preview-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .preview-item {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
+  .preview-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #f8fafc;
+    background-image:
+      linear-gradient(#e5e5e5 1px, transparent 1px),
+      linear-gradient(90deg, #e5e5e5 1px, transparent 1px);
+    background-size: 20px 20px;
     position: relative;
-    transition: all 0.2s;
-  }
-
-  .preview-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  }
-
-  .preview-thumb {
-    height: 140px;
-    background: #f1f5f9;
-    position: relative;
+    height: calc(100vh - 350px); /* rough estimation for scrolling inner area */
+    min-height: 500px;
     overflow: hidden;
+  }
+
+  .preview-scroll {
+    overflow-y: auto;
+    padding: 1.5rem;
+    height: 100%;
+  }
+
+  .empty-state {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.25rem;
+    color: #777;
+    font-style: italic;
+    font-weight: bold;
+    height: 100%;
   }
 
-  .preview-thumb img {
+  .brutal-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .brutal-image-card {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 6px 6px 0px #111;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s;
+  }
+
+  .brutal-image-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0px #111;
+  }
+
+  .card-thumb {
+    height: 160px;
+    border-bottom: 4px solid #111;
+    position: relative;
+    background: #eee;
+    overflow: hidden;
+  }
+
+  .card-thumb img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    background: repeating-conic-gradient(#e0e0e0 0% 25%, transparent 0% 50%) 50% / 10px 10px;
+    background-color: white;
   }
 
   .remove-btn {
     position: absolute;
     top: 8px;
     right: 8px;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.5);
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    line-height: 36px;
+    text-align: center;
+    border: 3px solid #111;
+    background: #ff4b4b;
     color: white;
-    border: none;
     cursor: pointer;
+    box-shadow: 3px 3px 0px #111;
+    z-index: 2;
+  }
+
+  .card-info {
+    padding: 1rem;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: all 0.2s;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
-  .preview-item:hover .remove-btn {
-    opacity: 1;
-  }
-
-  .remove-btn:hover {
-    background: var(--danger);
-  }
-
-  .preview-info {
-    padding: 0.8rem;
-    background: white;
+  .source-name {
     font-size: 0.85rem;
-  }
-
-  .file-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--text-secondary);
-    margin-bottom: 0.4rem;
-  }
-
-  .original-name {
+    color: #666;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    max-width: 120px;
+    font-weight: bold;
   }
 
-  .new-name {
-    font-weight: 600;
-    color: var(--text);
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    margin-bottom: 0.5rem;
+  .meta-separator {
+    font-size: 1.2rem;
+    text-align: center;
+    opacity: 0.8;
   }
 
-  .name-edit-container {
+  .edit-zone {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-    width: 100%;
+    background: #fdfae5;
+    border: 3px solid #111;
+    box-shadow: 3px 3px 0px #111;
+    overflow: hidden;
   }
 
-  .name-input {
+  .sm-input {
     flex: 1;
+    border: none;
+    box-shadow: none;
+    font-size: 0.9rem;
+    padding: 0.4rem;
+    border-right: 3px solid #111;
     min-width: 0;
-    padding: 0.3rem 0.5rem;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    font-size: 0.85rem;
-    font-family: inherit;
   }
 
-  .name-suffix {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    white-space: nowrap;
-    font-family: 'JetBrains Mono', monospace;
+  .sm-input:focus {
+    transform: none;
+    box-shadow: none;
+    background: #fff;
   }
 
-  .name-input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  .suffix-label {
+    padding: 0.4em 0.5em;
+    font-size: 0.8rem;
+    background: #111;
+    color: #fff;
+    font-weight: bold;
+    flex-shrink: 0;
   }
 
-  .btn-icon {
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 4px;
-    width: 100%;
-    cursor: pointer;
-    color: var(--text-secondary);
-  }
-
-  .btn-icon:hover {
-    background: #f8fafc;
-    color: var(--primary);
-    border-color: var(--primary);
-  }
-
-  .intro-section {
-    margin-top: 2rem;
-    border-top: 1px solid var(--border);
-    padding-top: 2rem;
-  }
-
-  .intro-section h2 {
-    font-size: 1.1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .features-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .feature-item {
-    display: flex;
-    gap: 1rem;
-  }
-
-  .feature-item .icon {
+  .brutal-status {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
     font-size: 1.5rem;
-    background: #f1f5f9;
-    width: 48px;
-    height: 48px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    text-transform: uppercase;
   }
 
-  .feature-item h4 {
-    margin: 0 0 0.25rem 0;
-    font-size: 0.95rem;
+  .brutal-status.info {
+    background: #fff;
+  }
+  .brutal-status.success {
+    background: #00e572;
+    color: #111;
+  }
+  .brutal-status.warn {
+    background: #ffd900;
+    color: #111;
   }
 
-  .feature-item p {
-    margin: 0;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    line-height: 1.5;
+  .marquee-wrapper {
+    width: 100%;
+    overflow: hidden;
   }
 
-  .spinner {
-    animation: spin 1s linear infinite;
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
   }
 
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
     }
-
-    to {
-      transform: rotate(360deg);
+    100% {
+      transform: translateX(-50%);
     }
   }
 
-  @media (max-width: 640px) {
-    .settings-grid {
+  @media (max-width: 1024px) {
+    .brutal-grid {
       grid-template-columns: 1fr;
     }
-
-    .options-row {
+    .brutal-header {
+      flex-wrap: wrap;
       gap: 1rem;
-    }
-
-    .preview-grid {
-      grid-template-columns: 1fr 1fr;
+      justify-content: center;
     }
   }
 
-  .footer {
-    text-align: center;
-    padding: 3rem 0;
-    color: var(--text-secondary, #64748b);
-    font-size: 0.85rem;
+  /* --- Dark Mode Overrides --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .pane-actions button,
+  [data-theme='dark'] .brutal-status,
+  [data-theme='dark'] .brutal-status.info {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-upload-area {
+    box-shadow: 6px 6px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+
+  [data-theme='dark'] .brutal-upload-area {
+    background: #1a1a1a;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-upload-area:hover,
+  [data-theme='dark'] .brutal-upload-area.is-dragover {
+    background: #b28f00;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .channel-group {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .group-pink h4 {
+    color: #ff9ecf;
+    text-shadow: 1px 1px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-input,
+  [data-theme='dark'] .brutal-select,
+  [data-theme='dark'] .brutal-checkbox {
+    background: #111;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-checkbox:checked {
+    background: #00994c;
+  }
+  [data-theme='dark'] .brutal-checkbox:checked::after {
+    border-color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-select-wrapper::after {
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn-block {
+    background: #00994c;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn-block:disabled {
+    background: #333;
+    color: #888;
+    border-color: #888;
+  }
+  [data-theme='dark'] .action-btn {
+    box-shadow: 4px 4px 0px #eee;
+  }
+
+  [data-theme='dark'] .preview-container {
+    background: #222;
+    background-image:
+      linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px);
+  }
+
+  [data-theme='dark'] .brutal-image-card {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-image-card:hover {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .card-thumb {
+    border-bottom-color: #eee;
+    background: #222;
+  }
+  [data-theme='dark'] .card-thumb img {
+    background-color: #222;
+    background-image: repeating-conic-gradient(#333 0% 25%, transparent 0% 50%);
+  }
+
+  [data-theme='dark'] .remove-btn {
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+
+  [data-theme='dark'] .edit-zone {
+    background: #111;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .sm-input {
+    background: #111;
+    color: #eee;
+    border-right-color: #eee;
+  }
+  [data-theme='dark'] .suffix-label {
+    background: #eee;
+    color: #111;
+  }
+
+  [data-theme='dark'] .brutal-status {
+    border-color: #eee;
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn.clear-btn {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-status.success {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-status.warn {
+    background: #b28f00;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
   }
 </style>

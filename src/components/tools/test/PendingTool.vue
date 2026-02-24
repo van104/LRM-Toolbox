@@ -1,276 +1,635 @@
 <template>
-  <!-- 外层容器：确保居中且具备最小高度，适应各种嵌套环境 -->
-  <div
-    class="flex items-center justify-center min-h-[600px] h-full w-full bg-slate-100/50 p-4 font-sans select-none"
-  >
-    <!-- 计算器主体：设定安全宽度，增加精致的阴影和圆角 -->
-    <div
-      class="w-full max-w-[360px] min-w-[320px] bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/80 overflow-hidden border border-slate-100 flex flex-col relative"
-    >
-      <!-- 顶部屏幕区域 -->
-      <div
-        class="bg-gradient-to-b from-slate-50 to-white px-6 pt-8 pb-4 flex flex-col gap-6 relative"
-      >
-        <!-- 视角切换控制栏 -->
-        <div class="flex justify-between items-center w-full z-10">
-          <span class="text-xs font-bold text-slate-400 tracking-wider">我的性别</span>
-          <div class="flex bg-slate-100 p-1 rounded-xl shadow-inner border border-slate-200/50">
-            <button
-              :class="
-                myGender === 1
-                  ? 'bg-white text-blue-500 shadow'
-                  : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
-              "
-              class="px-4 py-1.5 rounded-lg text-sm font-bold transition-all duration-300"
-              @click="setGender(1)"
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$emit('back')">← 返回</button>
+        <h1 class="brutal-title">批量重命名<span>.工具()</span></h1>
+        <button class="brutal-btn clear-btn" @click="clearFiles">清空列表</button>
+      </header>
+
+      <div class="brutal-grid">
+        <!-- 左侧面板：设置与上传 -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span>规则设置.Config</span>
+          </div>
+          <div class="pane-content settings-content">
+            <!-- 拖拽上传区 -->
+            <div
+              class="brutal-dropzone"
+              :class="{ 'is-dragover': isDragOver }"
+              @dragover.prevent="isDragOver = true"
+              @dragleave.prevent="isDragOver = false"
+              @drop.prevent="handleDrop"
+              @click="triggerFileInput"
             >
-              男
-            </button>
-            <button
-              :class="
-                myGender === 0
-                  ? 'bg-white text-rose-500 shadow'
-                  : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
-              "
-              class="px-4 py-1.5 rounded-lg text-sm font-bold transition-all duration-300"
-              @click="setGender(0)"
-            >
-              女
-            </button>
+              <input ref="fileInput" type="file" multiple hidden @change="handleFileSelect" />
+              <div class="drop-icon">📂</div>
+              <div class="drop-text">点击或拖拽文件到此处上传</div>
+            </div>
+
+            <div class="rules-container">
+              <div class="brutal-input-group">
+                <label>前缀 (Prefix):</label>
+                <input
+                  v-model="prefix"
+                  type="text"
+                  class="brutal-input"
+                  placeholder="例如: image_"
+                />
+              </div>
+
+              <div class="brutal-input-group grid-2-col">
+                <div>
+                  <label>起始序号:</label>
+                  <input v-model.number="startNumber" type="number" class="brutal-input" min="0" />
+                </div>
+                <div>
+                  <label>数字位数 (补零):</label>
+                  <input
+                    v-model.number="padding"
+                    type="number"
+                    class="brutal-input"
+                    min="1"
+                    max="10"
+                  />
+                </div>
+              </div>
+
+              <div class="brutal-input-group">
+                <label>新扩展名 (留空则保持原样):</label>
+                <input
+                  v-model="extension"
+                  type="text"
+                  class="brutal-input"
+                  placeholder="例如: .jpg"
+                />
+              </div>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="brutal-toolbar actions-toolbar">
+              <button
+                class="brutal-action-btn primary bg-pink"
+                :disabled="files.length === 0 || isProcessing"
+                @click="downloadZip"
+              >
+                {{ isProcessing ? '处理中...' : '打包下载 ZIP' }}
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- 结果展示区 -->
-        <div class="flex flex-col items-end justify-end h-24 w-full">
-          <div class="text-right text-slate-400 text-sm h-6 w-full truncate mb-1">
-            {{ expressionText }}
+        <!-- 右侧面板：预览列表 -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-green">
+            <span>预览列表.Preview ({{ files.length }})</span>
           </div>
-          <div
-            class="text-right font-black tracking-tight w-full truncate transition-all duration-300 flex items-end justify-end"
-            :class="
-              resultText === '未知亲戚' ? 'text-3xl text-slate-300' : 'text-5xl text-slate-800'
-            "
-          >
-            {{ resultText }}
+          <div class="pane-content preview-content">
+            <div v-if="files.length === 0" class="empty-state">
+              [ 暂无文件，请先上传以查看预览 ]
+            </div>
+            <ul v-else class="file-list">
+              <li v-for="(file, index) in files" :key="index" class="file-item">
+                <div class="file-original" :title="file.name">{{ file.name }}</div>
+                <div class="file-arrow">→</div>
+                <div class="file-new" :title="getNewName(file, index)">
+                  {{ getNewName(file, index) }}
+                </div>
+                <button class="remove-btn" title="移除此文件" @click="removeFile(index)">×</button>
+              </li>
+            </ul>
           </div>
         </div>
-      </div>
-
-      <!-- 分割线 -->
-      <div class="h-px w-full bg-gradient-to-r from-transparent via-slate-100 to-transparent"></div>
-
-      <!-- 键盘区域 -->
-      <div class="p-6 bg-white grid grid-cols-4 gap-3">
-        <button
-          v-for="btn in buttons"
-          :key="btn.label"
-          :disabled="btn.disabled"
-          :class="[
-            'h-16 flex items-center justify-center text-xl font-bold rounded-2xl transition-all duration-200',
-            btn.disabled
-              ? 'opacity-30 bg-slate-50 text-slate-400 cursor-not-allowed border border-transparent'
-              : btn.colorClass ||
-                'bg-slate-50 text-slate-700 hover:bg-blue-50 hover:text-blue-600 active:scale-95 border border-slate-100 shadow-sm hover:shadow active:shadow-none'
-          ]"
-          @click="btn.action"
-        >
-          {{ btn.label }}
-        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue';
+  import { ref } from 'vue';
+  import JSZip from 'jszip'; // 依赖 jszip 进行打包
 
-  // 初始状态：1 为男，0 为女
-  const myGender = ref(1);
-  const chain = ref([]);
+  defineEmits(['back']);
 
-  // 关系推导字典（覆盖主流场景）
-  const relationDict = {
-    // 1级关系
-    父: '爸爸',
-    母: '妈妈',
-    夫: '老公',
-    妻: '老婆',
-    兄: '哥哥',
-    弟: '弟弟',
-    姐: '姐姐',
-    妹: '妹妹',
-    子: '儿子',
-    女: '女儿',
+  // 状态
+  const files = ref([]);
+  const fileInput = ref(null);
+  const isDragOver = ref(false);
+  const isProcessing = ref(false);
 
-    // 2级 - 直系长辈
-    '父,父': '爷爷',
-    '父,母': '奶奶',
-    '母,父': '外公',
-    '母,母': '外婆',
-    '夫,父': '公公',
-    '夫,母': '婆婆',
-    '妻,父': '岳父',
-    '妻,母': '岳母',
+  // 规则设置
+  const prefix = ref('file_');
+  const startNumber = ref(1);
+  const padding = ref(3);
+  const extension = ref('');
 
-    // 2级 - 旁系长辈
-    '父,兄': '伯父',
-    '父,弟': '叔叔',
-    '父,姐': '姑妈',
-    '父,妹': '姑姑',
-    '母,兄': '舅舅',
-    '母,弟': '舅舅',
-    '母,姐': '大姨',
-    '母,妹': '小姨',
-
-    // 2级 - 平辈配偶与姻亲
-    '兄,妻': '嫂子',
-    '弟,妻': '弟妹',
-    '姐,夫': '姐夫',
-    '妹,夫': '妹夫',
-    '夫,兄': '大伯子',
-    '夫,弟': '小叔子',
-    '夫,姐': '大姑子',
-    '夫,妹': '小姑子',
-    '妻,兄': '大舅子',
-    '妻,弟': '小舅子',
-    '妻,姐': '大姨子',
-    '妻,妹': '小姨子',
-
-    // 2级 - 晚辈
-    '子,子': '孙子',
-    '子,女': '孙女',
-    '女,子': '外孙',
-    '女,女': '外孙女',
-    '兄,子': '侄子',
-    '弟,子': '侄子',
-    '兄,女': '侄女',
-    '弟,女': '侄女',
-    '姐,子': '外甥',
-    '妹,子': '外甥',
-    '姐,女': '外甥女',
-    '妹,女': '外甥女',
-
-    // 继子/继女 简化
-    '夫,子': '儿子',
-    '夫,女': '女儿',
-    '妻,子': '儿子',
-    '妻,女': '女儿',
-
-    // 逻辑闭环（父母的配偶、兄弟姐妹的父母）
-    '父,妻': '妈妈',
-    '母,夫': '爸爸',
-    '兄,父': '爸爸',
-    '弟,父': '爸爸',
-    '姐,父': '爸爸',
-    '妹,父': '爸爸',
-    '兄,母': '妈妈',
-    '弟,母': '妈妈',
-    '姐,母': '妈妈',
-    '妹,母': '妈妈',
-
-    // 3级 - 长辈的配偶
-    '父,兄,妻': '伯母',
-    '父,弟,妻': '婶婶',
-    '父,姐,夫': '姑父',
-    '父,妹,夫': '姑父',
-    '母,兄,妻': '舅妈',
-    '母,弟,妻': '舅妈',
-    '母,姐,夫': '姨父',
-    '母,妹,夫': '姨父',
-
-    // 3级 - 曾祖辈
-    '父,父,父': '太爷爷',
-    '父,父,母': '太奶奶',
-    '母,母,父': '太外公',
-    '母,母,母': '太外婆',
-    '父,母,父': '太外公',
-    '父,母,母': '太外婆',
-    '母,父,父': '太爷爷',
-    '母,父,母': '太奶奶',
-
-    // 3级 - 旁系长辈扩展 (伯祖父/舅公等)
-    '父,父,兄': '伯公',
-    '父,父,弟': '叔公',
-    '父,父,姐': '姑婆',
-    '父,父,妹': '姑婆',
-    '母,母,兄': '舅公',
-    '母,母,弟': '舅公',
-    '母,母,姐': '姨婆',
-    '母,母,妹': '姨婆',
-    '父,母,兄': '舅公',
-    '父,母,弟': '舅公',
-    '父,母,姐': '姨婆',
-    '父,母,妹': '姨婆',
-    '母,父,兄': '伯公',
-    '母,父,弟': '叔公',
-    '母,父,姐': '姑婆',
-    '母,父,妹': '姑婆'
-  };
-
-  // 动态推断当前节点的性别（决定是否能点击“夫”或“妻”）
-  const currentGender = computed(() => {
-    if (chain.value.length === 0) return myGender.value;
-    const last = chain.value[chain.value.length - 1];
-    if (['父', '兄', '弟', '子', '夫'].includes(last)) return 1; // 链条末端是男性
-    if (['母', '姐', '妹', '女', '妻'].includes(last)) return 0; // 链条末端是女性
-    return -1;
-  });
-
-  // 计算键盘按钮属性
-  const buttons = computed(() => [
-    { label: '父', action: () => append('父') },
-    { label: '母', action: () => append('母') },
-    // 如果当前是男性，无法点击“夫”
-    { label: '夫', action: () => append('夫'), disabled: currentGender.value === 1 },
-    // 如果当前是女性，无法点击“妻”
-    { label: '妻', action: () => append('妻'), disabled: currentGender.value === 0 },
-    { label: '兄', action: () => append('兄') },
-    { label: '弟', action: () => append('弟') },
-    { label: '姐', action: () => append('姐') },
-    { label: '妹', action: () => append('妹') },
-    { label: '子', action: () => append('子') },
-    { label: '女', action: () => append('女') },
-    {
-      label: '退',
-      action: backspace,
-      colorClass:
-        'bg-orange-50 text-orange-500 hover:bg-orange-100 active:scale-95 border border-orange-100 shadow-sm hover:shadow'
-    },
-    {
-      label: 'C',
-      action: clear,
-      colorClass:
-        'bg-rose-50 text-rose-500 hover:bg-rose-100 active:scale-95 border border-rose-100 shadow-sm hover:shadow'
+  // 获取新文件名
+  const getNewName = (file, index) => {
+    const currentExt = file.name.substring(file.name.lastIndexOf('.'));
+    let targetExt = extension.value.trim();
+    if (targetExt && !targetExt.startsWith('.')) {
+      targetExt = '.' + targetExt;
     }
-  ]);
+    const finalExt = targetExt || currentExt;
 
-  // 操作逻辑
-  const setGender = gender => {
-    myGender.value = gender;
-    chain.value = [];
+    const num = String(startNumber.value + index).padStart(padding.value, '0');
+    return `${prefix.value}${num}${finalExt}`;
   };
 
-  const append = relation => {
-    chain.value.push(relation);
+  // 文件处理
+  const triggerFileInput = () => {
+    fileInput.value.click();
   };
 
-  const backspace = () => {
-    chain.value.pop();
+  const handleFileSelect = event => {
+    const selectedFiles = Array.from(event.target.files);
+    files.value.push(...selectedFiles);
+    event.target.value = ''; // reset
   };
 
-  const clear = () => {
-    chain.value = [];
+  const handleDrop = event => {
+    isDragOver.value = false;
+    const droppedFiles = Array.from(event.dataTransfer.files).filter(f => f.type !== ''); // 简单过滤文件夹
+    files.value.push(...droppedFiles);
   };
 
-  // 显示格式化
-  const expressionText = computed(() => {
-    if (chain.value.length === 0) return '我';
-    return '我 的 ' + chain.value.join(' 的 ');
-  });
+  const removeFile = index => {
+    files.value.splice(index, 1);
+  };
 
-  const resultText = computed(() => {
-    if (chain.value.length === 0) return '我';
-    const key = chain.value.join(',');
-    return relationDict[key] || '未知亲戚';
-  });
+  const clearFiles = () => {
+    files.value = [];
+  };
+
+  // 下载 ZIP
+  const downloadZip = async () => {
+    if (files.value.length === 0) return;
+    isProcessing.value = true;
+
+    try {
+      const zip = new JSZip();
+
+      files.value.forEach((file, index) => {
+        const newName = getNewName(file, index);
+        zip.file(newName, file);
+      });
+
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `renamed_files_${new Date().getTime()}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('ZIP生成失败:', error);
+      alert('打包文件时出错，请重试！');
+    } finally {
+      isProcessing.value = false;
+    }
+  };
 </script>
+
+<style scoped>
+  /* ==========================================================================
+   Neobrutalism UI 核心变量与字体
+   ========================================================================== */
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@700;800&display=swap');
+
+  .brutal-wrapper {
+    min-height: 100vh;
+    background: #f4f4f0;
+    padding: 2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    color: #111;
+    transition:
+      background 0.3s,
+      color 0.3s;
+  }
+
+  .brutal-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* ==========================================================================
+   头部 (Header)
+   ========================================================================== */
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 4px solid #111;
+    padding: 1rem 2rem;
+    background: #fff;
+    box-shadow: 8px 8px 0px #111;
+  }
+
+  .brutal-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+  }
+  .brutal-title span {
+    color: #ff0055;
+  }
+
+  /* ==========================================================================
+   按钮 (Buttons)
+   ========================================================================== */
+  .brutal-btn,
+  .brutal-action-btn {
+    font-family: inherit;
+    font-weight: 700;
+    border: 3px solid #111;
+    background: #fff;
+    color: #111;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .brutal-btn {
+    padding: 0.5rem 1.5rem;
+    font-size: 1.1rem;
+    box-shadow: 4px 4px 0px #111;
+  }
+  .brutal-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+  .brutal-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-btn.clear-btn {
+    background: #ff0055;
+    color: #fff;
+  }
+
+  .brutal-action-btn {
+    padding: 0.75rem 2rem;
+    font-size: 1.2rem;
+    box-shadow: 6px 6px 0px #111;
+    width: 100%;
+  }
+  .brutal-action-btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0px #111;
+  }
+  .brutal-action-btn:active:not(:disabled) {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-action-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  /* ==========================================================================
+   网格与面板 (Grid & Panes)
+   ========================================================================== */
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .brutal-pane {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s;
+  }
+
+  .pane-header {
+    padding: 1rem 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 800;
+    border-bottom: 4px solid #111;
+    text-transform: uppercase;
+  }
+  .bg-yellow {
+    background: #ffe100;
+  }
+  .bg-green {
+    background: #00e5ff;
+  }
+  .bg-pink {
+    background: #ff66cc;
+  }
+
+  .pane-content {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ==========================================================================
+   内部控件 (Inputs & Dropzone)
+   ========================================================================== */
+  .brutal-dropzone {
+    border: 4px dashed #111;
+    background: #f9f9f9;
+    padding: 2.5rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .brutal-dropzone:hover,
+  .brutal-dropzone.is-dragover {
+    background: #ffe100;
+    border-style: solid;
+  }
+  .drop-icon {
+    font-size: 3rem;
+  }
+  .drop-text {
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  .rules-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .brutal-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .brutal-input-group label {
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .grid-2-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .brutal-input {
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 3px solid #111;
+    background: #fff;
+    color: #111;
+    box-shadow: 4px 4px 0px #111;
+    outline: none;
+    transition: all 0.2s;
+  }
+  .brutal-input:focus {
+    background: #e6f7ff;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+
+  .actions-toolbar {
+    margin-top: 2rem;
+  }
+
+  /* ==========================================================================
+   列表区 (List & Preview)
+   ========================================================================== */
+  .preview-content {
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .empty-state {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    color: #666;
+    padding: 3rem;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .file-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: auto; /* 允许水平滚动 */
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* 自定义滚动条 (包含垂直和水平) */
+  .file-list::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  .file-list::-webkit-scrollbar-track {
+    background: #fff;
+    border-left: 3px solid #111;
+    border-top: 3px solid #111;
+  }
+  .file-list::-webkit-scrollbar-thumb {
+    background: #111;
+  }
+  .file-list::-webkit-scrollbar-corner {
+    background: #fff;
+    border-left: 3px solid #111;
+    border-top: 3px solid #111;
+  }
+
+  .file-item {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto;
+    min-width: 450px; /* 保证窄屏下能触发水平滚动，而不是过度挤压 */
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 3px solid #111;
+    background: #fff;
+    transition: background 0.2s;
+  }
+  .file-item:last-child {
+    border-bottom: none;
+  }
+  .file-item:hover {
+    background: #f0f0f0;
+  }
+
+  .file-original {
+    color: #666;
+    text-decoration: line-through;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.9rem;
+  }
+
+  .file-arrow {
+    font-weight: 800;
+    color: #111;
+  }
+
+  .file-new {
+    color: #ff0055;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1rem;
+  }
+
+  .remove-btn {
+    background: none;
+    border: 2px solid #111;
+    border-radius: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: bold;
+    background: #fff;
+    transition: all 0.1s;
+  }
+  .remove-btn:hover {
+    background: #ff0055;
+    color: #fff;
+  }
+
+  /* ==========================================================================
+   Dark Mode 暗黑模式适配
+   ========================================================================== */
+  [data-theme='dark'] .brutal-wrapper {
+    background: #1a1a1a;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-header,
+  [data-theme='dark'] .brutal-pane {
+    background: #2a2a2a;
+    border-color: #eee;
+    box-shadow: 8px 8px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-header {
+    box-shadow: 6px 6px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 12px 12px 0px #eee;
+  }
+
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111; /* 保持暗黑模式下亮色头部的黑字 */
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .brutal-input,
+  [data-theme='dark'] .remove-btn {
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+    background: #222;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn:hover,
+  [data-theme='dark'] .brutal-input:focus {
+    box-shadow: 6px 6px 0px #eee;
+    background: #333;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover:not(:disabled) {
+    box-shadow: 8px 8px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn:active,
+  [data-theme='dark'] .brutal-action-btn:active,
+  [data-theme='dark'] .brutal-action-btn:disabled {
+    box-shadow: 0px 0px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn.clear-btn {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #b25482;
+    color: #fff;
+  } /* 调整按钮背景适应暗黑 */
+
+  [data-theme='dark'] .brutal-dropzone {
+    border-color: #eee;
+    background: #2a2a2a;
+  }
+  [data-theme='dark'] .brutal-dropzone:hover,
+  [data-theme='dark'] .brutal-dropzone.is-dragover {
+    background: #554b00;
+  }
+
+  [data-theme='dark'] .file-item {
+    border-bottom-color: #eee;
+    background: #2a2a2a;
+  }
+  [data-theme='dark'] .file-item:hover {
+    background: #333;
+  }
+  [data-theme='dark'] .file-original {
+    color: #aaa;
+  }
+  [data-theme='dark'] .file-arrow {
+    color: #eee;
+  }
+  [data-theme='dark'] .file-new {
+    color: #ff9fb2;
+  }
+
+  [data-theme='dark'] .file-list::-webkit-scrollbar-track,
+  [data-theme='dark'] .file-list::-webkit-scrollbar-corner {
+    background: #2a2a2a;
+    border-left-color: #eee;
+    border-top-color: #eee;
+  }
+  [data-theme='dark'] .file-list::-webkit-scrollbar-thumb {
+    background: #eee;
+  }
+
+  /* 响应式 */
+  @media (max-width: 900px) {
+    .brutal-grid {
+      grid-template-columns: 1fr;
+    }
+    .brutal-title {
+      font-size: 1.8rem;
+    }
+    .file-item {
+      grid-template-columns: 1fr auto 1fr auto;
+      gap: 0.5rem;
+    }
+  }
+</style>

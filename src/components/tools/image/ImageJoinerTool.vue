@@ -1,226 +1,240 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">图片拼接工具</h1>
-        <span class="tool-subtitle">Image Joiner & Collage Tool</span>
-      </div>
-      <div class="header-right">
-        <el-button-group>
-          <el-button type="danger" :disabled="!images.length" @click="clearAll">
-            <el-icon>
-              <Delete />
-            </el-icon>
-            清空
-          </el-button>
-          <el-button type="primary" :disabled="!images.length" @click="downloadResult">
-            <el-icon>
-              <Download />
-            </el-icon>
-            导出拼图
-          </el-button>
-        </el-button-group>
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <div class="header-action start">
+          <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        </div>
+        <h1 class="brutal-title">像素拼合<span>.熔炉()</span></h1>
+        <div class="header-action end">
+          <button
+            class="brutal-btn action-btn mr-2"
+            :disabled="!images.length"
+            @click="downloadResult"
+          >
+            熔铸输出
+          </button>
+          <button class="brutal-btn clear-btn" :disabled="!images.length" @click="clearAll">
+            排空熔炉
+          </button>
+        </div>
+      </header>
 
-    <main class="tool-content">
-      <div class="layout-container">
-        <div class="workbench glass-card">
-          <div v-if="!images.length" class="upload-placeholder" @click="triggerFileInput">
-            <div class="upload-icon">
-              <el-icon>
-                <PictureFilled />
-              </el-icon>
+      <div class="brutal-grid">
+        <!-- 左侧: Preview & Image List -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span>融合沙盒.观察窗</span>
+            <div class="pane-actions">
+              <button @click="triggerUpload">+ 投入介质</button>
             </div>
-            <h3>点击或拖拽上传多张图片</h3>
-            <p>支持横向、纵向及网格智能拼接，所有处理均在本地进行，不上传服务器</p>
+          </div>
+
+          <div class="control-panel-content">
             <input
               ref="fileInput"
               type="file"
               multiple
-              hidden
+              style="display: none"
               accept="image/*"
               @change="handleFileSelect"
             />
-          </div>
 
-          <div v-else class="joiner-stage">
-            <div class="stage-toolbar">
-              <div class="info-badge">已导入 {{ images.length }} 张图片</div>
-              <p class="hint">所有处理均在本地进行，不会上传服务器</p>
+            <div v-if="!images.length" class="brutal-upload-area" @click="triggerUpload">
+              <div class="upload-placeholder">
+                <span class="upload-icon">🧩</span>
+                <p>点击灌注多张像素碎片</p>
+                <small>(支持长轴/宽轴/网格阵列重组)</small>
+              </div>
             </div>
 
-            <div class="preview-scroll">
-              <div ref="stageContainer" class="canvas-container">
+            <div v-else class="preview-area">
+              <div ref="stageContainer" class="brutal-canvas-container brutal-shadow">
                 <canvas ref="resultCanvas"></canvas>
               </div>
-            </div>
 
-            <div class="image-list">
-              <div
-                v-for="(img, idx) in images"
-                :key="img.id"
-                class="image-item shadow-sm"
-                :class="{ dragging: dragSourceIdx === idx }"
-                draggable="true"
-                @dragstart="handleDragStart(idx)"
-                @dragover.prevent
-                @dragenter.prevent="handleDragEnter(idx)"
-                @dragend="handleDragEnd"
-              >
-                <img :src="img.preview" />
-                <div class="item-overlay">
-                  <span class="idx">{{ idx + 1 }}</span>
-                  <el-button circle size="small" type="danger" @click="removeImage(idx)">
-                    <el-icon>
-                      <Close />
-                    </el-icon>
-                  </el-button>
+              <!-- Draggable Image List -->
+              <div class="feed-belt mt-4">
+                <h4 class="feed-title">进料传送带: (可拖拽干预排序)</h4>
+                <div class="image-list">
+                  <div
+                    v-for="(img, idx) in images"
+                    :key="img.id"
+                    class="image-item brutal-shadow"
+                    :class="{ 'is-dragging': dragSourceIdx === idx }"
+                    draggable="true"
+                    @dragstart="handleDragStart(idx)"
+                    @dragover.prevent
+                    @dragenter.prevent="handleDragEnter(idx)"
+                    @dragend="handleDragEnd"
+                  >
+                    <img :src="img.preview" />
+                    <div class="item-overlay">
+                      <span class="item-idx">{{ idx + 1 }}</span>
+                      <button class="del-btn" @click.stop="removeImage(idx)">✕</button>
+                    </div>
+                  </div>
+                  <div class="add-more brutal-shadow" @click="triggerUpload">+</div>
                 </div>
               </div>
-              <div class="add-more" @click="triggerFileInput">
-                <el-icon>
-                  <Plus />
-                </el-icon>
-              </div>
             </div>
-            <p class="hint mt-2">提示：按住图片图标可拖拽排序，点击右下角删除。当前按顺序排列。</p>
           </div>
         </div>
 
-        <div class="settings-panel glass-card">
-          <div class="panel-section">
-            <h3 class="section-title">排列方式</h3>
-            <el-radio-group v-model="config.mode" class="mode-selector" @change="debouncedRender">
-              <el-radio-button value="vertical">
-                <div class="mode-btn-content">
-                  <el-icon>
-                    <Sort />
-                  </el-icon>
-                  纵向拼接
-                </div>
-              </el-radio-button>
-              <el-radio-button value="horizontal">
-                <div class="mode-btn-content">
-                  <el-icon>
-                    <Right />
-                  </el-icon>
-                  横向拼接
-                </div>
-              </el-radio-button>
-              <el-radio-button value="grid">
-                <div class="mode-btn-content">
-                  <el-icon>
-                    <Grid />
-                  </el-icon>
-                  网格拼接
-                </div>
-              </el-radio-button>
-            </el-radio-group>
+        <!-- 右侧: Controls -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-blue">
+            <span class="text-white">力场约束.控制台</span>
           </div>
 
-          <div v-if="config.mode === 'grid'" class="settings-group">
-            <div class="label">每行图片数 ({{ config.gridColumns }})</div>
-            <el-slider v-model="config.gridColumns" :min="1" :max="10" @input="debouncedRender" />
-          </div>
-
-          <el-divider />
-
-          <div class="panel-section">
-            <h3 class="section-title">间距与边框</h3>
-            <div class="settings-group">
-              <div class="label">外边距 ({{ config.padding }}px)</div>
-              <el-slider v-model="config.padding" :min="0" :max="100" @input="debouncedRender" />
+          <div class="settings-content">
+            <!-- Mode -->
+            <div class="brutal-form-group channel-group bg-cyan">
+              <label class="brutal-label">引力坍缩方向 (Mode)</label>
+              <div class="mode-buttons mt-1">
+                <button
+                  class="mode-btn"
+                  :class="{ active: config.mode === 'vertical' }"
+                  @click="
+                    config.mode = 'vertical';
+                    debouncedRender();
+                  "
+                >
+                  纵向沉积
+                </button>
+                <button
+                  class="mode-btn"
+                  :class="{ active: config.mode === 'horizontal' }"
+                  @click="
+                    config.mode = 'horizontal';
+                    debouncedRender();
+                  "
+                >
+                  横向扩张
+                </button>
+                <button
+                  class="mode-btn"
+                  :class="{ active: config.mode === 'grid' }"
+                  @click="
+                    config.mode = 'grid';
+                    debouncedRender();
+                  "
+                >
+                  矩阵网格
+                </button>
+              </div>
             </div>
-            <div class="settings-group">
-              <div class="label">图片间距 ({{ config.spacing }}px)</div>
-              <el-slider v-model="config.spacing" :min="0" :max="100" @input="debouncedRender" />
+
+            <!-- Grid Specific -->
+            <div v-if="config.mode === 'grid'" class="brutal-form-group mt-4">
+              <label class="brutal-label">网格横向切割数 (Columns)</label>
+              <div class="slider-group mt-1">
+                <input
+                  v-model.number="config.gridColumns"
+                  type="range"
+                  class="brutal-slider"
+                  min="1"
+                  max="10"
+                  @input="debouncedRender"
+                />
+                <span class="slider-value">[ {{ config.gridColumns }} ]</span>
+              </div>
             </div>
-            <div class="settings-group">
-              <div class="label">圆角大小 ({{ config.borderRadius }}px)</div>
-              <el-slider
-                v-model="config.borderRadius"
-                :min="0"
-                :max="100"
+
+            <!-- Spacing & Layout -->
+            <div class="brutal-form-group mt-4">
+              <label class="brutal-label">外部绝缘层 (Padding: {{ config.padding }}px)</label>
+              <input
+                v-model.number="config.padding"
+                type="range"
+                class="brutal-slider mt-1"
+                min="0"
+                max="200"
                 @input="debouncedRender"
               />
             </div>
-          </div>
 
-          <el-divider />
+            <div class="brutal-form-group mt-4">
+              <label class="brutal-label">单元排斥力 (Spacing: {{ config.spacing }}px)</label>
+              <input
+                v-model.number="config.spacing"
+                type="range"
+                class="brutal-slider mt-1"
+                min="0"
+                max="200"
+                @input="debouncedRender"
+              />
+            </div>
 
-          <div class="panel-section">
-            <h3 class="section-title">背景与输出</h3>
-            <div class="settings-group mb-4">
-              <div class="label">背景颜色</div>
-              <el-color-picker
+            <div class="brutal-form-group mt-4">
+              <label class="brutal-label">圆角腐蚀力 (Radius: {{ config.borderRadius }}px)</label>
+              <input
+                v-model.number="config.borderRadius"
+                type="range"
+                class="brutal-slider mt-1"
+                min="0"
+                max="100"
+                @input="debouncedRender"
+              />
+            </div>
+
+            <!-- Theme & Sizes -->
+            <div class="brutal-form-group channel-group group-pink mt-4">
+              <label class="brutal-label">基础暗物质带 (Bg Color)</label>
+              <input
                 v-model="config.backgroundColor"
-                show-alpha
+                type="color"
+                class="brutal-color-picker mt-1"
+                @input="debouncedRender"
+              />
+
+              <label class="brutal-label mt-4">横向强压像素 (Width)</label>
+              <input
+                v-model.number="config.outputWidth"
+                type="number"
+                class="brutal-input mt-1"
+                min="200"
+                max="8000"
+                step="100"
                 @change="debouncedRender"
               />
-            </div>
 
-            <div class="settings-group">
-              <div class="label">对齐模式 (当尺寸不一时)</div>
-              <el-select v-model="config.align" class="full-width" @change="debouncedRender">
-                <el-option label="缩放填满 (等高/等宽)" value="fill" />
-                <el-option label="居中对齐" value="center" />
-                <el-option label="顶部/左侧对齐" value="start" />
-              </el-select>
-            </div>
+              <label class="brutal-label mt-4">非对称填充协议 (Align)</label>
+              <select v-model="config.align" class="brutal-input mt-1" @change="debouncedRender">
+                <option value="fill">暴力拉伸填充 (Fill)</option>
+                <option value="center">引力中心对齐 (Center)</option>
+                <option value="start">零点坐标对齐 (Start)</option>
+              </select>
 
-            <div class="settings-group mt-4">
-              <div class="label">输出宽度 ({{ config.outputWidth }}px)</div>
-              <el-input-number
-                v-model="config.outputWidth"
-                :min="200"
-                :max="8000"
-                :step="100"
-                class="full-width"
-                @change="debouncedRender"
+              <label class="brutal-label mt-4">导出代号 (Filename)</label>
+              <input
+                v-model="config.filename"
+                type="text"
+                class="brutal-input mt-1"
+                placeholder="collage"
               />
-              <p class="hint mt-1">高度将根据比例自动计算</p>
-            </div>
-
-            <div class="settings-group">
-              <div class="label">导出文件名</div>
-              <el-input v-model="config.filename" placeholder="collage" clearable>
-                <template #append>.png</template>
-              </el-input>
             </div>
           </div>
         </div>
       </div>
-    </main>
 
-    <footer class="footer">© 2026 LRM工具箱 - 图片拼接工具</footer>
+      <!-- 全局状态栏 -->
+      <div class="brutal-status" :class="statusClass">
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span>
+              <span v-for="i in 10" :key="i">{{ statusText }} // &nbsp;</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
-<script setup>
-  import { ref, reactive, onMounted, onUnmounted } from 'vue';
+<script setup lang="ts">
+  import { ref, reactive, onMounted, onUnmounted, computed } from 'vue';
   import { useRouter } from 'vue-router';
-  import { ElMessage } from 'element-plus';
-  import {
-    ArrowLeft,
-    Delete,
-    Download,
-    PictureFilled,
-    Plus,
-    Sort,
-    Right,
-    Grid,
-    Close
-  } from '@element-plus/icons-vue';
-  import { useFileHandler } from '@/composables';
 
   const router = useRouter();
   const goBack = () => {
@@ -228,36 +242,35 @@
     else router.push('/');
   };
 
-  const images = ref([]);
-  const resultCanvas = ref(null);
-  const stageContainer = ref(null);
+  const images = ref<
+    Array<{ id: number; name: string; preview: string; img: HTMLImageElement | null }>
+  >([]);
+  const resultCanvas = ref<HTMLCanvasElement | null>(null);
+  const stageContainer = ref<HTMLElement | null>(null);
+  const fileInput = ref<HTMLInputElement | null>(null);
 
-  const { fileInput, triggerFileInput } = useFileHandler({
-    accept: 'image/*',
-    readMode: 'none'
-  });
+  const triggerUpload = () => {
+    if (fileInput.value) fileInput.value.click();
+  };
 
-  // Re-define triggerUpload if used elsewhere, or just use triggerFileInput
-  // Actually, I'll just use triggerFileInput in the template.
-
-  const handleUpload = files => {
+  const handleUpload = (files: File[]) => {
     if (!files.length) return;
-
     const newImages = files.map((file, idx) => ({
       id: Date.now() + idx,
       name: file.name,
       preview: URL.createObjectURL(file),
       img: null
     }));
-
     images.value = [...images.value, ...newImages];
     loadImages();
   };
 
-  // Re-wiring manual handlers
-  const handleFileSelect = event => {
-    handleUpload(Array.from(event.target.files));
-    event.target.value = '';
+  const handleFileSelect = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    if (target.files) {
+      handleUpload(Array.from(target.files));
+    }
+    target.value = '';
   };
 
   const config = reactive({
@@ -272,19 +285,17 @@
     filename: ''
   });
 
-  const dragSourceIdx = ref(null);
+  const dragSourceIdx = ref<number | null>(null);
 
-  const handleDragStart = idx => {
+  const handleDragStart = (idx: number) => {
     dragSourceIdx.value = idx;
   };
 
-  const handleDragEnter = targetIdx => {
+  const handleDragEnter = (targetIdx: number) => {
     if (dragSourceIdx.value === null || dragSourceIdx.value === targetIdx) return;
-
     const list = [...images.value];
     const item = list.splice(dragSourceIdx.value, 1)[0];
     list.splice(targetIdx, 0, item);
-
     images.value = list;
     dragSourceIdx.value = targetIdx;
   };
@@ -312,7 +323,7 @@
     });
   };
 
-  const removeImage = idx => {
+  const removeImage = (idx: number) => {
     URL.revokeObjectURL(images.value[idx].preview);
     images.value.splice(idx, 1);
     debouncedRender();
@@ -323,7 +334,7 @@
     images.value = [];
   };
 
-  let renderTimer = null;
+  let renderTimer: ReturnType<typeof setTimeout> | null = null;
   const debouncedRender = () => {
     if (renderTimer) clearTimeout(renderTimer);
     renderTimer = setTimeout(render, 50);
@@ -333,9 +344,9 @@
     if (!images.value.length || !resultCanvas.value) return;
     const canvas = resultCanvas.value;
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
     const layout = calculateLayout();
-
     canvas.width = layout.totalWidth;
     canvas.height = layout.totalHeight;
 
@@ -358,7 +369,6 @@
       if (!imgData) return;
 
       ctx.save();
-
       if (config.borderRadius > 0) {
         const r = Math.min(config.borderRadius, item.width / 2, item.height / 2);
         ctx.beginPath();
@@ -404,7 +414,6 @@
         }
         ctx.drawImage(imgData, dx, dy, dw, dh);
       }
-
       ctx.restore();
     });
   };
@@ -417,12 +426,13 @@
 
     let totalWidth = outW;
     let totalHeight = 0;
-    let items = [];
+    const items: Array<{ x: number; y: number; width: number; height: number }> = [];
 
     if (config.mode === 'vertical') {
       const drawW = outW - p * 2;
       let currentY = p;
       images.value.forEach(item => {
+        if (!item.img) return;
         const img = item.img;
         const drawH = drawW / (img.width / img.height);
         items.push({ x: p, y: currentY, width: drawW, height: drawH });
@@ -430,12 +440,15 @@
       });
       totalHeight = currentY - s + p;
     } else if (config.mode === 'horizontal') {
-      const targetH =
-        (outW - p * 2 - (count - 1) * s) /
-        images.value.reduce((acc, cur) => acc + cur.img.width / cur.img.height, 0);
+      const totalRatio = images.value.reduce(
+        (acc, cur) => (cur.img ? acc + cur.img.width / cur.img.height : acc),
+        0
+      );
+      const targetH = (outW - p * 2 - (count - 1) * s) / (totalRatio || 1);
 
       let currentX = p;
       images.value.forEach(item => {
+        if (!item.img) return;
         const img = item.img;
         const drawW = targetH * (img.width / img.height);
         items.push({ x: currentX, y: p, width: drawW, height: targetH });
@@ -468,324 +481,597 @@
   const downloadResult = () => {
     if (!resultCanvas.value) return;
     const link = document.createElement('a');
-    const fileName = config.filename.trim() || `collage_${Date.now()}`;
+    const fileName = config.filename.trim() || `lrm_collage_matrix_${Date.now()}`;
     link.download = `${fileName}.png`;
     link.href = resultCanvas.value.toDataURL('image/png');
     link.click();
-    ElMessage.success('导出成功');
   };
 
   onMounted(() => {
-    window.addEventListener('resize', render);
+    window.addEventListener('resize', debouncedRender);
   });
 
   onUnmounted(() => {
-    window.removeEventListener('resize', render);
+    window.removeEventListener('resize', debouncedRender);
     images.value.forEach(img => URL.revokeObjectURL(img.preview));
+  });
+
+  const statusClass = computed(() => {
+    if (images.value.length > 0) return 'success';
+    return 'info';
+  });
+
+  const statusText = computed(() => {
+    if (images.value.length > 0)
+      return `共鸣完成 : 已桥接 ${images.value.length} 个像素介质，引擎持续热绘制中...`;
+    return '引擎静默 : 等待投喂碎片...';
   });
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f1f5f9;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+
+  .brutal-container {
+    max-width: 1600px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
   }
 
-  .tool-header {
+  .brutal-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  .header-action.start {
+    display: flex;
+    justify-content: flex-start;
+  }
+  .header-action.end {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn-block {
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-btn:disabled {
+    background: #e0e0e0;
+    color: #888;
+    border-color: #888;
+    box-shadow: 2px 2px 0px #888;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .brutal-btn.clear-btn {
+    background: #ff4b4b;
+    color: #fff;
+  }
+  .brutal-btn.action-btn {
+    background: #00e572;
+    color: #111;
+  }
+
+  .mr-2 {
+    margin-right: 1rem;
+  }
+  .mt-1 {
+    margin-top: 0.25rem;
+  }
+  .mt-4 {
+    margin-top: 1.5rem;
+  }
+
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 1fr 450px;
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .pane-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: #ffffff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .header-center {
-    text-align: center;
-  }
-
-  .tool-title {
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
     font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+  }
+  .bg-cyan {
+    background: #2dfdff;
+  }
+  .bg-pink {
+    background: #ff9ecf;
+  }
+  .text-white {
+    color: #fff;
+    text-shadow: 1px 1px 0 #111;
+  }
+
+  .pane-actions button {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
     font-weight: 600;
-    color: #1e293b;
-    margin: 0;
-  }
-
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
-    text-transform: uppercase;
-  }
-
-  .tool-content {
-    flex: 1;
-    padding: 1.5rem;
-    max-width: 1400px;
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  .layout-container {
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 1.5rem;
-  }
-
-  .workbench {
-    display: flex;
-    flex-direction: column;
-    min-height: 600px;
-    background: #f8fafc;
-    overflow: hidden;
-  }
-
-  .upload-placeholder {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
-    margin: 2rem;
+    font-size: 0.9rem;
+    padding: 0.35rem 0.75rem;
     cursor: pointer;
-    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 3px 3px 0px #111;
+  }
+  .pane-actions button:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
   }
 
+  .control-panel-content,
+  .settings-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: #fdfdfd;
+  }
+  .settings-content {
+    background: #f8fafc;
+    background-image:
+      linear-gradient(#e5e5e5 1px, transparent 1px),
+      linear-gradient(90deg, #e5e5e5 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .brutal-upload-area {
+    border: 4px dashed #111;
+    background: #fff;
+    padding: 2.5rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .brutal-upload-area:hover {
+    background: #ffd900;
+    border-style: solid;
+  }
   .upload-icon {
     font-size: 4rem;
-    color: #94a3b8;
+    display: block;
     margin-bottom: 1rem;
   }
+  .upload-placeholder p {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    margin: 0 0 0.5rem 0;
+  }
+  .upload-placeholder small {
+    font-weight: bold;
+    color: #666;
+  }
 
-  .joiner-stage {
-    flex: 1;
+  .preview-area {
     display: flex;
     flex-direction: column;
-    padding: 1.5rem;
-    height: 100%;
-  }
-
-  .stage-toolbar {
-    margin-bottom: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .info-badge {
-    background: #3b82f6;
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
-  }
-
-  .hint {
-    font-size: 0.8rem;
-    color: #64748b;
-    margin: 0;
-  }
-
-  .mb-2 {
-    margin-bottom: 0.5rem;
-  }
-
-  .mt-2 {
-    margin-top: 0.5rem;
-  }
-
-  .preview-scroll {
     flex: 1;
-    background: #e2e8f0;
-    border-radius: 8px;
+  }
+
+  .brutal-canvas-container {
+    flex: 1;
+    border: 4px solid #111;
+    background: repeating-conic-gradient(#e0e0e0 0% 25%, white 0% 50%) 50% / 20px 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
-    min-height: 400px;
     overflow: auto;
-    background-image:
-      linear-gradient(45deg, #f1f5f9 25%, transparent 25%),
-      linear-gradient(-45deg, #f1f5f9 25%, transparent 25%),
-      linear-gradient(45deg, transparent 75%, #f1f5f9 75%),
-      linear-gradient(-45deg, transparent 75%, #f1f5f9 75%);
-    background-size: 20px 20px;
-    background-position:
-      0 0,
-      0 10px,
-      10px -10px,
-      -10px 0px;
+    min-height: 400px;
+    padding: 2rem;
   }
 
-  .canvas-container {
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  canvas {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    background: transparent;
   }
 
+  .feed-title {
+    margin: 0 0 0.5rem 0;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: bold;
+  }
+  .feed-belt {
+    padding-top: 1rem;
+    border-top: 4px solid #111;
+  }
   .image-list {
     display: flex;
-    gap: 0.75rem;
-    padding: 1rem 0;
+    gap: 1rem;
     overflow-x: auto;
-    margin-top: 1rem;
+    padding: 0.5rem;
   }
-
   .image-item {
     width: 80px;
     height: 80px;
-    border-radius: 8px;
-    overflow: hidden;
-    position: relative;
+    border: 3px solid #111;
+    background: #fff;
     flex-shrink: 0;
-    border: 2px solid white;
+    position: relative;
+    cursor: grab;
+    transition: transform 0.1s;
   }
-
   .image-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-
+  .image-item.is-dragging {
+    opacity: 0.5;
+    border-color: #ff4b4b;
+    background: #ffebeb;
+  }
   .item-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
     opacity: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 4px;
     transition: opacity 0.2s;
   }
-
   .image-item:hover .item-overlay {
     opacity: 1;
   }
-
-  .image-item.dragging {
-    opacity: 0.5;
-    transform: scale(0.9);
-    border: 2px dashed #3b82f6;
-  }
-
-  .idx {
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 700;
-    background: rgba(0, 0, 0, 0.5);
-    width: 18px;
-    height: 18px;
+  .item-idx {
+    color: #fff;
+    font-weight: bold;
+    background: #111;
+    width: 20px;
+    height: 20px;
     display: flex;
-    align-items: center;
     justify-content: center;
-    border-radius: 4px;
+    align-items: center;
+    font-size: 0.8rem;
   }
-
+  .del-btn {
+    align-self: flex-end;
+    background: #ff4b4b;
+    border: 2px solid #111;
+    color: #fff;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    font-weight: bold;
+    margin: 2px;
+  }
   .add-more {
     width: 80px;
     height: 80px;
-    border: 2px dashed #cbd5e1;
-    border-radius: 8px;
+    border: 3px dashed #111;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #111;
     cursor: pointer;
-    color: #94a3b8;
+    background: #fff;
     flex-shrink: 0;
   }
-
   .add-more:hover {
-    border-color: #3b82f6;
-    color: #3b82f6;
+    background: #ffd900;
+    border-style: solid;
+    transform: translate(-2px, -2px);
   }
 
-  .settings-panel {
-    padding: 1.5rem;
+  .mode-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .mode-btn {
+    flex: 1;
+    background: #fff;
+    border: 3px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: bold;
+    padding: 0.5rem;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px #111;
+  }
+  .mode-btn:hover {
+    background: #eee;
+  }
+  .mode-btn.active {
+    background: #111;
+    color: white;
+    box-shadow: inset 2px 2px 0px #000;
+    transform: translate(2px, 2px);
+  }
+
+  .brutal-shadow {
+    box-shadow: 8px 8px 0px #111;
+  }
+  .channel-group {
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    padding: 1.25rem;
+  }
+  .channel-group.group-pink {
+    background: #fdfae5;
+  }
+
+  .brutal-label {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #111;
+  }
+  .brutal-input {
+    width: 100%;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-size: 1rem;
+    padding: 0.75rem;
+    border: 3px solid #111;
+    border-radius: 0;
+    box-shadow: 4px 4px 0px #111;
+    outline: none;
+    transition: all 0.1s;
+    background: #fff;
+    box-sizing: border-box;
+  }
+  .brutal-input:focus {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+
+  .brutal-color-picker {
+    width: 100%;
+    height: 50px;
+    border: 3px solid #111;
+    padding: 0;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+  }
+  .brutal-color-picker::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+  .brutal-color-picker::-webkit-color-swatch {
+    border: none;
+  }
+
+  .slider-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .brutal-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 12px;
+    background: #111;
+    outline: none;
+    border: 3px solid #111;
+    box-shadow: 3px 3px 0px #111;
+    margin: 10px 0;
+  }
+  .brutal-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: #ffd900;
+    border: 3px solid #111;
+    cursor: pointer;
+  }
+  .slider-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    min-width: 60px;
+  }
+
+  .brutal-status {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    overflow: hidden;
+    position: relative;
+    text-transform: uppercase;
+  }
+  .brutal-status.info {
     background: #fff;
   }
-
-  .panel-section {
-    margin-bottom: 1.5rem;
+  .brutal-status.success {
+    background: #00e572;
+    color: #111;
   }
 
-  .section-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 1rem;
-  }
-
-  .settings-group {
-    margin-bottom: 1.25rem;
-  }
-
-  .label {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: #64748b;
-    margin-bottom: 0.5rem;
-  }
-
-  .mode-selector {
+  .marquee-wrapper {
     width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    overflow: hidden;
   }
-
-  .mode-selector :deep(.el-radio-button) {
-    width: 100%;
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
   }
-
-  .mode-selector :deep(.el-radio-button__inner) {
-    width: 100%;
-    padding: 10px 4px;
-  }
-
-  .mode-btn-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.75rem;
-  }
-
-  .full-width {
-    width: 100%;
-  }
-
-  .mt-1 {
-    margin-top: 4px;
-  }
-
-  .mt-4 {
-    margin-top: 1rem;
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 16px;
-  }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
-  }
-
-  @media (max-width: 992px) {
-    .layout-container {
-      grid-template-columns: 1fr;
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
     }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .pane-actions button,
+  [data-theme='dark'] .brutal-status,
+  [data-theme='dark'] .brutal-status.info,
+  [data-theme='dark'] .brutal-input {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .brutal-upload-area {
+    background: #1a1a1a;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-upload-area:hover,
+  [data-theme='dark'] .brutal-upload-area.is-dragover {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .channel-group {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .channel-group.group-pink,
+  [data-theme='dark'] .settings-content {
+    background: #222;
+  }
+  [data-theme='dark'] .settings-content {
+    background-image:
+      linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px);
+  }
+  [data-theme='dark'] .brutal-btn.clear-btn {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-btn.action-btn {
+    background: #00994c;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-status.success {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-cyan {
+    background: #1a5e5f;
+    color: #fff;
+  }
+  [data-theme='dark'] .mode-btn {
+    background: #1a1a1a;
+    color: #eee;
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .mode-btn.active {
+    background: #eee;
+    color: #111;
+    box-shadow: inset 2px 2px 0px #111;
   }
 </style>

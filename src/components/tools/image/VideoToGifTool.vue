@@ -1,146 +1,185 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon><ArrowLeft /></el-icon><span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">视频转 GIF</h1>
-        <span class="tool-subtitle">Video to GIF</span>
-      </div>
-      <div class="header-right">
-        <el-button
-          type="primary"
-          :disabled="!videoUrl || processing"
-          :loading="processing"
-          @click="startProcessing"
-        >
-          {{ processing ? '正在生成...' : '生成 GIF' }}
-        </el-button>
-      </div>
-    </header>
-
-    <main class="tool-content">
-      <div class="layout-container">
-        <div class="main-section glass-card">
-          <input ref="fileInput" type="file" hidden accept="video/*" @change="handleFileSelect" />
-          <div
-            v-if="!videoUrl"
-            class="upload-area"
-            :class="{ 'is-dragover': isDragOver }"
-            @click="triggerFileInput"
-            @dragover.prevent="dragOver"
-            @dragleave.prevent="dragLeave"
-            @drop.prevent="handleFileDrop"
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <div class="header-action start">
+          <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        </div>
+        <h1 class="brutal-title">帧抽取器<span>.GIF()</span></h1>
+        <div class="header-action end">
+          <button
+            class="brutal-btn action-btn"
+            :disabled="!videoUrl || processing"
+            @click="startProcessing"
           >
-            <el-icon class="upload-icon"><VideoCamera /></el-icon>
-            <h3>点击或拖拽上传视频</h3>
-            <p>支持 MP4, WebM, OGG 格式</p>
+            {{ processing ? '抽帧中...' : '启动帧抽取' }}
+          </button>
+        </div>
+      </header>
+
+      <div class="brutal-grid">
+        <!-- 左: Upload / Preview -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span>视频源信号.反应堆</span>
+            <div class="pane-actions">
+              <button v-if="videoUrl" @click="clearVideo">重置</button>
+            </div>
           </div>
 
-          <div v-else class="video-preview-area">
-            <video
-              ref="videoRef"
-              :src="videoUrl"
-              controls
-              class="video-player"
-              @loadedmetadata="onVideoLoaded"
-            ></video>
+          <div class="control-panel-content">
+            <input ref="fileInput" type="file" hidden accept="video/*" @change="handleFileSelect" />
 
-            <div v-if="videoDuration > 0" class="timeline-controls">
-              <div class="range-info">
-                <span>截取范围: {{ startTime.toFixed(2) }}s - {{ endTime.toFixed(2) }}s</span>
-                <span>总长: {{ (endTime - startTime).toFixed(2) }}s</span>
+            <div
+              v-if="!videoUrl"
+              class="brutal-upload-area"
+              :class="{ 'is-dragover': isDragOver }"
+              @click="triggerFileInput"
+              @dragover.prevent="dragOver"
+              @dragleave.prevent="dragLeave"
+              @drop.prevent="handleFileDrop"
+            >
+              <div class="upload-placeholder">
+                <span class="upload-icon">🎬</span>
+                <p>点击或拖拽投入视频帧序列</p>
+                <small>(支持 MP4, WebM, OGG · 纯前端处理)</small>
               </div>
-              <el-slider
-                v-model="timeRange"
-                range
-                :min="0"
-                :max="videoDuration"
-                :step="0.1"
-                @change="onTimeRangeChange"
-              />
+            </div>
+
+            <div v-else class="video-area">
+              <video
+                ref="videoRef"
+                :src="videoUrl"
+                controls
+                class="video-player brutal-shadow"
+                @loadedmetadata="onVideoLoaded"
+              ></video>
+
+              <div v-if="videoDuration > 0" class="timeline-section mt-4 brutal-shadow">
+                <div class="timeline-header bg-cyan">
+                  <span>截取范围: {{ startTime.toFixed(2) }}s - {{ endTime.toFixed(2) }}s</span>
+                  <span>总长: {{ (endTime - startTime).toFixed(2) }}s</span>
+                </div>
+                <div class="timeline-body">
+                  <input
+                    v-model.number="startTime"
+                    type="range"
+                    class="brutal-slider"
+                    :min="0"
+                    :max="videoDuration"
+                    step="0.1"
+                    @input="onStartChange"
+                  />
+                  <input
+                    v-model.number="endTime"
+                    type="range"
+                    class="brutal-slider"
+                    :min="0"
+                    :max="videoDuration"
+                    step="0.1"
+                    @input="onEndChange"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="sidebar glass-card">
-          <h3>参数设置</h3>
-          <div class="settings-form">
-            <div class="form-item">
-              <label>输出宽度 (px)</label>
-              <el-input-number
-                v-model="settings.width"
-                :min="50"
-                :max="1280"
+        <!-- 右: Settings -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-blue">
+            <span class="text-white">参数约束.面板</span>
+          </div>
+
+          <div class="settings-content">
+            <div class="brutal-form-group channel-group">
+              <label class="brutal-label">输出宽度 [ {{ settings.width }}px ]</label>
+              <input
+                v-model.number="settings.width"
+                type="range"
+                class="brutal-slider mt-1"
+                min="50"
+                max="1280"
+                step="10"
                 @change="syncHeight"
               />
+
+              <label class="brutal-label mt-4">输出高度 [ {{ settings.height }}px ]</label>
+              <input
+                v-model.number="settings.height"
+                type="number"
+                class="brutal-input mt-1"
+                min="50"
+                max="1280"
+              />
             </div>
 
-            <div class="form-item">
-              <label>输出高度 (px)</label>
-              <el-input-number v-model="settings.height" :min="50" :max="1280" />
+            <div class="brutal-form-group channel-group group-pink mt-4">
+              <label class="brutal-label">帧率 FPS [ {{ settings.fps }} ]</label>
+              <input
+                v-model.number="settings.fps"
+                type="range"
+                class="brutal-slider mt-1"
+                min="1"
+                max="30"
+              />
+
+              <label class="brutal-label mt-4">品质系数 [ {{ settings.quality }} ]</label>
+              <input
+                v-model.number="settings.quality"
+                type="range"
+                class="brutal-slider mt-1"
+                min="1"
+                max="20"
+              />
+              <small class="hint mt-1">1 = 极致品质(慢)，20 = 极速压缩</small>
             </div>
 
-            <div class="form-item">
-              <label>帧率 (FPS: {{ settings.fps }})</label>
-              <el-slider v-model="settings.fps" :min="1" :max="30" />
-            </div>
-
-            <div class="form-item">
-              <label>质量 (1-20: {{ settings.quality }})</label>
-              <el-slider v-model="settings.quality" :min="1" :max="20" />
-              <p class="hint">1 为最高质量，生成较慢</p>
-            </div>
-
-            <el-divider />
-
-            <div v-if="resultGif" class="result-area">
-              <h4>生成结果</h4>
-              <div class="gif-preview">
+            <!-- Result -->
+            <div v-if="resultGif" class="brutal-form-group channel-group mt-4">
+              <h4>🎉 生成结果</h4>
+              <div class="gif-preview brutal-shadow mt-1">
                 <img :src="resultGif" alt="Result GIF" />
               </div>
-              <div class="result-info">大小: {{ resultSize }}</div>
-              <el-button type="success" class="download-btn" @click="downloadGif">
+              <div class="result-info mt-1">文件大小: {{ resultSize }}</div>
+              <button class="brutal-btn brutal-btn-block action-btn mt-4" @click="downloadGif">
                 下载 GIF
-              </el-button>
+              </button>
+            </div>
+
+            <!-- Tips -->
+            <div class="brutal-form-group channel-group tips-box mt-4">
+              <h4>⚡ 工具说明</h4>
+              <ul class="tips-list mt-1">
+                <li><b>本地处理</b>：视频不会上传到服务器。</li>
+                <li><b>性能提示</b>：建议截取 5 秒以内片段。</li>
+                <li><b>帧率建议</b>：表情包通常 10-15 FPS。</li>
+              </ul>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="tips-section glass-card">
-        <div class="tips-header">
-          <el-icon><InfoFilled /></el-icon>
-          <h4>工具说明</h4>
-        </div>
-        <div class="tips-content">
-          <ul class="premium-list">
-            <li><b>本地处理</b>：所有操作均在您的浏览器内完成，视频不会被上传到服务器。</li>
-            <li>
-              <b>性能提示</b>：建议截取 5
-              秒以内的片段，过长的视频或过高的帧率会导致处理时间变长且文件极大。
-            </li>
-            <li><b>帧率建议</b>：常见的动态表情包通常使用 10-15 FPS。</li>
-          </ul>
+      <!-- 全局状态栏 -->
+      <div class="brutal-status" :class="statusClass">
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span>
+              <span v-for="i in 10" :key="i">{{ statusText }} // &nbsp;</span>
+            </span>
+          </div>
         </div>
       </div>
-    </main>
+    </div>
 
-    <footer class="footer">© 2026 LRM工具箱 - 视频转 GIF</footer>
-
-    <!-- 用于抓取帧的 Canvas -->
     <canvas ref="frameCanvas" style="display: none"></canvas>
   </div>
 </template>
 
 <script setup>
-  import { ref, reactive, onMounted } from 'vue';
+  import { ref, reactive, computed, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { ElMessage } from 'element-plus';
-  import { ArrowLeft, VideoCamera } from '@element-plus/icons-vue';
   import { useFileHandler } from '@/composables';
 
   const router = useRouter();
@@ -153,7 +192,6 @@
   const videoRef = ref(null);
   const videoDuration = ref(0);
   const videoAspectRatio = ref(1);
-  const timeRange = ref([0, 5]);
   const startTime = ref(0);
   const endTime = ref(5);
   const processing = ref(false);
@@ -169,11 +207,7 @@
 
   const { fileInput, isDragOver, triggerFileInput, dragOver, dragLeave } = useFileHandler({
     accept: 'video/*',
-    readMode: 'dataURL',
-    onSuccess: result => {
-      videoUrl.value = result.data;
-      resultGif.value = '';
-    }
+    readMode: 'none'
   });
 
   const handleFileSelect = event => {
@@ -193,17 +227,20 @@
     }
   };
 
+  const clearVideo = () => {
+    videoUrl.value = '';
+    resultGif.value = '';
+    videoDuration.value = 0;
+  };
+
   const onVideoLoaded = () => {
     const v = videoRef.value;
     videoDuration.value = v.duration;
     videoAspectRatio.value = v.videoWidth / v.videoHeight;
 
-    // 默认截取前 5 秒或整段
     startTime.value = 0;
     endTime.value = Math.min(5, v.duration);
-    timeRange.value = [0, endTime.value];
 
-    // 初始化输出尺寸
     settings.width = Math.min(480, v.videoWidth);
     settings.height = Math.round(settings.width / videoAspectRatio.value);
   };
@@ -212,11 +249,13 @@
     settings.height = Math.round(settings.width / videoAspectRatio.value);
   };
 
-  const onTimeRangeChange = val => {
-    startTime.value = val[0];
-    endTime.value = val[1];
-    // 自动预览起始点
+  const onStartChange = () => {
+    if (startTime.value >= endTime.value) startTime.value = Math.max(0, endTime.value - 0.1);
     if (videoRef.value) videoRef.value.currentTime = startTime.value;
+  };
+  const onEndChange = () => {
+    if (endTime.value <= startTime.value)
+      endTime.value = Math.min(videoDuration.value, startTime.value + 0.1);
   };
 
   const frameCanvas = ref(null);
@@ -247,14 +286,12 @@
       const totalFrames = Math.floor(duration * settings.fps);
 
       ElMessage.info(`正在准备抓取 ${totalFrames} 帧...`);
-
       v.pause();
 
       for (let i = 0; i < totalFrames; i++) {
         const time = startTime.value + i * frameInterval;
         v.currentTime = time;
 
-        // 等待 seek 完成
         await new Promise(resolve => {
           const onSeeked = () => {
             v.removeEventListener('seeked', onSeeked);
@@ -296,239 +333,487 @@
       document.head.appendChild(script);
     }
   });
+
+  const statusClass = computed(() => {
+    if (processing.value) return 'warn';
+    if (resultGif.value) return 'success';
+    return 'info';
+  });
+
+  const statusText = computed(() => {
+    if (processing.value) return '警告: 帧抽取引擎全功率运行中...';
+    if (resultGif.value) return '任务达成 : GIF 已生成等待下载导出!';
+    if (videoUrl.value) return '视频源就位 : 调整参数后启动帧抽取...';
+    return '系统待命 : 等待投入视频帧序列...';
+  });
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
     min-height: 100vh;
-    background: #f1f5f9;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 1600px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
   }
 
-  .tool-header {
+  .brutal-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  .header-action.start {
+    display: flex;
+    justify-content: flex-start;
+  }
+  .header-action.end {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn-block {
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-btn:disabled {
+    background: #e0e0e0;
+    color: #888;
+    border-color: #888;
+    box-shadow: 2px 2px 0px #888;
+    cursor: not-allowed;
+  }
+  .action-btn {
+    background: #00e572;
+    color: #111;
+  }
+
+  .mt-1 {
+    margin-top: 0.5rem;
+  }
+  .mt-4 {
+    margin-top: 1.5rem;
+  }
+
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 1fr 450px;
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .brutal-pane {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+  }
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .pane-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  }
-
-  .header-center {
-    text-align: center;
-    flex: 1;
-  }
-
-  .tool-title {
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
     font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+  }
+  .bg-cyan {
+    background: #2dfdff;
+  }
+  .text-white {
+    color: #fff;
+    text-shadow: 1px 1px 0 #111;
+  }
+
+  .pane-actions button {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    font-family: 'IBM Plex Mono', monospace;
     font-weight: 600;
-    color: #1e293b;
-    margin: 0;
-  }
-
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
-    text-transform: uppercase;
-  }
-
-  .tool-content {
-    flex: 1;
-    padding: 1.5rem;
-    max-width: 1400px;
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  .layout-container {
-    display: grid;
-    grid-template-columns: 1fr 350px;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .main-section {
-    padding: 1.5rem;
-    min-height: 500px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .upload-area {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
+    font-size: 0.9rem;
+    padding: 0.35rem 0.75rem;
     cursor: pointer;
-    transition: all 0.3s;
-    padding: 2rem;
+    box-shadow: 3px 3px 0px #111;
+  }
+  .pane-actions button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+  }
+
+  .control-panel-content,
+  .settings-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .settings-content {
+    background: #f8fafc;
+    background-image:
+      linear-gradient(#e5e5e5 1px, transparent 1px),
+      linear-gradient(90deg, #e5e5e5 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .brutal-upload-area {
+    border: 4px dashed #111;
+    background: #fff;
+    padding: 2.5rem 1rem;
     text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
   }
-
-  .upload-area:hover {
-    border-color: #3b82f6;
-    background: #eff6ff;
+  .brutal-upload-area:hover,
+  .brutal-upload-area.is-dragover {
+    background: #ffd900;
+    border-style: solid;
   }
-
   .upload-icon {
     font-size: 4rem;
-    color: #3b82f6;
+    display: block;
     margin-bottom: 1rem;
   }
-
-  .video-preview-area {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+  .upload-placeholder p {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    margin: 0 0 0.5rem 0;
+  }
+  .upload-placeholder small {
+    font-weight: bold;
+    color: #666;
   }
 
+  .video-area {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
   .video-player {
     width: 100%;
-    max-height: 500px;
+    max-height: 420px;
     background: #000;
-    border-radius: 8px;
+    border: 4px solid #111;
   }
 
-  .timeline-controls {
-    padding: 0 1rem;
+  .timeline-section {
+    border: 4px solid #111;
   }
-
-  .range-info {
+  .timeline-header {
+    padding: 0.75rem 1rem;
+    border-bottom: 4px solid #111;
+    font-weight: 800;
+    font-size: 0.9rem;
     display: flex;
     justify-content: space-between;
-    font-size: 0.85rem;
-    color: #64748b;
-    margin-bottom: 0.5rem;
   }
-
-  .sidebar {
-    padding: 1.5rem;
-  }
-
-  .sidebar h3 {
-    margin: 0 0 1.5rem;
-    font-size: 1.1rem;
-  }
-
-  .settings-form {
+  .timeline-body {
+    padding: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 0.75rem;
   }
 
-  .form-item label {
+  .brutal-label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    color: #475569;
-    font-weight: 600;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #111;
+  }
+  .brutal-input {
+    width: 100%;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1rem;
+    padding: 0.5rem;
+    border: 3px solid #111;
+    box-shadow: 3px 3px 0px #111;
+    outline: none;
+    background: #fff;
+    box-sizing: border-box;
+  }
+  .brutal-input:focus {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
   }
 
-  .hint {
-    font-size: 0.75rem;
-    color: #94a3b8;
-    margin-top: 0.25rem;
+  .brutal-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 12px;
+    background: #111;
+    border: 3px solid #111;
+    box-shadow: 2px 2px 0px #111;
+    margin: 5px 0;
+  }
+  .brutal-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: #ffd900;
+    border: 3px solid #111;
+    cursor: pointer;
   }
 
-  .result-area {
-    margin-top: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  .channel-group {
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    padding: 1.25rem;
+    background: #fdfdfd;
+  }
+  .channel-group.group-pink {
+    background: #fff0f5;
+  }
+  .channel-group h4 {
+    margin: 0;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
   }
 
   .gif-preview {
-    width: 100%;
-    border-radius: 8px;
+    border: 4px solid #111;
     overflow: hidden;
-    border: 1px solid #e2e8f0;
   }
-
   .gif-preview img {
     width: 100%;
     display: block;
   }
-
   .result-info {
-    font-size: 0.85rem;
-    color: #64748b;
-  }
-
-  .download-btn {
-    width: 100%;
-  }
-
-  .tips-section {
-    padding: 1.5rem 2rem;
-    background: linear-gradient(to bottom right, #ffffff, #f8fafc);
-    border: 1px solid rgba(59, 130, 246, 0.1);
-  }
-
-  .tips-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    color: #3b82f6;
-  }
-
-  .tips-header h4 {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-
-  .tips-content p {
-    color: #475569;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin: 0;
-  }
-
-  .premium-list {
-    padding-left: 1.25rem;
-    margin: 0.5rem 0 0;
-  }
-
-  .premium-list li {
-    margin-bottom: 0.75rem;
-    color: #475569;
+    font-weight: 700;
     font-size: 0.9rem;
-    position: relative;
-    list-style-type: none;
+    color: #555;
   }
-
-  .premium-list li::before {
-    content: '•';
-    color: #3b82f6;
+  .hint {
     font-weight: bold;
-    display: inline-block;
-    width: 1em;
-    margin-left: -1em;
+    color: #888;
+    font-size: 0.8rem;
+    display: block;
   }
 
-  .glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 16px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  .tips-box {
+    background: #f0f8ff;
   }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
+  .tips-list {
+    padding-left: 1.25rem;
+    margin: 0;
+  }
+  .tips-list li {
+    margin-bottom: 0.5rem;
     font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.5;
   }
 
-  @media (max-width: 992px) {
-    .layout-container {
-      grid-template-columns: 1fr;
+  .brutal-shadow {
+    box-shadow: 8px 8px 0px #111;
+  }
+
+  .brutal-status {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    overflow: hidden;
+    text-transform: uppercase;
+  }
+  .brutal-status.info {
+    background: #fff;
+  }
+  .brutal-status.success {
+    background: #00e572;
+    color: #111;
+  }
+  .brutal-status.warn {
+    background: #ffd900;
+    color: #111;
+  }
+  .marquee-wrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+  }
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
     }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .pane-actions button,
+  [data-theme='dark'] .brutal-input,
+  [data-theme='dark'] .brutal-status,
+  [data-theme='dark'] .brutal-status.info {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .channel-group {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .channel-group.group-pink {
+    background: #2a1a20;
+  }
+  [data-theme='dark'] .settings-content {
+    background: #222;
+    background-image:
+      linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px);
+  }
+  [data-theme='dark'] .brutal-upload-area {
+    background: #1a1a1a;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-upload-area:hover,
+  [data-theme='dark'] .brutal-upload-area.is-dragover {
+    background: #b28f00;
+  }
+  [data-theme='dark'] .video-player {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .timeline-section {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .timeline-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .brutal-shadow {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-status.success {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-status.warn {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .action-btn {
+    background: #00994c;
+    color: #fff;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+  }
+  [data-theme='dark'] .bg-cyan {
+    background: #1a5e5f;
+  }
+  [data-theme='dark'] .gif-preview {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .tips-box {
+    background: #1a2030;
+  }
+  [data-theme='dark'] .brutal-slider {
+    background: #eee;
+    border-color: #eee;
   }
 </style>
