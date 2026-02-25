@@ -424,7 +424,7 @@
   }
   .active-tab {
     background: #111;
-    color: #fff;
+    color: #000;
   }
 
   .brutal-pane {
@@ -785,7 +785,7 @@
   }
 
   .text-white {
-    color: #fff;
+    color: #000;
   }
 
   .rule-box {

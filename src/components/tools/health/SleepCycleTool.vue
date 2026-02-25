@@ -281,7 +281,7 @@
   }
   .active-tab {
     background: #111;
-    color: #fff;
+    color: #000;
   }
 
   .bg-yellow {

@@ -1,1321 +1,1539 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>智能健身助手</title>
-    <meta name="theme-color" content="#2563EB">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#2563EB" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
 
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            background: transparent !important;
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background: transparent !important;
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      /* 自定义动画与特效 */
+      .glass {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+
+      .card-shadow {
+        box-shadow: 0 10px 40px -10px rgba(37, 99, 235, 0.15);
+      }
+
+      /* 进度环动画 */
+      .progress-ring__circle {
+        transition: stroke-dashoffset 0.35s;
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+      }
+
+      /* 模式切换动画 */
+      .mode-container {
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease;
+        opacity: 0;
+        transform: translateY(10px);
+        display: none;
+      }
+
+      .mode-container.active {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* 按钮点击反馈 */
+      .btn-click:active {
+        transform: scale(0.96);
+      }
+
+      .btn-bounce {
+        animation: bounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      /* 自定义确认弹窗动画 */
+      #confirm-modal.active #confirm-backdrop,
+      #prompt-modal.active #prompt-backdrop {
+        opacity: 1;
+      }
+
+      #confirm-modal.active #confirm-panel,
+      #prompt-modal.active #prompt-panel {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      @keyframes bounce {
+        0% {
+          transform: scale(1);
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
+        50% {
+          transform: scale(0.95);
         }
 
-        /* 自定义动画与特效 */
-        .glass {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* 滚动条美化 */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      /* 选中态样式 */
+      .tab-active {
+        color: #2563eb;
+        position: relative;
+      }
+
+      .tab-active::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 3px;
+        background: #2563eb;
+        border-radius: 3px;
+      }
+
+      .line-through-animated {
+        position: relative;
+        opacity: 0.6;
+      }
+
+      .line-through-animated::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 100%;
+        height: 2px;
+        background: currentColor;
+        animation: strike 0.3s ease-out forwards;
+      }
+
+      @keyframes strike {
+        from {
+          width: 0;
         }
 
-        .card-shadow {
-            box-shadow: 0 10px 40px -10px rgba(37, 99, 235, 0.15);
+        to {
+          width: 100%;
         }
+      }
 
-        /* 进度环动画 */
-        .progress-ring__circle {
-            transition: stroke-dashoffset 0.35s;
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-        }
+      [x-cloak] {
+        display: none !important;
+      }
 
-        /* 模式切换动画 */
-        .mode-container {
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            opacity: 0;
-            transform: translateY(10px);
-            display: none;
-        }
-
-        .mode-container.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* 按钮点击反馈 */
-        .btn-click:active {
-            transform: scale(0.96);
-        }
-
-        .btn-bounce {
-            animation: bounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        /* 自定义确认弹窗动画 */
-        #confirm-modal.active #confirm-backdrop,
-        #prompt-modal.active #prompt-backdrop {
-            opacity: 1;
-        }
-
-        #confirm-modal.active #confirm-panel,
-        #prompt-modal.active #prompt-panel {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        @keyframes bounce {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(0.95);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        /* 滚动条美化 */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
-        /* 选中态样式 */
-        .tab-active {
-            color: #2563EB;
-            position: relative;
-        }
-
-        .tab-active::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 3px;
-            background: #2563EB;
-            border-radius: 3px;
-        }
-
-        .line-through-animated {
-            position: relative;
-            opacity: 0.6;
-        }
-
-        .line-through-animated::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            width: 100%;
-            height: 2px;
-            background: currentColor;
-            animation: strike 0.3s ease-out forwards;
-        }
-
-        @keyframes strike {
-            from {
-                width: 0;
-            }
-
-            to {
-                width: 100%;
-            }
-        }
-
-        [x-cloak] {
-            display: none !important;
-        }
-
-
-        #timer-adjust-controls {
-            height: 10px;
-        }
+      #timer-adjust-controls {
+        height: 10px;
+      }
     </style>
-</head>
+  </head>
 
-<body class="bg-transparent text-slate-800 min-h-screen relative overflow-x-hidden selection:bg-blue-200">
-
+  <body
+    class="bg-transparent text-slate-800 min-h-screen relative overflow-x-hidden selection:bg-blue-200"
+  >
     <!-- 背景装饰 -->
     <div class="fixed top-0 left-0 w-full h-screen overflow-hidden -z-10 pointer-events-none">
-        <div
-            class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-400/20 rounded-full blur-[100px] mix-blend-multiply filter">
-        </div>
-        <div
-            class="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-teal-400/20 rounded-full blur-[100px] mix-blend-multiply filter">
-        </div>
+      <div
+        class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-400/20 rounded-full blur-[100px] mix-blend-multiply filter"
+      ></div>
+      <div
+        class="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-teal-400/20 rounded-full blur-[100px] mix-blend-multiply filter"
+      ></div>
     </div>
 
     <!-- 顶部导航 -->
     <nav class="fixed top-0 inset-x-0 z-50 glass shadow-sm transition-all duration-300" id="navbar">
-        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <a href="/" target="_top"
-                    class="mr-1 w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 transition-colors"
-                    title="返回首页">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </a>
-                <div class="bg-blue-600 text-white p-1.5 rounded-lg">
-                    <i class="fa-solid fa-dumbbell text-lg"></i>
-                </div>
-                <h1 class="font-bold text-lg tracking-tight text-slate-800">训练助手</h1>
-            </div>
-            <button id="sound-toggle"
-                class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                <i class="fa-solid fa-volume-high text-sm"></i>
-            </button>
+      <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <a
+            href="/"
+            target="_top"
+            class="mr-1 w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 transition-colors"
+            title="返回首页"
+          >
+            <i class="fa-solid fa-chevron-left"></i>
+          </a>
+          <div class="bg-blue-600 text-white p-1.5 rounded-lg">
+            <i class="fa-solid fa-dumbbell text-lg"></i>
+          </div>
+          <h1 class="font-bold text-lg tracking-tight text-slate-800">训练助手</h1>
         </div>
+        <button
+          id="sound-toggle"
+          class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+        >
+          <i class="fa-solid fa-volume-high text-sm"></i>
+        </button>
+      </div>
 
-        <!-- 模式切换 Tabs -->
-        <div class="flex justify-center gap-8 py-2 border-t border-slate-100 max-w-md mx-auto">
-            <button class="nav-tab tab-active font-medium text-sm py-2 px-2 transition-colors"
-                data-target="workout-mode">
-                锻炼模式
-            </button>
-            <button class="nav-tab font-medium text-sm py-2 px-2 text-slate-500 hover:text-slate-700 transition-colors"
-                data-target="plan-mode">
-                训练计划
-            </button>
-            <button class="nav-tab font-medium text-sm py-2 px-2 text-slate-500 hover:text-slate-700 transition-colors"
-                data-target="timer-mode">
-                自由计时
-            </button>
-        </div>
+      <!-- 模式切换 Tabs -->
+      <div class="flex justify-center gap-8 py-2 border-t border-slate-100 max-w-md mx-auto">
+        <button
+          class="nav-tab tab-active font-medium text-sm py-2 px-2 transition-colors"
+          data-target="workout-mode"
+        >
+          锻炼模式
+        </button>
+        <button
+          class="nav-tab font-medium text-sm py-2 px-2 text-slate-500 hover:text-slate-700 transition-colors"
+          data-target="plan-mode"
+        >
+          训练计划
+        </button>
+        <button
+          class="nav-tab font-medium text-sm py-2 px-2 text-slate-500 hover:text-slate-700 transition-colors"
+          data-target="timer-mode"
+        >
+          自由计时
+        </button>
+      </div>
     </nav>
 
     <!-- 主内容区域 -->
     <main class="max-w-md mx-auto pt-36 px-4">
+      <!-- 1. 锻炼模式 -->
+      <div id="workout-mode" class="mode-container active">
+        <!-- 状态卡片 -->
+        <div
+          class="glass rounded-3xl p-6 card-shadow mb-6 text-center relative overflow-hidden transition-all duration-500"
+          id="main-card"
+        >
+          <!-- 进度指示器 -->
+          <div
+            class="absolute top-0 left-0 h-2 bg-gradient-to-r from-blue-400 to-blue-600 shadow-[0_0_10px_rgba(37,99,235,0.5)] transition-all duration-1000"
+            id="overall-progress"
+            style="width: 0%"
+          ></div>
 
-        <!-- 1. 锻炼模式 -->
-        <div id="workout-mode" class="mode-container active">
-            <!-- 状态卡片 -->
-            <div class="glass rounded-3xl p-6 card-shadow mb-6 text-center relative overflow-hidden transition-all duration-500"
-                id="main-card">
-                <!-- 进度指示器 -->
-                <div class="absolute top-0 left-0 h-2 bg-gradient-to-r from-blue-400 to-blue-600 shadow-[0_0_10px_rgba(37,99,235,0.5)] transition-all duration-1000"
-                    id="overall-progress" style="width: 0%"></div>
-
-                <div class="flex flex-col items-center mb-6 mt-2">
-                    <div
-                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold mb-3 uppercase tracking-wider">
-                        <i class="fa-solid fa-calendar-day"></i>
-                        <span id="current-day-badge">Today</span>
-                    </div>
-                    <h2 id="workout-status-title" class="text-2xl font-black text-slate-800 leading-tight mb-1">准备开始
-                    </h2>
-                    <p id="workout-status-subtitle" class="text-slate-500 text-sm font-medium">请选择今日计划开始训练</p>
-                </div>
-
-                <!-- 圆环计时器 -->
-                <div class="relative w-64 h-64 mx-auto mb-8 flex items-center justify-center">
-                    <svg class="progress-ring w-full h-full" width="256" height="256">
-                        <circle class="text-slate-100" stroke="currentColor" stroke-width="12" fill="transparent"
-                            r="110" cx="128" cy="128" />
-                        <circle id="progress-ring-circle" class="progress-ring__circle text-blue-600"
-                            stroke="currentColor" stroke-width="12" stroke-linecap="round" fill="transparent" r="110"
-                            cx="128" cy="128" style="stroke-dasharray: 691; stroke-dashoffset: 691;" />
-                    </svg>
-
-                    <div class="absolute inset-0 flex flex-col items-center justify-center z-10">
-                        <div id="timer-display"
-                            class="text-6xl font-black text-slate-800 tabular-nums tracking-tighter">--:--</div>
-                        <div id="timer-label"
-                            class="text-sm font-semibold text-slate-400 mt-1 uppercase tracking-widest">待机中</div>
-
-                        <!-- 休息时间微调按钮 (默认隐藏，仅在休息时显示) -->
-                        <div id="timer-adjust-controls" class="hidden flex gap-3 mt-3 animate-[fadeIn_0.3s_ease-out]">
-                            <button
-                                class="w-10 h-10 rounded-full bg-slate-100 hover:bg-white border border-slate-200 text-slate-500 hover:text-blue-600 flex items-center justify-center transition-all shadow-sm active:scale-95"
-                                data-adjust="-10" title="减少10秒">
-                                <span class="text-xs font-bold">-10</span>
-                            </button>
-                            <button
-                                class="w-10 h-10 rounded-full bg-slate-100 hover:bg-white border border-slate-200 text-slate-500 hover:text-blue-600 flex items-center justify-center transition-all shadow-sm active:scale-95"
-                                data-adjust="+10" title="增加10秒">
-                                <span class="text-xs font-bold">+10</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 循环计数器 -->
-                <div class="flex justify-center gap-4 mb-8 opacity-50 transition-opacity duration-300" id="stats-row">
-                    <div class="text-center">
-                        <div class="text-xs text-slate-400 uppercase font-bold">组数</div>
-                        <div class="text-xl font-bold text-slate-700" id="set-counter">-/-</div>
-                    </div>
-                    <div class="w-px h-8 bg-slate-200"></div>
-                    <div class="text-center">
-                        <div class="text-xs text-slate-400 uppercase font-bold">动作</div>
-                        <div class="text-xl font-bold text-slate-700" id="exercise-counter">-/-</div>
-                    </div>
-                </div>
-
-                <!-- 控制按钮 -->
-                <div class="grid grid-cols-5 gap-3">
-                    <button id="reset-btn"
-                        class="col-span-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl h-14 flex items-center justify-center btn-click transition-colors"
-                        title="重置">
-                        <i class="fa-solid fa-rotate-left"></i>
-                    </button>
-                    <button id="main-action-btn"
-                        class="col-span-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg shadow-lg shadow-blue-500/30 btn-click transition-all">
-                        <i class="fa-solid fa-play"></i>
-                        <span>开始训练</span>
-                    </button>
-                </div>
+          <div class="flex flex-col items-center mb-6 mt-2">
+            <div
+              class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold mb-3 uppercase tracking-wider"
+            >
+              <i class="fa-solid fa-calendar-day"></i>
+              <span id="current-day-badge">Today</span>
             </div>
+            <h2
+              id="workout-status-title"
+              class="text-2xl font-black text-slate-800 leading-tight mb-1"
+            >
+              准备开始
+            </h2>
+            <p id="workout-status-subtitle" class="text-slate-500 text-sm font-medium">
+              请选择今日计划开始训练
+            </p>
+          </div>
 
-            <!-- 快捷入口 -->
-            <button id="launch-music-btn"
-                class="w-full bg-white rounded-xl p-4 flex items-center justify-between shadow-sm border border-slate-100 hover:border-blue-200 transition-colors group">
-                <div class="flex items-center gap-3">
-                    <div
-                        class="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-colors">
-                        <svg fill="currentColor" class="w-6 h-6" role="img" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <title>NetEase Cloud Music</title>
-                            <path
-                                d="M13.046 9.388a3.919 3.919 0 0 0-.66.19c-.809.312-1.447.991-1.666 1.775a2.269 2.269 0 0 0-.074.81c.048.546.333 1.05.764 1.35a1.483 1.483 0 0 0 2.01-.286c.406-.531.355-1.183.24-1.636-.098-.387-.22-.816-.345-1.249a64.76 64.76 0 0 1-.269-.954zm-.82 10.07c-3.984 0-7.224-3.24-7.224-7.223 0-.98.226-3.02 1.884-4.822A7.188 7.188 0 0 1 9.502 5.6a.792.792 0 1 1 .587 1.472 5.619 5.619 0 0 0-2.795 2.462 5.538 5.538 0 0 0-.707 2.7 5.645 5.645 0 0 0 5.638 5.638c1.844 0 3.627-.953 4.542-2.428 1.042-1.68.772-3.931-.627-5.238a3.299 3.299 0 0 0-1.437-.777c.172.589.334 1.18.494 1.772.284 1.12.1 2.181-.519 2.989-.39.51-.956.888-1.592 1.064a3.038 3.038 0 0 1-2.58-.44 3.45 3.45 0 0 1-1.44-2.514c-.04-.467.002-.93.128-1.376.35-1.256 1.356-2.339 2.622-2.826a5.5 5.5 0 0 1 .823-.246l-.134-.505c-.37-1.371.25-2.579 1.547-3.007.329-.109.68-.145 1.025-.105.792.09 1.476.592 1.709 1.023.258.507-.096 1.153-.706 1.153a.788.788 0 0 1-.54-.213c-.088-.08-.163-.174-.259-.247a.825.825 0 0 0-.632-.166.807.807 0 0 0-.634.551c-.056.191-.031.406.02.595.07.256.159.597.217.82 1.11.098 2.162.54 2.97 1.296 1.974 1.844 2.35 4.886.892 7.233-1.197 1.93-3.509 3.177-5.889 3.177zM0 12c0 6.627 5.373 12 12 12s12-5.373 12-12S18.627 0 12 0 0 5.373 0 12Z" />
-                        </svg>
-                    </div>
-                    <div class="text-left">
-                        <div class="font-semibold text-slate-700">背景音乐</div>
-                        <div class="text-xs text-slate-400">启动网易云音乐 App</div>
-                    </div>
-                </div>
-                <i class="fa-solid fa-chevron-right text-slate-300"></i>
+          <!-- 圆环计时器 -->
+          <div class="relative w-64 h-64 mx-auto mb-8 flex items-center justify-center">
+            <svg class="progress-ring w-full h-full" width="256" height="256">
+              <circle
+                class="text-slate-100"
+                stroke="currentColor"
+                stroke-width="12"
+                fill="transparent"
+                r="110"
+                cx="128"
+                cy="128"
+              />
+              <circle
+                id="progress-ring-circle"
+                class="progress-ring__circle text-blue-600"
+                stroke="currentColor"
+                stroke-width="12"
+                stroke-linecap="round"
+                fill="transparent"
+                r="110"
+                cx="128"
+                cy="128"
+                style="stroke-dasharray: 691; stroke-dashoffset: 691"
+              />
+            </svg>
+
+            <div class="absolute inset-0 flex flex-col items-center justify-center z-10">
+              <div
+                id="timer-display"
+                class="text-6xl font-black text-slate-800 tabular-nums tracking-tighter"
+              >
+                --:--
+              </div>
+              <div
+                id="timer-label"
+                class="text-sm font-semibold text-slate-400 mt-1 uppercase tracking-widest"
+              >
+                待机中
+              </div>
+
+              <!-- 休息时间微调按钮 (默认隐藏，仅在休息时显示) -->
+              <div
+                id="timer-adjust-controls"
+                class="hidden flex gap-3 mt-3 animate-[fadeIn_0.3s_ease-out]"
+              >
+                <button
+                  class="w-10 h-10 rounded-full bg-slate-100 hover:bg-white border border-slate-200 text-slate-500 hover:text-blue-600 flex items-center justify-center transition-all shadow-sm active:scale-95"
+                  data-adjust="-10"
+                  title="减少10秒"
+                >
+                  <span class="text-xs font-bold">-10</span>
+                </button>
+                <button
+                  class="w-10 h-10 rounded-full bg-slate-100 hover:bg-white border border-slate-200 text-slate-500 hover:text-blue-600 flex items-center justify-center transition-all shadow-sm active:scale-95"
+                  data-adjust="+10"
+                  title="增加10秒"
+                >
+                  <span class="text-xs font-bold">+10</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 循环计数器 -->
+          <div
+            class="flex justify-center gap-4 mb-8 opacity-50 transition-opacity duration-300"
+            id="stats-row"
+          >
+            <div class="text-center">
+              <div class="text-xs text-slate-400 uppercase font-bold">组数</div>
+              <div class="text-xl font-bold text-slate-700" id="set-counter">-/-</div>
+            </div>
+            <div class="w-px h-8 bg-slate-200"></div>
+            <div class="text-center">
+              <div class="text-xs text-slate-400 uppercase font-bold">动作</div>
+              <div class="text-xl font-bold text-slate-700" id="exercise-counter">-/-</div>
+            </div>
+          </div>
+
+          <!-- 控制按钮 -->
+          <div class="grid grid-cols-5 gap-3">
+            <button
+              id="reset-btn"
+              class="col-span-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl h-14 flex items-center justify-center btn-click transition-colors"
+              title="重置"
+            >
+              <i class="fa-solid fa-rotate-left"></i>
             </button>
-        </div>
-
-        <!-- 2. 计划模式 -->
-        <div id="plan-mode" class="mode-container pb-20">
-            <div class="flex justify-between items-end mb-6 px-1">
-                <div>
-                    <h2 class="text-2xl font-bold text-slate-800">训练计划</h2>
-                    <p class="text-slate-500 text-sm">定制你的专属日程</p>
-                </div>
-                <button id="add-plan-btn"
-                    class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-blue-500/30 btn-click hover:bg-blue-700 transition-colors">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-            </div>
-
-            <!-- 数据管理按钮 (Moved to Top) -->
-            <div class="flex flex-wrap justify-end gap-2 mb-4">
-                <button id="export-plans-btn"
-                    class="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium px-2 py-1.5 transition-colors rounded-lg bg-blue-50 border border-blue-100">
-                    <i class="fa-solid fa-download"></i> 导出计划
-                </button>
-
-                <div class="relative">
-                    <input type="file" id="import-file-input" accept=".json" class="hidden" />
-                    <button id="import-plans-btn"
-                        class="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium px-2 py-1.5 transition-colors rounded-lg bg-blue-50 border border-blue-100">
-                        <i class="fa-solid fa-upload"></i> 导入计划
-                    </button>
-                </div>
-
-                <button id="clear-all-plans"
-                    class="flex items-center gap-1 text-xs text-red-500 hover:text-red-700 font-medium px-2 py-1.5 transition-colors rounded-lg bg-red-50 border border-red-100">
-                    <i class="fa-regular fa-trash-can"></i> 清空计划
-                </button>
-            </div>
-
-            <div id="plans-list" class="space-y-4">
-                <!-- 计划列表将通过 JS 动态生成 -->
-                <div class="text-center py-10 text-slate-400">
-                    <i class="fa-regular fa-clipboard text-4xl mb-3 opacity-50"></i>
-                    <p>暂无训练计划，点击右上角添加</p>
-                </div>
-            </div>
-
+            <button
+              id="main-action-btn"
+              class="col-span-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg shadow-lg shadow-blue-500/30 btn-click transition-all"
+            >
+              <i class="fa-solid fa-play"></i>
+              <span>开始训练</span>
             </button>
+          </div>
         </div>
-        </div>
 
-        <!-- 3. 自由计时模式 -->
-        <div id="timer-mode" class="mode-container">
-            <div class="glass rounded-3xl p-8 card-shadow text-center">
-                <div class="mb-8">
-                    <h2 class="text-2xl font-bold text-slate-800 mb-2">倒计时</h2>
-                    <p class="text-slate-500">自定义倒计时长</p>
-                </div>
-
-                <!-- 自由计时输入与显示 -->
-                <div class="relative h-48 flex items-center justify-center mb-8">
-                    <!-- 显示状态 -->
-                    <div id="free-timer-display"
-                        class="text-7xl font-black    text-slate-800 tabular-nums tracking-tighter cursor-pointer hover:text-blue-600 transition-colors">
-                        00:00</div>
-
-                    <!-- 设置状态 (默认隐藏) -->
-                    <div id="free-timer-setup"
-                        class="hidden absolute inset-0 bg-white/95 flex flex-col items-center justify-center z-10">
-                        <div class="flex items-end gap-2 mb-4">
-                            <div class="flex flex-col">
-                                <input type="number" id="ft-min"
-                                    class="w-20 text-center text-4xl font-bold border-b-2 border-slate-200 focus:border-blue-500 outline-none bg-transparent p-2"
-                                    placeholder="00" min="0" max="99">
-                                <span class="text-xs text-slate-400 mt-1">分</span>
-                            </div>
-                            <span class="text-3xl font-bold text-slate-300 pb-4">:</span>
-                            <div class="flex flex-col">
-                                <input type="number" id="ft-sec"
-                                    class="w-20 text-center text-4xl font-bold border-b-2 border-slate-200 focus:border-blue-500 outline-none bg-transparent p-2"
-                                    placeholder="00" min="0" max="59">
-                                <span class="text-xs text-slate-400 mt-1">秒</span>
-                            </div>
-                        </div>
-                        <button id="ft-confirm-btn"
-                            class="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-md">确定</button>
-                    </div>
-                </div>
-
-                <!-- 快捷时间预设 -->
-                <div class="flex flex-wrap justify-center gap-2 mb-8">
-                    <button
-                        class="ft-preset-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 font-medium text-xs hover:bg-blue-100 hover:text-blue-600 transition-colors"
-                        data-time="30">00:30</button>
-                    <button
-                        class="ft-preset-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 font-medium text-xs hover:bg-blue-100 hover:text-blue-600 transition-colors"
-                        data-time="60">01:00</button>
-                    <button
-                        class="ft-preset-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 font-medium text-xs hover:bg-blue-100 hover:text-blue-600 transition-colors"
-                        data-time="90">01:30</button>
-                    <button
-                        class="ft-preset-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 font-medium text-xs hover:bg-blue-100 hover:text-blue-600 transition-colors"
-                        data-time="300">05:00</button>
-                    <button
-                        class="ft-preset-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 font-medium text-xs hover:bg-blue-100 hover:text-blue-600 transition-colors"
-                        data-time="900">15:00</button>
-                </div>
-
-                <div class="flex gap-3 justify-center">
-                    <button id="ft-reset-btn"
-                        class="w-14 h-14 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition-colors btn-click">
-                        <i class="fa-solid fa-rotate-left"></i>
-                    </button>
-                    <button id="ft-start-btn"
-                        class="h-14 px-10 rounded-full bg-slate-800 text-white flex items-center justify-center gap-2 hover:bg-slate-900 transition-colors shadow-lg btn-click font-bold text-lg">
-                        <i class="fa-solid fa-play"></i>
-                        <span>开始</span>
-                    </button>
-                </div>
+        <!-- 快捷入口 -->
+        <button
+          id="launch-music-btn"
+          class="w-full bg-white rounded-xl p-4 flex items-center justify-between shadow-sm border border-slate-100 hover:border-blue-200 transition-colors group"
+        >
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-colors"
+            >
+              <svg
+                fill="currentColor"
+                class="w-6 h-6"
+                role="img"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>NetEase Cloud Music</title>
+                <path
+                  d="M13.046 9.388a3.919 3.919 0 0 0-.66.19c-.809.312-1.447.991-1.666 1.775a2.269 2.269 0 0 0-.074.81c.048.546.333 1.05.764 1.35a1.483 1.483 0 0 0 2.01-.286c.406-.531.355-1.183.24-1.636-.098-.387-.22-.816-.345-1.249a64.76 64.76 0 0 1-.269-.954zm-.82 10.07c-3.984 0-7.224-3.24-7.224-7.223 0-.98.226-3.02 1.884-4.822A7.188 7.188 0 0 1 9.502 5.6a.792.792 0 1 1 .587 1.472 5.619 5.619 0 0 0-2.795 2.462 5.538 5.538 0 0 0-.707 2.7 5.645 5.645 0 0 0 5.638 5.638c1.844 0 3.627-.953 4.542-2.428 1.042-1.68.772-3.931-.627-5.238a3.299 3.299 0 0 0-1.437-.777c.172.589.334 1.18.494 1.772.284 1.12.1 2.181-.519 2.989-.39.51-.956.888-1.592 1.064a3.038 3.038 0 0 1-2.58-.44 3.45 3.45 0 0 1-1.44-2.514c-.04-.467.002-.93.128-1.376.35-1.256 1.356-2.339 2.622-2.826a5.5 5.5 0 0 1 .823-.246l-.134-.505c-.37-1.371.25-2.579 1.547-3.007.329-.109.68-.145 1.025-.105.792.09 1.476.592 1.709 1.023.258.507-.096 1.153-.706 1.153a.788.788 0 0 1-.54-.213c-.088-.08-.163-.174-.259-.247a.825.825 0 0 0-.632-.166.807.807 0 0 0-.634.551c-.056.191-.031.406.02.595.07.256.159.597.217.82 1.11.098 2.162.54 2.97 1.296 1.974 1.844 2.35 4.886.892 7.233-1.197 1.93-3.509 3.177-5.889 3.177zM0 12c0 6.627 5.373 12 12 12s12-5.373 12-12S18.627 0 12 0 0 5.373 0 12Z"
+                />
+              </svg>
             </div>
+            <div class="text-left">
+              <div class="font-semibold text-slate-700">背景音乐</div>
+              <div class="text-xs text-slate-400">启动网易云音乐 App</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-slate-300"></i>
+        </button>
+      </div>
+
+      <!-- 2. 计划模式 -->
+      <div id="plan-mode" class="mode-container pb-20">
+        <div class="flex justify-between items-end mb-6 px-1">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-800">训练计划</h2>
+            <p class="text-slate-500 text-sm">定制你的专属日程</p>
+          </div>
+          <button
+            id="add-plan-btn"
+            class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-blue-500/30 btn-click hover:bg-blue-700 transition-colors"
+          >
+            <i class="fa-solid fa-plus"></i>
+          </button>
         </div>
 
+        <!-- 数据管理按钮 (Moved to Top) -->
+        <div class="flex flex-wrap justify-end gap-2 mb-4">
+          <button
+            id="export-plans-btn"
+            class="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium px-2 py-1.5 transition-colors rounded-lg bg-blue-50 border border-blue-100"
+          >
+            <i class="fa-solid fa-download"></i> 导出计划
+          </button>
+
+          <div class="relative">
+            <input type="file" id="import-file-input" accept=".json" class="hidden" />
+            <button
+              id="import-plans-btn"
+              class="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium px-2 py-1.5 transition-colors rounded-lg bg-blue-50 border border-blue-100"
+            >
+              <i class="fa-solid fa-upload"></i> 导入计划
+            </button>
+          </div>
+
+          <button
+            id="clear-all-plans"
+            class="flex items-center gap-1 text-xs text-red-500 hover:text-red-700 font-medium px-2 py-1.5 transition-colors rounded-lg bg-red-50 border border-red-100"
+          >
+            <i class="fa-regular fa-trash-can"></i> 清空计划
+          </button>
+        </div>
+
+        <div id="plans-list" class="space-y-4">
+          <!-- 计划列表将通过 JS 动态生成 -->
+          <div class="text-center py-10 text-slate-400">
+            <i class="fa-regular fa-clipboard text-4xl mb-3 opacity-50"></i>
+            <p>暂无训练计划，点击右上角添加</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 自由计时模式 -->
+      <div id="timer-mode" class="mode-container">
+        <div class="glass rounded-3xl p-8 card-shadow text-center">
+          <div class="mb-8">
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">倒计时</h2>
+            <p class="text-slate-500">自定义倒计时长</p>
+          </div>
+
+          <!-- 自由计时输入与显示 -->
+          <div class="relative h-48 flex items-center justify-center mb-8">
+            <!-- 显示状态 -->
+            <div
+              id="free-timer-display"
+              class="text-7xl font-black text-slate-800 tabular-nums tracking-tighter cursor-pointer hover:text-blue-600 transition-colors"
+            >
+              00:00
+            </div>
+
+            <!-- 设置状态 (默认隐藏) -->
+            <div
+              id="free-timer-setup"
+              class="hidden absolute inset-0 bg-white/95 flex flex-col items-center justify-center z-10"
+            >
+              <div class="flex items-end gap-2 mb-4">
+                <div class="flex flex-col">
+                  <input
+                    type="number"
+                    id="ft-min"
+                    class="w-20 text-center text-4xl font-bold border-b-2 border-slate-200 focus:border-blue-500 outline-none bg-transparent p-2"
+                    placeholder="00"
+                    min="0"
+                    max="99"
+                  />
+                  <span class="text-xs text-slate-400 mt-1">分</span>
+                </div>
+                <span class="text-3xl font-bold text-slate-300 pb-4">:</span>
+                <div class="flex flex-col">
+                  <input
+                    type="number"
+                    id="ft-sec"
+                    class="w-20 text-center text-4xl font-bold border-b-2 border-slate-200 focus:border-blue-500 outline-none bg-transparent p-2"
+                    placeholder="00"
+                    min="0"
+                    max="59"
+                  />
+                  <span class="text-xs text-slate-400 mt-1">秒</span>
+                </div>
+              </div>
+              <button
+                id="ft-confirm-btn"
+                class="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-md"
+              >
+                确定
+              </button>
+            </div>
+          </div>
+
+          <!-- 快捷时间预设 -->
+          <div class="flex flex-wrap justify-center gap-2 mb-8">
+            <button
+              class="ft-preset-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 font-medium text-xs hover:bg-blue-100 hover:text-blue-600 transition-colors"
+              data-time="30"
+            >
+              00:30
+            </button>
+            <button
+              class="ft-preset-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 font-medium text-xs hover:bg-blue-100 hover:text-blue-600 transition-colors"
+              data-time="60"
+            >
+              01:00
+            </button>
+            <button
+              class="ft-preset-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 font-medium text-xs hover:bg-blue-100 hover:text-blue-600 transition-colors"
+              data-time="90"
+            >
+              01:30
+            </button>
+            <button
+              class="ft-preset-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 font-medium text-xs hover:bg-blue-100 hover:text-blue-600 transition-colors"
+              data-time="300"
+            >
+              05:00
+            </button>
+            <button
+              class="ft-preset-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 font-medium text-xs hover:bg-blue-100 hover:text-blue-600 transition-colors"
+              data-time="900"
+            >
+              15:00
+            </button>
+          </div>
+
+          <div class="flex gap-3 justify-center">
+            <button
+              id="ft-reset-btn"
+              class="w-14 h-14 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition-colors btn-click"
+            >
+              <i class="fa-solid fa-rotate-left"></i>
+            </button>
+            <button
+              id="ft-start-btn"
+              class="h-14 px-10 rounded-full bg-slate-800 text-white flex items-center justify-center gap-2 hover:bg-slate-900 transition-colors shadow-lg btn-click font-bold text-lg"
+            >
+              <i class="fa-solid fa-play"></i>
+              <span>开始</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </main>
 
     <!-- 编辑计划模态框 -->
     <div id="plan-modal" class="fixed inset-0 z-[100] hidden">
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity opacity-0" id="modal-backdrop">
+      <div
+        class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity opacity-0"
+        id="modal-backdrop"
+      ></div>
+      <div
+        class="absolute inset-x-0 bottom-0 md:top-20 md:bottom-auto md:left-1/2 md:-translate-x-1/2 md:w-[600px] md:rounded-2xl bg-white rounded-t-3xl h-[85vh] md:h-auto md:max-h-[80vh] flex flex-col shadow-2xl transform translate-y-full transition-transform duration-300"
+        id="modal-panel"
+      >
+        <div class="p-4 border-b border-slate-100 flex justify-between items-center">
+          <button class="modal-close p-2 text-slate-400 hover:text-slate-600">
+            <i class="fa-solid fa-times text-xl"></i>
+          </button>
+          <h3 class="font-bold text-lg text-slate-800" id="modal-title">新建计划</h3>
+          <button id="modal-save-btn" class="text-blue-600 font-bold px-2 hover:text-blue-700">
+            保存
+          </button>
         </div>
-        <div class="absolute inset-x-0 bottom-0 md:top-20 md:bottom-auto md:left-1/2 md:-translate-x-1/2 md:w-[600px] md:rounded-2xl bg-white rounded-t-3xl h-[85vh] md:h-auto md:max-h-[80vh] flex flex-col shadow-2xl transform translate-y-full transition-transform duration-300"
-            id="modal-panel">
 
-            <div class="p-4 border-b border-slate-100 flex justify-between items-center">
-                <button class="modal-close p-2 text-slate-400 hover:text-slate-600"><i
-                        class="fa-solid fa-times text-xl"></i></button>
-                <h3 class="font-bold text-lg text-slate-800" id="modal-title">新建计划</h3>
-                <button id="modal-save-btn" class="text-blue-600 font-bold px-2 hover:text-blue-700">保存</button>
+        <div class="flex-1 overflow-y-auto p-5 custom-scrollbar">
+          <form id="plan-form" class="space-y-6">
+            <input type="hidden" name="planId" />
+
+            <!-- 标题 -->
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2"
+                >计划名称</label
+              >
+              <input
+                type="text"
+                name="title"
+                required
+                placeholder="例如：周一胸肌训练"
+                class="w-full bg-slate-50 border-none rounded-xl px-4 py-3 font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 placeholder-slate-300"
+              />
             </div>
 
-            <div class="flex-1 overflow-y-auto p-5 custom-scrollbar">
-                <form id="plan-form" class="space-y-6">
-                    <input type="hidden" name="planId">
-
-                    <!-- 标题 -->
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">计划名称</label>
-                        <input type="text" name="title" required placeholder="例如：周一胸肌训练"
-                            class="w-full bg-slate-50 border-none rounded-xl px-4 py-3 font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 placeholder-slate-300">
-                    </div>
-
-                    <!-- 星期选择 -->
-                    <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">重复日期</label>
-                        <div class="flex justify-between gap-1" id="day-selector">
-                            <!-- JS 生成星期按钮 -->
-                        </div>
-                        <input type="hidden" name="days" id="selected-days-input">
-                    </div>
-
-                    <!-- 动作列表 -->
-                    <div>
-                        <div class="flex justify-between items-center mb-2">
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider">动作流程</label>
-                            <button type="button" id="add-exercise-btn"
-                                class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md hover:bg-blue-100"><i
-                                    class="fa-solid fa-plus mr-1"></i>添加动作</button>
-                        </div>
-                        <div id="exercises-list" class="space-y-3">
-                            <!-- JS 生成动作项 -->
-                        </div>
-                    </div>
-                </form>
+            <!-- 星期选择 -->
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2"
+                >重复日期</label
+              >
+              <div class="flex justify-between gap-1" id="day-selector">
+                <!-- JS 生成星期按钮 -->
+              </div>
+              <input type="hidden" name="days" id="selected-days-input" />
             </div>
+
+            <!-- 动作列表 -->
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider"
+                  >动作流程</label
+                >
+                <button
+                  type="button"
+                  id="add-exercise-btn"
+                  class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md hover:bg-blue-100"
+                >
+                  <i class="fa-solid fa-plus mr-1"></i>添加动作
+                </button>
+              </div>
+              <div id="exercises-list" class="space-y-3">
+                <!-- JS 生成动作项 -->
+              </div>
+            </div>
+          </form>
         </div>
+      </div>
     </div>
 
     <!-- 自定义确认弹窗 -->
     <div id="confirm-modal" class="fixed inset-0 z-[120] hidden items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 opacity-0"
-            id="confirm-backdrop"></div>
-        <div class="bg-white rounded-3xl p-6 shadow-2xl relative w-full max-w-xs transform scale-90 opacity-0 transition-all duration-300"
-            id="confirm-panel">
-            <h3 class="text-xl font-bold text-slate-800 mb-2 text-center" id="confirm-title">提示</h3>
-            <p class="text-slate-500 mb-6 text-center leading-relaxed" id="confirm-message">确认执行此操作吗？</p>
-            <div class="flex gap-3">
-                <button id="confirm-cancel-btn"
-                    class="flex-1 py-3 rounded-2xl bg-slate-100 text-slate-500 font-bold text-sm tracking-wide">取消</button>
-                <button id="confirm-ok-btn"
-                    class="flex-1 py-3 rounded-2xl bg-blue-600 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/20">确定</button>
-            </div>
+      <div
+        class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 opacity-0"
+        id="confirm-backdrop"
+      ></div>
+      <div
+        class="bg-white rounded-3xl p-6 shadow-2xl relative w-full max-w-xs transform scale-90 opacity-0 transition-all duration-300"
+        id="confirm-panel"
+      >
+        <h3 class="text-xl font-bold text-slate-800 mb-2 text-center" id="confirm-title">提示</h3>
+        <p class="text-slate-500 mb-6 text-center leading-relaxed" id="confirm-message">
+          确认执行此操作吗？
+        </p>
+        <div class="flex gap-3">
+          <button
+            id="confirm-cancel-btn"
+            class="flex-1 py-3 rounded-2xl bg-slate-100 text-slate-500 font-bold text-sm tracking-wide"
+          >
+            取消
+          </button>
+          <button
+            id="confirm-ok-btn"
+            class="flex-1 py-3 rounded-2xl bg-blue-600 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/20"
+          >
+            确定
+          </button>
         </div>
+      </div>
     </div>
 
     <!-- 自定义输入弹窗 -->
     <div id="prompt-modal" class="fixed inset-0 z-[120] hidden items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 opacity-0"
-            id="prompt-backdrop"></div>
-        <div class="bg-white rounded-3xl p-6 shadow-2xl relative w-full max-w-xs transform scale-90 opacity-0 transition-all duration-300"
-            id="prompt-panel">
-            <h3 class="text-xl font-bold text-slate-800 mb-2 text-center" id="prompt-title">标题</h3>
-            <div class="mb-6">
-                <input type="text" id="prompt-input"
-                    class="w-full bg-slate-50 border-none rounded-xl px-4 py-3 font-medium text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-300 text-center"
-                    placeholder="请输入...">
-            </div>
-            <div class="flex gap-3">
-                <button id="prompt-cancel-btn"
-                    class="flex-1 py-3 rounded-2xl bg-slate-100 text-slate-500 font-bold text-sm tracking-wide">取消</button>
-                <button id="prompt-ok-btn"
-                    class="flex-1 py-3 rounded-2xl bg-blue-600 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/20">确定</button>
-            </div>
+      <div
+        class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 opacity-0"
+        id="prompt-backdrop"
+      ></div>
+      <div
+        class="bg-white rounded-3xl p-6 shadow-2xl relative w-full max-w-xs transform scale-90 opacity-0 transition-all duration-300"
+        id="prompt-panel"
+      >
+        <h3 class="text-xl font-bold text-slate-800 mb-2 text-center" id="prompt-title">标题</h3>
+        <div class="mb-6">
+          <input
+            type="text"
+            id="prompt-input"
+            class="w-full bg-slate-50 border-none rounded-xl px-4 py-3 font-medium text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-300 text-center"
+            placeholder="请输入..."
+          />
         </div>
+        <div class="flex gap-3">
+          <button
+            id="prompt-cancel-btn"
+            class="flex-1 py-3 rounded-2xl bg-slate-100 text-slate-500 font-bold text-sm tracking-wide"
+          >
+            取消
+          </button>
+          <button
+            id="prompt-ok-btn"
+            class="flex-1 py-3 rounded-2xl bg-blue-600 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/20"
+          >
+            确定
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- JavaScript 逻辑 -->
     <script>
-        // 音效管理器
-        const AudioMgr = {
-            enabled: true,
-            bgm: null,
-            timerEnd: new Audio('https://www.lrm123.site/tools/audio/audio/527475a0f6de'), // 提示音 (循环)
-            tick: new Audio('https://assets.mixkit.co/active_storage/sfx/2578/2578-preview.m4a'), // 倒计时滴答声
+      // 音效管理器
+      const AudioMgr = {
+        enabled: true,
+        bgm: null,
+        timerEnd: new Audio('https://www.lrm123.site/tools/audio/audio/527475a0f6de'), // 提示音 (循环)
+        tick: new Audio('https://assets.mixkit.co/active_storage/sfx/2578/2578-preview.m4a'), // 倒计时滴答声
 
-            init() {
-                this.timerEnd.volume = 0.8;
-                this.timerEnd.loop = true; // 开启循环播放
-                this.tick.volume = 0.3;
-            },
+        init() {
+          this.timerEnd.volume = 0.8;
+          this.timerEnd.loop = true; // 开启循环播放
+          this.tick.volume = 0.3;
+        },
 
-            playTick() {
-                if (!this.enabled) return;
-                this.tick.currentTime = 0;
-                this.tick.play().catch(() => { });
-            },
+        playTick() {
+          if (!this.enabled) return;
+          this.tick.currentTime = 0;
+          this.tick.play().catch(() => {});
+        },
 
-            playEnd() {
-                if (!this.enabled) return;
-                this.timerEnd.currentTime = 0;
-                this.timerEnd.play().catch(() => { });
-            },
+        playEnd() {
+          if (!this.enabled) return;
+          this.timerEnd.currentTime = 0;
+          this.timerEnd.play().catch(() => {});
+        },
 
-            stopEnd() {
-                this.timerEnd.pause();
-                this.timerEnd.currentTime = 0;
-            },
+        stopEnd() {
+          this.timerEnd.pause();
+          this.timerEnd.currentTime = 0;
+        },
 
-            toggle() {
-                this.enabled = !this.enabled;
-                if (!this.enabled) {
-                    this.tick.pause();
-                    this.stopEnd(); // 禁用声音时立即停止
+        toggle() {
+          this.enabled = !this.enabled;
+          if (!this.enabled) {
+            this.tick.pause();
+            this.stopEnd(); // 禁用声音时立即停止
+          }
+          return this.enabled;
+        }
+      };
+
+      // 屏幕常亮管理器
+      const WakeLockMgr = {
+        lock: null,
+        async request() {
+          if (!('wakeLock' in navigator)) return;
+          try {
+            this.lock = await navigator.wakeLock.request('screen');
+            console.log('Screen Wake Lock acquired');
+            this.lock.addEventListener('release', () => {
+              console.log('Screen Wake Lock released');
+              this.lock = null;
+            });
+          } catch (err) {
+            console.error(`${err.name}, ${err.message}`);
+          }
+        },
+        async release() {
+          if (this.lock) {
+            await this.lock.release();
+            this.lock = null;
+          }
+        }
+      };
+
+      // 监听页面可见性，在恢复可见时重新获取锁
+      document.addEventListener('visibilitychange', async () => {
+        if (WakeLockMgr.lock !== null && document.visibilityState === 'visible') {
+          await WakeLockMgr.request();
+        }
+      });
+
+      // 状态管理
+      const App = {
+        state: {
+          mode: 'idle', // idle, workout_work, workout_rest, timer_running, timer_paused
+          currentPlan: null,
+          currentExerciseIdx: 0,
+          currentSet: 1,
+          timeLeft: 0,
+          timerId: null,
+          totalDuration: 0, // 用于进度条计算
+          freeTimerSetting: 0 // 自由计时器的设定时间
+        },
+
+        data: {
+          plans: []
+        },
+
+        // 核心 DOM 元素缓存
+        dom: {},
+
+        init() {
+          // 1. 修复：优先缓存DOM元素，防止后续调用报错
+          this.cacheDom();
+
+          // 加载数据
+          const savedPlans = localStorage.getItem('fitness_plans_v2');
+          if (savedPlans) {
+            this.data.plans = JSON.parse(savedPlans);
+          } else {
+            // 默认数据
+            this.data.plans = this.getDefaultPlans();
+            this.saveData();
+          }
+
+          // this.cacheDom(); // 原位置已移除
+          this.bindEvents();
+          this.renderPlansList();
+          this.checkTodayPlan();
+          AudioMgr.init();
+
+          // 初始化自由计时器显示
+          this.updateFreeTimerDisplay(0);
+        },
+
+        getDefaultPlans() {
+          return [
+            {
+              id: 'p1',
+              title: '上肢力量 (示例)',
+              days: ['周一'],
+              exercises: [
+                {
+                  name: '俯卧撑',
+                  sets: 4,
+                  reps: '12次',
+                  restBetweenSets: 60,
+                  restAfterExercise: 90
+                },
+                {
+                  name: '哑铃弯举',
+                  sets: 3,
+                  reps: '10次',
+                  restBetweenSets: 60,
+                  restAfterExercise: 90
                 }
-                return this.enabled;
-            }
-        };
-
-        // 屏幕常亮管理器
-        const WakeLockMgr = {
-            lock: null,
-            async request() {
-                if (!('wakeLock' in navigator)) return;
-                try {
-                    this.lock = await navigator.wakeLock.request('screen');
-                    console.log('Screen Wake Lock acquired');
-                    this.lock.addEventListener('release', () => {
-                        console.log('Screen Wake Lock released');
-                        this.lock = null;
-                    });
-                } catch (err) {
-                    console.error(`${err.name}, ${err.message}`);
+              ]
+            },
+            {
+              id: 'p2',
+              title: '核心燃脂 (示例)',
+              days: ['周三', '周五'],
+              exercises: [
+                {
+                  name: '平板支撑',
+                  sets: 3,
+                  reps: '60秒',
+                  restBetweenSets: 60,
+                  restAfterExercise: 90
+                },
+                { name: '卷腹', sets: 4, reps: '20次', restBetweenSets: 60, restAfterExercise: 90 },
+                {
+                  name: '波比跳',
+                  sets: 3,
+                  reps: '15次',
+                  restBetweenSets: 60,
+                  restAfterExercise: 90
                 }
-            },
-            async release() {
-                if (this.lock) {
-                    await this.lock.release();
-                    this.lock = null;
-                }
+              ]
             }
-        };
+          ];
+        },
 
-        // 监听页面可见性，在恢复可见时重新获取锁
-        document.addEventListener('visibilitychange', async () => {
-            if (WakeLockMgr.lock !== null && document.visibilityState === 'visible') {
-                await WakeLockMgr.request();
+        cacheDom() {
+          this.dom = {
+            tabs: document.querySelectorAll('.nav-tab'),
+            modes: document.querySelectorAll('.mode-container'),
+            mainCard: document.getElementById('main-card'),
+            statusTitle: document.getElementById('workout-status-title'),
+            statusSubtitle: document.getElementById('workout-status-subtitle'),
+            timerDisplay: document.getElementById('timer-display'),
+            timerLabel: document.getElementById('timer-label'),
+            timerControls: document.getElementById('timer-adjust-controls'), // 新增缓存
+            ringCircle: document.getElementById('progress-ring-circle'),
+            actionBtn: document.getElementById('main-action-btn'),
+            resetBtn: document.getElementById('reset-btn'),
+            dayBadge: document.getElementById('current-day-badge'),
+            setCounter: document.getElementById('set-counter'),
+            exCounter: document.getElementById('exercise-counter'),
+            statsRow: document.getElementById('stats-row'),
+            overallProgress: document.getElementById('overall-progress'),
+
+            // 自由计时器
+            ftDisplay: document.getElementById('free-timer-display'),
+            ftSetup: document.getElementById('free-timer-setup'),
+            ftMin: document.getElementById('ft-min'),
+            ftSec: document.getElementById('ft-sec'),
+            ftStartBtn: document.getElementById('ft-start-btn'),
+            ftResetBtn: document.getElementById('ft-reset-btn'),
+            ftConfirmBtn: document.getElementById('ft-confirm-btn'),
+
+            // 模态框
+            modal: document.getElementById('plan-modal'),
+            modalBackdrop: document.getElementById('modal-backdrop'),
+            modalPanel: document.getElementById('modal-panel'),
+            planForm: document.getElementById('plan-form'),
+
+            // 确认弹窗
+            confirmModal: document.getElementById('confirm-modal'),
+            confirmBackdrop: document.getElementById('confirm-backdrop'),
+            confirmPanel: document.getElementById('confirm-panel'),
+            confirmTitle: document.getElementById('confirm-title'),
+            confirmMsg: document.getElementById('confirm-message'),
+            confirmOk: document.getElementById('confirm-ok-btn'),
+            confirmCancel: document.getElementById('confirm-cancel-btn'),
+
+            // 输入弹窗
+            promptModal: document.getElementById('prompt-modal'),
+            promptBackdrop: document.getElementById('prompt-backdrop'),
+            promptPanel: document.getElementById('prompt-panel'),
+            promptTitle: document.getElementById('prompt-title'),
+            promptInput: document.getElementById('prompt-input'),
+            promptOk: document.getElementById('prompt-ok-btn'),
+            promptCancel: document.getElementById('prompt-cancel-btn')
+          };
+        },
+
+        saveData() {
+          localStorage.setItem('fitness_plans_v2', JSON.stringify(this.data.plans));
+          this.renderPlansList();
+          this.checkTodayPlan(); // 数据更新后重新检查今日计划
+        },
+
+        exportData() {
+          if (this.data.plans.length === 0) {
+            this.confirm('错误', '当前没有可导出的训练计划', null); // 这里复用 confirm 作为 alert
+            return;
+          }
+
+          const defaultName = `workout_plans_${new Date().toISOString().split('T')[0]}`;
+
+          this.prompt('导出计划', '请输入导出的文件名:', defaultName, fileName => {
+            if (!fileName) return;
+            fileName = fileName.trim();
+            if (!fileName.toLowerCase().endsWith('.json')) {
+              fileName += '.json';
             }
-        });
 
-        // 状态管理
-        const App = {
-            state: {
-                mode: 'idle', // idle, workout_work, workout_rest, timer_running, timer_paused
-                currentPlan: null,
-                currentExerciseIdx: 0,
-                currentSet: 1,
-                timeLeft: 0,
-                timerId: null,
-                totalDuration: 0, // 用于进度条计算
-                freeTimerSetting: 0 // 自由计时器的设定时间
-            },
+            const dataStr = JSON.stringify(this.data.plans, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          });
+        },
 
-            data: {
-                plans: []
-            },
-
-            // 核心 DOM 元素缓存
-            dom: {},
-
-            init() {
-                // 1. 修复：优先缓存DOM元素，防止后续调用报错
-                this.cacheDom();
-
-                // 加载数据
-                const savedPlans = localStorage.getItem('fitness_plans_v2');
-                if (savedPlans) {
-                    this.data.plans = JSON.parse(savedPlans);
-                } else {
-                    // 默认数据
-                    this.data.plans = this.getDefaultPlans();
+        importData(file) {
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = e => {
+            try {
+              const imported = JSON.parse(e.target.result);
+              if (Array.isArray(imported)) {
+                this.confirm(
+                  '导入计划',
+                  `确定导入 ${imported.length} 个计划吗？这将覆盖现有数据。`,
+                  () => {
+                    this.data.plans = imported;
                     this.saveData();
-                }
-
-                // this.cacheDom(); // 原位置已移除
-                this.bindEvents();
-                this.renderPlansList();
-                this.checkTodayPlan();
-                AudioMgr.init();
-
-                // 初始化自由计时器显示
-                this.updateFreeTimerDisplay(0);
-            },
-
-            getDefaultPlans() {
-                return [
-                    {
-                        id: 'p1', title: '上肢力量 (示例)', days: ['周一'],
-                        exercises: [
-                            { name: '俯卧撑', sets: 4, reps: '12次', restBetweenSets: 60, restAfterExercise: 90 },
-                            { name: '哑铃弯举', sets: 3, reps: '10次', restBetweenSets: 60, restAfterExercise: 90 }
-                        ]
-                    },
-                    {
-                        id: 'p2', title: '核心燃脂 (示例)', days: ['周三', '周五'],
-                        exercises: [
-                            { name: '平板支撑', sets: 3, reps: '60秒', restBetweenSets: 60, restAfterExercise: 90 },
-                            { name: '卷腹', sets: 4, reps: '20次', restBetweenSets: 60, restAfterExercise: 90 },
-                            { name: '波比跳', sets: 3, reps: '15次', restBetweenSets: 60, restAfterExercise: 90 }
-                        ]
-                    }
-                ];
-            },
-
-            cacheDom() {
-                this.dom = {
-                    tabs: document.querySelectorAll('.nav-tab'),
-                    modes: document.querySelectorAll('.mode-container'),
-                    mainCard: document.getElementById('main-card'),
-                    statusTitle: document.getElementById('workout-status-title'),
-                    statusSubtitle: document.getElementById('workout-status-subtitle'),
-                    timerDisplay: document.getElementById('timer-display'),
-                    timerLabel: document.getElementById('timer-label'),
-                    timerControls: document.getElementById('timer-adjust-controls'), // 新增缓存
-                    ringCircle: document.getElementById('progress-ring-circle'),
-                    actionBtn: document.getElementById('main-action-btn'),
-                    resetBtn: document.getElementById('reset-btn'),
-                    dayBadge: document.getElementById('current-day-badge'),
-                    setCounter: document.getElementById('set-counter'),
-                    exCounter: document.getElementById('exercise-counter'),
-                    statsRow: document.getElementById('stats-row'),
-                    overallProgress: document.getElementById('overall-progress'),
-
-                    // 自由计时器
-                    ftDisplay: document.getElementById('free-timer-display'),
-                    ftSetup: document.getElementById('free-timer-setup'),
-                    ftMin: document.getElementById('ft-min'),
-                    ftSec: document.getElementById('ft-sec'),
-                    ftStartBtn: document.getElementById('ft-start-btn'),
-                    ftResetBtn: document.getElementById('ft-reset-btn'),
-                    ftConfirmBtn: document.getElementById('ft-confirm-btn'),
-
-                    // 模态框
-                    modal: document.getElementById('plan-modal'),
-                    modalBackdrop: document.getElementById('modal-backdrop'),
-                    modalPanel: document.getElementById('modal-panel'),
-                    planForm: document.getElementById('plan-form'),
-
-                    // 确认弹窗
-                    confirmModal: document.getElementById('confirm-modal'),
-                    confirmBackdrop: document.getElementById('confirm-backdrop'),
-                    confirmPanel: document.getElementById('confirm-panel'),
-                    confirmTitle: document.getElementById('confirm-title'),
-                    confirmMsg: document.getElementById('confirm-message'),
-                    confirmOk: document.getElementById('confirm-ok-btn'),
-                    confirmCancel: document.getElementById('confirm-cancel-btn'),
-
-                    // 输入弹窗
-                    promptModal: document.getElementById('prompt-modal'),
-                    promptBackdrop: document.getElementById('prompt-backdrop'),
-                    promptPanel: document.getElementById('prompt-panel'),
-                    promptTitle: document.getElementById('prompt-title'),
-                    promptInput: document.getElementById('prompt-input'),
-                    promptOk: document.getElementById('prompt-ok-btn'),
-                    promptCancel: document.getElementById('prompt-cancel-btn')
-                };
-            },
-
-            saveData() {
-                localStorage.setItem('fitness_plans_v2', JSON.stringify(this.data.plans));
-                this.renderPlansList();
-                this.checkTodayPlan(); // 数据更新后重新检查今日计划
-            },
-
-            exportData() {
-                if (this.data.plans.length === 0) {
-                    this.confirm("错误", "当前没有可导出的训练计划", null); // 这里复用 confirm 作为 alert
-                    return;
-                }
-
-                const defaultName = `workout_plans_${new Date().toISOString().split('T')[0]}`;
-
-                this.prompt("导出计划", "请输入导出的文件名:", defaultName, (fileName) => {
-                    if (!fileName) return;
-                    fileName = fileName.trim();
-                    if (!fileName.toLowerCase().endsWith('.json')) {
-                        fileName += '.json';
-                    }
-
-                    const dataStr = JSON.stringify(this.data.plans, null, 2);
-                    const blob = new Blob([dataStr], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = fileName;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                });
-            },
-
-            importData(file) {
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    try {
-                        const imported = JSON.parse(e.target.result);
-                        if (Array.isArray(imported)) {
-                            this.confirm("导入计划", `确定导入 ${imported.length} 个计划吗？这将覆盖现有数据。`, () => {
-                                this.data.plans = imported;
-                                this.saveData();
-                            });
-                        } else {
-                            this.confirm("错误", "无效的文件格式", null);
-                        }
-                    } catch (err) {
-                        this.confirm("错误", "解析文件失败: " + err.message, null);
-                    }
-                };
-                reader.readAsText(file);
-            },
-
-            // --- 路由与导航 ---
-            switchTab(targetId) {
-                // 更新 Tab 样式
-                this.dom.tabs.forEach(t => {
-                    if (t.dataset.target === targetId) t.classList.add('tab-active', 'text-blue-600');
-                    else t.classList.remove('tab-active', 'text-blue-600');
-                });
-
-                // 更新视图
-                this.dom.modes.forEach(m => {
-                    if (m.id === targetId) m.classList.add('active');
-                    else m.classList.remove('active');
-                });
-
-                // 如果离开锻炼模式且正在计时，建议暂停吗？暂时保持后台运行
-            },
-
-            // --- 核心逻辑：锻炼模式 ---
-            checkTodayPlan() {
-                // 安全检查
-                if (!this.dom.dayBadge) return;
-
-                const daysMap = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-                const today = daysMap[new Date().getDay()];
-                this.dom.dayBadge.textContent = today;
-
-                // 查找今日计划
-                const todayPlan = this.data.plans.find(p => p.days.includes(today));
-
-                if (todayPlan) {
-                    this.state.currentPlan = todayPlan;
-                    this.resetWorkoutState();
-                    this.dom.statusTitle.textContent = todayPlan.title;
-                    this.dom.statusSubtitle.textContent = `共 ${todayPlan.exercises.length} 个动作，准备开始`;
-                    this.dom.actionBtn.disabled = false;
-                    this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>开始训练</span>';
-                    this.dom.actionBtn.classList.remove('bg-slate-400', 'cursor-not-allowed');
-                    this.dom.actionBtn.classList.add('bg-blue-600', 'shadow-lg');
-                } else {
-                    this.state.currentPlan = null;
-                    this.dom.statusTitle.textContent = "今天也是休息日";
-                    this.dom.statusSubtitle.textContent = "好好放松，或者添加一个临时计划";
-                    this.dom.actionBtn.disabled = true;
-                    this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-bed"></i><span>暂无计划</span>';
-                    this.dom.actionBtn.classList.add('bg-slate-400', 'cursor-not-allowed');
-                    this.dom.actionBtn.classList.remove('bg-blue-600', 'shadow-lg');
-                    this.resetWorkoutUI();
-                }
-            },
-
-            resetWorkoutState() {
-                this.clearInterval();
-                this.state.mode = 'idle';
-                this.state.currentExerciseIdx = 0;
-                this.state.currentSet = 1;
-                this.updateCounters();
-                this.setProgress(0);
-                this.dom.timerDisplay.textContent = '--:--';
-                this.dom.timerLabel.textContent = '待机中';
-                this.dom.mainCard.classList.remove('border-green-400', 'border-amber-400', 'border-blue-400', 'border-2');
-                this.dom.overallProgress.style.width = '0%';
-                if (this.dom.timerControls) this.dom.timerControls.classList.add('hidden'); // 隐藏微调按钮
-
-                // 重置按钮 UI
-                if (this.state.currentPlan) {
-                    this.dom.statusTitle.textContent = this.state.currentPlan.title;
-                    this.dom.statusSubtitle.textContent = `共 ${this.state.currentPlan.exercises.length} 个动作，准备开始`;
-                    this.dom.actionBtn.disabled = false;
-                    this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>开始训练</span>';
-                    this.dom.actionBtn.className = 'col-span-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg shadow-lg shadow-blue-500/30 btn-click transition-all';
-                }
-
-                AudioMgr.stopEnd(); // 重置状态时停止播放
-                WakeLockMgr.release(); // 重置时释放锁
-            },
-
-            resetWorkoutUI() {
-                this.dom.timerDisplay.textContent = '--:--';
-                this.dom.setCounter.textContent = '-/-';
-                this.dom.exCounter.textContent = '-/-';
-                this.setProgress(0);
-                if (this.dom.timerControls) this.dom.timerControls.classList.add('hidden');
-            },
-
-            toggleWorkout() {
-                if (!this.state.currentPlan) return;
-
-                const plan = this.state.currentPlan;
-                const exercises = plan.exercises;
-                const currentEx = exercises[this.state.currentExerciseIdx];
-
-                if (this.state.mode === 'idle') {
-                    // 开始第一个动作
-                    this.startExercise(currentEx);
-                } else if (this.state.mode === 'workout_work') {
-                    // 用户点击"完成"，进入休息
-                    this.startRest(currentEx);
-                } else if (this.state.mode === 'workout_rest') {
-                    // 用户想跳过休息
-                    this.finishRest();
-                } else if (this.state.mode === 'workout_rest_end') {
-                    // 休息结束提示页，点击进入下一组
-                    this.finishRest();
-                }
-            },
-
-            startExercise(exercise) {
-                this.clearInterval();
-                this.state.mode = 'workout_work';
-                WakeLockMgr.request(); // 开始锻炼，请求常亮
-
-                // 更新UI
-                this.dom.statusTitle.textContent = exercise.name;
-                this.dom.statusSubtitle.textContent = `目标: ${exercise.reps}`;
-                this.dom.timerDisplay.textContent = '锻炼中';
-                this.dom.timerDisplay.classList.add('text-4xl');
-                this.dom.timerDisplay.classList.remove('text-6xl');
-                this.dom.timerLabel.textContent = '点击按钮完成本组';
-
-                // 按钮状态
-                this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-check"></i><span>完成本组</span>';
-                this.dom.actionBtn.className = 'col-span-4 bg-green-500 hover:bg-green-600 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg shadow-lg shadow-green-500/30 btn-click transition-all';
-
-                // 视觉反馈
-                this.dom.mainCard.classList.remove('border-amber-400', 'border-blue-400');
-                this.dom.mainCard.classList.add('border-2', 'border-green-400');
-                this.dom.ringCircle.classList.add('text-green-500');
-                this.dom.ringCircle.classList.remove('text-blue-600', 'text-amber-500');
-                this.setProgress(100); // 锻炼时圆环填满
-                this.dom.timerControls.classList.add('hidden'); // 隐藏微调按钮
-
-                this.updateCounters();
-            },
-
-            startRest(exercise) {
-                this.state.mode = 'workout_rest';
-                AudioMgr.stopEnd(); // 开始休息（即完成了上一组）时，停止提示音
-
-                const setsTotal = parseInt(exercise.sets) || 1;
-                const isLastSet = this.state.currentSet >= setsTotal;
-                const hasNextExercise = this.state.currentExerciseIdx < this.state.currentPlan.exercises.length - 1;
-
-                // 组间休息时间与动作结束后的休息时间分开配置
-                const betweenRaw = exercise.restBetweenSets !== undefined ? exercise.restBetweenSets : exercise.rest;
-                const afterRaw = exercise.restAfterExercise !== undefined ? exercise.restAfterExercise : exercise.rest;
-                const betweenRest = parseInt(betweenRaw) || 60; // 默认 60 秒
-                const afterRest = parseInt(afterRaw) || 90;     // 默认 90 秒（1 分 30 秒）
-
-                const restSeconds = isLastSet ? afterRest : betweenRest;
-
-                this.state.timeLeft = restSeconds;
-                this.state.totalDuration = restSeconds;
-
-                // 更新UI
-                this.dom.statusTitle.textContent = "休息一下";
-                if (!isLastSet) {
-                    this.dom.statusSubtitle.textContent = `下一组: ${exercise.name}`;
-                } else if (hasNextExercise) {
-                    this.dom.statusSubtitle.textContent = `准备下一个动作: ${this.state.currentPlan.exercises[this.state.currentExerciseIdx + 1].name}`;
-                } else {
-                    this.dom.statusSubtitle.textContent = `本次训练已完成，稍作放松`;
-                }
-
-                this.dom.timerDisplay.classList.remove('text-4xl');
-                this.dom.timerDisplay.classList.add('text-6xl');
-                this.dom.timerLabel.textContent = '休息计时中';
-
-                // 按钮状态
-                this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-forward"></i><span>跳过休息</span>';
-                this.dom.actionBtn.className = 'col-span-4 bg-amber-500 hover:bg-amber-600 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg shadow-lg shadow-amber-500/30 btn-click transition-all';
-
-                // 视觉反馈
-                this.dom.mainCard.classList.remove('border-green-400', 'border-blue-400');
-                this.dom.mainCard.classList.add('border-2', 'border-amber-400');
-                this.dom.ringCircle.classList.add('text-amber-500');
-                this.dom.ringCircle.classList.remove('text-blue-600', 'text-green-500');
-
-                this.dom.timerControls.classList.remove('hidden'); // 显示微调按钮
-
-                // 启动倒计时
-                this.updateTimerDisplay(this.state.timeLeft);
-                this.state.timerId = setInterval(() => {
-                    this.state.timeLeft--;
-                    this.updateTimerDisplay(this.state.timeLeft);
-
-                    const percent = (this.state.timeLeft / this.state.totalDuration) * 100;
-                    this.setProgress(percent);
-
-                    if (this.state.timeLeft <= 3 && this.state.timeLeft > 0) {
-                        AudioMgr.playTick();
-                    }
-
-                    if (this.state.timeLeft <= 0) {
-                        this.onRestEnd();
-                    }
-                }, 1000);
-            },
-
-            onRestEnd() {
-                this.clearInterval();
-                this.state.mode = 'workout_rest_end';
-                AudioMgr.playEnd(); // 循环播放结束提示音
-
-                this.dom.statusTitle.textContent = "休息结束！";
-                this.dom.statusSubtitle.textContent = "准备好进行下一组了吗？";
-                this.dom.timerDisplay.textContent = "00:00";
-                this.dom.timerLabel.textContent = "点击下方按钮开始";
-
-                // 按钮改为绿色“开始下一组”
-                this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>开始下一组</span>';
-                this.dom.actionBtn.className = 'col-span-4 bg-green-500 hover:bg-green-600 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg shadow-lg shadow-green-500/30 btn-click transition-all';
-
-                // 视觉反馈优化
-                this.dom.mainCard.classList.remove('border-amber-400');
-                this.dom.mainCard.classList.add('border-2', 'border-blue-400');
-                this.dom.ringCircle.classList.remove('text-amber-500');
-                this.dom.ringCircle.classList.add('text-blue-600');
-                this.setProgress(100);
-
-                this.dom.timerControls.classList.add('hidden'); // 隐藏微调按钮
-            },
-
-            // 调整休息时间
-            adjustRestTime(seconds) {
-                if (this.state.mode !== 'workout_rest') return;
-
-                this.state.timeLeft += seconds;
-                if (this.state.timeLeft < 0) this.state.timeLeft = 0;
-
-                // 如果增加时间超过了原定总时间，更新总时间以保持进度条显示合理（可选）
-                if (this.state.timeLeft > this.state.totalDuration) {
-                    this.state.totalDuration = this.state.timeLeft;
-                }
-
-                this.updateTimerDisplay(this.state.timeLeft);
-                const percent = (this.state.timeLeft / this.state.totalDuration) * 100;
-                this.setProgress(percent);
-            },
-
-            finishRest() {
-                this.clearInterval();
-                AudioMgr.stopEnd(); // 进入训练或下一组前停止音效
-                this.dom.timerControls.classList.add('hidden'); // 隐藏微调按钮
-
-                const plan = this.state.currentPlan;
-                const currentEx = plan.exercises[this.state.currentExerciseIdx];
-
-                // 逻辑判断：下一组 还是 下一个动作
-                if (this.state.currentSet < currentEx.sets) {
-                    this.state.currentSet++;
-                    this.startExercise(currentEx);
-                } else {
-                    // 动作完成，检查是否还有下一个动作
-                    if (this.state.currentExerciseIdx < plan.exercises.length - 1) {
-                        this.state.currentExerciseIdx++;
-                        this.state.currentSet = 1;
-                        this.startExercise(plan.exercises[this.state.currentExerciseIdx]);
-                    } else {
-                        // 全部完成
-                        this.finishWorkout();
-                    }
-                }
-            },
-
-            finishWorkout() {
-                this.state.mode = 'idle';
-                WakeLockMgr.release(); // 训练结束，释放锁
-                this.dom.statusTitle.textContent = "训练完成！🎉";
-                this.dom.statusSubtitle.textContent = "你太棒了！休息一下吧";
-                this.dom.timerDisplay.textContent = "DONE";
-                this.dom.timerLabel.textContent = "今日计划已结束";
-
-                this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-rotate-right"></i><span>再来一次</span>';
-                this.dom.actionBtn.className = 'col-span-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg shadow-lg shadow-blue-500/30 btn-click transition-all';
-
-                this.dom.mainCard.classList.remove('border-amber-400', 'border-green-400', 'border-2');
-                this.dom.ringCircle.classList.remove('text-amber-500', 'text-green-500');
-                this.dom.ringCircle.classList.add('text-blue-600');
-                this.dom.timerControls.classList.add('hidden');
-
-                this.dom.overallProgress.style.width = '100%';
-
-                // 简单的烟花效果（这里仅用重置状态代替）
-                this.state.currentExerciseIdx = 0;
-                this.state.currentSet = 1;
-            },
-
-            // --- 核心逻辑：自由计时 ---
-            initFreeTimer() {
-                this.dom.ftDisplay.addEventListener('click', () => {
-                    // 锻炼模式进行中时，禁止打开自由计时设置，避免计时器冲突
-                    if (this.state.mode === 'workout_work' || this.state.mode === 'workout_rest') {
-                        alert('当前正在进行训练流程，请先结束或重置训练后再使用自由计时器。');
-                        return;
-                    }
-                    // 允许在计时器运行时修改时间，会暂停计时器
-                    if (this.state.mode === 'timer_running') {
-                        this.pauseFreeTimer(); // 暂停计时器以便修改时间
-                    }
-                    this.dom.ftDisplay.classList.add('hidden');
-                    this.dom.ftSetup.classList.remove('hidden');
-                });
-
-                this.dom.ftConfirmBtn.addEventListener('click', () => {
-                    const min = parseInt(this.dom.ftMin.value) || 0;
-                    const sec = parseInt(this.dom.ftSec.value) || 0;
-                    const total = min * 60 + sec;
-                    this.confirmFreeTimer(total);
-                });
-
-                // 快捷时间预设按钮
-                document.querySelectorAll('.ft-preset-btn').forEach(btn => {
-                    btn.onclick = () => {
-                        const seconds = parseInt(btn.dataset.time);
-                        this.confirmFreeTimer(seconds);
-                    };
-                });
-
-                this.dom.ftStartBtn.addEventListener('click', () => {
-                    // 锻炼模式进行中时，禁止启动自由计时器，避免与训练倒计时共用同一个计时器
-                    if (this.state.mode === 'workout_work' || this.state.mode === 'workout_rest') {
-                        alert('当前正在进行训练流程，请先结束或重置训练后再使用自由计时器。');
-                        return;
-                    }
-                    if (this.state.mode === 'timer_running') {
-                        // 暂停
-                        this.pauseFreeTimer();
-                    } else if (this.state.mode === 'timer_paused') {
-                        // 继续（使用当前 timeLeft，不重置）
-                        this.runFreeTimer();
-                    } else {
-                        // 开始：始终使用最新的 freeTimerSetting
-                        if (this.state.freeTimerSetting <= 0) {
-                            // 如果没设置，默认打开设置
-                            this.dom.ftDisplay.click();
-                            return;
-                        }
-                        // 确保使用最新的设置值
-                        this.state.timeLeft = this.state.freeTimerSetting;
-                        this.runFreeTimer();
-                    }
-                });
-
-                this.dom.ftResetBtn.addEventListener('click', () => {
-                    AudioMgr.stopEnd(); // 重置时停止播放
-                    this.clearInterval();
-                    this.state.mode = 'idle';
-                    this.state.timeLeft = this.state.freeTimerSetting;
-                    this.updateFreeTimerDisplay(this.state.timeLeft);
-                    this.dom.ftStartBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>开始</span>';
-                    this.dom.ftStartBtn.classList.remove('bg-amber-500');
-                    this.dom.ftStartBtn.classList.add('bg-slate-800');
-                });
-            },
-
-            confirmFreeTimer(total) {
-                if (total > 0) {
-                    this.state.freeTimerSetting = total;
-                    if (this.state.mode === 'timer_running' || this.state.mode === 'timer_paused') {
-                        this.clearInterval();
-                        this.state.mode = 'idle';
-                        this.state.timeLeft = total;
-                    }
-                    this.updateFreeTimerDisplay(total);
-                    this.dom.ftDisplay.classList.remove('hidden');
-                    this.dom.ftSetup.classList.add('hidden');
-                    this.dom.ftStartBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>开始</span>';
-                    this.dom.ftStartBtn.classList.remove('bg-amber-500');
-                    this.dom.ftStartBtn.classList.add('bg-slate-800');
-                } else {
-                    alert("请设置有效的时间");
-                }
-            },
-
-            runFreeTimer() {
-                // 启动自由计时前先清理旧的计时器，避免多个 interval 叠加
-                this.clearInterval();
-                AudioMgr.stopEnd(); // 重新开始计时，停止提示音
-                this.state.mode = 'timer_running';
-                WakeLockMgr.request(); // 计时器开始，请求常亮
-                this.dom.ftStartBtn.innerHTML = '<i class="fa-solid fa-pause"></i><span>暂停</span>';
-                this.dom.ftStartBtn.classList.remove('bg-slate-800');
-                this.dom.ftStartBtn.classList.add('bg-amber-500');
-
-                this.state.timerId = setInterval(() => {
-                    this.state.timeLeft--;
-                    this.updateFreeTimerDisplay(this.state.timeLeft);
-
-                    if (this.state.timeLeft <= 0) {
-                        this.clearInterval();
-                        this.state.mode = 'idle';
-                        WakeLockMgr.release(); // 计时器结束，释放锁
-                        AudioMgr.playEnd();
-                        this.dom.ftStartBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>开始</span>';
-                        this.dom.ftStartBtn.classList.remove('bg-amber-500');
-                        this.dom.ftStartBtn.classList.add('bg-slate-800');
-                    }
-                }, 1000);
-            },
-
-            pauseFreeTimer() {
-                this.clearInterval();
-                this.state.mode = 'timer_paused';
-                WakeLockMgr.release(); // 暂停时释放锁
-                this.dom.ftStartBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>继续</span>';
-            },
-
-            updateFreeTimerDisplay(seconds) {
-                const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-                const s = (seconds % 60).toString().padStart(2, '0');
-                this.dom.ftDisplay.textContent = `${m}:${s}`;
-                document.title = seconds > 0 ? `${m}:${s} - 倒计时` : '智能健身助手 Pro';
-            },
-
-            // --- 自定义确认框 ---
-            confirm(title, message, onOk) {
-                this.dom.confirmTitle.textContent = title;
-                this.dom.confirmMsg.textContent = message;
-                this.dom.confirmModal.classList.remove('hidden');
-                this.dom.confirmModal.classList.add('flex');
-
-                // 强制触发重绘以运行动画
-                this.dom.confirmModal.offsetHeight;
-                this.dom.confirmModal.classList.add('active');
-
-                const cleanup = () => {
-                    this.dom.confirmModal.classList.remove('active');
-                    setTimeout(() => {
-                        this.dom.confirmModal.classList.add('hidden');
-                        this.dom.confirmModal.classList.remove('flex');
-                    }, 300);
-                };
-
-                this.dom.confirmOk.onclick = () => {
-                    cleanup();
-                    if (onOk) onOk();
-                };
-
-                this.dom.confirmCancel.onclick = cleanup;
-                this.dom.confirmBackdrop.onclick = cleanup;
-            },
-
-            prompt(title, message, defaultValue, onOk) {
-                this.dom.promptTitle.textContent = title;
-                this.dom.promptInput.placeholder = message;
-                this.dom.promptInput.value = defaultValue || '';
-                this.dom.promptModal.classList.remove('hidden');
-                this.dom.promptModal.classList.add('flex');
-
-                this.dom.promptModal.offsetHeight;
-                this.dom.promptModal.classList.add('active');
-
-                const cleanup = () => {
-                    this.dom.promptModal.classList.remove('active');
-                    setTimeout(() => {
-                        this.dom.promptModal.classList.add('hidden');
-                        this.dom.promptModal.classList.remove('flex');
-                    }, 300);
-                };
-
-                this.dom.promptOk.onclick = () => {
-                    const val = this.dom.promptInput.value;
-                    cleanup();
-                    if (onOk) onOk(val);
-                };
-
-                this.dom.promptCancel.onclick = cleanup;
-                this.dom.promptBackdrop.onclick = cleanup;
-
-                // 自动聚焦并选中
-                setTimeout(() => {
-                    this.dom.promptInput.focus();
-                    this.dom.promptInput.select();
-                }, 100);
-            },
-
-            // --- 辅助函数 ---
-            clearInterval() {
-                if (this.state.timerId) {
-                    clearInterval(this.state.timerId);
-                    this.state.timerId = null;
-                }
-            },
-
-            updateTimerDisplay(seconds) {
-                const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-                const s = (seconds % 60).toString().padStart(2, '0');
-                this.dom.timerDisplay.textContent = `${m}:${s}`;
-            },
-
-            setProgress(percent) {
-                const circle = this.dom.ringCircle;
-                const radius = circle.r.baseVal.value;
-                const circumference = radius * 2 * Math.PI;
-                const offset = circumference - (percent / 100) * circumference;
-                circle.style.strokeDashoffset = offset;
-            },
-
-            updateCounters() {
-                const plan = this.state.currentPlan;
-                if (!plan) return;
-
-                const currentEx = plan.exercises[this.state.currentExerciseIdx];
-                this.dom.setCounter.textContent = `${this.state.currentSet}/${currentEx.sets}`;
-                this.dom.exCounter.textContent = `${this.state.currentExerciseIdx + 1}/${plan.exercises.length}`;
-
-                // 按照“完成的组数”来计算整体进度，而不是只按动作数量
-                const totalSets = plan.exercises.reduce((sum, ex) => {
-                    return sum + (parseInt(ex.sets) || 0);
-                }, 0);
-
-                let finishedSetsBefore = 0;
-                for (let i = 0; i < this.state.currentExerciseIdx; i++) {
-                    finishedSetsBefore += parseInt(plan.exercises[i].sets) || 0;
-                }
-
-                // 当前动作中已经完成的组数（当前组正在进行，所以 -1）
-                const finishedInCurrent = Math.max(
-                    0,
-                    Math.min(this.state.currentSet - 1, parseInt(currentEx.sets) || 0)
+                  }
                 );
+              } else {
+                this.confirm('错误', '无效的文件格式', null);
+              }
+            } catch (err) {
+              this.confirm('错误', '解析文件失败: ' + err.message, null);
+            }
+          };
+          reader.readAsText(file);
+        },
 
-                const finishedTotal = finishedSetsBefore + finishedInCurrent;
-                const percent = totalSets > 0 ? (finishedTotal / totalSets) * 100 : 0;
-                this.dom.overallProgress.style.width = `${percent}%`;
-            },
+        // --- 路由与导航 ---
+        switchTab(targetId) {
+          // 更新 Tab 样式
+          this.dom.tabs.forEach(t => {
+            if (t.dataset.target === targetId) t.classList.add('tab-active', 'text-blue-600');
+            else t.classList.remove('tab-active', 'text-blue-600');
+          });
 
-            // --- 计划管理 (CRUD) ---
-            renderPlansList() {
-                const container = document.getElementById('plans-list');
-                container.innerHTML = '';
+          // 更新视图
+          this.dom.modes.forEach(m => {
+            if (m.id === targetId) m.classList.add('active');
+            else m.classList.remove('active');
+          });
+        },
 
-                if (this.data.plans.length === 0) {
-                    container.innerHTML = `<div class="text-center py-10 text-slate-400"><i class="fa-regular fa-clipboard text-4xl mb-3 opacity-50"></i><p>暂无训练计划，点击右上角添加</p></div>`;
-                    return;
-                }
+        // --- 核心逻辑：锻炼模式 ---
+        checkTodayPlan() {
+          // 安全检查
+          if (!this.dom.dayBadge) return;
 
-                this.data.plans.forEach(plan => {
-                    const el = document.createElement('div');
-                    el.className = 'bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow relative group';
-                    el.innerHTML = `
+          const daysMap = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+          const today = daysMap[new Date().getDay()];
+          this.dom.dayBadge.textContent = today;
+
+          // 查找今日计划
+          const todayPlan = this.data.plans.find(p => p.days.includes(today));
+
+          if (todayPlan) {
+            this.state.currentPlan = todayPlan;
+            this.resetWorkoutState();
+            this.dom.statusTitle.textContent = todayPlan.title;
+            this.dom.statusSubtitle.textContent = `共 ${todayPlan.exercises.length} 个动作，准备开始`;
+            this.dom.actionBtn.disabled = false;
+            this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>开始训练</span>';
+            this.dom.actionBtn.classList.remove('bg-slate-400', 'cursor-not-allowed');
+            this.dom.actionBtn.classList.add('bg-blue-600', 'shadow-lg');
+          } else {
+            this.state.currentPlan = null;
+            this.dom.statusTitle.textContent = '今天也是休息日';
+            this.dom.statusSubtitle.textContent = '好好放松，或者添加一个临时计划';
+            this.dom.actionBtn.disabled = true;
+            this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-bed"></i><span>暂无计划</span>';
+            this.dom.actionBtn.classList.add('bg-slate-400', 'cursor-not-allowed');
+            this.dom.actionBtn.classList.remove('bg-blue-600', 'shadow-lg');
+            this.resetWorkoutUI();
+          }
+        },
+
+        resetWorkoutState() {
+          this.clearInterval();
+          this.state.mode = 'idle';
+          this.state.currentExerciseIdx = 0;
+          this.state.currentSet = 1;
+          this.updateCounters();
+          this.setProgress(0);
+          this.dom.timerDisplay.textContent = '--:--';
+          this.dom.timerLabel.textContent = '待机中';
+          this.dom.mainCard.classList.remove(
+            'border-green-400',
+            'border-amber-400',
+            'border-blue-400',
+            'border-2'
+          );
+          this.dom.overallProgress.style.width = '0%';
+          if (this.dom.timerControls) this.dom.timerControls.classList.add('hidden'); // 隐藏微调按钮
+
+          // 重置按钮 UI
+          if (this.state.currentPlan) {
+            this.dom.statusTitle.textContent = this.state.currentPlan.title;
+            this.dom.statusSubtitle.textContent = `共 ${this.state.currentPlan.exercises.length} 个动作，准备开始`;
+            this.dom.actionBtn.disabled = false;
+            this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>开始训练</span>';
+            this.dom.actionBtn.className =
+              'col-span-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg shadow-lg shadow-blue-500/30 btn-click transition-all';
+          }
+
+          AudioMgr.stopEnd(); // 重置状态时停止播放
+          WakeLockMgr.release(); // 重置时释放锁
+        },
+
+        resetWorkoutUI() {
+          this.dom.timerDisplay.textContent = '--:--';
+          this.dom.setCounter.textContent = '-/-';
+          this.dom.exCounter.textContent = '-/-';
+          this.setProgress(0);
+          if (this.dom.timerControls) this.dom.timerControls.classList.add('hidden');
+        },
+
+        toggleWorkout() {
+          if (!this.state.currentPlan) return;
+
+          const plan = this.state.currentPlan;
+          const exercises = plan.exercises;
+          const currentEx = exercises[this.state.currentExerciseIdx];
+
+          if (this.state.mode === 'idle') {
+            // 开始第一个动作
+            this.startExercise(currentEx);
+          } else if (this.state.mode === 'workout_work') {
+            // 用户点击"完成"，进入休息
+            this.startRest(currentEx);
+          } else if (this.state.mode === 'workout_rest') {
+            // 用户想跳过休息
+            this.finishRest();
+          } else if (this.state.mode === 'workout_rest_end') {
+            // 休息结束提示页，点击进入下一组
+            this.finishRest();
+          }
+        },
+
+        startExercise(exercise) {
+          this.clearInterval();
+          this.state.mode = 'workout_work';
+          WakeLockMgr.request(); // 开始锻炼，请求常亮
+
+          // 更新UI
+          this.dom.statusTitle.textContent = exercise.name;
+          this.dom.statusSubtitle.textContent = `目标: ${exercise.reps}`;
+          this.dom.timerDisplay.textContent = '锻炼中';
+          this.dom.timerDisplay.classList.add('text-4xl');
+          this.dom.timerDisplay.classList.remove('text-6xl');
+          this.dom.timerLabel.textContent = '点击按钮完成本组';
+
+          // 按钮状态
+          this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-check"></i><span>完成本组</span>';
+          this.dom.actionBtn.className =
+            'col-span-4 bg-green-500 hover:bg-green-600 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg shadow-lg shadow-green-500/30 btn-click transition-all';
+
+          // 视觉反馈
+          this.dom.mainCard.classList.remove('border-amber-400', 'border-blue-400');
+          this.dom.mainCard.classList.add('border-2', 'border-green-400');
+          this.dom.ringCircle.classList.add('text-green-500');
+          this.dom.ringCircle.classList.remove('text-blue-600', 'text-amber-500');
+          this.setProgress(100); // 锻炼时圆环填满
+          this.dom.timerControls.classList.add('hidden'); // 隐藏微调按钮
+
+          this.updateCounters();
+        },
+
+        startRest(exercise) {
+          this.state.mode = 'workout_rest';
+          AudioMgr.stopEnd(); // 开始休息（即完成了上一组）时，停止提示音
+
+          const setsTotal = parseInt(exercise.sets) || 1;
+          const isLastSet = this.state.currentSet >= setsTotal;
+          const hasNextExercise =
+            this.state.currentExerciseIdx < this.state.currentPlan.exercises.length - 1;
+
+          // 组间休息时间与动作结束后的休息时间分开配置
+          const betweenRaw =
+            exercise.restBetweenSets !== undefined ? exercise.restBetweenSets : exercise.rest;
+          const afterRaw =
+            exercise.restAfterExercise !== undefined ? exercise.restAfterExercise : exercise.rest;
+          const betweenRest = parseInt(betweenRaw) || 60; // 默认 60 秒
+          const afterRest = parseInt(afterRaw) || 90; // 默认 90 秒（1 分 30 秒）
+
+          const restSeconds = isLastSet ? afterRest : betweenRest;
+
+          this.state.timeLeft = restSeconds;
+          this.state.totalDuration = restSeconds;
+
+          // 更新UI
+          this.dom.statusTitle.textContent = '休息一下';
+          if (!isLastSet) {
+            this.dom.statusSubtitle.textContent = `下一组: ${exercise.name}`;
+          } else if (hasNextExercise) {
+            this.dom.statusSubtitle.textContent = `准备下一个动作: ${this.state.currentPlan.exercises[this.state.currentExerciseIdx + 1].name}`;
+          } else {
+            this.dom.statusSubtitle.textContent = `本次训练已完成，稍作放松`;
+          }
+
+          this.dom.timerDisplay.classList.remove('text-4xl');
+          this.dom.timerDisplay.classList.add('text-6xl');
+          this.dom.timerLabel.textContent = '休息计时中';
+
+          // 按钮状态
+          this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-forward"></i><span>跳过休息</span>';
+          this.dom.actionBtn.className =
+            'col-span-4 bg-amber-500 hover:bg-amber-600 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg shadow-lg shadow-amber-500/30 btn-click transition-all';
+
+          // 视觉反馈
+          this.dom.mainCard.classList.remove('border-green-400', 'border-blue-400');
+          this.dom.mainCard.classList.add('border-2', 'border-amber-400');
+          this.dom.ringCircle.classList.add('text-amber-500');
+          this.dom.ringCircle.classList.remove('text-blue-600', 'text-green-500');
+
+          this.dom.timerControls.classList.remove('hidden'); // 显示微调按钮
+
+          // 启动倒计时
+          this.updateTimerDisplay(this.state.timeLeft);
+          this.state.timerId = setInterval(() => {
+            this.state.timeLeft--;
+            this.updateTimerDisplay(this.state.timeLeft);
+
+            const percent = (this.state.timeLeft / this.state.totalDuration) * 100;
+            this.setProgress(percent);
+
+            if (this.state.timeLeft <= 3 && this.state.timeLeft > 0) {
+              AudioMgr.playTick();
+            }
+
+            if (this.state.timeLeft <= 0) {
+              this.onRestEnd();
+            }
+          }, 1000);
+        },
+
+        onRestEnd() {
+          this.clearInterval();
+          this.state.mode = 'workout_rest_end';
+          AudioMgr.playEnd(); // 循环播放结束提示音
+
+          this.dom.statusTitle.textContent = '休息结束！';
+          this.dom.statusSubtitle.textContent = '准备好进行下一组了吗？';
+          this.dom.timerDisplay.textContent = '00:00';
+          this.dom.timerLabel.textContent = '点击下方按钮开始';
+
+          // 按钮改为绿色“开始下一组”
+          this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>开始下一组</span>';
+          this.dom.actionBtn.className =
+            'col-span-4 bg-green-500 hover:bg-green-600 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg shadow-lg shadow-green-500/30 btn-click transition-all';
+
+          // 视觉反馈优化
+          this.dom.mainCard.classList.remove('border-amber-400');
+          this.dom.mainCard.classList.add('border-2', 'border-blue-400');
+          this.dom.ringCircle.classList.remove('text-amber-500');
+          this.dom.ringCircle.classList.add('text-blue-600');
+          this.setProgress(100);
+
+          this.dom.timerControls.classList.add('hidden'); // 隐藏微调按钮
+        },
+
+        // 调整休息时间
+        adjustRestTime(seconds) {
+          if (this.state.mode !== 'workout_rest') return;
+
+          this.state.timeLeft += seconds;
+          if (this.state.timeLeft < 0) this.state.timeLeft = 0;
+
+          // 如果增加时间超过了原定总时间，更新总时间以保持进度条显示合理（可选）
+          if (this.state.timeLeft > this.state.totalDuration) {
+            this.state.totalDuration = this.state.timeLeft;
+          }
+
+          this.updateTimerDisplay(this.state.timeLeft);
+          const percent = (this.state.timeLeft / this.state.totalDuration) * 100;
+          this.setProgress(percent);
+        },
+
+        finishRest() {
+          this.clearInterval();
+          AudioMgr.stopEnd(); // 进入训练或下一组前停止音效
+          this.dom.timerControls.classList.add('hidden'); // 隐藏微调按钮
+
+          const plan = this.state.currentPlan;
+          const currentEx = plan.exercises[this.state.currentExerciseIdx];
+
+          // 逻辑判断：下一组 还是 下一个动作
+          if (this.state.currentSet < currentEx.sets) {
+            this.state.currentSet++;
+            this.startExercise(currentEx);
+          } else {
+            // 动作完成，检查是否还有下一个动作
+            if (this.state.currentExerciseIdx < plan.exercises.length - 1) {
+              this.state.currentExerciseIdx++;
+              this.state.currentSet = 1;
+              this.startExercise(plan.exercises[this.state.currentExerciseIdx]);
+            } else {
+              // 全部完成
+              this.finishWorkout();
+            }
+          }
+        },
+
+        finishWorkout() {
+          this.state.mode = 'idle';
+          WakeLockMgr.release(); // 训练结束，释放锁
+          this.dom.statusTitle.textContent = '训练完成！🎉';
+          this.dom.statusSubtitle.textContent = '你太棒了！休息一下吧';
+          this.dom.timerDisplay.textContent = 'DONE';
+          this.dom.timerLabel.textContent = '今日计划已结束';
+
+          this.dom.actionBtn.innerHTML =
+            '<i class="fa-solid fa-rotate-right"></i><span>再来一次</span>';
+          this.dom.actionBtn.className =
+            'col-span-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg shadow-lg shadow-blue-500/30 btn-click transition-all';
+
+          this.dom.mainCard.classList.remove('border-amber-400', 'border-green-400', 'border-2');
+          this.dom.ringCircle.classList.remove('text-amber-500', 'text-green-500');
+          this.dom.ringCircle.classList.add('text-blue-600');
+          this.dom.timerControls.classList.add('hidden');
+
+          this.dom.overallProgress.style.width = '100%';
+
+          // 简单的烟花效果（这里仅用重置状态代替）
+          this.state.currentExerciseIdx = 0;
+          this.state.currentSet = 1;
+        },
+
+        // --- 核心逻辑：自由计时 ---
+        initFreeTimer() {
+          this.dom.ftDisplay.addEventListener('click', () => {
+            // 锻炼模式进行中时，禁止打开自由计时设置，避免计时器冲突
+            if (this.state.mode === 'workout_work' || this.state.mode === 'workout_rest') {
+              alert('当前正在进行训练流程，请先结束或重置训练后再使用自由计时器。');
+              return;
+            }
+            // 允许在计时器运行时修改时间，会暂停计时器
+            if (this.state.mode === 'timer_running') {
+              this.pauseFreeTimer(); // 暂停计时器以便修改时间
+            }
+            this.dom.ftDisplay.classList.add('hidden');
+            this.dom.ftSetup.classList.remove('hidden');
+          });
+
+          this.dom.ftConfirmBtn.addEventListener('click', () => {
+            const min = parseInt(this.dom.ftMin.value) || 0;
+            const sec = parseInt(this.dom.ftSec.value) || 0;
+            const total = min * 60 + sec;
+            this.confirmFreeTimer(total);
+          });
+
+          // 快捷时间预设按钮
+          document.querySelectorAll('.ft-preset-btn').forEach(btn => {
+            btn.onclick = () => {
+              const seconds = parseInt(btn.dataset.time);
+              this.confirmFreeTimer(seconds);
+            };
+          });
+
+          this.dom.ftStartBtn.addEventListener('click', () => {
+            // 锻炼模式进行中时，禁止启动自由计时器，避免与训练倒计时共用同一个计时器
+            if (this.state.mode === 'workout_work' || this.state.mode === 'workout_rest') {
+              alert('当前正在进行训练流程，请先结束或重置训练后再使用自由计时器。');
+              return;
+            }
+            if (this.state.mode === 'timer_running') {
+              // 暂停
+              this.pauseFreeTimer();
+            } else if (this.state.mode === 'timer_paused') {
+              // 继续（使用当前 timeLeft，不重置）
+              this.runFreeTimer();
+            } else {
+              // 开始：始终使用最新的 freeTimerSetting
+              if (this.state.freeTimerSetting <= 0) {
+                // 如果没设置，默认打开设置
+                this.dom.ftDisplay.click();
+                return;
+              }
+              // 确保使用最新的设置值
+              this.state.timeLeft = this.state.freeTimerSetting;
+              this.runFreeTimer();
+            }
+          });
+
+          this.dom.ftResetBtn.addEventListener('click', () => {
+            AudioMgr.stopEnd(); // 重置时停止播放
+            this.clearInterval();
+            this.state.mode = 'idle';
+            this.state.timeLeft = this.state.freeTimerSetting;
+            this.updateFreeTimerDisplay(this.state.timeLeft);
+            this.dom.ftStartBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>开始</span>';
+            this.dom.ftStartBtn.classList.remove('bg-amber-500');
+            this.dom.ftStartBtn.classList.add('bg-slate-800');
+          });
+        },
+
+        confirmFreeTimer(total) {
+          if (total > 0) {
+            this.state.freeTimerSetting = total;
+            if (this.state.mode === 'timer_running' || this.state.mode === 'timer_paused') {
+              this.clearInterval();
+              this.state.mode = 'idle';
+              this.state.timeLeft = total;
+            }
+            this.updateFreeTimerDisplay(total);
+            this.dom.ftDisplay.classList.remove('hidden');
+            this.dom.ftSetup.classList.add('hidden');
+            this.dom.ftStartBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>开始</span>';
+            this.dom.ftStartBtn.classList.remove('bg-amber-500');
+            this.dom.ftStartBtn.classList.add('bg-slate-800');
+          } else {
+            alert('请设置有效的时间');
+          }
+        },
+
+        runFreeTimer() {
+          // 启动自由计时前先清理旧的计时器，避免多个 interval 叠加
+          this.clearInterval();
+          AudioMgr.stopEnd(); // 重新开始计时，停止提示音
+          this.state.mode = 'timer_running';
+          WakeLockMgr.request(); // 计时器开始，请求常亮
+          this.dom.ftStartBtn.innerHTML = '<i class="fa-solid fa-pause"></i><span>暂停</span>';
+          this.dom.ftStartBtn.classList.remove('bg-slate-800');
+          this.dom.ftStartBtn.classList.add('bg-amber-500');
+
+          this.state.timerId = setInterval(() => {
+            this.state.timeLeft--;
+            this.updateFreeTimerDisplay(this.state.timeLeft);
+
+            if (this.state.timeLeft <= 0) {
+              this.clearInterval();
+              this.state.mode = 'idle';
+              WakeLockMgr.release(); // 计时器结束，释放锁
+              AudioMgr.playEnd();
+              this.dom.ftStartBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>开始</span>';
+              this.dom.ftStartBtn.classList.remove('bg-amber-500');
+              this.dom.ftStartBtn.classList.add('bg-slate-800');
+            }
+          }, 1000);
+        },
+
+        pauseFreeTimer() {
+          this.clearInterval();
+          this.state.mode = 'timer_paused';
+          WakeLockMgr.release(); // 暂停时释放锁
+          this.dom.ftStartBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>继续</span>';
+        },
+
+        updateFreeTimerDisplay(seconds) {
+          const m = Math.floor(seconds / 60)
+            .toString()
+            .padStart(2, '0');
+          const s = (seconds % 60).toString().padStart(2, '0');
+          this.dom.ftDisplay.textContent = `${m}:${s}`;
+          document.title = seconds > 0 ? `${m}:${s} - 倒计时` : '智能健身助手 Pro';
+        },
+
+        // --- 自定义确认框 ---
+        confirm(title, message, onOk) {
+          this.dom.confirmTitle.textContent = title;
+          this.dom.confirmMsg.textContent = message;
+          this.dom.confirmModal.classList.remove('hidden');
+          this.dom.confirmModal.classList.add('flex');
+
+          // 强制触发重绘以运行动画
+          this.dom.confirmModal.offsetHeight;
+          this.dom.confirmModal.classList.add('active');
+
+          const cleanup = () => {
+            this.dom.confirmModal.classList.remove('active');
+            setTimeout(() => {
+              this.dom.confirmModal.classList.add('hidden');
+              this.dom.confirmModal.classList.remove('flex');
+            }, 300);
+          };
+
+          this.dom.confirmOk.onclick = () => {
+            cleanup();
+            if (onOk) onOk();
+          };
+
+          this.dom.confirmCancel.onclick = cleanup;
+          this.dom.confirmBackdrop.onclick = cleanup;
+        },
+
+        prompt(title, message, defaultValue, onOk) {
+          this.dom.promptTitle.textContent = title;
+          this.dom.promptInput.placeholder = message;
+          this.dom.promptInput.value = defaultValue || '';
+          this.dom.promptModal.classList.remove('hidden');
+          this.dom.promptModal.classList.add('flex');
+
+          this.dom.promptModal.offsetHeight;
+          this.dom.promptModal.classList.add('active');
+
+          const cleanup = () => {
+            this.dom.promptModal.classList.remove('active');
+            setTimeout(() => {
+              this.dom.promptModal.classList.add('hidden');
+              this.dom.promptModal.classList.remove('flex');
+            }, 300);
+          };
+
+          this.dom.promptOk.onclick = () => {
+            const val = this.dom.promptInput.value;
+            cleanup();
+            if (onOk) onOk(val);
+          };
+
+          this.dom.promptCancel.onclick = cleanup;
+          this.dom.promptBackdrop.onclick = cleanup;
+
+          // 自动聚焦并选中
+          setTimeout(() => {
+            this.dom.promptInput.focus();
+            this.dom.promptInput.select();
+          }, 100);
+        },
+
+        // --- 辅助函数 ---
+        clearInterval() {
+          if (this.state.timerId) {
+            clearInterval(this.state.timerId);
+            this.state.timerId = null;
+          }
+        },
+
+        updateTimerDisplay(seconds) {
+          const m = Math.floor(seconds / 60)
+            .toString()
+            .padStart(2, '0');
+          const s = (seconds % 60).toString().padStart(2, '0');
+          this.dom.timerDisplay.textContent = `${m}:${s}`;
+        },
+
+        setProgress(percent) {
+          const circle = this.dom.ringCircle;
+          const radius = circle.r.baseVal.value;
+          const circumference = radius * 2 * Math.PI;
+          const offset = circumference - (percent / 100) * circumference;
+          circle.style.strokeDashoffset = offset;
+        },
+
+        updateCounters() {
+          const plan = this.state.currentPlan;
+          if (!plan) return;
+
+          const currentEx = plan.exercises[this.state.currentExerciseIdx];
+          this.dom.setCounter.textContent = `${this.state.currentSet}/${currentEx.sets}`;
+          this.dom.exCounter.textContent = `${this.state.currentExerciseIdx + 1}/${plan.exercises.length}`;
+
+          // 按照“完成的组数”来计算整体进度，而不是只按动作数量
+          const totalSets = plan.exercises.reduce((sum, ex) => {
+            return sum + (parseInt(ex.sets) || 0);
+          }, 0);
+
+          let finishedSetsBefore = 0;
+          for (let i = 0; i < this.state.currentExerciseIdx; i++) {
+            finishedSetsBefore += parseInt(plan.exercises[i].sets) || 0;
+          }
+
+          // 当前动作中已经完成的组数（当前组正在进行，所以 -1）
+          const finishedInCurrent = Math.max(
+            0,
+            Math.min(this.state.currentSet - 1, parseInt(currentEx.sets) || 0)
+          );
+
+          const finishedTotal = finishedSetsBefore + finishedInCurrent;
+          const percent = totalSets > 0 ? (finishedTotal / totalSets) * 100 : 0;
+          this.dom.overallProgress.style.width = `${percent}%`;
+        },
+
+        // --- 计划管理 (CRUD) ---
+        renderPlansList() {
+          const container = document.getElementById('plans-list');
+          container.innerHTML = '';
+
+          if (this.data.plans.length === 0) {
+            container.innerHTML = `<div class="text-center py-10 text-slate-400"><i class="fa-regular fa-clipboard text-4xl mb-3 opacity-50"></i><p>暂无训练计划，点击右上角添加</p></div>`;
+            return;
+          }
+
+          this.data.plans.forEach(plan => {
+            const el = document.createElement('div');
+            el.className =
+              'bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow relative group';
+            el.innerHTML = `
                         <div class="flex justify-between items-start mb-3">
                             <div class="cursor-pointer flex-1" onclick="App.togglePlanCard(this)">
                                 <h3 class="font-bold text-lg text-slate-800 flex items-center">
@@ -1336,7 +1554,9 @@
                             </div>
                         </div>
                         <div class="space-y-2 hidden plan-exercises overflow-hidden transition-all duration-300">
-                            ${plan.exercises.map(ex => `
+                            ${plan.exercises
+                              .map(
+                                ex => `
                                 <div class="flex justify-between text-sm text-slate-600 bg-slate-50 p-2 rounded-lg">
                                     <span class="font-medium">${ex.name}</span>
                                     <div class="flex gap-3 text-xs text-slate-400">
@@ -1344,100 +1564,108 @@
                                         <span><i class="fa-solid fa-rotate mr-1"></i>${ex.reps}</span>
                                     </div>
                                 </div>
-                            `).join('')}
+                            `
+                              )
+                              .join('')}
                         </div>
                     `;
-                    container.appendChild(el);
-                });
-            },
+            container.appendChild(el);
+          });
+        },
 
-            togglePlanCard(headerEl) {
-                const card = headerEl.closest('.group');
-                const content = card.querySelector('.plan-exercises');
-                const icon = headerEl.querySelector('.fa-chevron-down');
-                content.classList.toggle('hidden');
-                icon.classList.toggle('rotate-180');
-            },
+        togglePlanCard(headerEl) {
+          const card = headerEl.closest('.group');
+          const content = card.querySelector('.plan-exercises');
+          const icon = headerEl.querySelector('.fa-chevron-down');
+          content.classList.toggle('hidden');
+          icon.classList.toggle('rotate-180');
+        },
 
-            openModal(planId = null) {
-                this.dom.modal.classList.remove('hidden');
-                setTimeout(() => {
-                    this.dom.modalBackdrop.classList.remove('opacity-0');
-                    this.dom.modalPanel.classList.remove('translate-y-full');
-                }, 10);
+        openModal(planId = null) {
+          this.dom.modal.classList.remove('hidden');
+          setTimeout(() => {
+            this.dom.modalBackdrop.classList.remove('opacity-0');
+            this.dom.modalPanel.classList.remove('translate-y-full');
+          }, 10);
 
-                // 重置表单
-                this.dom.planForm.reset();
-                this.dom.planForm.querySelector('input[name="planId"]').value = '';
-                document.getElementById('exercises-list').innerHTML = '';
+          // 重置表单
+          this.dom.planForm.reset();
+          this.dom.planForm.querySelector('input[name="planId"]').value = '';
+          document.getElementById('exercises-list').innerHTML = '';
 
-                // 生成星期选择器
-                const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
-                const dayContainer = document.getElementById('day-selector');
-                dayContainer.innerHTML = days.map(d => `
+          // 生成星期选择器
+          const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+          const dayContainer = document.getElementById('day-selector');
+          dayContainer.innerHTML = days
+            .map(
+              d => `
                     <button type="button" class="day-btn w-9 h-9 rounded-full text-xs font-bold border border-slate-200 text-slate-400 hover:border-blue-500 transition-colors" data-day="${d}">${d.replace('周', '')}</button>
-                `).join('');
+                `
+            )
+            .join('');
 
-                if (planId) {
-                    document.getElementById('modal-title').textContent = "编辑计划";
-                    const plan = this.data.plans.find(p => p.id === planId);
-                    if (plan) {
-                        this.dom.planForm.querySelector('input[name="planId"]').value = plan.id;
-                        this.dom.planForm.querySelector('input[name="title"]').value = plan.title;
+          if (planId) {
+            document.getElementById('modal-title').textContent = '编辑计划';
+            const plan = this.data.plans.find(p => p.id === planId);
+            if (plan) {
+              this.dom.planForm.querySelector('input[name="planId"]').value = plan.id;
+              this.dom.planForm.querySelector('input[name="title"]').value = plan.title;
 
-                        // 填充星期
-                        plan.days.forEach(d => {
-                            const btn = dayContainer.querySelector(`[data-day="${d}"]`);
-                            if (btn) this.toggleDayBtn(btn, true);
-                        });
+              // 填充星期
+              plan.days.forEach(d => {
+                const btn = dayContainer.querySelector(`[data-day="${d}"]`);
+                if (btn) this.toggleDayBtn(btn, true);
+              });
 
-                        // 填充动作
-                        plan.exercises.forEach(ex => this.addExerciseRow(ex));
-                    }
-                } else {
-                    document.getElementById('modal-title').textContent = "新建计划";
-                    this.addExerciseRow(); // 默认加一行
-                }
+              // 填充动作
+              plan.exercises.forEach(ex => this.addExerciseRow(ex));
+            }
+          } else {
+            document.getElementById('modal-title').textContent = '新建计划';
+            this.addExerciseRow(); // 默认加一行
+          }
 
-                // 绑定星期点击事件
-                dayContainer.querySelectorAll('.day-btn').forEach(btn => {
-                    btn.onclick = () => this.toggleDayBtn(btn);
-                });
-            },
+          // 绑定星期点击事件
+          dayContainer.querySelectorAll('.day-btn').forEach(btn => {
+            btn.onclick = () => this.toggleDayBtn(btn);
+          });
+        },
 
-            closeModal() {
-                this.dom.modalBackdrop.classList.add('opacity-0');
-                this.dom.modalPanel.classList.add('translate-y-full');
-                setTimeout(() => {
-                    this.dom.modal.classList.add('hidden');
-                }, 300);
-            },
+        closeModal() {
+          this.dom.modalBackdrop.classList.add('opacity-0');
+          this.dom.modalPanel.classList.add('translate-y-full');
+          setTimeout(() => {
+            this.dom.modal.classList.add('hidden');
+          }, 300);
+        },
 
-            toggleDayBtn(btn, forceSelect = false) {
-                if (forceSelect || !btn.classList.contains('bg-blue-600')) {
-                    btn.classList.add('bg-blue-600', 'text-white', 'border-transparent');
-                    btn.classList.remove('text-slate-400', 'border-slate-200');
-                } else {
-                    btn.classList.remove('bg-blue-600', 'text-white', 'border-transparent');
-                    btn.classList.add('text-slate-400', 'border-slate-200');
-                }
-                this.updateSelectedDays();
-            },
+        toggleDayBtn(btn, forceSelect = false) {
+          if (forceSelect || !btn.classList.contains('bg-blue-600')) {
+            btn.classList.add('bg-blue-600', 'text-white', 'border-transparent');
+            btn.classList.remove('text-slate-400', 'border-slate-200');
+          } else {
+            btn.classList.remove('bg-blue-600', 'text-white', 'border-transparent');
+            btn.classList.add('text-slate-400', 'border-slate-200');
+          }
+          this.updateSelectedDays();
+        },
 
-            updateSelectedDays() {
-                const selected = Array.from(document.querySelectorAll('.day-btn.bg-blue-600')).map(b => b.dataset.day);
-                document.getElementById('selected-days-input').value = JSON.stringify(selected);
-            },
+        updateSelectedDays() {
+          const selected = Array.from(document.querySelectorAll('.day-btn.bg-blue-600')).map(
+            b => b.dataset.day
+          );
+          document.getElementById('selected-days-input').value = JSON.stringify(selected);
+        },
 
-            addExerciseRow(data = null) {
-                const container = document.getElementById('exercises-list');
-                const div = document.createElement('div');
-                div.className = 'grid grid-cols-12 gap-2 items-start animate-[fadeIn_0.3s_ease-out]';
+        addExerciseRow(data = null) {
+          const container = document.getElementById('exercises-list');
+          const div = document.createElement('div');
+          div.className = 'grid grid-cols-12 gap-2 items-start animate-[fadeIn_0.3s_ease-out]';
 
-                const restBetween = data ? (data.restBetweenSets ?? data.rest ?? 60) : 60;
-                const restAfter = data ? (data.restAfterExercise ?? data.rest ?? 90) : 90;
+          const restBetween = data ? (data.restBetweenSets ?? data.rest ?? 60) : 60;
+          const restAfter = data ? (data.restAfterExercise ?? data.rest ?? 90) : 90;
 
-                div.innerHTML = `
+          div.innerHTML = `
                     <div class="col-span-3">
                         <input type="text" class="w-full bg-slate-50 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 outline-none" placeholder="动作名称" value="${data ? data.name : ''}" required name="ex_name">
                     </div>
@@ -1457,205 +1685,214 @@
                         <button type="button" class="text-slate-300 hover:text-red-500" onclick="this.parentElement.parentElement.remove()"><i class="fa-solid fa-minus-circle"></i></button>
                     </div>
                 `;
-                container.appendChild(div);
-            },
+          container.appendChild(div);
+        },
 
-            editPlan(id) {
-                this.openModal(id);
-            },
+        editPlan(id) {
+          this.openModal(id);
+        },
 
-            deletePlan(id) {
-                this.confirm("删除计划", "确定删除该计划吗？", () => {
-                    this.data.plans = this.data.plans.filter(p => p.id !== id);
-                    this.saveData();
-                });
-            },
+        deletePlan(id) {
+          this.confirm('删除计划', '确定删除该计划吗？', () => {
+            this.data.plans = this.data.plans.filter(p => p.id !== id);
+            this.saveData();
+          });
+        },
 
-            savePlanFromForm() {
-                const form = this.dom.planForm;
-                const formData = new FormData(form);
-                const title = formData.get('title');
-                const daysStr = formData.get('days');
-                const days = daysStr ? JSON.parse(daysStr) : [];
-                const planId = formData.get('planId');
+        savePlanFromForm() {
+          const form = this.dom.planForm;
+          const formData = new FormData(form);
+          const title = formData.get('title');
+          const daysStr = formData.get('days');
+          const days = daysStr ? JSON.parse(daysStr) : [];
+          const planId = formData.get('planId');
 
-                if (days.length === 0) {
-                    alert("请至少选择一天");
-                    return;
-                }
+          if (days.length === 0) {
+            alert('请至少选择一天');
+            return;
+          }
 
-                // 收集动作数据
-                const exercises = [];
-                const names = form.querySelectorAll('input[name="ex_name"]');
-                const sets = form.querySelectorAll('input[name="ex_sets"]');
-                const reps = form.querySelectorAll('input[name="ex_reps"]');
-                const restsBetween = form.querySelectorAll('input[name="ex_rest_between"]');
-                const restsAfter = form.querySelectorAll('input[name="ex_rest_after"]');
+          // 收集动作数据
+          const exercises = [];
+          const names = form.querySelectorAll('input[name="ex_name"]');
+          const sets = form.querySelectorAll('input[name="ex_sets"]');
+          const reps = form.querySelectorAll('input[name="ex_reps"]');
+          const restsBetween = form.querySelectorAll('input[name="ex_rest_between"]');
+          const restsAfter = form.querySelectorAll('input[name="ex_rest_after"]');
 
-                for (let i = 0; i < names.length; i++) {
-                    if (names[i].value.trim()) {
-                        exercises.push({
-                            name: names[i].value.trim(),
-                            sets: parseInt(sets[i].value) || 1,
-                            reps: reps[i].value || '10',
-                            restBetweenSets: parseInt(restsBetween[i].value) || 60,
-                            restAfterExercise: parseInt(restsAfter[i].value) || 90
-                        });
-                    }
-                }
-
-                if (exercises.length === 0) {
-                    alert("请至少添加一个动作");
-                    return;
-                }
-
-                const newPlan = {
-                    id: planId || Date.now().toString(),
-                    title,
-                    days,
-                    exercises
-                };
-
-                if (planId) {
-                    const idx = this.data.plans.findIndex(p => p.id === planId);
-                    if (idx !== -1) this.data.plans[idx] = newPlan;
-                } else {
-                    this.data.plans.push(newPlan);
-                }
-
-                this.saveData();
-                this.closeModal();
-            },
-
-            // --- 事件绑定 ---
-            bindEvents() {
-                // Tab 切换
-                this.dom.tabs.forEach(tab => {
-                    tab.addEventListener('click', () => this.switchTab(tab.dataset.target));
-                });
-
-                // 锻炼控制
-                this.dom.actionBtn.addEventListener('click', () => this.toggleWorkout());
-                this.dom.resetBtn.addEventListener('click', () => {
-                    this.confirm("确认重置", "确定要重置当前训练进度吗？", () => {
-                        this.resetWorkoutState();
-                    });
-                });
-
-                // 声音开关
-                document.getElementById('sound-toggle').addEventListener('click', (e) => {
-                    const enabled = AudioMgr.toggle();
-                    e.currentTarget.innerHTML = enabled ? '<i class="fa-solid fa-volume-high text-sm"></i>' : '<i class="fa-solid fa-volume-xmark text-sm"></i>';
-                    e.currentTarget.classList.toggle('text-slate-400', !enabled);
-                    e.currentTarget.classList.toggle('text-blue-600', enabled);
-                });
-
-                // 自由计时器
-                this.initFreeTimer();
-
-                // 计划管理
-                document.getElementById('add-plan-btn').addEventListener('click', () => this.openModal());
-                document.querySelector('.modal-close').addEventListener('click', () => this.closeModal());
-                document.getElementById('modal-save-btn').addEventListener('click', () => this.savePlanFromForm());
-                document.getElementById('add-exercise-btn').addEventListener('click', () => this.addExerciseRow());
-                document.getElementById('clear-all-plans').addEventListener('click', () => {
-                    this.confirm("清空计划", "确定清空所有计划吗？这将无法恢复。", () => {
-                        this.data.plans = [];
-                        this.saveData();
-                    });
-                });
-
-                // 休息时间微调按钮事件
-                this.dom.timerControls.querySelectorAll('button').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const adjust = parseInt(btn.dataset.adjust);
-                        this.adjustRestTime(adjust);
-                    });
-                });
-
-                // 第三方 App 跳转
-                document.getElementById('launch-music-btn').addEventListener('click', () => {
-                    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-                    if (isMobile) {
-                        // 移动端尝试使用 orpheus:// (iOS/Android 通用)
-                        window.location.href = 'orpheus://';
-                    } else {
-                        // PC 端尝试使用 neteasemusic://
-                        window.location.href = 'neteasemusic://';
-                    }
-
-                    // 简单的 Fallback 提示 (因为无法准确检测是否安装)
-                    setTimeout(() => {
-                        console.log("尝试打开网易云音乐");
-                    }, 1000);
-                });
-
-                // 导入导出
-                document.getElementById('export-plans-btn').addEventListener('click', () => this.exportData());
-                document.getElementById('import-plans-btn').addEventListener('click', () => {
-                    document.getElementById('import-file-input').click();
-                });
-                document.getElementById('import-file-input').addEventListener('change', (e) => {
-                    this.importData(e.target.files[0]);
-                    e.target.value = ''; // 重置以触发同名文件导入
-                });
-
-                // 键盘快捷键：
-                // - 锻炼模式：空格 完成/跳过，R 重置锻炼进度
-                // - 自由计时模式：R 重置自由计时器（触发 ft-reset-btn）
-                document.addEventListener('keydown', (e) => {
-                    const isSpace = (e.code === 'Space' || e.key === ' ');
-                    const isR = (e.code === 'KeyR' || e.key === 'r' || e.key === 'R');
-                    if (!isSpace && !isR) return;
-
-                    // 输入框/文本域/可编辑区域中输入时不拦截
-                    const target = e.target;
-                    const tag = target.tagName;
-                    if (tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable) {
-                        return;
-                    }
-
-                    // 根据当前 Tab 决定快捷键行为
-                    const activeTab = document.querySelector('.nav-tab.tab-active');
-                    if (!activeTab) return;
-
-                    const targetId = activeTab.dataset.target;
-
-                    if (targetId === 'workout-mode') {
-                        if (isSpace) {
-                            // 没有计划或按钮被禁用时不处理
-                            if (!this.state.currentPlan || this.dom.actionBtn.disabled) return;
-
-                            // 阻止页面滚动，并模拟点击主按钮
-                            e.preventDefault();
-                            this.dom.actionBtn.click();
-
-                            // 轻微动效反馈
-                            this.dom.actionBtn.classList.add('btn-bounce');
-                            setTimeout(() => {
-                                this.dom.actionBtn.classList.remove('btn-bounce');
-                            }, 200);
-                        } else if (isR) {
-                            // R 键触发锻炼模式的重置按钮
-                            e.preventDefault();
-                            this.dom.resetBtn.click();
-                        }
-                    } else if (targetId === 'timer-mode' && isR) {
-                        // R 键在“自由计时”模式下触发自由计时器重置按钮（ft-reset-btn）
-                        e.preventDefault();
-                        this.dom.ftResetBtn.click();
-                    }
-                });
+          for (let i = 0; i < names.length; i++) {
+            if (names[i].value.trim()) {
+              exercises.push({
+                name: names[i].value.trim(),
+                sets: parseInt(sets[i].value) || 1,
+                reps: reps[i].value || '10',
+                restBetweenSets: parseInt(restsBetween[i].value) || 60,
+                restAfterExercise: parseInt(restsAfter[i].value) || 90
+              });
             }
-        };
+          }
 
-        // 启动应用
-        document.addEventListener('DOMContentLoaded', () => {
-            App.init();
-        });
+          if (exercises.length === 0) {
+            alert('请至少添加一个动作');
+            return;
+          }
+
+          const newPlan = {
+            id: planId || Date.now().toString(),
+            title,
+            days,
+            exercises
+          };
+
+          if (planId) {
+            const idx = this.data.plans.findIndex(p => p.id === planId);
+            if (idx !== -1) this.data.plans[idx] = newPlan;
+          } else {
+            this.data.plans.push(newPlan);
+          }
+
+          this.saveData();
+          this.closeModal();
+        },
+
+        // --- 事件绑定 ---
+        bindEvents() {
+          // Tab 切换
+          this.dom.tabs.forEach(tab => {
+            tab.addEventListener('click', () => this.switchTab(tab.dataset.target));
+          });
+
+          // 锻炼控制
+          this.dom.actionBtn.addEventListener('click', () => this.toggleWorkout());
+          this.dom.resetBtn.addEventListener('click', () => {
+            this.confirm('确认重置', '确定要重置当前训练进度吗？', () => {
+              this.resetWorkoutState();
+            });
+          });
+
+          // 声音开关
+          document.getElementById('sound-toggle').addEventListener('click', e => {
+            const enabled = AudioMgr.toggle();
+            e.currentTarget.innerHTML = enabled
+              ? '<i class="fa-solid fa-volume-high text-sm"></i>'
+              : '<i class="fa-solid fa-volume-xmark text-sm"></i>';
+            e.currentTarget.classList.toggle('text-slate-400', !enabled);
+            e.currentTarget.classList.toggle('text-blue-600', enabled);
+          });
+
+          // 自由计时器
+          this.initFreeTimer();
+
+          // 计划管理
+          document.getElementById('add-plan-btn').addEventListener('click', () => this.openModal());
+          document.querySelector('.modal-close').addEventListener('click', () => this.closeModal());
+          document
+            .getElementById('modal-save-btn')
+            .addEventListener('click', () => this.savePlanFromForm());
+          document
+            .getElementById('add-exercise-btn')
+            .addEventListener('click', () => this.addExerciseRow());
+          document.getElementById('clear-all-plans').addEventListener('click', () => {
+            this.confirm('清空计划', '确定清空所有计划吗？这将无法恢复。', () => {
+              this.data.plans = [];
+              this.saveData();
+            });
+          });
+
+          // 休息时间微调按钮事件
+          this.dom.timerControls.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', e => {
+              e.stopPropagation();
+              const adjust = parseInt(btn.dataset.adjust);
+              this.adjustRestTime(adjust);
+            });
+          });
+
+          // 第三方 App 跳转
+          document.getElementById('launch-music-btn').addEventListener('click', () => {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+              navigator.userAgent
+            );
+
+            if (isMobile) {
+              // 移动端尝试使用 orpheus:// (iOS/Android 通用)
+              window.location.href = 'orpheus://';
+            } else {
+              // PC 端尝试使用 neteasemusic://
+              window.location.href = 'neteasemusic://';
+            }
+
+            // 简单的 Fallback 提示 (因为无法准确检测是否安装)
+            setTimeout(() => {
+              console.log('尝试打开网易云音乐');
+            }, 1000);
+          });
+
+          // 导入导出
+          document
+            .getElementById('export-plans-btn')
+            .addEventListener('click', () => this.exportData());
+          document.getElementById('import-plans-btn').addEventListener('click', () => {
+            document.getElementById('import-file-input').click();
+          });
+          document.getElementById('import-file-input').addEventListener('change', e => {
+            this.importData(e.target.files[0]);
+            e.target.value = ''; // 重置以触发同名文件导入
+          });
+
+          // 键盘快捷键：
+          // - 锻炼模式：空格 完成/跳过，R 重置锻炼进度
+          // - 自由计时模式：R 重置自由计时器（触发 ft-reset-btn）
+          document.addEventListener('keydown', e => {
+            const isSpace = e.code === 'Space' || e.key === ' ';
+            const isR = e.code === 'KeyR' || e.key === 'r' || e.key === 'R';
+            if (!isSpace && !isR) return;
+
+            // 输入框/文本域/可编辑区域中输入时不拦截
+            const target = e.target;
+            const tag = target.tagName;
+            if (tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable) {
+              return;
+            }
+
+            // 根据当前 Tab 决定快捷键行为
+            const activeTab = document.querySelector('.nav-tab.tab-active');
+            if (!activeTab) return;
+
+            const targetId = activeTab.dataset.target;
+
+            if (targetId === 'workout-mode') {
+              if (isSpace) {
+                // 没有计划或按钮被禁用时不处理
+                if (!this.state.currentPlan || this.dom.actionBtn.disabled) return;
+
+                // 阻止页面滚动，并模拟点击主按钮
+                e.preventDefault();
+                this.dom.actionBtn.click();
+
+                // 轻微动效反馈
+                this.dom.actionBtn.classList.add('btn-bounce');
+                setTimeout(() => {
+                  this.dom.actionBtn.classList.remove('btn-bounce');
+                }, 200);
+              } else if (isR) {
+                // R 键触发锻炼模式的重置按钮
+                e.preventDefault();
+                this.dom.resetBtn.click();
+              }
+            } else if (targetId === 'timer-mode' && isR) {
+              // R 键在“自由计时”模式下触发自由计时器重置按钮（ft-reset-btn）
+              e.preventDefault();
+              this.dom.ftResetBtn.click();
+            }
+          });
+        }
+      };
+
+      // 启动应用
+      document.addEventListener('DOMContentLoaded', () => {
+        App.init();
+      });
     </script>
-</body>
-
+  </body>
 </html>
