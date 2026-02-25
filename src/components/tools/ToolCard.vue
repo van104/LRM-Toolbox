@@ -40,8 +40,18 @@
       <!-- 主体内容 Body -->
       <div class="card-body">
         <div class="body-accent" :class="getRandomColorClass(tool.id)"></div>
-        <h3 class="brutal-card-title">{{ tool.name }}</h3>
-        <p class="brutal-card-summary">{{ tool.summary }}</p>
+        <div class="card-body-content">
+          <div class="card-body-text">
+            <h3 class="brutal-card-title">{{ tool.name }}</h3>
+            <p class="brutal-card-summary">{{ tool.summary }}</p>
+          </div>
+          <div class="card-body-deco" :class="getRandomColorClass(tool.id) + '-deco'">
+            <img v-if="tool.customIcon" :src="tool.customIcon" class="deco-icon custom" alt="" />
+            <el-icon v-else class="deco-icon">
+              <component :is="tool.icon" />
+            </el-icon>
+          </div>
+        </div>
       </div>
 
       <!-- 底部标签栏 Footer -->
@@ -244,6 +254,66 @@
     width: 5px;
   }
 
+  .card-body-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+  }
+
+  .card-body-text {
+    flex: 1;
+    min-width: 0;
+    z-index: 1;
+  }
+
+  /* 右侧装饰图标 */
+  .card-body-deco {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #111;
+    box-shadow: 3px 3px 0px #111;
+    opacity: 0.65;
+    transition: all 0.2s ease;
+    transform: rotate(-6deg);
+  }
+
+  .card-body-deco .deco-icon {
+    font-size: 28px;
+    color: #111;
+  }
+
+  .card-body-deco .deco-icon.custom {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    filter: brightness(0);
+  }
+
+  /* 装饰图标的颜色变体 */
+  .bg-yellow-deco {
+    background: #ffeba0;
+  }
+  .bg-blue-deco {
+    background: #89b4f8;
+  }
+  .bg-pink-deco {
+    background: #ff9fb2;
+  }
+  .bg-green-deco {
+    background: #81e6b3;
+  }
+
+  .brutal-card:hover .card-body-deco {
+    opacity: 1;
+    transform: rotate(0deg) scale(1.1);
+    box-shadow: 4px 4px 0px #111;
+  }
+
   .brutal-card-title {
     font-family: 'Syne', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', 'Heiti SC', sans-serif;
     font-size: 1.2rem;
@@ -421,6 +491,35 @@
   }
   [data-theme='dark'] .brutal-card-summary {
     color: #aaa;
+  }
+
+  /* Dark Mode 装饰图标 */
+  [data-theme='dark'] .card-body-deco {
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+    opacity: 0.5;
+  }
+  [data-theme='dark'] .card-body-deco .deco-icon {
+    color: #eee;
+  }
+  [data-theme='dark'] .card-body-deco .deco-icon.custom {
+    filter: brightness(0) invert(1);
+  }
+  [data-theme='dark'] .brutal-card:hover .card-body-deco {
+    opacity: 0.85;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .bg-yellow-deco {
+    background: #a98d36;
+  }
+  [data-theme='dark'] .bg-blue-deco {
+    background: #405d9e;
+  }
+  [data-theme='dark'] .bg-pink-deco {
+    background: #b25465;
+  }
+  [data-theme='dark'] .bg-green-deco {
+    background: #3c9165;
   }
 
   [data-theme='dark'] .brutal-tag {

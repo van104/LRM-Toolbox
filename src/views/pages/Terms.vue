@@ -8,11 +8,15 @@
 
     <main class="brutal-page-content">
       <h1 class="brutal-page-title">服务条款</h1>
-      <div class="update-stamp">最后更新时间：2026年1月29日</div>
+      <div class="update-stamp">最后更新时间：2026年2月25日</div>
 
       <section class="brutal-content-section bg-yellow">
         <h2 class="section-title">1. 服务说明</h2>
-        <p>LRM工具箱（以下简称"本站"）是一个免费的在线工具服务平台，为用户提供各类实用工具。</p>
+        <p>
+          LRM工具箱（以下简称"本站"）是一个免费、开源的在线工具集合平台，为用户提供涵盖开发运维、文本处理、图片视频、PDF
+          处理、设计辅助、金融理财、健康运动、生活常用、教育学习、趣味玩法等10大类别共 255+
+          种实用工具。
+        </p>
         <p>本站保留随时修改、中断或终止部分或全部服务的权利，无需事先通知。</p>
       </section>
 
@@ -24,34 +28,51 @@
           <li>不得利用本站工具从事任何违法活动</li>
           <li>不得对本站进行恶意攻击或干扰</li>
           <li>不得滥用本站资源影响其他用户正常使用</li>
+          <li>不得利用本站工具生成或传播违规内容</li>
         </ul>
       </section>
 
       <section class="brutal-content-section bg-pink text-white">
         <h2 class="section-title variant-light">3. 知识产权</h2>
         <p>本站的所有内容，包括但不限于文字、图片、代码、界面设计等，均受知识产权法保护。</p>
-        <p>未经许可，不得复制、修改、传播本站内容用于商业目的。</p>
+        <p>
+          本站项目代码基于开源协议在 GitHub 发布，您可以依据相关开源协议的条款使用、修改和分发代码。
+        </p>
+        <p>未经许可，不得将本站品牌标识、界面设计等用于商业目的或误导性用途。</p>
       </section>
 
       <section class="brutal-content-section bg-green">
         <h2 class="section-title">4. 免责声明</h2>
         <ul>
           <li>本站工具按"现状"提供，不保证完全准确或适合特定用途</li>
+          <li>涉及健康、财务类工具的计算结果仅供参考，不构成任何专业医疗或财务建议</li>
           <li>对于使用本站工具产生的任何直接或间接损失，本站不承担责任</li>
-          <li>本站不对第三方链接的内容负责</li>
+          <li>本站不对第三方链接或外部资源的内容负责</li>
+          <li>因网络传输、系统故障等不可抗力导致的数据丢失，本站不承担责任</li>
         </ul>
       </section>
 
       <section class="brutal-content-section">
-        <h2 class="section-title">5. 条款修改</h2>
+        <h2 class="section-title">5. 用户数据</h2>
+        <p>本站大部分工具完全在浏览器端运行，您处理的数据不会上传至服务器。</p>
+        <p>您在本站产生的收藏、历史记录等偏好数据仅存储在您的浏览器本地，本站无法访问。</p>
         <p>
-          本站保留随时修改本服务条款的权利。修改后的条款将在本页面公布，继续使用本站服务即表示您接受修改后的条款。
+          详细的数据处理方式请参阅我们的<router-link to="/privacy" class="brutal-inline-link"
+            >隐私政策</router-link
+          >。
         </p>
       </section>
 
       <section class="brutal-content-section bg-yellow">
-        <h2 class="section-title">6. 联系方式</h2>
-        <p>如对本服务条款有任何疑问，请直接联系网站管理员。</p>
+        <h2 class="section-title">6. 条款修改与联系</h2>
+        <p>
+          本站保留随时修改本服务条款的权利。修改后的条款将在本页面公布，继续使用本站服务即表示您接受修改后的条款。
+        </p>
+        <p>如对本服务条款有任何疑问，请通过以下方式联系：</p>
+        <ul>
+          <li>邮箱：powelabraham67@gmail.com</li>
+          <li>GitHub Issues：github.com/van104/LRM-Toolbox/issues</li>
+        </ul>
       </section>
     </main>
   </div>
@@ -233,6 +254,22 @@
     padding: 2rem;
     border-top: 4px dashed #111;
     margin-top: 3rem;
+  }
+
+  .brutal-inline-link {
+    color: inherit;
+    background: #111;
+    color: #fff;
+    padding: 2px 8px;
+    font-weight: bold;
+    border: 2px solid #111;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .brutal-inline-link:hover {
+    background: #4b7bff;
+    box-shadow: 3px 3px 0px #111;
   }
 
   /* --- Dark Mode Overrides --- */

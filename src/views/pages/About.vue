@@ -15,7 +15,8 @@
           LRM工具箱是一个免费、开源的实用工具集合网站，旨在为开发者和日常用户提供便捷高效的在线执行工具终端。
         </p>
         <p>
-          我们的目标是让每个人都能快速调用所需的模块集，无需下载安装，唤醒浏览器即可进入工作状态。
+          目前已上线 <strong>255+</strong> 款工具，覆盖
+          <strong>10 大分类</strong>，无需下载安装，唤醒浏览器即可进入工作状态。
         </p>
       </section>
 
@@ -33,16 +34,35 @@
       <section class="brutal-content-section bg-blue text-white">
         <h2 class="section-title variant-light">02 // 核心总线</h2>
         <ul>
-          <li><strong>[DEV] 开发工具</strong> - JSON 格式化、正则测试、颜色选择等链路</li>
-          <li><strong>[CODE] 编码引擎</strong> - Base64 封包、URL 编解码、MD5 加密</li>
-          <li><strong>[IMG] 图形处理</strong> - 图片压缩、二维码生成控制台</li>
-          <li><strong>[TXT] 文本模块</strong> - 文本对比、Markdown 渲染解析</li>
-          <li><strong>[CALC] 数值计算</strong> - 时间戳与各类函数标定</li>
+          <li>
+            <strong>[DEV] 开发运维</strong> — JSON 格式化、正则测试、JWT 解析、代码美化、哈希校验
+          </li>
+          <li><strong>[TXT] 文本处理</strong> — 文本对比、Markdown 渲染、批量替换、字数统计</li>
+          <li><strong>[IMG] 图片视频</strong> — 图片压缩、二维码生成、GIF 处理、视频格式转换</li>
+          <li><strong>[PDF] PDF 处理</strong> — PDF 拆分合并、文本提取、页面操作</li>
+          <li><strong>[DSG] 设计辅助</strong> — 颜色选择器、对比度检查、屏幕标尺、SVG 优化</li>
+          <li><strong>[FIN] 金融理财</strong> — 房贷计算、汇率转换、养老估算、折扣计算</li>
+          <li><strong>[HP] 健康运动</strong> — BMI 计算、番茄钟、脊柱锻炼、运动计时器</li>
+          <li><strong>[LIFE] 生活常用</strong> — 单位换算、日期计算、节假日查询、亲戚称呼</li>
+          <li><strong>[EDU] 教育学习</strong> — 打字练习、背诵辅助、知识测验</li>
+          <li><strong>[FUN] 趣味玩法</strong> — 随机数生成、摩尔斯电码、白噪音、决策转盘</li>
+        </ul>
+      </section>
+
+      <section class="brutal-content-section bg-green">
+        <h2 class="section-title">03 // 项目特色</h2>
+        <ul>
+          <li><strong>[SAFE] 隐私安全</strong> — 绝大部分工具纯前端运行，数据不离开您的浏览器</li>
+          <li><strong>[PWA] 离线可用</strong> — 支持渐进式 Web 应用，安装后可离线使用</li>
+          <li><strong>[FAST] 极速启动</strong> — 按需异步加载，首屏秒开</li>
+          <li><strong>[DARK] 深色模式</strong> — 全站支持深色/浅色模式自由切换</li>
+          <li><strong>[I18N] 多语言</strong> — 支持中文与英文界面</li>
+          <li><strong>[OPEN] 完全开源</strong> — 项目代码在 GitHub 开源，欢迎贡献</li>
         </ul>
       </section>
 
       <section class="brutal-content-section bg-pink text-white">
-        <h2 class="section-title variant-light">03 // 动力栈配置</h2>
+        <h2 class="section-title variant-light">04 // 动力栈配置</h2>
         <div class="tech-tags">
           <span class="brutal-tag">V U E 3</span>
           <span class="brutal-tag">V I T E</span>
@@ -51,8 +71,8 @@
         </div>
       </section>
 
-      <section id="contact" class="brutal-content-section bg-green">
-        <h2 class="section-title">04 // 建立连接</h2>
+      <section id="contact" class="brutal-content-section bg-yellow">
+        <h2 class="section-title">05 // 建立连接</h2>
         <p>如在终端调用时遇到阻碍或需要新增特性请求，请通过以下协议端口与我们通讯：</p>
         <ul>
           <li>

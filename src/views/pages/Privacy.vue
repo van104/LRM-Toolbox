@@ -8,7 +8,7 @@
 
     <main class="brutal-page-content">
       <h1 class="brutal-page-title">隐私政策</h1>
-      <div class="update-stamp">最后更新时间：2026年1月29日</div>
+      <div class="update-stamp">最后更新时间：2026年2月25日</div>
 
       <section class="brutal-content-section bg-blue text-white">
         <h2 class="section-title variant-light">1. 信息收集</h2>
@@ -16,46 +16,72 @@
           本网站是一个纯前端工具网站，绝大多数工具都在您的浏览器本地运行，我们不会收集、存储或传输您的任何个人数据。
         </p>
         <p>
-          对于需要服务器处理的少数工具，我们仅在处理过程中临时使用您的数据，处理完成后立即删除，不会保留任何副本。
+          对于需要服务器处理的少数工具（如 AI
+          辅助功能），我们仅在处理过程中临时使用您的数据，处理完成后立即删除，不会保留任何副本。
         </p>
       </section>
 
       <section class="brutal-content-section bg-yellow">
-        <h2 class="section-title">2. Cookie 使用</h2>
+        <h2 class="section-title">2. 本地存储与 Cookie</h2>
+        <p>本站使用浏览器本地存储技术来提升您的使用体验，所有数据仅保存在您的设备中：</p>
+        <ul>
+          <li><strong>localStorage</strong> — 保存主题模式（深色/浅色）、语言偏好等设置项</li>
+          <li><strong>IndexedDB</strong> — 存储您的工具收藏列表和使用历史记录</li>
+          <li><strong>sessionStorage</strong> — 保存当前会话的临时状态（如分类展开状态）</li>
+        </ul>
         <p>
-          我们使用本地存储（localStorage）来保存您的偏好设置，如主题模式等。这些数据仅存储在您的浏览器中。
+          您可以随时通过浏览器设置清除这些数据，清除后不会影响工具的正常使用，但您的个人偏好设置将被重置。
         </p>
       </section>
 
       <section class="brutal-content-section bg-pink text-white">
-        <h2 class="section-title variant-light">3. 第三方服务</h2>
-        <p>本网站可能使用以下第三方服务：</p>
-        <ul>
-          <li>Google Fonts - 用于加载网页字体</li>
-          <li>CDN 服务 - 用于加速静态资源加载</li>
-        </ul>
-        <p>这些服务可能会收集匿名的使用统计信息，详情请参阅相关服务的隐私政策。</p>
+        <h2 class="section-title variant-light">3. PWA 离线缓存</h2>
+        <p>
+          本站支持渐进式 Web 应用（PWA），安装后可在无网络环境下正常使用。Service Worker
+          将缓存必要的静态资源（HTML、CSS、JS、图标等）以实现离线访问。
+        </p>
+        <p>这些缓存数据不包含任何个人信息，您可以通过浏览器设置或卸载 PWA 来清除所有缓存。</p>
       </section>
 
       <section class="brutal-content-section bg-green">
-        <h2 class="section-title">4. 数据收集与安全</h2>
-        <p>大多数工具都在您的浏览器本地运行，不会上传数据。</p>
-        <p>对于部分需要云端服务的工具（如在线音频库）：</p>
+        <h2 class="section-title">4. 第三方服务</h2>
+        <p>本网站可能使用以下第三方服务：</p>
         <ul>
-          <li>我们会收集您上传的文件及相关元数据。</li>
-          <li>我们会通过 HTTPS 加密传输并在服务器端采取安全措施保护您的数据。</li>
-          <li>除非法律要求，我们不会向第三方分享您的个人数据。</li>
+          <li>Google Fonts — 用于加载网页字体（Inter、Roboto 等）</li>
+          <li>CDN 服务 — 用于加速 Element Plus 等静态资源加载</li>
+          <li>Font Awesome — 用于加载图标字体</li>
         </ul>
+        <p>
+          这些服务可能会收集匿名的访问日志信息（如 IP
+          地址、浏览器类型），详情请参阅相关服务的隐私政策。
+        </p>
       </section>
 
       <section class="brutal-content-section">
-        <h2 class="section-title">5. 政策更新</h2>
-        <p>我们可能会不时更新本隐私政策。更新后的政策将在本页面发布，建议您定期查阅。</p>
+        <h2 class="section-title">5. 数据安全</h2>
+        <p>我们高度重视您的数据安全：</p>
+        <ul>
+          <li>绝大多数工具完全在浏览器端运行，数据不会离开您的设备</li>
+          <li>对于需要网络传输的功能，均通过 HTTPS 加密传输</li>
+          <li>本站项目代码完全开源（GitHub），接受社区审查</li>
+          <li>除非法律要求，我们不会向任何第三方分享您的数据</li>
+        </ul>
       </section>
 
       <section class="brutal-content-section bg-yellow">
-        <h2 class="section-title">6. 联系我们</h2>
-        <p>如有任何隐私相关问题，请直接联系网站管理员。</p>
+        <h2 class="section-title">6. 政策更新</h2>
+        <p>
+          我们可能会不时更新本隐私政策。更新后的政策将在本页面发布，建议您定期查阅。若政策发生重大变更，我们将在网站显著位置进行提示。
+        </p>
+      </section>
+
+      <section class="brutal-content-section bg-blue text-white">
+        <h2 class="section-title variant-light">7. 联系我们</h2>
+        <p>如有任何隐私相关问题，请通过以下方式联系网站管理员：</p>
+        <ul>
+          <li>邮箱：powelabraham67@gmail.com</li>
+          <li>GitHub：github.com/van104/LRM-Toolbox</li>
+        </ul>
       </section>
     </main>
   </div>
