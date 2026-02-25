@@ -1,89 +1,85 @@
 <template>
-  <div class="decision-maker">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="$router.back()">
-        <el-icon>
-          <Back />
-        </el-icon>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>随机决策</h1>
-        <span class="nav-subtitle">Decision Maker</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">随机<span>.决策()</span></h1>
+        <div style="width: 120px"></div>
+      </header>
 
-    <div class="tool-container">
-      <div class="main-layout">
-        <div class="wheel-section card">
-          <div class="wheel-wrapper">
-            <div
-              class="pointer"
-              :style="{ transform: `translateX(-50%) rotate(${pointerRotation}deg)` }"
-            ></div>
-            <canvas ref="canvasRef" width="500" height="500" class="wheel-canvas"></canvas>
-
-            <div class="center-button" :disabled="isSpinning" @click="spin">
-              <span>{{ isSpinning ? '转动中' : '开始' }}</span>
-            </div>
+      <div class="brutal-grid main-layout">
+        <div class="brutal-pane wheel-pane">
+          <div class="pane-header bg-yellow">
+            <span>🎡 转盘区域</span>
           </div>
+          <div class="wheel-body">
+            <div class="wheel-wrapper">
+              <div
+                class="pointer"
+                :style="{ transform: `translateX(-50%) rotate(${pointerRotation}deg)` }"
+              ></div>
+              <canvas ref="canvasRef" width="500" height="500" class="wheel-canvas"></canvas>
+              <div class="center-button" @click="spin">
+                <span>{{ isSpinning ? '转动中' : '开始' }}</span>
+              </div>
+            </div>
 
-          <div v-if="result" class="result-show animation-fade-in">
-            <el-tag type="success" size="large" effect="dark" class="result-tag">
-              🎉 结果：{{ result }}
-            </el-tag>
+            <div v-if="result" class="result-show">
+              <div class="result-box">🎉 结果：{{ result }}</div>
+            </div>
           </div>
         </div>
 
-        <div class="options-section card">
-          <div class="section-title">
-            <el-icon>
-              <Edit />
-            </el-icon>
-            决策选项
+        <div class="brutal-pane options-pane">
+          <div class="pane-header bg-blue">
+            <span class="text-white">⚙ 决策选项</span>
           </div>
+          <div class="options-body">
+            <div class="preset-buttons">
+              <button class="brutal-action-btn" @click="loadPreset('food')">中午吃啥</button>
+              <button class="brutal-action-btn" @click="loadPreset('truth')">真心话</button>
+              <button class="brutal-action-btn" @click="loadPreset('dare')">大冒险</button>
+              <button class="brutal-action-btn" @click="loadPreset('number')">随机数</button>
+            </div>
 
-          <div class="preset-buttons">
-            <el-button size="small" @click="loadPreset('food')">中午吃啥</el-button>
-            <el-button size="small" @click="loadPreset('truth')">真心话</el-button>
-            <el-button size="small" @click="loadPreset('dare')">大冒险</el-button>
-            <el-button size="small" @click="loadPreset('number')">随机数</el-button>
-          </div>
+            <div class="options-list">
+              <div v-for="(opt, index) in options" :key="index" class="option-row">
+                <input
+                  v-model="options[index]"
+                  class="brutal-input full"
+                  placeholder="输入选项内容"
+                />
+                <button
+                  class="del-btn"
+                  :disabled="options.length <= 2"
+                  @click="removeOption(index)"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
 
-          <div class="options-list custom-scroll">
-            <div v-for="(opt, index) in options" :key="index" class="option-item">
-              <el-input v-model="options[index]" placeholder="输入选项内容">
-                <template #append>
-                  <el-button :disabled="options.length <= 2" @click="removeOption(index)">
-                    <el-icon>
-                      <Delete />
-                    </el-icon>
-                  </el-button>
-                </template>
-              </el-input>
+            <div class="action-row">
+              <button class="brutal-action-btn primary" @click="addOption">+ 添加选项</button>
+              <button class="brutal-action-btn danger" @click="clearOptions">清空</button>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div class="action-buttons">
-            <el-button type="primary" plain class="add-btn" @click="addOption">
-              <el-icon>
-                <Plus />
-              </el-icon>
-              添加选项
-            </el-button>
-            <el-button type="info" plain @click="clearOptions">清空</el-button>
+      <div class="brutal-status info">
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span v-for="i in 10" :key="i">© 2026 LRM工具箱 - 随机决策 // &nbsp;</span>
           </div>
         </div>
       </div>
     </div>
-    <footer class="footer">© 2026 LRM工具箱 - 随机决策</footer>
   </div>
 </template>
 
 <script setup>
   import { ref, onMounted, watch, nextTick } from 'vue';
-  import { Back, Edit, Plus, Delete } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
 
   const canvasRef = ref(null);
@@ -113,7 +109,7 @@
       '手机里最近的一条短信内容？',
       '最不喜欢的人是谁？'
     ],
-    dare: ['模仿一个著名的明星', '向第5个联系人发“我喜欢你”', '绕场跑一圈', '做10个俯卧撑'],
+    dare: ['模仿一个著名的明星', '向第5个联系人发"我喜欢你"', '绕场跑一圈', '做10个俯卧撑'],
     number: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
   };
 
@@ -137,24 +133,27 @@
       ctx.arc(centerX, centerY, radius, startAngle, endAngle);
       ctx.fillStyle = colors[i % colors.length];
       ctx.fill();
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#111';
+      ctx.lineWidth = 3;
       ctx.stroke();
 
       ctx.save();
       ctx.translate(centerX, centerY);
       ctx.rotate(startAngle + angleStep / 2);
       ctx.textAlign = 'right';
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 18px Inter, sans-serif';
+      ctx.fillStyle = '#111';
+      ctx.font = 'bold 18px "Syne", "Noto Sans SC", sans-serif';
       ctx.fillText(opt, radius - 30, 8);
       ctx.restore();
     });
 
     ctx.beginPath();
-    ctx.arc(centerX, centerY, 40, 0, Math.PI * 2);
+    ctx.arc(centerX, centerY, 45, 0, Math.PI * 2);
     ctx.fillStyle = '#fff';
     ctx.fill();
+    ctx.strokeStyle = '#111';
+    ctx.lineWidth = 4;
+    ctx.stroke();
   };
 
   const spin = () => {
@@ -170,7 +169,6 @@
     const animate = currentTime => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
-
       const ease = 1 - Math.pow(1 - progress, 3);
       const currentRotation = ease * spinRotation;
 
@@ -183,10 +181,8 @@
         requestAnimationFrame(animate);
       } else {
         isSpinning.value = false;
-
         const finalRotation = currentRotation % 360;
         const anglePerOption = 360 / options.value.length;
-
         let index = Math.floor(((360 - (finalRotation % 360) + 270) % 360) / anglePerOption);
         result.value = options.value[index];
         ElMessage.success(`🎉 结果是：${result.value}`);
@@ -198,9 +194,7 @@
 
   const addOption = () => {
     options.value.push('');
-    nextTick(() => {
-      drawWheel();
-    });
+    nextTick(() => drawWheel());
   };
 
   const removeOption = index => {
@@ -215,120 +209,136 @@
     options.value = [...presets[type]];
   };
 
-  watch(
-    options,
-    () => {
-      drawWheel();
-    },
-    { deep: true }
-  );
-
-  onMounted(() => {
-    drawWheel();
-  });
+  watch(options, () => drawWheel(), { deep: true });
+  onMounted(() => drawWheel());
 </script>
 
 <style scoped>
-  .decision-maker {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: var(--el-bg-color-page);
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: var(--el-bg-color);
-    border-bottom: 1px solid var(--el-border-color-lighter);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
-  }
-
-  .nav-back,
-  .nav-spacer {
-    width: 80px;
-  }
-
-  .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--el-text-color-regular);
-    cursor: pointer;
-    font-size: 0.9rem;
-    padding: 0.5rem 0;
-    transition: color 0.2s;
-  }
-
-  .nav-back:hover {
-    color: var(--el-color-primary);
-  }
-
-  .nav-center {
-    text-align: center;
-  }
-
-  .nav-center h1 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0;
-    color: var(--el-text-color-primary);
-  }
-
-  .nav-subtitle {
-    font-size: 0.7rem;
-    color: var(--el-text-color-secondary);
-    text-transform: uppercase;
-    display: block;
-    margin-top: 2px;
-  }
-
-  .tool-container {
-    padding: 24px;
-    flex: 1;
+  .brutal-container {
     max-width: 1200px;
     margin: 0 auto;
-    width: 100%;
+  }
+
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ffd900;
+  }
+  .brutal-title span {
+    color: #ffd900;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
   }
 
   .main-layout {
     display: grid;
     grid-template-columns: 1fr 380px;
-    gap: 24px;
+    gap: 2.5rem;
+    margin-bottom: 2.5rem;
   }
 
-  .card {
-    background: var(--el-bg-color);
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  .brutal-pane {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
   }
 
-  .wheel-section {
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.15rem;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .text-white {
+    color: #fff;
+  }
+
+  /* Wheel */
+  .wheel-body {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 600px;
-    position: relative;
+    padding: 2rem;
+    min-height: 550px;
   }
 
   .wheel-wrapper {
     position: relative;
-    width: 500px;
-    height: 500px;
+    width: 400px;
+    height: 400px;
   }
 
   .wheel-canvas {
-    width: 500px;
-    height: 500px;
+    width: 400px;
+    height: 400px;
     transition: transform 0s cubic-bezier(0.2, 0, 0, 1);
   }
 
@@ -339,10 +349,9 @@
     transform: translateX(-50%);
     width: 40px;
     height: 60px;
-    background: #f5222d;
+    background: #ff4b4b;
     clip-path: polygon(50% 100%, 0 0, 100% 0);
     z-index: 10;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
   }
 
   .center-button {
@@ -350,129 +359,295 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 80px;
-    height: 80px;
+    width: 85px;
+    height: 85px;
     background: #fff;
-    border-radius: 50%;
+    border: 4px solid #111;
+    box-shadow: 4px 4px 0px #111;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     z-index: 20;
-    font-weight: bold;
-    font-size: 18px;
-    color: #333;
-    transition: transform 0.2s;
+    font-weight: 800;
+    font-size: 1.1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    transition: all 0.1s;
   }
-
   .center-button:hover {
-    transform: translate(-50%, -50%) scale(1.1);
+    transform: translate(-50%, -50%) translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
   }
-
   .center-button:active {
-    transform: translate(-50%, -50%) scale(0.95);
+    transform: translate(-50%, -50%) translate(4px, 4px);
+    box-shadow: 0px 0px 0px #111;
   }
 
   .result-show {
-    margin-top: 40px;
+    margin-top: 2rem;
   }
 
-  .result-tag {
-    font-size: 24px;
-    padding: 20px 40px;
-    border-radius: 12px;
+  .result-box {
+    background: #00e572;
+    border: 4px solid #111;
+    box-shadow: 6px 6px 0px #111;
+    padding: 1rem 2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
   }
 
-  .options-section {
+  /* Options */
+  .options-body {
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
-  }
-
-  .section-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    gap: 1.25rem;
   }
 
   .preset-buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 20px;
+    gap: 0.5rem;
+  }
+
+  .brutal-action-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.5rem 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #111;
+    transition: all 0.1s;
+  }
+  .brutal-action-btn.primary {
+    background: #00e572;
+  }
+  .brutal-action-btn.danger {
+    background: #ff4b4b;
+    color: #fff;
+  }
+  .brutal-action-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+  }
+  .brutal-action-btn:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
   }
 
   .options-list {
     flex: 1;
     overflow-y: auto;
-    padding-right: 8px;
-    margin-bottom: 20px;
     max-height: 400px;
-  }
-
-  .option-item {
-    margin-bottom: 12px;
-  }
-
-  .action-buttons {
     display: flex;
-    gap: 12px;
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
-  .add-btn {
+  .option-row {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .brutal-input {
+    border: 3px solid #111;
+    padding: 0.5rem 0.8rem;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 600;
+    font-size: 0.95rem;
+    background: #fff;
+    box-shadow: 3px 3px 0px #111;
+    outline: none;
+  }
+  .brutal-input.full {
     flex: 1;
   }
 
-  .animation-fade-in {
-    animation: fadeIn 0.5s ease-out;
+  .del-btn {
+    background: #ff4b4b;
+    color: #fff;
+    border: 3px solid #111;
+    box-shadow: 3px 3px 0px #111;
+    cursor: pointer;
+    font-weight: 800;
+    padding: 0 0.6rem;
+    transition: all 0.1s;
+  }
+  .del-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+  }
+  .del-btn:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .del-btn:disabled {
+    background: #eee;
+    color: #aaa;
+    border-color: #aaa;
+    box-shadow: 2px 2px 0px #aaa;
+    cursor: not-allowed;
   }
 
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
+  .action-row {
+    display: flex;
+    gap: 0.75rem;
+  }
+  .action-row .brutal-action-btn {
+    flex: 1;
+    text-align: center;
+  }
+
+  /* Status */
+  .brutal-status {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    overflow: hidden;
+    text-transform: uppercase;
+  }
+  .marquee-wrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+  }
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
     }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
+    100% {
+      transform: translateX(-50%);
     }
-  }
-
-  .custom-scroll::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .custom-scroll::-webkit-scrollbar-thumb {
-    background: var(--el-border-color);
-    border-radius: 3px;
   }
 
   @media (max-width: 1024px) {
     .main-layout {
       grid-template-columns: 1fr;
     }
-
     .wheel-wrapper {
-      width: 350px;
-      height: 350px;
+      width: 300px;
+      height: 300px;
     }
-
     .wheel-canvas {
-      width: 350px;
-      height: 350px;
+      width: 300px;
+      height: 300px;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .brutal-title {
+      font-size: 2rem;
     }
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: var(--el-text-color-secondary);
-    font-size: 0.85rem;
-    border-top: 1px solid var(--el-border-color-lighter);
-    background: var(--el-bg-color);
+  /* Dark Mode */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-status,
+  [data-theme='dark'] .brutal-action-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .brutal-input {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn {
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover {
+    box-shadow: 5px 5px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-action-btn.danger {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .del-btn {
+    background: #cc0000;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .del-btn:hover {
+    box-shadow: 5px 5px 0px #eee;
+  }
+  [data-theme='dark'] .del-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .center-button {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .result-box {
+    background: #00994c;
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-status {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .pointer {
+    background: #cc0000;
   }
 </style>

@@ -1,108 +1,105 @@
 <template>
-  <div class="date-calculator-tool">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="$router.back()">
-        <el-icon>
-          <Back />
-        </el-icon>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>日期差计算器</h1>
-        <span class="nav-subtitle">Date Difference</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">日期<span>.差值()</span></h1>
+        <div style="width: 120px"></div>
+      </header>
 
-    <main class="main-content">
-      <div class="mode-tabs glass-card">
-        <button :class="['mode-btn', { active: mode === 'diff' }]" @click="mode = 'diff'">
-          <el-icon>
-            <Calendar />
-          </el-icon>
-          计算日期间隔
-        </button>
-        <button :class="['mode-btn', { active: mode === 'add' }]" @click="mode = 'add'">
-          <el-icon>
-            <Timer />
-          </el-icon>
-          推算日期
-        </button>
-      </div>
-
-      <section v-if="mode === 'diff'" class="calculator-card glass-card">
-        <div class="date-inputs">
-          <div class="input-group">
-            <label>开始日期</label>
-            <el-date-picker
-              v-model="startDate"
-              type="date"
-              placeholder="选择开始日期"
-              :clearable="false"
-              class="full-width"
-            />
-          </div>
-          <div class="separator">至</div>
-          <div class="input-group">
-            <label>结束日期</label>
-            <el-date-picker
-              v-model="endDate"
-              type="date"
-              placeholder="选择结束日期"
-              :clearable="false"
-              class="full-width"
-            />
-            <button class="today-btn" @click="setToday('end')">今天</button>
-          </div>
+      <!-- Mode Tabs -->
+      <div class="brutal-toolbar">
+        <div class="tools-left">
+          <button
+            class="brutal-action-btn"
+            :class="{ primary: mode === 'diff' }"
+            @click="mode = 'diff'"
+          >
+            📅 计算日期间隔
+          </button>
+          <button
+            class="brutal-action-btn"
+            :class="{ primary: mode === 'add' }"
+            @click="mode = 'add'"
+          >
+            ⏱ 推算日期
+          </button>
         </div>
+      </div>
 
-        <div v-if="diffResult" class="result-display">
-          <div class="primary-result">
-            <span class="label">相隔天数</span>
-            <span class="value">{{ diffResult.days }}</span>
-            <span class="unit">天</span>
+      <!-- Diff Mode -->
+      <div v-if="mode === 'diff'" class="brutal-pane calc-pane">
+        <div class="pane-header bg-blue">
+          <span class="text-white">日期间隔计算</span>
+        </div>
+        <div class="calc-body">
+          <div class="date-inputs">
+            <div class="input-group">
+              <label class="brutal-label">开始日期</label>
+              <input v-model="startDateStr" type="date" class="brutal-input full" />
+            </div>
+            <div class="separator">至</div>
+            <div class="input-group">
+              <label class="brutal-label">
+                结束日期
+                <button class="today-link" @click="setToday('end')">今天</button>
+              </label>
+              <input v-model="endDateStr" type="date" class="brutal-input full" />
+            </div>
           </div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="d-label">周数</span>
-              <span class="d-value">{{ diffResult.weeks }}</span>
+
+          <div v-if="diffResult" class="result-display">
+            <div class="primary-result">
+              <span class="result-label">相隔天数</span>
+              <span class="result-value">{{ diffResult.days }}</span>
+              <span class="result-unit">天</span>
             </div>
-            <div class="detail-item">
-              <span class="d-label">月数 (各约)</span>
-              <span class="d-value">{{ diffResult.months }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="d-label">年数 (各约)</span>
-              <span class="d-value">{{ diffResult.years }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="d-label">工作日 (估算)</span>
-              <span class="d-value">{{ diffResult.workdays }}</span>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="d-label">周数</span>
+                <span class="d-value">{{ diffResult.weeks }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="d-label">月数 (约)</span>
+                <span class="d-value">{{ diffResult.months }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="d-label">年数 (约)</span>
+                <span class="d-value">{{ diffResult.years }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="d-label">工作日 (估算)</span>
+                <span class="d-value">{{ diffResult.workdays }}</span>
+              </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      <section v-else class="calculator-card glass-card">
-        <div class="date-inputs">
-          <div class="input-group">
-            <label>基准日期</label>
-            <el-date-picker
-              v-model="baseDate"
-              type="date"
-              placeholder="选择基准日期"
-              :clearable="false"
-              class="full-width"
-            />
-          </div>
-          <div class="operation-group">
-            <div class="op-input">
-              <select v-model="calcOperator">
+      <!-- Add Mode -->
+      <div v-else class="brutal-pane calc-pane">
+        <div class="pane-header bg-green">
+          <span>推算日期</span>
+        </div>
+        <div class="calc-body">
+          <div class="date-inputs">
+            <div class="input-group">
+              <label class="brutal-label">基准日期</label>
+              <input v-model="baseDateStr" type="date" class="brutal-input full" />
+            </div>
+            <div class="operation-group">
+              <select v-model="calcOperator" class="brutal-select">
                 <option value="+">往后 (+)</option>
                 <option value="-">往前 (-)</option>
               </select>
-              <input v-model.number="calcValue" type="number" min="0" placeholder="数值" />
-              <select v-model="calcUnit">
+              <input
+                v-model.number="calcValue"
+                type="number"
+                min="0"
+                class="brutal-input"
+                placeholder="数值"
+              />
+              <select v-model="calcUnit" class="brutal-select">
                 <option value="days">天</option>
                 <option value="weeks">周</option>
                 <option value="months">月</option>
@@ -110,66 +107,72 @@
               </select>
             </div>
           </div>
-        </div>
 
-        <div v-if="calcResult" class="result-display">
-          <div class="primary-result">
-            <span class="label">推算结果</span>
-            <span class="value date-val">{{ formatDate(calcResult) }}</span>
-          </div>
-          <div class="weekday-display">
-            {{ getWeekday(calcResult) }}
+          <div v-if="calcResult" class="result-display">
+            <div class="primary-result">
+              <span class="result-label">推算结果</span>
+              <span class="result-value date-val">{{ formatDate(calcResult) }}</span>
+            </div>
+            <div class="weekday-display">{{ getWeekday(calcResult) }}</div>
           </div>
         </div>
-      </section>
+      </div>
 
-      <section class="scenarios-section glass-card">
-        <h3>常用场景快捷计算</h3>
+      <!-- Scenarios -->
+      <div class="brutal-pane">
+        <div class="pane-header bg-yellow">
+          <span>常用场景快捷计算</span>
+        </div>
         <div class="scenario-grid">
           <div class="scenario-item" @click="setScenario('anniversary')">
-            <div class="icon">🎂</div>
-            <div class="info">
+            <div class="sc-icon">🎂</div>
+            <div class="sc-info">
               <h4>下一个生日</h4>
               <p>距离今天还有多久？</p>
             </div>
           </div>
           <div class="scenario-item" @click="setScenario('work')">
-            <div class="icon">💼</div>
-            <div class="info">
+            <div class="sc-icon">💼</div>
+            <div class="sc-info">
               <h4>工龄计算</h4>
               <p>入职至今的天数</p>
             </div>
           </div>
           <div class="scenario-item" @click="setScenario('countdown')">
-            <div class="icon">🎆</div>
-            <div class="info">
+            <div class="sc-icon">🎆</div>
+            <div class="sc-info">
               <h4>新年倒计时</h4>
               <p>距离明年元旦</p>
             </div>
           </div>
         </div>
-      </section>
-    </main>
+      </div>
 
-    <footer class="footer">© 2026 LRM工具箱 - 日期差计算器</footer>
+      <div class="brutal-status info">
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span v-for="i in 10" :key="i">© 2026 LRM工具箱 - 日期差计算器 // &nbsp;</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, computed } from 'vue';
-  import { Back, Calendar, Timer } from '@element-plus/icons-vue';
   import dayjs from 'dayjs';
 
   const mode = ref('diff');
 
-  const startDate = ref(new Date());
-  const endDate = ref(new Date());
+  const startDateStr = ref(dayjs().format('YYYY-MM-DD'));
+  const endDateStr = ref(dayjs().format('YYYY-MM-DD'));
 
   const diffResult = computed(() => {
-    if (!startDate.value || !endDate.value) return null;
+    if (!startDateStr.value || !endDateStr.value) return null;
 
-    const start = dayjs(startDate.value).startOf('day');
-    const end = dayjs(endDate.value).startOf('day');
+    const start = dayjs(startDateStr.value).startOf('day');
+    const end = dayjs(endDateStr.value).startOf('day');
     const diffDays = Math.abs(end.diff(start, 'day'));
 
     const weeksFull = Math.floor(diffDays / 7);
@@ -188,18 +191,18 @@
   });
 
   const setToday = target => {
-    if (target === 'start') startDate.value = new Date();
-    else endDate.value = new Date();
+    if (target === 'start') startDateStr.value = dayjs().format('YYYY-MM-DD');
+    else endDateStr.value = dayjs().format('YYYY-MM-DD');
   };
 
-  const baseDate = ref(new Date());
+  const baseDateStr = ref(dayjs().format('YYYY-MM-DD'));
   const calcOperator = ref('+');
   const calcValue = ref(100);
   const calcUnit = ref('days');
 
   const calcResult = computed(() => {
-    if (!baseDate.value || calcValue.value === '') return null;
-    const base = dayjs(baseDate.value);
+    if (!baseDateStr.value || calcValue.value === '') return null;
+    const base = dayjs(baseDateStr.value);
     const val = parseInt(calcValue.value) || 0;
 
     if (calcOperator.value === '+') {
@@ -217,150 +220,249 @@
 
   const setScenario = type => {
     mode.value = 'diff';
-    const now = new Date();
+    const now = dayjs();
 
     if (type === 'anniversary') {
-      startDate.value = now;
-
-      const nextYear = now.getFullYear() + 1;
-      endDate.value = new Date(`${nextYear}-01-01`);
+      startDateStr.value = now.format('YYYY-MM-DD');
+      const nextYear = now.year() + 1;
+      endDateStr.value = `${nextYear}-01-01`;
     } else if (type === 'work') {
-      endDate.value = now;
-
-      const lastYear = new Date();
-      lastYear.setFullYear(now.getFullYear() - 1);
-      startDate.value = lastYear;
+      endDateStr.value = now.format('YYYY-MM-DD');
+      startDateStr.value = now.subtract(1, 'year').format('YYYY-MM-DD');
     } else if (type === 'countdown') {
-      startDate.value = now;
-      const nextNewYear = new Date(now.getFullYear() + 1, 0, 1);
-      endDate.value = nextNewYear;
+      startDateStr.value = now.format('YYYY-MM-DD');
+      endDateStr.value = `${now.year() + 1}-01-01`;
     }
   };
 </script>
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
 
-  .date-calculator-tool {
-    --bg: #faf9f7;
-    --card: #ffffff;
-    --border: #e8e6e3;
-    --text: #1a1a1a;
-    --text-secondary: #6b6b6b;
-    --accent: #2563eb;
-    --accent-light: #eff6ff;
-
-    font-family: 'Noto Sans SC', sans-serif;
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-back,
-  .nav-spacer {
-    width: 80px;
-  }
-
-  .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-    font-size: 0.9rem;
-    padding: 0.5rem 0;
-  }
-
-  .nav-center h1 {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 1.25rem;
-    font-weight: 600;
-  }
-
-  .nav-subtitle {
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    display: block;
-    text-align: center;
-  }
-
-  .main-content {
-    max-width: 700px;
+  .brutal-container {
+    max-width: 800px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
   }
 
-  .glass-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  .mode-tabs {
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #4b7bff;
+  }
+
+  .brutal-title span {
+    color: #4b7bff;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  /* Toolbar */
+  .brutal-toolbar {
+    display: flex;
+    background: #fff;
+    border: 4px solid #111;
+    padding: 1rem;
+    box-shadow: 8px 8px 0px #111;
+  }
+
+  .tools-left {
     display: flex;
     gap: 1rem;
-    padding: 0.5rem;
+    flex-wrap: wrap;
   }
 
-  .mode-btn {
-    flex: 1;
-    border: none;
-    background: transparent;
-    padding: 0.75rem;
-    border-radius: 10px;
+  .brutal-action-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.6rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
     font-size: 1rem;
-    color: var(--text-secondary);
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    transition: all 0.2s;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.1s;
   }
 
-  .mode-btn.active {
-    background: var(--accent-light);
-    color: var(--accent);
-    font-weight: 600;
+  .brutal-action-btn.primary {
+    background: #00e572;
+  }
+
+  .brutal-action-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+
+  .brutal-action-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  /* Pane */
+  .brutal-pane {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: 1px;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .bg-green {
+    background: #00e572;
+  }
+  .text-white {
+    color: #fff;
+  }
+
+  .calc-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
   }
 
   .date-inputs {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    margin-bottom: 2rem;
   }
 
-  .input-group label {
-    display: block;
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .brutal-label {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .today-link {
+    background: none;
+    border: none;
+    color: #4b7bff;
+    font-weight: 800;
     font-size: 0.9rem;
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
+    cursor: pointer;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    text-decoration: underline;
+  }
+
+  .brutal-input {
+    border: 3px solid #111;
+    padding: 0.6rem 0.8rem;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 600;
+    font-size: 1rem;
+    background: #fff;
+    box-shadow: 3px 3px 0px #111;
+    outline: none;
+  }
+
+  .brutal-select {
+    border: 3px solid #111;
+    padding: 0.6rem 0.8rem;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 600;
+    font-size: 1rem;
+    background: #ffd900;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #111;
+    outline: none;
+  }
+
+  .full {
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .separator {
     text-align: center;
-    color: var(--text-secondary);
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #555;
     position: relative;
-    font-size: 0.9rem;
+    padding: 0.5rem 0;
   }
 
   .separator::before,
@@ -368,85 +470,60 @@
     content: '';
     position: absolute;
     top: 50%;
-    width: 45%;
-    height: 1px;
-    background: var(--border);
+    width: 40%;
+    height: 3px;
+    background: #111;
   }
 
   .separator::before {
     left: 0;
   }
-
   .separator::after {
     right: 0;
   }
 
-  .full-width {
-    width: 100% !important;
-  }
-
-  .today-btn {
-    position: absolute;
-    right: 0;
-    top: 0;
-    font-size: 0.8rem;
-    color: var(--accent);
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-
-  .input-group {
-    position: relative;
-  }
-
-  .op-input {
+  .operation-group {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.75rem;
   }
 
-  .op-input select,
-  .op-input input {
-    padding: 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--bg);
-    outline: none;
-  }
-
-  .op-input input {
+  .operation-group .brutal-input {
     flex: 1;
   }
 
+  /* Results */
   .result-display {
-    background: var(--accent-light);
-    border-radius: 12px;
+    background: #ffd900;
+    border: 3px solid #111;
+    box-shadow: 6px 6px 0px #111;
     padding: 2rem;
     text-align: center;
   }
 
-  .primary-result .label {
+  .primary-result .result-label {
     display: block;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
+    color: #555;
+    font-size: 1rem;
     margin-bottom: 0.5rem;
+    font-weight: 700;
   }
 
-  .primary-result .value {
-    font-size: 3rem;
-    font-weight: 700;
-    color: var(--accent);
+  .primary-result .result-value {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #111;
     line-height: 1;
   }
 
   .primary-result .date-val {
-    font-size: 2rem;
+    font-size: 2.2rem;
   }
 
-  .primary-result .unit {
+  .primary-result .result-unit {
     margin-left: 0.25rem;
-    font-size: 1rem;
-    color: var(--text-secondary);
+    font-size: 1.2rem;
+    font-weight: 700;
   }
 
   .detail-grid {
@@ -455,7 +532,7 @@
     gap: 1rem;
     margin-top: 1.5rem;
     padding-top: 1.5rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    border-top: 3px solid #111;
   }
 
   .detail-item {
@@ -466,69 +543,271 @@
 
   .d-label {
     font-size: 0.8rem;
-    color: var(--text-secondary);
+    color: #555;
+    font-weight: 700;
   }
 
   .d-value {
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 1.2rem;
+    font-weight: 800;
+    font-family: 'IBM Plex Mono', monospace;
   }
 
   .weekday-display {
-    margin-top: 0.5rem;
-    color: var(--text-secondary);
+    margin-top: 0.75rem;
+    font-weight: 800;
+    font-size: 1.1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
   }
 
+  /* Scenarios */
   .scenario-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
   }
 
   .scenario-item {
-    background: var(--bg);
-    border-radius: 12px;
-    padding: 1rem;
+    padding: 1.5rem;
     cursor: pointer;
     text-align: center;
-    transition: all 0.2s;
-    border: 1px solid transparent;
+    transition: all 0.1s;
+    border-right: 3px solid #111;
+  }
+
+  .scenario-item:last-child {
+    border-right: none;
   }
 
   .scenario-item:hover {
-    background: white;
-    border-color: var(--border);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    background: #fdfae5;
   }
 
-  .scenario-item .icon {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
+  .scenario-item:active {
+    background: #ffd900;
   }
 
-  .scenario-item h4 {
-    font-size: 0.9rem;
-    margin-bottom: 0.25rem;
+  .sc-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
   }
 
-  .scenario-item p {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
+  .sc-info h4 {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    margin: 0 0 0.25rem;
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-    border-top: 1px solid var(--border);
-    margin-top: 2rem;
+  .sc-info p {
+    font-size: 0.8rem;
+    color: #555;
+    margin: 0;
+    font-weight: 600;
   }
 
-  @media (max-width: 600px) {
+  /* Status Bar */
+  .brutal-status {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    overflow: hidden;
+    text-transform: uppercase;
+  }
+
+  .brutal-status.info {
+    background: #fff;
+  }
+
+  .marquee-wrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .brutal-title {
+      font-size: 2rem;
+    }
     .scenario-grid {
       grid-template-columns: 1fr;
+    }
+    .scenario-item {
+      border-right: none;
+      border-bottom: 3px solid #111;
+    }
+    .scenario-item:last-child {
+      border-bottom: none;
+    }
+    .operation-group {
+      flex-direction: column;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+  }
+
+  /* --- Dark Mode --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-toolbar,
+  [data-theme='dark'] .brutal-status,
+  [data-theme='dark'] .brutal-status.info,
+  [data-theme='dark'] .brutal-action-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-toolbar {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn {
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #00994c;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+
+  [data-theme='dark'] .brutal-input {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-select {
+    background: #b28f00;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .result-display {
+    background: #b28f00;
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .detail-grid {
+    border-top-color: #eee;
+  }
+
+  [data-theme='dark'] .d-label,
+  [data-theme='dark'] .primary-result .result-label {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  [data-theme='dark'] .primary-result .result-value {
+    color: #fff;
+  }
+
+  [data-theme='dark'] .separator::before,
+  [data-theme='dark'] .separator::after {
+    background: #eee;
+  }
+  [data-theme='dark'] .separator {
+    color: #aaa;
+  }
+
+  [data-theme='dark'] .scenario-item {
+    border-right-color: #eee;
+  }
+  [data-theme='dark'] .scenario-item:hover {
+    background: #222;
+  }
+  [data-theme='dark'] .scenario-item:active {
+    background: #b28f00;
+  }
+  [data-theme='dark'] .sc-info p {
+    color: #aaa;
+  }
+
+  [data-theme='dark'] .today-link {
+    color: #89b4f8;
+  }
+
+  [data-theme='dark'] .brutal-status {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #00994c;
+    color: #fff;
+  }
+
+  @media (max-width: 700px) {
+    [data-theme='dark'] .scenario-item {
+      border-right: none;
+      border-bottom-color: #eee;
     }
   }
 </style>

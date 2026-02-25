@@ -1,88 +1,83 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="$router.back()">
-          <el-icon><ArrowLeft /></el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">旅行打包清单</h1>
-        <span class="tool-subtitle">Travel Checklist</span>
-      </div>
-      <div class="header-right">
-        <el-dropdown @command="handleCommand">
-          <el-button>
-            操作 <el-icon class="el-icon--right"><arrow-down /></el-icon>
-          </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item command="reset">重置当前清单</el-dropdown-item>
-              <el-dropdown-item command="clear">清空所有勾选</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">旅行<span>.清单()</span></h1>
+        <div class="header-actions">
+          <button class="brutal-btn" @click="handleReset">重置</button>
+          <button class="brutal-btn" @click="handleClear">清空勾选</button>
+        </div>
+      </header>
 
-    <main class="tool-content">
-      <div class="checklist-tool">
+      <main class="main-content">
         <div class="scenario-selector">
-          <el-radio-group v-model="currentScenario" size="large">
-            <el-radio-button v-for="s in scenarios" :key="s.id" :label="s.id">{{
-              s.name
-            }}</el-radio-button>
-          </el-radio-group>
+          <button
+            v-for="s in scenarios"
+            :key="s.id"
+            class="brutal-action-btn scenario-btn"
+            :class="{ active: currentScenario === s.id }"
+            @click="currentScenario = s.id"
+          >
+            {{ s.name }}
+          </button>
         </div>
 
-        <div class="progress-bar">
-          <el-progress
-            :text-inside="true"
-            :stroke-width="20"
-            :percentage="progress"
-            status="success"
-          />
+        <div class="progress-section brutal-pane">
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" :style="{ width: progress + '%' }"></div>
+          </div>
+          <span class="progress-text">{{ progress }}% 已完成</span>
         </div>
 
-        <div class="checklist-container glass">
+        <div class="brutal-pane checklist-container">
           <div v-for="(group, gIndex) in currentList" :key="gIndex" class="check-group">
-            <h3 class="group-title">{{ group.category }}</h3>
+            <div class="group-title-bar">
+              <h3>{{ group.category }}</h3>
+              <span class="group-count"
+                >{{ getGroupChecked(gIndex) }}/{{ group.items.length }}</span
+              >
+            </div>
             <div class="items-grid">
-              <div
+              <button
                 v-for="(item, iIndex) in group.items"
                 :key="iIndex"
                 class="check-item"
                 :class="{ checked: item.checked }"
                 @click="toggleItem(gIndex, iIndex)"
               >
-                <el-checkbox v-model="item.checked" @click.stop />
+                <span class="check-box" :class="{ done: item.checked }">{{
+                  item.checked ? '✔' : ''
+                }}</span>
                 <span class="item-name">{{ item.name }}</span>
-              </div>
+              </button>
             </div>
           </div>
         </div>
+      </main>
+
+      <div class="brutal-status">
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span v-for="i in 10" :key="i">© 2026 LRM工具箱 - 旅行打包清单 // &nbsp;</span>
+          </div>
+        </div>
       </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - 旅行打包清单</footer>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, computed, watch, onMounted } from 'vue';
-  import { ArrowLeft, ArrowDown } from '@element-plus/icons-vue';
-  import { ElMessageBox, ElMessage } from 'element-plus';
 
   interface CheckItem {
     name: string;
     checked: boolean;
   }
-
   interface CheckGroup {
     category: string;
     items: CheckItem[];
   }
-
   interface Scenario {
     id: string;
     name: string;
@@ -214,24 +209,17 @@
   const currentScenario = ref('general');
   const lists = ref<Record<string, CheckGroup[]>>({});
 
-  // Initialize or load from storage
   const initLists = () => {
-    const saved = localStorage.getItem('lrm-travel-checklists');
+    const saved = localStorage.getItem('lrm-travel-checklists-brutal');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        // Merge saved data with structure (in case structure changed)
         const newLists: Record<string, CheckGroup[]> = {};
         scenarios.forEach(s => {
-          if (parsed[s.id]) {
-            newLists[s.id] = parsed[s.id];
-          } else {
-            newLists[s.id] = JSON.parse(JSON.stringify(s.data));
-          }
+          newLists[s.id] = parsed[s.id] || JSON.parse(JSON.stringify(s.data));
         });
         lists.value = newLists;
-      } catch (e) {
-        console.error('Failed to load checklists', e);
+      } catch {
         resetAll();
       }
     } else {
@@ -247,191 +235,381 @@
     lists.value = newLists;
   };
 
-  const currentList = computed(() => {
-    return lists.value[currentScenario.value] || [];
-  });
+  const currentList = computed(() => lists.value[currentScenario.value] || []);
 
   const progress = computed(() => {
-    let total = 0;
-    let checked = 0;
-    currentList.value.forEach(group => {
-      group.items.forEach(item => {
+    let total = 0,
+      checked = 0;
+    currentList.value.forEach(g => {
+      g.items.forEach(i => {
         total++;
-        if (item.checked) checked++;
+        if (i.checked) checked++;
       });
     });
     return total === 0 ? 0 : Math.round((checked / total) * 100);
   });
+
+  const getGroupChecked = (gIndex: number) => {
+    return currentList.value[gIndex].items.filter(i => i.checked).length;
+  };
 
   const toggleItem = (gIndex: number, iIndex: number) => {
     currentList.value[gIndex].items[iIndex].checked =
       !currentList.value[gIndex].items[iIndex].checked;
   };
 
-  const handleCommand = (command: string) => {
-    if (command === 'reset') {
-      ElMessageBox.confirm('确定要重置当前清单吗？所有勾选将丢失。', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        const original = scenarios.find(s => s.id === currentScenario.value);
-        if (original) {
-          lists.value[currentScenario.value] = JSON.parse(JSON.stringify(original.data));
-          ElMessage.success('已重置');
-        }
-      });
-    } else if (command === 'clear') {
-      currentList.value.forEach(group => {
-        group.items.forEach(item => (item.checked = false));
-      });
-      ElMessage.success('已清空勾选');
+  const handleReset = () => {
+    if (confirm('确定要重置当前清单吗？')) {
+      const original = scenarios.find(s => s.id === currentScenario.value);
+      if (original) lists.value[currentScenario.value] = JSON.parse(JSON.stringify(original.data));
     }
+  };
+
+  const handleClear = () => {
+    currentList.value.forEach(g => {
+      g.items.forEach(i => (i.checked = false));
+    });
   };
 
   watch(
     lists,
     newVal => {
-      localStorage.setItem('lrm-travel-checklists', JSON.stringify(newVal));
+      localStorage.setItem('lrm-travel-checklists-brutal', JSON.stringify(newVal));
     },
     { deep: true }
   );
-
   onMounted(() => {
     initLists();
   });
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
     min-height: 100vh;
-    background: #f1f5f9;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 850px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
+    gap: 2rem;
   }
-
-  .tool-header {
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
-
-  .header-left,
-  .header-right {
-    width: 140px;
-  }
-
-  .header-center {
-    text-align: center;
-    flex: 1;
-  }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
     margin: 0;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #4b7bff;
   }
-
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
-    text-transform: uppercase;
+  .brutal-title span {
+    color: #4b7bff;
+    text-shadow: 4px 4px 0px #111;
   }
-
-  .tool-content {
-    flex: 1;
-    padding: 1.5rem;
-    max-width: 800px;
-    margin: 0 auto;
-    width: 100%;
+  .header-actions {
+    display: flex;
+    gap: 0.75rem;
   }
-
-  .checklist-tool {
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    color: #111;
+    white-space: nowrap;
+  }
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0 0 0 #111;
+  }
+  .brutal-pane {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    overflow: hidden;
   }
-
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
   .scenario-selector {
     display: flex;
-    justify-content: center;
+    gap: 0.75rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
   }
-
-  .checklist-container {
-    padding: 20px;
-    border-radius: 12px;
+  .brutal-action-btn {
     background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 3px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.1s;
+    white-space: nowrap;
   }
-
-  .group-title {
+  .brutal-action-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+  .brutal-action-btn.active {
+    background: #4b7bff;
+    color: #fff;
+    box-shadow: 0 0 0 #111;
+    transform: translate(4px, 4px);
+  }
+  .progress-section {
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.25rem 1.5rem;
+  }
+  .progress-bar-track {
+    flex: 1;
+    height: 20px;
+    background: #fdfae5;
+    border: 3px solid #111;
+    box-shadow: 2px 2px 0px #111;
+    position: relative;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: #00e572;
+    transition: width 0.3s;
+  }
+  .progress-text {
+    font-weight: 800;
     font-size: 1.1rem;
-    font-weight: 600;
-    margin: 20px 0 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
-    color: #2c3e50;
+    font-family: 'Syne', monospace;
+    white-space: nowrap;
   }
-
-  .group-title:first-child {
-    margin-top: 0;
+  .checklist-container {
+    padding: 1.5rem;
   }
-
+  .check-group {
+    margin-bottom: 2rem;
+  }
+  .check-group:last-child {
+    margin-bottom: 0;
+  }
+  .group-title-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 4px solid #111;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .group-title-bar h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin: 0;
+  }
+  .group-count {
+    font-weight: 800;
+    font-size: 1rem;
+    color: #555;
+    background: #ffd900;
+    padding: 2px 8px;
+    border: 2px solid #111;
+  }
   .items-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.75rem;
   }
-
   .check-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px;
-    background: #f8fafc;
-    border-radius: 8px;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: 3px solid #111;
+    background: #fff;
     cursor: pointer;
-    transition: all 0.2s;
-    border: 1px solid transparent;
+    transition: all 0.15s;
+    box-shadow: 3px 3px 0px #111;
+    text-align: left;
   }
-
   .check-item:hover {
-    background: #f1f5f9;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+    background: #fdfae5;
   }
-
   .check-item.checked {
-    background: #f0f9eb;
-    border-color: #67c23a;
+    background: #00e572;
+    box-shadow: 0 0 0 #111;
+    transform: translate(3px, 3px);
   }
-
-  .check-item.checked .item-name {
-    text-decoration: line-through;
-    color: #999;
+  .check-box {
+    width: 24px;
+    height: 24px;
+    border: 3px solid #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1rem;
+    background: #fff;
+    flex-shrink: 0;
   }
-
+  .check-box.done {
+    background: #111;
+    color: #fff;
+  }
   .item-name {
     font-size: 0.95rem;
-    color: #333;
+    font-weight: 700;
     user-select: none;
   }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  .check-item.checked .item-name {
+    text-decoration: line-through;
+    opacity: 0.7;
   }
-
-  @media (max-width: 600px) {
+  .brutal-status {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 1rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    overflow: hidden;
+  }
+  .marquee-wrapper {
+    overflow: hidden;
+  }
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+  }
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+  @media (max-width: 768px) {
+    .brutal-title {
+      font-size: 2rem;
+    }
     .items-grid {
       grid-template-columns: 1fr;
     }
+  }
+
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-status,
+  [data-theme='dark'] .brutal-action-btn,
+  [data-theme='dark'] .check-item {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0 0 0 #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn {
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.active {
+    background: #2a4eb2;
+    box-shadow: 0 0 0 #eee;
+  }
+  [data-theme='dark'] .check-item {
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .check-item:hover {
+    box-shadow: 5px 5px 0px #eee;
+    background: #222;
+  }
+  [data-theme='dark'] .check-item.checked {
+    background: #00994c;
+    box-shadow: 0 0 0 #eee;
+  }
+  [data-theme='dark'] .check-box {
+    border-color: #eee;
+    background: #222;
+  }
+  [data-theme='dark'] .check-box.done {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .group-title-bar {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .group-count {
+    background: #b28f00;
+    border-color: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .progress-bar-track {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .progress-bar-fill {
+    background: #00994c;
+  }
+  [data-theme='dark'] .brutal-status {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
   }
 </style>

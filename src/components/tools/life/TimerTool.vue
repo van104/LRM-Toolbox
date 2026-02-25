@@ -1,425 +1,369 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon>
-            <ArrowLeft />
-          </el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">高级计时系统</h1>
-        <span class="tool-subtitle">Advanced Timer & Stopwatch</span>
-      </div>
-      <div class="header-right">
-        <el-button type="info" @click="settingsVisible = true">
-          <el-icon>
-            <Setting />
-          </el-icon>
-        </el-button>
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">高级<span>.计时器()</span></h1>
+        <button class="brutal-btn settings-btn" @click="settingsVisible = true">⚙️ 设置</button>
+      </header>
 
-    <main class="tool-content">
-      <div class="mode-switcher">
-        <div class="switcher-bg">
-          <div
-            class="switcher-active"
-            :style="{
-              transform: currentMode === 'countdown' ? 'translateX(0)' : 'translateX(100%)'
-            }"
-          ></div>
+      <main class="main-content">
+        <div class="mode-switcher brutal-pane">
           <button
-            class="switcher-btn"
+            class="switch-btn"
             :class="{ active: currentMode === 'countdown' }"
             @click="switchMode('countdown')"
           >
             倒计时
           </button>
           <button
-            class="switcher-btn"
+            class="switch-btn"
             :class="{ active: currentMode === 'stopwatch' }"
             @click="switchMode('stopwatch')"
           >
             正计时
           </button>
         </div>
+
+        <div v-show="currentMode === 'countdown'" class="timer-container brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span>⏳ {{ currentLabel || '倒计时' }}</span>
+          </div>
+          <div class="pane-body flex-col-center">
+            <div class="display-area">
+              <div
+                class="time-display"
+                :class="{
+                  'time-end': isTimeEnd,
+                  running: isCountdownRunning,
+                  'near-end': countdownRemaining <= 10000 && countdownRemaining > 0
+                }"
+              >
+                {{ formatTime(countdownRemaining) }}
+              </div>
+              <div class="time-status" :class="{ 'status-active': isCountdownRunning }">
+                {{ isTimeEnd ? '计时结束' : isCountdownRunning ? '计时中...' : '准备就绪' }}
+              </div>
+            </div>
+
+            <div class="controls-area">
+              <button
+                class="brutal-action-btn play-btn"
+                :class="{
+                  'bg-pink text-white': isCountdownRunning,
+                  'bg-green text-black': !isCountdownRunning
+                }"
+                @click="toggleCountdown"
+              >
+                {{ isCountdownRunning ? '⏸ 暂停' : '▶ 开始' }}
+              </button>
+              <button
+                class="brutal-action-btn reset-btn"
+                :disabled="!canResetCountdown"
+                @click="resetCountdown"
+              >
+                🔄 重置
+              </button>
+            </div>
+
+            <div class="quick-presets">
+              <span class="section-title">⚡ 快速开始</span>
+              <div class="preset-grid">
+                <button
+                  v-for="preset in quickPresets"
+                  :key="preset.label"
+                  class="preset-btn"
+                  @click="startPreset(preset)"
+                >
+                  <span class="preset-time">{{ formatDuration(preset.time) }}</span>
+                  <span class="preset-label">{{ preset.label }}</span>
+                </button>
+                <button class="preset-btn add-btn" @click="addPresetVisible = true">
+                  + 添加预设
+                </button>
+              </div>
+            </div>
+
+            <div class="custom-timer-boxes">
+              <div class="custom-box">
+                <div class="box-title">✍️ 自定义时间</div>
+                <div class="custom-input-group">
+                  <div class="input-item">
+                    <input
+                      v-model.number="customHours"
+                      type="number"
+                      min="0"
+                      max="99"
+                      class="num-input"
+                    />
+                    <span class="unit">时</span>
+                  </div>
+                  <div class="input-item">
+                    <input
+                      v-model.number="customMinutes"
+                      type="number"
+                      min="0"
+                      max="59"
+                      class="num-input"
+                    />
+                    <span class="unit">分</span>
+                  </div>
+                  <div class="input-item">
+                    <input
+                      v-model.number="customSeconds"
+                      type="number"
+                      min="0"
+                      max="59"
+                      class="num-input"
+                    />
+                    <span class="unit">秒</span>
+                  </div>
+                </div>
+                <input
+                  v-model="customLabelInput"
+                  class="brutal-input full mt-2"
+                  placeholder="标签（如：午休）"
+                />
+                <button
+                  class="brutal-action-btn bg-blue text-white full mt-3"
+                  @click="startCustomTimer"
+                >
+                  ▶ 开始自定义计时
+                </button>
+              </div>
+
+              <div class="custom-box">
+                <div class="box-title">📅 目标时间倒计时</div>
+                <input v-model="targetDateTime" type="datetime-local" class="brutal-input full" />
+                <button
+                  class="brutal-action-btn bg-dark text-white full mt-3"
+                  @click="startTargetTimer"
+                >
+                  ▶ 开始目标倒计时
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div v-show="currentMode === 'stopwatch'" class="stopwatch-container brutal-pane">
+          <div class="pane-header bg-blue text-white">
+            <span>⏱️ 跑表正计时</span>
+          </div>
+          <div class="pane-body flex-col-center">
+            <div class="display-area">
+              <div class="time-display stopwatch-display">
+                {{ formatStopwatch(stopwatchElapsed) }}
+              </div>
+              <div class="stopwatch-ms">.{{ formatMs(stopwatchElapsed) }}</div>
+              <div class="time-status" :class="{ 'status-active': isStopwatchRunning }">
+                {{ isStopwatchRunning ? '运行中...' : '已停止' }}
+              </div>
+            </div>
+
+            <div class="controls-area">
+              <button
+                v-if="!isStopwatchRunning"
+                class="brutal-action-btn play-btn bg-green"
+                @click="startStopwatch"
+              >
+                ▶ 开始
+              </button>
+              <button v-else class="brutal-action-btn play-btn bg-yellow" @click="pauseStopwatch">
+                ⏸ 暂停
+              </button>
+
+              <button
+                class="brutal-action-btn flag-btn bg-blue text-white"
+                :disabled="!isStopwatchRunning && stopwatchElapsed === 0"
+                @click="lapStopwatch"
+              >
+                🚩 计次
+              </button>
+
+              <button
+                class="brutal-action-btn reset-btn bg-pink text-white"
+                :disabled="stopwatchElapsed === 0"
+                @click="resetStopwatch"
+              >
+                🔄 重置
+              </button>
+            </div>
+
+            <div v-if="laps.length > 0" class="laps-container">
+              <div class="section-title">📊 计次记录</div>
+              <div class="laps-list-wrapper">
+                <div class="laps-list">
+                  <div v-for="lap in reversedLaps" :key="lap.index" class="lap-item">
+                    <div class="lap-index">#{{ lap.index }}</div>
+                    <div class="lap-time">
+                      {{ formatStopwatch(lap.time)
+                      }}<small>.{{ String(lap.time % 1000).padStart(3, '0') }}</small>
+                    </div>
+                    <div class="lap-split">+{{ formatStopwatch(lap.split) }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Settings Modal -->
+      <div
+        v-if="settingsVisible"
+        class="brutal-modal-overlay"
+        @click.self="settingsVisible = false"
+      >
+        <div class="brutal-modal-content brutal-pane">
+          <div class="pane-header bg-dark text-white">
+            <span>⚙️ 高级配置</span>
+            <button class="close-btn" @click="settingsVisible = false">✖</button>
+          </div>
+          <div class="pane-body settings-body">
+            <div class="settings-section">
+              <h3 class="settings-title">提示音</h3>
+              <div class="sound-grid">
+                <button
+                  v-for="sound in soundOptions"
+                  :key="sound.key"
+                  class="sound-btn"
+                  :class="{ active: currentSound === sound.key }"
+                  @click="setSound(sound.key)"
+                >
+                  {{ sound.name }}
+                </button>
+              </div>
+              <label class="brutal-checkbox mt-3">
+                <input v-model="loopSound" type="checkbox" />
+                <span>循环播放提示音</span>
+              </label>
+            </div>
+
+            <div class="settings-section">
+              <h3 class="settings-title">通知提示</h3>
+              <label class="brutal-checkbox">
+                <input
+                  v-model="enableNotification"
+                  type="checkbox"
+                  @change="requestNotificationPermission"
+                />
+                <span>浏览器系统通知</span>
+              </label>
+              <label class="brutal-checkbox mt-2">
+                <input v-model="enableVibration" type="checkbox" />
+                <span>震动反馈 (支持的设备)</span>
+              </label>
+            </div>
+
+            <div class="settings-section">
+              <h3 class="settings-title">预设管理</h3>
+              <div class="preset-edit-list">
+                <div
+                  v-for="(preset, index) in quickPresets"
+                  :key="preset.label"
+                  class="preset-edit-item"
+                >
+                  <span class="time">{{ formatDuration(preset.time) }}</span>
+                  <span class="label">{{ preset.label }}</span>
+                  <button class="del-btn" @click="removePreset(index)">✖</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div v-show="currentMode === 'countdown'" class="timer-container glass-card">
-        <div class="display-area">
-          <div
-            class="time-display"
-            :class="{
-              'time-end': isTimeEnd,
-              running: isCountdownRunning,
-              'near-end': countdownRemaining <= 10000 && countdownRemaining > 0
-            }"
-          >
-            {{ formatTime(countdownRemaining) }}
-          </div>
-          <div class="time-label">{{ currentLabel || '倒计时' }}</div>
-          <div class="time-status" :class="{ 'status-active': isCountdownRunning }">
-            {{ isTimeEnd ? '计时结束' : isCountdownRunning ? '计时中' : '已暂停' }}
-          </div>
-        </div>
-
-        <div class="controls-area">
-          <el-button
-            type="primary"
-            size="large"
-            circle
-            class="control-btn play-btn"
-            :class="{ 'is-running': isCountdownRunning }"
-            @click="toggleCountdown"
-          >
-            <el-icon size="24">
-              <component :is="isCountdownRunning ? VideoPause : VideoPlay" />
-            </el-icon>
-          </el-button>
-          <el-button
-            type="danger"
-            size="large"
-            circle
-            class="control-btn"
-            :disabled="!canResetCountdown"
-            @click="resetCountdown"
-          >
-            <el-icon size="24">
-              <Refresh />
-            </el-icon>
-          </el-button>
-        </div>
-
-        <div class="quick-presets">
-          <div class="section-title">
-            <el-icon>
-              <Clock />
-            </el-icon>
-            快速开始
-          </div>
-          <div class="preset-grid">
-            <button
-              v-for="preset in quickPresets"
-              :key="preset.label"
-              class="preset-btn"
-              @click="startPreset(preset)"
-            >
-              <span class="preset-time">{{ formatDuration(preset.time) }}</span>
-              <span class="preset-label">{{ preset.label }}</span>
-            </button>
-            <button class="preset-btn add-btn" @click="showAddPreset">
-              <el-icon>
-                <Plus />
-              </el-icon>
+      <!-- Add Preset Modal -->
+      <div
+        v-if="addPresetVisible"
+        class="brutal-modal-overlay"
+        @click.self="addPresetVisible = false"
+      >
+        <div class="brutal-modal-content brutal-pane" style="max-width: 400px">
+          <div class="pane-header bg-yellow text-black">
+            <span>+ 新增预设</span>
+            <button class="close-btn" style="color: black" @click="addPresetVisible = false">
+              ✖
             </button>
           </div>
-        </div>
-
-        <el-collapse v-model="activeCollapse" class="custom-collapse">
-          <el-collapse-item name="custom">
-            <template #title>
-              <div class="collapse-title">
-                <el-icon>
-                  <Operation />
-                </el-icon>
-                自定义时间
-              </div>
-            </template>
-            <div class="custom-input-group">
+          <div class="pane-body">
+            <div class="custom-input-group mt-2">
               <div class="input-item">
-                <el-input-number
-                  v-model="customHours"
-                  :min="0"
-                  :max="99"
-                  controls-position="right"
-                  placeholder="00"
+                <input
+                  v-model.number="newPresetHours"
+                  type="number"
+                  min="0"
+                  max="99"
+                  class="num-input"
                 />
                 <span class="unit">时</span>
               </div>
               <div class="input-item">
-                <el-input-number
-                  v-model="customMinutes"
-                  :min="0"
-                  :max="59"
-                  controls-position="right"
-                  placeholder="00"
+                <input
+                  v-model.number="newPresetMinutes"
+                  type="number"
+                  min="0"
+                  max="59"
+                  class="num-input"
                 />
                 <span class="unit">分</span>
               </div>
               <div class="input-item">
-                <el-input-number
-                  v-model="customSeconds"
-                  :min="0"
-                  :max="59"
-                  controls-position="right"
-                  placeholder="00"
+                <input
+                  v-model.number="newPresetSeconds"
+                  type="number"
+                  min="0"
+                  max="59"
+                  class="num-input"
                 />
                 <span class="unit">秒</span>
               </div>
             </div>
-            <el-input
-              v-model="customLabelInput"
-              placeholder="标签（可选，如：午休）"
-              class="mt-2"
+            <input
+              v-model="newPresetLabel"
+              class="brutal-input full mt-3"
+              placeholder="预设名称（留空推断时长）"
             />
-            <el-button type="primary" class="w-full mt-3" @click="startCustomTimer"
-              >开始计时</el-button
-            >
-          </el-collapse-item>
-
-          <el-collapse-item name="target">
-            <template #title>
-              <div class="collapse-title">
-                <el-icon>
-                  <Calendar />
-                </el-icon>
-                目标时间倒计时
-              </div>
-            </template>
-            <el-date-picker
-              v-model="targetDateTime"
-              type="datetime"
-              placeholder="选择目标时间"
-              style="width: 100%"
-              :disabled-date="disabledDate"
-            />
-            <el-button type="primary" class="w-full mt-3" @click="startTargetTimer"
-              >开始倒计时</el-button
-            >
-          </el-collapse-item>
-        </el-collapse>
-      </div>
-
-      <div v-show="currentMode === 'stopwatch'" class="timer-container glass-card">
-        <div class="display-area">
-          <div class="time-display stopwatch-display">{{ formatStopwatch(stopwatchElapsed) }}</div>
-          <div class="stopwatch-ms">{{ formatMs(stopwatchElapsed) }}</div>
-          <div class="time-status" :class="{ 'status-active': isStopwatchRunning }">
-            {{ isStopwatchRunning ? '运行中' : '已停止' }}
-          </div>
-        </div>
-
-        <div class="controls-area">
-          <el-button
-            v-if="!isStopwatchRunning"
-            type="success"
-            size="large"
-            circle
-            class="control-btn play-btn"
-            @click="startStopwatch"
-          >
-            <el-icon size="24">
-              <VideoPlay />
-            </el-icon>
-          </el-button>
-          <el-button
-            v-else
-            type="warning"
-            size="large"
-            circle
-            class="control-btn play-btn"
-            @click="pauseStopwatch"
-          >
-            <el-icon size="24">
-              <VideoPause />
-            </el-icon>
-          </el-button>
-
-          <el-button
-            type="primary"
-            size="large"
-            circle
-            class="control-btn"
-            :disabled="!isStopwatchRunning && stopwatchElapsed === 0"
-            @click="lapStopwatch"
-          >
-            <el-icon size="24">
-              <Flag />
-            </el-icon>
-          </el-button>
-
-          <el-button
-            type="danger"
-            size="large"
-            circle
-            class="control-btn"
-            :disabled="stopwatchElapsed === 0"
-            @click="resetStopwatch"
-          >
-            <el-icon size="24">
-              <Refresh />
-            </el-icon>
-          </el-button>
-        </div>
-
-        <div v-if="laps.length > 0" class="laps-container">
-          <div class="section-title">
-            <el-icon>
-              <DataAnalysis />
-            </el-icon>
-            计次记录
-          </div>
-          <div class="laps-list-wrapper">
-            <div class="laps-list">
-              <div v-for="lap in reversedLaps" :key="lap.index" class="lap-item">
-                <div class="lap-index">#{{ lap.index }}</div>
-                <div class="lap-time">
-                  {{ formatStopwatch(lap.time)
-                  }}<small>.{{ String(lap.time % 1000).padStart(3, '0') }}</small>
-                </div>
-                <div class="lap-split text-gray-400">+{{ formatStopwatch(lap.split) }}</div>
-              </div>
+            <div class="flex-row mt-4" style="gap: 1rem">
+              <button class="brutal-action-btn full" @click="addPresetVisible = false">取消</button>
+              <button class="brutal-action-btn bg-dark text-white full" @click="confirmAddPreset">
+                确认新增
+              </button>
             </div>
           </div>
         </div>
       </div>
-    </main>
 
-    <el-drawer
-      v-model="settingsVisible"
-      title="高级设置"
-      size="90%"
-      :direction="'btt'"
-      class="settings-drawer"
-    >
-      <div class="settings-content">
-        <div class="settings-section">
-          <h3 class="settings-section-title">提示音设置</h3>
-          <div class="sound-grid">
-            <div
-              v-for="sound in soundOptions"
-              :key="sound.key"
-              class="sound-item"
-              :class="{ active: currentSound === sound.key }"
-              @click="setSound(sound.key)"
-            >
-              <div class="sound-icon">
-                <el-icon>
-                  <component :is="Icons[sound.icon]" />
-                </el-icon>
-              </div>
-              <div class="sound-name">{{ sound.name }}</div>
-            </div>
-          </div>
-          <div class="mt-4 flex items-center justify-between">
-            <span>循环播放提示音</span>
-            <el-switch v-model="loopSound" />
-          </div>
-        </div>
-
-        <div class="settings-section">
-          <h3 class="settings-section-title">预设管理</h3>
-          <div class="editable-presets">
-            <div
-              v-for="(preset, index) in quickPresets"
-              :key="preset.label"
-              class="editable-preset-item"
-            >
-              <span class="time">{{ formatDuration(preset.time) }}</span>
-              <span class="label">{{ preset.label }}</span>
-              <el-button type="danger" link @click="removePreset(index)"
-                ><el-icon>
-                  <Delete /> </el-icon
-              ></el-button>
-            </div>
-          </div>
-        </div>
-
-        <div class="settings-section">
-          <h3 class="settings-section-title">通知</h3>
-          <div class="flex items-center justify-between">
-            <span>浏览器通知</span>
-            <el-switch v-model="enableNotification" @change="requestNotificationPermission" />
-          </div>
-          <div class="flex items-center justify-between mt-3">
-            <span>震动反馈</span>
-            <el-switch v-model="enableVibration" />
+      <div class="brutal-status">
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span v-for="i in 10" :key="i">© 2026 LRM工具箱 - 高级计时系统 // &nbsp;</span>
           </div>
         </div>
       </div>
-    </el-drawer>
 
-    <el-dialog v-model="addPresetVisible" title="添加快速预设" width="90%">
-      <div class="custom-input-group">
-        <div class="input-item">
-          <el-input-number
-            v-model="newPresetHours"
-            :min="0"
-            :max="99"
-            controls-position="right"
-            placeholder="00"
-          />
-          <span class="unit">时</span>
-        </div>
-        <div class="input-item">
-          <el-input-number
-            v-model="newPresetMinutes"
-            :min="0"
-            :max="59"
-            controls-position="right"
-            placeholder="00"
-          />
-          <span class="unit">分</span>
-        </div>
-        <div class="input-item">
-          <el-input-number
-            v-model="newPresetSeconds"
-            :min="0"
-            :max="59"
-            controls-position="right"
-            placeholder="00"
-          />
-          <span class="unit">秒</span>
-        </div>
-      </div>
-      <el-input v-model="newPresetLabel" placeholder="标签" class="mt-3" />
-      <template #footer>
-        <el-button @click="addPresetVisible = false">取消</el-button>
-        <el-button type="primary" @click="confirmAddPreset">添加</el-button>
-      </template>
-    </el-dialog>
-
-    <audio ref="audioPlayer" loop></audio>
-
-    <footer class="footer">© 2026 LRM工具箱 - 高级计时系统</footer>
+      <audio ref="audioPlayer" loop></audio>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
   import { useRouter } from 'vue-router';
-  import { ElNotification } from 'element-plus';
-  import * as Icons from '@element-plus/icons-vue';
-  const {
-    ArrowLeft,
-    Setting,
-    VideoPlay,
-    VideoPause,
-    Refresh,
-    Clock,
-    Plus,
-    Operation,
-    Calendar,
-    Flag,
-    DataAnalysis,
-    Delete
-  } = Icons;
 
   const router = useRouter();
   const goBack = () => router.back();
 
   const currentMode = ref('countdown');
   const settingsVisible = ref(false);
-  const activeCollapse = ref(['custom']);
 
   const countdownTotal = ref(0);
   const countdownRemaining = ref(0);
   const isCountdownRunning = ref(false);
   const currentLabel = ref('');
   const countdownEndTime = ref(0);
+
   const customHours = ref(0);
   const customMinutes = ref(0);
   const customSeconds = ref(0);
@@ -452,16 +396,14 @@
   const audioPlayer = ref(null);
 
   const sounds = {
-    default: { name: '默认', icon: 'Bell', src: 'https://clockcn.com/sound/xylophone.mp3' },
-    digital: { name: '电子', icon: 'Service', src: 'https://clockcn.com/sound/xylophone.mp3' },
+    default: { name: '默认木琴', src: 'https://clockcn.com/sound/xylophone.mp3' },
+    digital: { name: '电子蜂鸣', src: 'https://clockcn.com/sound/xylophone.mp3' },
     soft: {
-      name: '柔和',
-      icon: 'VideoPlay',
+      name: '按键铃',
       src: 'https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3'
     },
     alarm: {
-      name: '警报',
-      icon: 'VideoPause',
+      name: '警报器',
       src: 'https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3'
     }
   };
@@ -570,11 +512,8 @@
     const total = customHours.value * 3600 + customMinutes.value * 60 + customSeconds.value;
     if (total > 0) {
       startTimer(total, customLabelInput.value);
+      window.scrollTo(0, 0);
     }
-  };
-
-  const disabledDate = time => {
-    return time.getTime() < Date.now() - 8.64e7;
   };
 
   const startTargetTimer = () => {
@@ -584,10 +523,11 @@
     const diff = Math.ceil((target - now) / 1000);
 
     if (diff <= 0) {
-      ElNotification.error('目标时间必须在未来');
+      alert('目标时间必须在未来');
       return;
     }
     startTimer(diff, '目标时间倒计时');
+    window.scrollTo(0, 0);
   };
 
   let stopwatchIntervalId = null;
@@ -651,14 +591,7 @@
   };
 
   const notify = (title, body) => {
-    ElNotification({
-      title,
-      message: body,
-      type: 'success',
-      duration: 0
-    });
-
-    if (enableNotification.value && Notification.permission === 'granted') {
+    if (enableNotification.value && Notification && Notification.permission === 'granted') {
       new Notification(title, { body });
     }
   };
@@ -667,10 +600,6 @@
     if (val && Notification && Notification.permission !== 'granted') {
       Notification.requestPermission();
     }
-  };
-
-  const showAddPreset = () => {
-    addPresetVisible.value = true;
   };
 
   const confirmAddPreset = () => {
@@ -692,7 +621,7 @@
   };
 
   const loadSettings = () => {
-    const s = localStorage.getItem('timer_tool_settings');
+    const s = localStorage.getItem('timer_tool_settings_brutal');
     if (s) {
       try {
         const data = JSON.parse(s);
@@ -701,15 +630,15 @@
         enableNotification.value = data.enableNotification || false;
         enableVibration.value = data.enableVibration ?? true;
         if (data.quickPresets) quickPresets.value = data.quickPresets;
-      } catch {
-        // Ignore parse errors, fallback to defaults
+      } catch (e) {
+        console.warn('Failed to parse timer settings:', e);
       }
     }
   };
 
   const saveSettings = () => {
     localStorage.setItem(
-      'timer_tool_settings',
+      'timer_tool_settings_brutal',
       JSON.stringify({
         currentSound: currentSound.value,
         loopSound: loopSound.value,
@@ -736,390 +665,505 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f1f5f9;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #4b7bff;
+  }
+  .brutal-title span {
+    color: #4b7bff;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+    color: #111;
+  }
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+    color: #111;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .bg-dark {
+    background: #111;
+    color: #fff;
+  }
+  .bg-pink {
+    background: #ff4b4b;
+    color: #fff;
+  }
+  .bg-green {
+    background: #00e572;
+    color: #111;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .text-black {
+    color: #111;
+  }
+  .flex-row {
+    display: flex;
+    align-items: center;
+  }
+
+  .brutal-pane {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    transition: transform 0.2s;
     display: flex;
     flex-direction: column;
   }
-
-  .tool-header {
+  .pane-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: #ffffff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
   }
-
-  .header-center {
-    text-align: center;
-  }
-
-  .tool-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0;
-  }
-
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .tool-content {
-    flex: 1;
-    max-width: 600px;
-    width: 100%;
-    margin: 0 auto;
+  .pane-body {
     padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
   }
-
-  .mode-switcher {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 0.5rem;
-  }
-
-  .switcher-bg {
-    background: #e2e8f0;
-    border-radius: 999px;
-    padding: 4px;
-    display: flex;
-    position: relative;
-    width: 200px;
-  }
-
-  .switcher-active {
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    width: 50%;
-    height: calc(100% - 8px);
-    background: #ffffff;
-    border-radius: 999px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none;
-
-    width: 96px;
-  }
-
-  .switcher-btn {
-    flex: 1;
-    position: relative;
-    z-index: 1;
-    border: none;
-    background: transparent;
-    padding: 6px 0;
-    border-radius: 999px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #64748b;
-    cursor: pointer;
-    transition: color 0.3s;
-  }
-
-  .switcher-btn.active {
-    color: #0f172a;
-    font-weight: 600;
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 24px;
-    box-shadow:
-      0 10px 25px -5px rgba(0, 0, 0, 0.05),
-      0 8px 10px -6px rgba(0, 0, 0, 0.01);
-    padding: 2rem;
+  .flex-col-center {
     display: flex;
     flex-direction: column;
     align-items: center;
-    transition: all 0.3s ease;
   }
 
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  /* Mode switcher */
+  .mode-switcher {
+    flex-direction: row;
+    box-shadow: 6px 6px 0px #111;
+    border-radius: 0;
+    padding: 0;
+  }
+  .mode-switcher .switch-btn {
+    flex: 1;
+    padding: 1rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    font-family: 'Syne', sans-serif;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    outline: none;
+    transition: all 0.2s;
+    color: #555;
+    border-right: 4px solid #111;
+  }
+  .mode-switcher .switch-btn:last-child {
+    border-right: none;
+  }
+  .mode-switcher .switch-btn.active {
+    color: #111;
+    background: #ffd900;
+    box-shadow: inset 4px 4px 0px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Display Area */
   .display-area {
     text-align: center;
     margin-bottom: 2rem;
+    position: relative;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
-
   .time-display {
-    font-size: 4rem;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    color: #1e293b;
+    font-size: 5rem;
+    font-weight: 800;
+    font-family: 'Syne', monospace;
+    color: #111;
     line-height: 1;
     letter-spacing: -2px;
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 0.5rem;
+    padding: 1rem 0;
+    text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
   }
-
-  .time-end {
-    color: #ef4444;
-    -webkit-text-fill-color: #ef4444;
-    animation: pulse 1s infinite;
+  .time-display.near-end {
+    color: #ff4b4b;
+    animation: blink 1s infinite alternate;
   }
-
+  @keyframes blink {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0.5;
+    }
+  }
   .stopwatch-display {
-    font-size: 3.5rem;
+    display: inline-block;
+    margin-right: 2px;
   }
-
   .stopwatch-ms {
-    font-family: monospace;
-    font-size: 1.5rem;
-    color: #10b981;
-    font-weight: 600;
-    margin-top: -0.5rem;
-  }
-
-  .time-label {
-    font-size: 1.1rem;
-    color: #3b82f6;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    height: 1.5rem;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #555;
+    font-family: 'Syne', monospace;
   }
 
   .time-status {
-    font-size: 0.85rem;
-    color: #94a3b8;
-    font-weight: 500;
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #777;
+    font-family: 'Syne', sans-serif;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    border: 3px solid #777;
+    display: inline-block;
+    padding: 5px 15px;
+  }
+  .time-status.status-active {
+    color: #00e572;
+    border-color: #00e572;
+    box-shadow: 3px 3px 0px #00e572;
+    background: #fff;
   }
 
-  .status-active {
-    color: #10b981;
-  }
-
+  /* Controls */
   .controls-area {
     display: flex;
-    justify-content: center;
     gap: 1.5rem;
+    justify-content: center;
     margin-bottom: 2rem;
   }
-
-  .control-btn {
-    width: 64px;
-    height: 64px;
-    font-size: 1.5rem;
-    transition: all 0.2s;
+  .brutal-action-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 1rem 2rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-action-btn:hover:not(:disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+    filter: brightness(1.1);
+  }
+  .brutal-action-btn:active:not(:disabled) {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .brutal-action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: 4px 4px 0px #111;
+    transform: translate(2px, 2px);
+  }
+  .brutal-action-btn.full {
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  .control-btn:hover {
-    transform: scale(1.05);
-  }
-
-  .play-btn {
-    width: 80px;
-    height: 80px;
-  }
-
-  .play-btn.is-running {
-    background-color: #f59e0b;
-
-    border-color: #f59e0b;
-  }
-
-  @keyframes pulse {
-    0% {
-      opacity: 1;
-    }
-
-    50% {
-      opacity: 0.5;
-    }
-
-    100% {
-      opacity: 1;
-    }
-  }
-
+  /* Presets */
   .quick-presets {
     width: 100%;
+    padding: 1.5rem 0;
+    border-top: 4px dashed #111;
     margin-bottom: 1.5rem;
   }
-
   .section-title {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #64748b;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    display: block;
   }
-
   .preset-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 0.8rem;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
   }
-
   .preset-btn {
-    background: rgba(59, 130, 246, 0.08);
-    border: 1px solid transparent;
-    border-radius: 12px;
-    padding: 0.8rem 0.5rem;
+    background: #fff;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
     display: flex;
     flex-direction: column;
     align-items: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: #3b82f6;
-  }
-
-  .preset-btn:hover {
-    background: rgba(59, 130, 246, 0.15);
-    transform: translateY(-2px);
-  }
-
-  .preset-time {
-    font-weight: 700;
-    font-size: 1.1rem;
-  }
-
-  .preset-label {
-    font-size: 0.7rem;
-    margin-top: 0.2rem;
-    opacity: 0.8;
-  }
-
-  .add-btn {
-    border: 1px dashed #cbd5e1;
-    background: transparent;
-    color: #94a3b8;
     justify-content: center;
+    gap: 0.4rem;
   }
-
+  .preset-btn:hover {
+    background: #fdfae5;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+  .preset-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px #111;
+  }
+  .preset-time {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #4b7bff;
+  }
+  .preset-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #555;
+  }
+  .add-btn {
+    background: #111;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
   .add-btn:hover {
-    border-color: #3b82f6;
-    color: #3b82f6;
+    background: #333;
   }
 
-  .custom-collapse {
-    width: 100%;
-    border: none;
-    background: transparent;
-  }
-
-  .custom-collapse :deep(.el-collapse-item__header) {
-    background: transparent;
-    border: none;
-    font-weight: 500;
-    color: #64748b;
-    height: 40px;
-  }
-
-  .custom-collapse :deep(.el-collapse-item__wrap) {
-    background: transparent;
-    border: none;
-  }
-
-  .custom-collapse :deep(.el-collapse-item__content) {
-    padding-bottom: 0;
-  }
-
-  .collapse-title {
+  /* Custom input */
+  .custom-timer-boxes {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
   }
-
+  .custom-box {
+    border: 3px solid #111;
+    padding: 1.5rem;
+    background: #fdfae5;
+    box-shadow: 4px 4px 0px #111;
+  }
+  .box-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
   .custom-input-group {
     display: flex;
-    gap: 0.5rem;
+    gap: 1rem;
     justify-content: space-between;
   }
-
   .input-item {
-    flex: 1;
     display: flex;
-    flex-direction: column;
     align-items: center;
+    border: 3px solid #111;
+    background: #fff;
+    padding: 0.25rem;
+    box-shadow: 2px 2px 0px #111;
+    flex: 1;
+    justify-content: space-between;
   }
-
+  .num-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-size: 1.5rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 800;
+    outline: none;
+    text-align: center;
+    color: #111;
+  }
   .unit {
-    font-size: 0.75rem;
-    color: #94a3b8;
-    margin-top: 0.2rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #555;
+    padding: 0 0.5rem;
+    border-left: 2px dashed #ccc;
   }
 
+  .brutal-input {
+    border: 3px solid #111;
+    padding: 0.75rem 1rem;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 700;
+    font-size: 1.1rem;
+    background: #fff;
+    box-shadow: 3px 3px 0px #111;
+    outline: none;
+    transition: all 0.2s;
+  }
+  .brutal-input:focus {
+    background: #ffd900;
+  }
+  .brutal-input.full {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .mt-2 {
+    margin-top: 1rem;
+  }
+  .mt-3 {
+    margin-top: 1.5rem;
+  }
+  .mt-4 {
+    margin-top: 2rem;
+  }
+
+  /* Laps */
   .laps-container {
     width: 100%;
-    margin-top: 1rem;
-    border-top: 1px solid #e2e8f0;
-    padding-top: 1rem;
+    padding-top: 2rem;
+    border-top: 4px dashed #111;
   }
-
   .laps-list-wrapper {
-    max-height: 200px;
+    background: #fff;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    max-height: 250px;
     overflow-y: auto;
-    border-radius: 8px;
-    background: #f8fafc;
-    padding: 0.5rem;
   }
-
   .lap-item {
     display: flex;
     justify-content: space-between;
-    padding: 0.5rem;
-    border-bottom: 1px solid #e2e8f0;
-    font-family: monospace;
-    font-size: 0.9rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 2px solid #ccc;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
   }
-
   .lap-item:last-child {
     border-bottom: none;
   }
-
+  .lap-item:nth-child(even) {
+    background: #fdfae5;
+  }
   .lap-index {
-    color: #3b82f6;
-    font-weight: 600;
+    color: #555;
     width: 40px;
   }
-
   .lap-time {
-    color: #1e293b;
-    font-weight: 700;
-    flex: 1;
-    text-align: center;
+    font-size: 1.25rem;
+    color: #111;
   }
-
   .lap-split {
-    color: #64748b;
-    width: 80px;
-    text-align: right;
-  }
-
-  .settings-content {
-    padding: 0 1rem 2rem;
-  }
-
-  .settings-section {
-    margin-bottom: 2rem;
-  }
-
-  .settings-section-title {
+    color: #888;
     font-size: 1rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 1rem;
+  }
+
+  /* Modals */
+  .brutal-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+  }
+  .brutal-modal-content {
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #fff;
+    cursor: pointer;
+    outline: none;
+    transition: transform 0.1s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+  }
+  .close-btn:hover {
+    transform: scale(1.1);
+    color: #ff4b4b;
+    text-shadow: 2px 2px 0 #fff;
+  }
+
+  .settings-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .settings-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .settings-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    border-bottom: 3px solid #111;
+    padding-bottom: 0.5rem;
+    margin: 0;
   }
 
   .sound-grid {
@@ -1127,69 +1171,377 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
-
-  .sound-item {
-    background: #f1f5f9;
-    border-radius: 12px;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: all 0.2s;
-  }
-
-  .sound-item.active {
-    background: #eff6ff;
-    border-color: #3b82f6;
-    color: #3b82f6;
-  }
-
-  .sound-icon {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .editable-presets {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .editable-preset-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .sound-btn {
     background: #fff;
-    padding: 0.8rem;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border: 3px solid #111;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.1s;
+    box-shadow: 3px 3px 0px #111;
+  }
+  .sound-btn:hover {
+    background: #fdfae5;
+  }
+  .sound-btn.active {
+    background: #4b7bff;
+    color: white;
+    box-shadow: 0px 0px 0px #111;
+    transform: translate(3px, 3px);
   }
 
-  .editable-preset-item .time {
-    font-weight: 600;
+  .brutal-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+  .brutal-checkbox input {
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 2px 2px 0px #111;
+    cursor: pointer;
+    position: relative;
+  }
+  .brutal-checkbox input:checked {
+    background: #00e572;
+  }
+  .brutal-checkbox input:checked::after {
+    content: '✔';
+    position: absolute;
+    color: #111;
+    font-weight: 900;
+    left: 2px;
+    top: -2px;
+    font-size: 1.2rem;
   }
 
-  .editable-preset-item .label {
-    color: #64748b;
-    font-size: 0.85rem;
+  .preset-edit-list {
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    background: #fff;
+  }
+  .preset-edit-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px dashed #ccc;
+    font-weight: 700;
+    gap: 1rem;
+  }
+  .preset-edit-item:last-child {
+    border-bottom: none;
+  }
+  .preset-edit-item .time {
+    color: #4b7bff;
+    font-family: monospace;
+    font-size: 1.2rem;
+    width: 100px;
+  }
+  .preset-edit-item .label {
+    flex: 1;
+  }
+  .preset-edit-item .del-btn {
+    background: #ff4b4b;
+    border: 2px solid #111;
+    color: white;
+    width: 32px;
+    height: 32px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px #111;
+  }
+  .preset-edit-item .del-btn:hover {
+    background: #cc0000;
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px #111;
   }
 
-  @media (max-width: 640px) {
+  .brutal-status {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    overflow: hidden;
+    text-transform: uppercase;
+    margin-top: 1rem;
+  }
+  .marquee-wrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+  }
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .brutal-title {
+      font-size: 2.2rem;
+    }
     .time-display {
-      font-size: 3rem;
+      font-size: 3.5rem;
     }
-
-    .stopwatch-display {
-      font-size: 2.5rem;
+    .controls-area {
+      flex-wrap: wrap;
+    }
+    .controls-area .brutal-action-btn {
+      flex: 1;
+      min-width: 140px;
+      padding: 1rem;
+      font-size: 1rem;
+    }
+    .quick-presets {
+      padding: 1rem 0;
+    }
+    .pane-body {
+      padding: 1rem;
+    }
+    .input-item {
+      padding: 0;
+    }
+    .num-input {
+      font-size: 1.2rem;
+      height: 40px;
     }
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  /* Dark Mode */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-status,
+  [data-theme='dark'] .mode-switcher,
+  [data-theme='dark'] .brutal-modal-content {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn {
+    border-color: #eee;
+    box-shadow: 6px 6px 0px #eee;
+    color: #eee;
+    background: #222;
+  }
+
+  [data-theme='dark'] .brutal-action-btn.bg-pink {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-action-btn.bg-green {
+    background: #00994c;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-action-btn.bg-yellow {
+    background: #b28f00;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.bg-dark {
+    background: #333;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #eee;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-dark {
+    background: #333;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+
+  [data-theme='dark'] .mode-switcher {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .switch-btn {
+    color: #aaa;
+    border-right-color: #eee;
+  }
+  [data-theme='dark'] .switch-btn.active {
+    background: #2a4eb2;
+    color: #fff;
+    box-shadow: inset 4px 4px 0px rgba(0, 0, 0, 0.5);
+  }
+
+  [data-theme='dark'] .time-display {
+    color: #eee;
+    text-shadow: 4px 4px 0px #333;
+  }
+  [data-theme='dark'] .stopwatch-ms {
+    color: #aaa;
+  }
+  [data-theme='dark'] .time-status {
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .status-active {
+    background: #00994c;
+    color: #eee;
+    box-shadow: 3px 3px 0px #00994c;
+    border-color: #00994c;
+  }
+
+  [data-theme='dark'] .quick-presets {
+    border-top-color: #eee;
+  }
+  [data-theme='dark'] .preset-btn {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .preset-btn:hover {
+    background: #333;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .preset-time {
+    color: #89b4f8;
+  }
+  [data-theme='dark'] .preset-label {
+    color: #aaa;
+  }
+  [data-theme='dark'] .preset-btn.add-btn {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .preset-btn.add-btn:hover {
+    background: #ccc;
+  }
+
+  [data-theme='dark'] .custom-box {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .input-item {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .num-input {
+    color: #eee;
+  }
+  [data-theme='dark'] .unit {
+    color: #aaa;
+    border-left-color: #444;
+  }
+  [data-theme='dark'] .brutal-input {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-input:focus {
+    background: #333;
+  }
+
+  [data-theme='dark'] .laps-container {
+    border-top-color: #eee;
+  }
+  [data-theme='dark'] .laps-list-wrapper {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .lap-item {
+    border-bottom-color: #444;
+  }
+  [data-theme='dark'] .lap-item:nth-child(even) {
+    background: #222;
+  }
+  [data-theme='dark'] .lap-time {
+    color: #eee;
+  }
+  [data-theme='dark'] .lap-index,
+  [data-theme='dark'] .lap-split {
+    color: #aaa;
+  }
+
+  [data-theme='dark'] .settings-title {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .sound-btn {
+    background: #222;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .sound-btn.active {
+    background: #2a4eb2;
+    color: #fff;
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-checkbox input {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-checkbox input:checked {
+    background: #00994c;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .brutal-checkbox input:checked::after {
+    color: #fff;
+  }
+  [data-theme='dark'] .preset-edit-list {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .preset-edit-item {
+    border-bottom-color: #444;
+  }
+  [data-theme='dark'] .preset-edit-item .time {
+    color: #89b4f8;
+  }
+  [data-theme='dark'] .preset-edit-item .del-btn {
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
   }
 </style>

@@ -1,120 +1,92 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="$router.back()">
-          <el-icon><ArrowLeft /></el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">家庭急救手册</h1>
-        <span class="tool-subtitle">First Aid Manual</span>
-      </div>
-      <div class="header-right">
-        <!-- 占位 -->
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">急救<span>.手册()</span></h1>
+        <div style="width: 120px"></div>
+      </header>
 
-    <main class="tool-content">
-      <div class="first-aid-tool">
-        <div class="search-bar">
-          <el-input
+      <!-- Search -->
+      <div class="brutal-toolbar">
+        <div class="tools-left" style="flex: 1">
+          <input
             v-model="keyword"
+            class="brutal-input full"
             placeholder="搜索急救主题（如：烫伤、CPR...）"
-            size="large"
-            :prefix-icon="Search"
-            clearable
           />
         </div>
+      </div>
 
-        <div v-if="!selectedTopic" class="topics-grid">
-          <div
-            v-for="topic in filteredTopics"
-            :key="topic.id"
-            class="topic-card glass"
-            @click="selectedTopic = topic"
-          >
-            <div class="topic-icon" :style="{ backgroundColor: topic.color }">
-              <el-icon color="#fff" :size="24"><component :is="topic.icon" /></el-icon>
-            </div>
-            <div class="topic-info">
-              <h3>{{ topic.title }}</h3>
-              <p>{{ topic.desc }}</p>
-            </div>
+      <!-- Topic Grid -->
+      <div v-if="!selectedTopic" class="topics-grid">
+        <div
+          v-for="topic in filteredTopics"
+          :key="topic.id"
+          class="brutal-pane topic-card"
+          @click="selectedTopic = topic"
+        >
+          <div class="pane-header" :class="topic.headerColor">
+            <span>{{ topic.emoji }} {{ topic.title }}</span>
+          </div>
+          <div class="topic-body">
+            <p>{{ topic.desc }}</p>
+            <span class="step-count">{{ topic.steps.length }} 步骤 →</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail View -->
+      <div v-else class="brutal-pane detail-pane">
+        <div class="pane-header bg-pink">
+          <span class="text-white">{{ selectedTopic.emoji }} {{ selectedTopic.title }}</span>
+          <div class="pane-actions">
+            <button @click="selectedTopic = null">← 返回列表</button>
           </div>
         </div>
 
-        <div v-else class="topic-detail glass">
-          <div class="detail-header">
-            <el-button link @click="selectedTopic = null">
-              <el-icon><Back /></el-icon> 返回列表
-            </el-button>
-            <h2>{{ selectedTopic.title }}</h2>
+        <div class="detail-body">
+          <div class="warning-box">
+            <span class="warn-icon">⚠</span>
+            <span>注意：本指南仅供参考，紧急情况请立即拨打 <b>120</b> 急救电话。</span>
           </div>
 
-          <div class="detail-content">
-            <div class="warning-box">
-              <el-icon><Warning /></el-icon>
-              <span>注意：本指南仅供参考，紧急情况请立即拨打 120 急救电话。</span>
-            </div>
-
-            <div class="steps-container">
-              <div v-for="(step, index) in selectedTopic.steps" :key="index" class="step-item">
-                <div class="step-num">{{ index + 1 }}</div>
-                <div class="step-content">
-                  <h4>{{ step.title }}</h4>
-                  <p>{{ step.desc }}</p>
-                </div>
+          <div class="steps-list">
+            <div v-for="(step, index) in selectedTopic.steps" :key="index" class="step-item">
+              <div class="step-num">{{ index + 1 }}</div>
+              <div class="step-content">
+                <h4>{{ step.title }}</h4>
+                <p>{{ step.desc }}</p>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </main>
-    <footer class="footer">© 2026 LRM工具箱 - 家庭急救手册</footer>
+
+      <div class="brutal-status info">
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span v-for="i in 10" :key="i">© 2026 LRM工具箱 - 家庭急救手册 // &nbsp;</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
   import { ref, computed } from 'vue';
-  import type { Component } from 'vue';
-  import {
-    ArrowLeft,
-    Search,
-    FirstAidKit,
-    Warning,
-    Back,
-    Watermelon,
-    Phone,
-    Sunny,
-    Star
-  } from '@element-plus/icons-vue';
-
-  interface Step {
-    title: string;
-    desc: string;
-  }
-
-  interface Topic {
-    id: string;
-    title: string;
-    desc: string;
-    icon: Component;
-    color: string;
-    steps: Step[];
-  }
 
   const keyword = ref('');
-  const selectedTopic = ref<Topic | null>(null);
+  const selectedTopic = ref(null);
 
-  const topics: Topic[] = [
+  const topics = [
     {
       id: 'cpr',
+      emoji: '🫀',
       title: '心肺复苏 (CPR)',
+      headerColor: 'bg-pink',
       desc: '当发现有人心脏骤停（无反应、无呼吸）时使用',
-      icon: FirstAidKit,
-      color: '#ff5f56',
       steps: [
         {
           title: '判断反应',
@@ -137,10 +109,10 @@
     },
     {
       id: 'choking',
+      emoji: '🍉',
       title: '海姆立克急救法',
+      headerColor: 'bg-yellow',
       desc: '用于气管异物梗阻（噎食）',
-      icon: Watermelon,
-      color: '#ffbd2e',
       steps: [
         { title: '判断征兆', desc: '患者双手掐脖子，无法说话、咳嗽或呼吸，面色发紫。' },
         { title: '站位姿势', desc: '站在患者身后，双脚成弓步，前腿置于患者双腿之间以稳固重心。' },
@@ -151,10 +123,10 @@
     },
     {
       id: 'burn',
+      emoji: '🔥',
       title: '烧烫伤',
+      headerColor: 'bg-orange',
       desc: '热液、火焰或高温物体引起的皮肤损伤',
-      icon: Sunny,
-      color: '#ff7675',
       steps: [
         {
           title: '冲',
@@ -171,10 +143,10 @@
     },
     {
       id: 'nosebleed',
+      emoji: '🩸',
       title: '流鼻血',
+      headerColor: 'bg-green',
       desc: '鼻腔毛细血管破裂出血',
-      icon: Star,
-      color: '#fd79a8',
       steps: [
         {
           title: '前倾坐姿',
@@ -187,10 +159,10 @@
     },
     {
       id: 'emergency-call',
+      emoji: '📞',
       title: '拨打120须知',
+      headerColor: 'bg-blue',
       desc: '如何高效拨打急救电话',
-      icon: Phone,
-      color: '#0984e3',
       steps: [
         { title: '保持镇定', desc: '尽量控制情绪，清晰回答调度员的问题。' },
         { title: '说清地址', desc: '准确告知所在街道、小区、楼号、门牌号，或明显的标志性建筑。' },
@@ -214,185 +186,418 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f1f5f9;
-    display: flex;
-    flex-direction: column;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+  .brutal-container {
+    max-width: 900px;
+    margin: 0 auto;
   }
 
-  .tool-header {
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff4b4b;
+  }
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-toolbar {
+    display: flex;
+    background: #fff;
+    border: 4px solid #111;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    box-shadow: 8px 8px 0px #111;
+  }
+  .tools-left {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .brutal-input {
+    border: 3px solid #111;
+    padding: 0.7rem 1rem;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 600;
+    font-size: 1rem;
+    background: #fff;
+    box-shadow: 3px 3px 0px #111;
+    outline: none;
+  }
+  .brutal-input.full {
+    flex: 1;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Topics Grid */
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .brutal-pane {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 10px 10px 0px #111;
+    transition: all 0.15s;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+  }
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 14px 14px 0px #111;
+  }
+
+  .pane-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+  .pane-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .pane-actions button {
     background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .header-left,
-  .header-right {
-    width: 140px;
-  }
-
-  .header-center {
-    text-align: center;
-    flex: 1;
-  }
-
-  .tool-title {
-    font-size: 1.25rem;
+    color: #111;
+    border: 3px solid #111;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
     font-weight: 600;
-    color: #1e293b;
-    margin: 0;
+    font-size: 0.9rem;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #111;
+    transition: all 0.1s;
+  }
+  .pane-actions button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+  }
+  .pane-actions button:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
   }
 
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
-    text-transform: uppercase;
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .bg-green {
+    background: #00e572;
+  }
+  .bg-pink {
+    background: #ff4b4b;
+    color: #fff;
+  }
+  .bg-orange {
+    background: #ffba6b;
+  }
+  .text-white {
+    color: #fff;
   }
 
-  .tool-content {
+  .topic-body {
+    padding: 1.25rem;
     flex: 1;
-    padding: 1.5rem;
-    max-width: 800px;
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  .first-aid-tool {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    justify-content: space-between;
   }
-
-  .topics-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-  }
-
-  .topic-card {
-    display: flex;
-    align-items: center;
-    padding: 20px;
-    border-radius: 12px;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-
-  .topic-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-  }
-
-  .topic-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 15px;
-    flex-shrink: 0;
-  }
-
-  .topic-info h3 {
-    font-size: 1.1rem;
+  .topic-body p {
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+    color: #555;
     font-weight: 600;
-    margin: 0 0 5px;
-    color: #2c3e50;
+    line-height: 1.5;
+  }
+  .step-count {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: #4b7bff;
   }
 
-  .topic-info p {
-    font-size: 0.85rem;
-    color: #64748b;
-    margin: 0;
-    line-height: 1.4;
+  /* Detail */
+  .detail-pane {
+    cursor: default;
+    margin-bottom: 2.5rem;
   }
-
-  .topic-detail {
-    padding: 30px;
-    border-radius: 16px;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-  }
-
-  .detail-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #eee;
-  }
-
-  .detail-header h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: #2c3e50;
+  .detail-body {
+    padding: 1.5rem;
   }
 
   .warning-box {
-    background: #fff5f5;
-    color: #e17055;
-    padding: 12px 16px;
-    border-radius: 8px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.75rem;
+    background: #ffd900;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
     font-size: 0.9rem;
-    margin-bottom: 30px;
-    border: 1px solid #fab1a0;
+  }
+  .warn-icon {
+    font-size: 1.5rem;
   }
 
-  .steps-container {
+  .steps-list {
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 1.5rem;
   }
 
   .step-item {
     display: flex;
-    gap: 20px;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    background: #fdfae5;
+    transition: all 0.1s;
+  }
+  .step-item:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
   }
 
   .step-num {
-    width: 32px;
-    height: 32px;
-    background: #e17055;
-    color: white;
-    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    background: #ff4b4b;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
     flex-shrink: 0;
-    margin-top: 2px;
+    border: 3px solid #111;
   }
-
   .step-content h4 {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
     font-size: 1.1rem;
-    margin: 0 0 8px;
-    color: #2d3436;
+    font-weight: 800;
+    margin: 0 0 0.5rem;
+    color: #111;
   }
-
   .step-content p {
     margin: 0;
-    color: #636e72;
+    font-size: 0.9rem;
+    color: #555;
     line-height: 1.6;
+    font-weight: 500;
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
-    font-size: 0.85rem;
+  /* Status */
+  .brutal-status {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    overflow: hidden;
+    text-transform: uppercase;
+  }
+  .marquee-wrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+  }
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (max-width: 700px) {
+    .brutal-title {
+      font-size: 2rem;
+    }
+    .topics-grid {
+      grid-template-columns: 1fr;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+  }
+
+  /* Dark Mode */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-toolbar,
+  [data-theme='dark'] .brutal-status {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-toolbar {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 10px 10px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 14px 14px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .pane-actions button {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-input {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .topic-body p {
+    color: #aaa;
+  }
+  [data-theme='dark'] .step-count {
+    color: #89b4f8;
+  }
+  [data-theme='dark'] .warning-box {
+    background: #b28f00;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+    color: #fff;
+  }
+  [data-theme='dark'] .step-item {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .step-item:hover {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .step-num {
+    background: #cc0000;
+    border-color: #eee;
+  }
+  [data-theme='dark'] .step-content h4 {
+    color: #eee;
+  }
+  [data-theme='dark'] .step-content p {
+    color: #aaa;
+  }
+  [data-theme='dark'] .brutal-status {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-orange {
+    background: #a07040;
+    color: #fff;
   }
 </style>

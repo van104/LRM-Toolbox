@@ -1,99 +1,108 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="$router.back()">
-          <el-icon><ArrowLeft /></el-icon>
-          <span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">纪念日倒计</h1>
-        <span class="tool-subtitle">Anniversary Countdown</span>
-      </div>
-      <div class="header-right">
-        <el-button type="primary" circle @click="showAddDialog = true">
-          <el-icon><Plus /></el-icon>
-        </el-button>
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">纪念日<span>.倒计()</span></h1>
+        <button class="brutal-btn add-btn-header" @click="showAddDialog = true">+ 新增</button>
+      </header>
 
-    <main class="tool-content">
-      <div class="anniversary-tool">
-        <div v-if="events.length === 0" class="empty-state">
-          <el-empty description="暂无纪念日，点击右上角添加" />
+      <div v-if="events.length === 0" class="brutal-pane empty-pane">
+        <div class="empty-content">
+          <span class="empty-icon">📅</span>
+          <p>暂无纪念日，点击右上角添加</p>
         </div>
+      </div>
 
-        <div class="events-grid">
-          <div
-            v-for="event in events"
-            :key="event.id"
-            class="event-card"
-            :style="{ background: event.color }"
-          >
-            <div class="card-content">
-              <div class="event-header">
-                <span class="event-title">{{ event.title }}</span>
-                <div class="card-actions">
-                  <el-button link class="action-btn" @click="deleteEvent(event.id)">
-                    <el-icon><Delete /></el-icon>
-                  </el-button>
-                </div>
-              </div>
-              <div class="event-days">
-                <span class="number">{{ getDays(event.date) }}</span>
-                <span class="label">{{ getLabel(event.date) }}</span>
-              </div>
-              <div class="event-date">{{ formatDate(event.date) }}</div>
+      <div class="events-grid">
+        <div
+          v-for="event in events"
+          :key="event.id"
+          class="brutal-pane event-card"
+          :class="getColorClass(event.color)"
+        >
+          <div class="pane-header event-header-bar">
+            <span class="event-title-text">{{ event.title }}</span>
+            <div class="pane-actions">
+              <button @click="deleteEvent(event.id)">✕ 删除</button>
             </div>
           </div>
+          <div class="event-body">
+            <div class="event-days">
+              <span class="number">{{ getDays(event.date) }}</span>
+              <span class="label-text">{{ getLabel(event.date) }}</span>
+            </div>
+            <div class="event-date">{{ formatDate(event.date) }}</div>
+          </div>
         </div>
       </div>
-    </main>
 
-    <el-dialog v-model="showAddDialog" title="添加纪念日" width="400px">
-      <el-form :model="form" label-position="top">
-        <el-form-item label="标题">
-          <el-input v-model="form.title" placeholder="例如：恋爱纪念日、发薪日" />
-        </el-form-item>
-        <el-form-item label="日期">
-          <el-date-picker
-            v-model="form.date"
-            type="date"
-            placeholder="选择日期"
-            style="width: 100%"
-            format="YYYY-MM-DD"
-            value-format="YYYY-MM-DD"
-          />
-        </el-form-item>
-        <el-form-item label="背景颜色">
-          <div class="color-presets">
-            <div
-              v-for="color in colors"
-              :key="color"
-              class="color-dot"
-              :style="{ background: color }"
-              :class="{ active: form.color === color }"
-              @click="form.color = color"
-            ></div>
+      <!-- Add Dialog -->
+      <div v-if="showAddDialog" class="modal-overlay" @click.self="showAddDialog = false">
+        <div class="brutal-pane modal-card">
+          <div class="pane-header bg-yellow">
+            <span>添加纪念日</span>
+            <div class="pane-actions">
+              <button @click="showAddDialog = false">✕</button>
+            </div>
           </div>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="showAddDialog = false">取消</el-button>
-        <el-button type="primary" @click="addEvent">保存</el-button>
-      </template>
-    </el-dialog>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="brutal-label">标题</label>
+              <input
+                v-model="form.title"
+                class="brutal-input full"
+                placeholder="例如：恋爱纪念日、发薪日"
+              />
+            </div>
+            <div class="form-group">
+              <label class="brutal-label">日期</label>
+              <input v-model="form.date" type="date" class="brutal-input full" />
+            </div>
+            <div class="form-group">
+              <label class="brutal-label">背景风格</label>
+              <div class="color-presets">
+                <button
+                  v-for="(c, idx) in colorOptions"
+                  :key="idx"
+                  class="color-btn"
+                  :class="[c.cls, { active: form.color === c.cls }]"
+                  @click="form.color = c.cls"
+                >
+                  {{ c.name }}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="brutal-action-btn" @click="showAddDialog = false">取消</button>
+            <button class="brutal-action-btn primary" @click="addEvent">保存</button>
+          </div>
+        </div>
+      </div>
 
-    <footer class="footer">© 2026 LRM工具箱 - 纪念日倒计</footer>
+      <div class="brutal-status info">
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span v-for="i in 10" :key="i">© 2026 LRM工具箱 - 纪念日倒计 // &nbsp;</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, onMounted, watch } from 'vue';
-  import { ArrowLeft, Plus, Delete } from '@element-plus/icons-vue';
+  import { useRouter } from 'vue-router';
   import { ElMessage, ElMessageBox } from 'element-plus';
   import dayjs from 'dayjs';
+
+  const router = useRouter();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
   interface EventItem {
     id: string;
@@ -105,20 +114,22 @@
   const showAddDialog = ref(false);
   const events = ref<EventItem[]>([]);
 
-  const colors = [
-    'linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)',
-    'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
-    'linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)',
-    'linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)',
-    'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)',
-    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
+  const colorOptions = [
+    { cls: 'card-pink', name: '粉红' },
+    { cls: 'card-blue', name: '蓝色' },
+    { cls: 'card-green', name: '绿色' },
+    { cls: 'card-yellow', name: '黄色' },
+    { cls: 'card-purple', name: '紫色' },
+    { cls: 'card-orange', name: '橙色' }
   ];
 
   const form = ref({
     title: '',
     date: '',
-    color: colors[0]
+    color: 'card-pink'
   });
+
+  const getColorClass = (color: string) => color || 'card-pink';
 
   const initEvents = () => {
     const saved = localStorage.getItem('lrm-anniversaries');
@@ -143,7 +154,7 @@
     });
 
     showAddDialog.value = false;
-    form.value = { title: '', date: '', color: colors[0] };
+    form.value = { title: '', date: '', color: 'card-pink' };
     ElMessage.success('添加成功');
   };
 
@@ -190,166 +201,534 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f1f5f9;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+
+  .brutal-container {
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
   }
 
-  .tool-header {
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff9fb2;
+  }
+
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-btn.add-btn-header {
+    background: #00e572;
+    color: #111;
+  }
+
+  /* Empty Pane */
+  .empty-pane {
+    text-align: center;
+    padding: 4rem 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .empty-content {
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  .empty-icon {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  /* Events Grid */
+  .events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .brutal-pane {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .pane-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
   }
 
-  .header-left,
-  .header-right {
-    width: 140px;
-  }
-
-  .header-right {
+  .pane-actions {
     display: flex;
-    justify-content: flex-end;
+    gap: 0.75rem;
   }
 
-  .header-center {
+  .pane-actions button {
+    background: #fff;
+    color: #111;
+    border: 3px solid #111;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #111;
+    transition: all 0.1s;
+  }
+
+  .pane-actions button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+  }
+
+  .pane-actions button:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  /* Event Card Colors */
+  .event-card.card-pink .event-header-bar {
+    background: #ff9fb2;
+  }
+  .event-card.card-blue .event-header-bar {
+    background: #89b4f8;
+  }
+  .event-card.card-green .event-header-bar {
+    background: #81e6b3;
+  }
+  .event-card.card-yellow .event-header-bar {
+    background: #ffd900;
+  }
+  .event-card.card-purple .event-header-bar {
+    background: #c4a7ff;
+  }
+  .event-card.card-orange .event-header-bar {
+    background: #ffba6b;
+  }
+
+  .event-body {
+    padding: 2rem 1.5rem;
     text-align: center;
     flex: 1;
-  }
-
-  .tool-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0;
-  }
-
-  .tool-subtitle {
-    font-size: 0.75rem;
-    color: #64748b;
-    text-transform: uppercase;
-  }
-
-  .tool-content {
-    flex: 1;
-    padding: 1.5rem;
-    max-width: 800px;
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  .anniversary-tool {
-    padding-top: 20px;
-  }
-
-  .events-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-  }
-
-  .event-card {
-    border-radius: 20px;
-    padding: 24px;
-    color: #fff;
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s;
-    position: relative;
-    overflow: hidden;
-    height: 180px;
-  }
-
-  .event-card:hover {
-    transform: translateY(-5px);
-  }
-
-  .card-content {
-    position: relative;
-    z-index: 2;
-    height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-  }
-
-  .event-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-
-  .event-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    opacity: 0.9;
-  }
-
-  .action-btn {
-    color: rgba(255, 255, 255, 0.6) !important;
-    padding: 0;
-    height: auto;
-  }
-
-  .action-btn:hover {
-    color: #fff !important;
-  }
-
-  .event-days {
-    text-align: center;
+    justify-content: center;
   }
 
   .event-days .number {
-    font-size: 3.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 4rem;
     font-weight: 800;
     line-height: 1;
-    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    display: block;
   }
 
-  .event-days .label {
-    font-size: 1rem;
-    margin-left: 5px;
-    opacity: 0.9;
+  .event-days .label-text {
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: block;
+    margin-top: 0.25rem;
   }
 
   .event-date {
     font-size: 0.9rem;
-    text-align: center;
-    opacity: 0.8;
-    margin-top: 10px;
+    margin-top: 1rem;
+    color: #555;
+    font-weight: 600;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+  }
+
+  .event-title-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .modal-card {
+    width: 90%;
+    max-width: 450px;
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .brutal-label {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+  }
+
+  .brutal-input {
+    border: 3px solid #111;
+    padding: 0.6rem 0.8rem;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 600;
+    font-size: 1rem;
+    background: #fff;
+    box-shadow: 3px 3px 0px #111;
+    outline: none;
+  }
+
+  .brutal-input.full {
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .color-presets {
     display: flex;
-    gap: 10px;
+    gap: 0.5rem;
     flex-wrap: wrap;
   }
 
-  .color-dot {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: all 0.2s;
-  }
-
-  .color-dot.active {
-    border-color: #333;
-    transform: scale(1.1);
-  }
-
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #64748b;
+  .color-btn {
+    padding: 0.4rem 0.8rem;
+    border: 3px solid #111;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 700;
     font-size: 0.85rem;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #111;
+    transition: all 0.1s;
+  }
+
+  .color-btn.card-pink {
+    background: #ff9fb2;
+  }
+  .color-btn.card-blue {
+    background: #89b4f8;
+  }
+  .color-btn.card-green {
+    background: #81e6b3;
+  }
+  .color-btn.card-yellow {
+    background: #ffd900;
+  }
+  .color-btn.card-purple {
+    background: #c4a7ff;
+  }
+  .color-btn.card-orange {
+    background: #ffba6b;
+  }
+
+  .color-btn.active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .color-btn:hover:not(.active) {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+  }
+
+  .modal-footer {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-top: 4px solid #111;
+    background: #fdfae5;
+  }
+
+  .brutal-action-btn {
+    flex: 1;
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.7rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.1s;
+  }
+
+  .brutal-action-btn.primary {
+    background: #00e572;
+  }
+
+  .brutal-action-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+
+  .brutal-action-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+
+  /* Status Bar */
+  .brutal-status {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    overflow: hidden;
+    text-transform: uppercase;
+  }
+
+  .brutal-status.info {
+    background: #fff;
+  }
+
+  .marquee-wrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .brutal-title {
+      font-size: 2rem;
+    }
+    .events-grid {
+      grid-template-columns: 1fr;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+  }
+
+  /* --- Dark Mode Overrides --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-status,
+  [data-theme='dark'] .brutal-status.info,
+  [data-theme='dark'] .brutal-action-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+
+  [data-theme='dark'] .pane-actions button {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .pane-actions button:hover {
+    box-shadow: 5px 5px 0px #eee;
+  }
+  [data-theme='dark'] .pane-actions button:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-input {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .color-btn {
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .color-btn.active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-action-btn {
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-btn.add-btn-header {
+    background: #00994c;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .modal-footer {
+    background: #222;
+    border-top-color: #eee;
+  }
+
+  [data-theme='dark'] .event-date {
+    color: #aaa;
+  }
+
+  [data-theme='dark'] .brutal-status {
+    box-shadow: 8px 8px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .event-card.card-pink .event-header-bar {
+    background: #b25465;
+  }
+  [data-theme='dark'] .event-card.card-blue .event-header-bar {
+    background: #405d9e;
+  }
+  [data-theme='dark'] .event-card.card-green .event-header-bar {
+    background: #3c9165;
+  }
+  [data-theme='dark'] .event-card.card-yellow .event-header-bar {
+    background: #b28f00;
+  }
+  [data-theme='dark'] .event-card.card-purple .event-header-bar {
+    background: #6b5b95;
+  }
+  [data-theme='dark'] .event-card.card-orange .event-header-bar {
+    background: #a07040;
   }
 </style>

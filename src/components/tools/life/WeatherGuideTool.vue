@@ -1,149 +1,121 @@
 <template>
-  <div class="weather-guide-tool">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="$router.back()">
-        <el-icon>
-          <Back />
-        </el-icon>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>天气生活指南</h1>
-        <span class="nav-subtitle">Weather Life Guide</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">天气<span>.指南()</span></h1>
+        <div style="width: 100px"></div>
+      </header>
 
-    <main class="main-content">
-      <div class="tool-card glass-card">
-        <div class="search-section">
-          <div class="input-wrapper">
-            <input
-              v-model="cityInput"
-              type="text"
-              placeholder="输入城市名称 (如: 北京 / Shanghai)"
-              @keyup.enter="fetchWeather"
-            />
-            <button class="search-btn" :disabled="loading" @click="fetchWeather">
-              <el-icon v-if="loading" class="is-loading">
-                <Loading />
-              </el-icon>
-              <span v-else>查询</span>
-            </button>
+      <main class="main-content">
+        <div class="brutal-pane tool-card">
+          <div class="pane-header bg-yellow">
+            <span>🌍 城市天气搜索</span>
           </div>
-          <div class="example-cities">
-            <span @click="quickSearch('北京')">北京</span>
-            <span @click="quickSearch('上海')">上海</span>
-            <span @click="quickSearch('广州')">广州</span>
-            <span @click="quickSearch('Shenzhen')">深圳</span>
-          </div>
-        </div>
-
-        <div v-if="errorMsg" class="error-msg">
-          <el-icon>
-            <Warning />
-          </el-icon>
-          {{ errorMsg }}
-        </div>
-
-        <div v-if="weatherData" class="weather-content animate-fade-in">
-          <div class="weather-header">
-            <div class="location-info">
-              <h2>{{ weatherData.city }}</h2>
-              <span class="coords"
-                >{{ weatherData.lat.toFixed(2) }}°N, {{ weatherData.lon.toFixed(2) }}°E</span
-              >
+          <div class="pane-body">
+            <div class="search-section">
+              <div class="input-wrapper">
+                <input
+                  v-model="cityInput"
+                  type="text"
+                  class="brutal-input"
+                  placeholder="输入城市名称 (如: 北京 / Shanghai / Tokyo)"
+                  @keyup.enter="fetchWeather"
+                />
+                <button class="brutal-btn search-btn" :disabled="loading" @click="fetchWeather">
+                  {{ loading ? '查询中...' : '🔍 查询' }}
+                </button>
+              </div>
+              <div class="example-cities">
+                <span @click="quickSearch('北京')">北京</span>
+                <span @click="quickSearch('上海')">上海</span>
+                <span @click="quickSearch('广州')">广州</span>
+                <span @click="quickSearch('Shenzhen')">深圳</span>
+              </div>
             </div>
-            <div class="current-weather">
-              <div class="temp-big">{{ Math.round(weatherData.current.temperature_2m) }}°</div>
-              <div class="condition">
-                <div class="weather-text">
-                  {{ getWeatherDesc(weatherData.current.weather_code) }}
+
+            <div v-if="errorMsg" class="error-msg brutal-error">⚠️ {{ errorMsg }}</div>
+
+            <div v-if="weatherData" class="weather-content animate-fade-in">
+              <div class="weather-header">
+                <div class="location-info">
+                  <h2>📍 {{ weatherData.city }}</h2>
+                  <span class="coords"
+                    >{{ weatherData.lat.toFixed(2) }}°N, {{ weatherData.lon.toFixed(2) }}°E</span
+                  >
                 </div>
-                <div class="range">
-                  H: {{ Math.round(weatherData.daily.temperature_2m_max[0]) }}° L:
-                  {{ Math.round(weatherData.daily.temperature_2m_min[0]) }}°
+                <div class="current-weather">
+                  <div class="temp-big">{{ Math.round(weatherData.current.temperature_2m) }}°</div>
+                  <div class="condition">
+                    <div class="weather-text">
+                      {{ getWeatherDesc(weatherData.current.weather_code) }}
+                    </div>
+                    <div class="range">
+                      HIGH: {{ Math.round(weatherData.daily.temperature_2m_max[0]) }}° LOW:
+                      {{ Math.round(weatherData.daily.temperature_2m_min[0]) }}°
+                    </div>
+                  </div>
                 </div>
               </div>
+
+              <div class="keywords-bar">
+                <span
+                  v-for="tag in calculatedKeywords"
+                  :key="tag.text"
+                  class="brutal-tag keyword-tag"
+                  :class="tag.type"
+                >
+                  #{{ tag.text }}
+                </span>
+              </div>
+
+              <div class="guide-grid">
+                <div class="brutal-pane guide-card">
+                  <div class="pane-header bg-blue text-white">👕 穿衣建议</div>
+                  <div class="pane-body">
+                    <p>{{ suggestions.clothing }}</p>
+                  </div>
+                </div>
+
+                <div class="brutal-pane guide-card">
+                  <div class="pane-header bg-green text-dark">🚴 出行指南</div>
+                  <div class="pane-body">
+                    <p>{{ suggestions.travel }}</p>
+                  </div>
+                </div>
+
+                <div class="brutal-pane guide-card">
+                  <div class="pane-header bg-red text-white">🏀 运动建议</div>
+                  <div class="pane-body">
+                    <p>{{ suggestions.sport }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="data-source">🌐 Data Source: Open-Meteo</div>
+            </div>
+
+            <div v-else-if="!loading && !errorMsg" class="empty-state">
+              <div class="huge-icon">⛅</div>
+              <p>请输入城市获取天气与生活建议</p>
             </div>
           </div>
-
-          <div class="keywords-bar">
-            <span
-              v-for="tag in calculatedKeywords"
-              :key="tag.text"
-              class="keyword-tag"
-              :class="tag.type"
-            >
-              #{{ tag.text }}
-            </span>
-          </div>
-
-          <div class="guide-grid">
-            <div class="guide-card">
-              <div class="card-icon clothing">
-                <el-icon>
-                  <User />
-                </el-icon>
-              </div>
-              <div class="card-body">
-                <h3>穿衣建议</h3>
-                <p>{{ suggestions.clothing }}</p>
-              </div>
-            </div>
-
-            <div class="guide-card">
-              <div class="card-icon travel">
-                <el-icon>
-                  <Bicycle />
-                </el-icon>
-              </div>
-              <div class="card-body">
-                <h3>出行指南</h3>
-                <p>{{ suggestions.travel }}</p>
-              </div>
-            </div>
-
-            <div class="guide-card">
-              <div class="card-icon sport">
-                <el-icon>
-                  <Basketball />
-                </el-icon>
-              </div>
-              <div class="card-body">
-                <h3>运动建议</h3>
-                <p>{{ suggestions.sport }}</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="data-source">数据来源: Open-Meteo</div>
         </div>
+      </main>
 
-        <div v-else-if="!loading && !errorMsg" class="empty-state">
-          <el-icon class="huge-icon">
-            <Sunny />
-          </el-icon>
-          <p>请输入城市获取天气与生活建议</p>
+      <div class="brutal-status">
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span v-for="i in 10" :key="i">© 2026 LRM工具箱 - 天气生活指南 // &nbsp;</span>
+          </div>
         </div>
       </div>
-    </main>
-
-    <footer class="footer">© 2026 LRM工具箱 - 天气生活指南</footer>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, computed } from 'vue';
-  import {
-    Back,
-    Loading,
-    Warning,
-    Sunny,
-    User,
-    Bicycle,
-    Basketball
-  } from '@element-plus/icons-vue';
 
   const cityInput = ref('');
   const loading = ref(false);
@@ -169,7 +141,7 @@
       const geoData = await geoRes.json();
 
       if (!geoData.results || geoData.results.length === 0) {
-        throw new Error('未找到该城市，请尝试输入英文名或拼音');
+        throw new Error('未找到该城市，请检查拼写');
       }
 
       const location = geoData.results[0];
@@ -181,15 +153,9 @@
       const weatherRes = await fetch(weatherUrl);
       const wData = await weatherRes.json();
 
-      weatherData.value = {
-        city: cityName,
-        lat,
-        lon,
-        current: wData.current,
-        daily: wData.daily
-      };
+      weatherData.value = { city: cityName, lat, lon, current: wData.current, daily: wData.daily };
     } catch (err) {
-      errorMsg.value = err.message || '获取数据失败，请稍后重试';
+      errorMsg.value = err.message || '网络请求失败，请稍后重试';
     } finally {
       loading.value = false;
     }
@@ -198,26 +164,26 @@
   const getWmoDesc = code => {
     const codes = {
       0: '晴朗',
-      1: '主要晴朗',
-      2: '多云',
+      1: '少部分多云',
+      2: '局部多云',
       3: '阴天',
       45: '雾',
       48: '沉积雾',
-      51: '毛毛雨-轻',
-      53: '毛毛雨-中',
-      55: '毛毛雨-密',
+      51: '毛毛雨',
+      53: '中毛毛雨',
+      55: '密毛毛雨',
       61: '小雨',
       63: '中雨',
       65: '大雨',
       71: '小雪',
       73: '中雪',
       75: '大雪',
-      80: '阵雨-轻',
-      81: '阵雨-中',
-      82: '阵雨-强',
+      80: '阵雨',
+      81: '中阵雨',
+      82: '强阵雨',
       95: '雷雨',
-      96: '雷雨伴冰雹',
-      99: '雷雨伴冰雹'
+      96: '雷阵雨伴有冰雹',
+      99: '强雷阵雨带冰雹'
     };
     return codes[code] || '未知天气';
   };
@@ -235,23 +201,23 @@
     let sport = '';
 
     if (t < 0) clothing = '极寒天气，请穿戴厚羽绒服、围巾、手套，注意保暖防冻。';
-    else if (t < 10) clothing = '气温较低，建议穿着棉服、毛呢大衣或夹克。';
+    else if (t < 10) clothing = '气温较低，建议穿着棉服、毛呢大衣或保暖外套。';
     else if (t < 20) clothing = '体感舒适偏凉，建议单层外套配长袖T恤。';
-    else if (t < 28) clothing = '温暖舒适，建议穿着短袖、薄衬衫。';
+    else if (t < 28) clothing = '温暖舒适，建议短袖或薄款长袖。';
     else clothing = '炎热高温，建议穿着透气轻薄衣物，注意防晒。';
 
     const isRain = [51, 53, 55, 61, 63, 65, 80, 81, 82, 95, 96, 99].includes(code);
     const isSnow = [71, 73, 75].includes(code);
 
-    if (isRain) travel = '有雨水光顾，出行请记得携带雨具，路面湿滑注意安全。';
-    else if (isSnow) travel = '有降雪，路面可能积雪结冰，出行请注意防滑，尽量乘坐公共交通。';
-    else if (wind > 20) travel = '风力较大，出行请注意防风，小心高空坠物。';
-    else travel = '天气不错，适合出行。';
+    if (isRain) travel = '有降雨预计，出门务必带伞！路面湿滑请注意安全。';
+    else if (isSnow) travel = '降雪将至，路面可能结冰打滑，建议乘坐公共交通。';
+    else if (wind > 20) travel = '风力较强，建议避开高楼广告牌，骑车请放慢速度。';
+    else travel = '天气环境良好，非常适合出行。';
 
-    if (isRain || isSnow) sport = '户外有雨雪，不适宜户外运动，建议在室内进行瑜伽或力量训练。';
-    else if (t > 30) sport = '气温过高，不宜剧烈运动，以免中暑，建议在清晨或傍晚进行轻量运动。';
-    else if (t < 5) sport = '气温较低，户外运动请做好热身，运动后及时擦汗防感冒。';
-    else sport = '天气条件适宜，非常适合户外跑步、打球等运动。';
+    if (isRain || isSnow) sport = '室外有雨雪，不宜户外运动，建议在家里举铁或做瑜伽。';
+    else if (t > 30) sport = '气温偏高，避免正午剧烈运动以免中暑，可在凉快时段轻量运动。';
+    else if (t < 5) sport = '气温较低，室外运动一定要充分热身，运动完立刻添衣。';
+    else sport = '温度适宜，快去户外跑两圈释放压力吧！';
 
     return { clothing, travel, sport };
   });
@@ -269,7 +235,6 @@
     const desc = getWmoDesc(code);
     if (desc.includes('雨')) list.push({ text: '带伞', type: 'purple' });
     if (desc.includes('晴')) list.push({ text: '防晒', type: 'orange' });
-
     list.push({ text: desc, type: 'gray' });
 
     return list;
@@ -277,347 +242,496 @@
 </script>
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
 
-  .weather-guide-tool {
-    --bg: #faf9f7;
-    --card: #ffffff;
-    --border: #e8e6e3;
-    --text: #1a1a1a;
-    --text-2: #6b6b6b;
-    --accent: #0ea5e9;
-
-    --accent-light: #e0f2fe;
-
-    font-family: 'Noto Sans SC', sans-serif;
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
     min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
-
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
+  .brutal-container {
+    max-width: 900px;
+    margin: 0 auto;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .brutal-header {
+    display: flex;
     justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-back,
-  .nav-spacer {
-    width: 80px;
-  }
-
-  .nav-back {
-    display: flex;
     align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--text-2);
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #4b7bff;
+  }
+  .brutal-title span {
+    color: #4b7bff;
+    text-shadow: 4px 4px 0px #111;
+  }
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
     cursor: pointer;
-    font-size: 0.9rem;
-    padding: 0.5rem 0;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    color: #111;
+    white-space: nowrap;
   }
-
-  .nav-center h1 {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 1.25rem;
-    font-weight: 600;
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
   }
-
-  .nav-subtitle {
-    font-size: 0.7rem;
-    color: var(--text-2);
-    text-transform: uppercase;
-    display: block;
-    text-align: center;
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0 0 0 #111;
+  }
+  .brutal-pane {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+  .pane-body {
+    padding: 1.5rem;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-green {
+    background: #00e572;
+  }
+  .bg-red {
+    background: #ff4b4b;
+  }
+  .bg-blue {
+    background: #4b7bff;
+  }
+  .bg-dark {
+    background: #111;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .text-dark {
+    color: #111;
   }
 
   .main-content {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
   }
-
-  .glass-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  }
-
   .input-wrapper {
     display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
   }
-
-  .input-wrapper input {
+  .brutal-input {
     flex: 1;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 1rem;
+    border: 4px solid #111;
+    padding: 1rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: 1.1rem;
+    box-shadow: 4px 4px 0px #111;
     outline: none;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
+    min-width: 250px;
+    background: #fff;
+    color: #111;
   }
-
-  .input-wrapper input:focus {
-    border-color: var(--accent);
+  .brutal-input:focus {
+    background: #fdfae5;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
   }
 
   .search-btn {
-    padding: 0 1.5rem;
-    background: var(--text);
-    color: white;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    display: flex;
-    align-items: center;
+    font-size: 1.1rem;
+    padding: 1rem 1.5rem;
   }
-
-  .search-btn:hover {
-    opacity: 0.9;
-  }
-
   .search-btn:disabled {
-    opacity: 0.7;
+    background: #ddd;
+    color: #888;
     cursor: not-allowed;
+    box-shadow: 6px 6px 0px #111;
+    transform: none;
   }
 
   .example-cities {
     display: flex;
-    gap: 0.75rem;
-    font-size: 0.8rem;
-    color: var(--text-2);
+    gap: 1rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #555;
   }
-
   .example-cities span {
     cursor: pointer;
-    border-bottom: 1px dotted var(--text-2);
+    border-bottom: 2px dashed #111;
+    transition: color 0.1s;
+  }
+  .example-cities span:hover {
+    color: #4b7bff;
+    border-color: #4b7bff;
   }
 
-  .example-cities span:hover {
-    color: var(--accent);
-    border-color: var(--accent);
+  .brutal-error {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #ff4b4b;
+    color: #fff;
+    font-weight: 800;
+    border: 4px solid #111;
+    box-shadow: 4px 4px 0px #111;
   }
 
   .weather-header {
     margin-top: 2rem;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: stretch;
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 4px solid #111;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
-
   .location-info h2 {
-    font-size: 1.75rem;
-    margin-bottom: 0.25rem;
-    font-family: 'Noto Serif SC', serif;
+    font-size: 2.25rem;
+    font-weight: 900;
+    font-family: 'Syne', sans-serif;
+    margin: 0 0 0.5rem;
   }
-
   .coords {
-    font-size: 0.8rem;
-    color: var(--text-2);
-    font-family: monospace;
+    font-size: 1rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    color: #555;
+    background: #eee;
+    padding: 4px 8px;
+    border: 2px solid #111;
   }
 
   .current-weather {
     text-align: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
   }
-
   .temp-big {
-    font-size: 3.5rem;
-    font-weight: 700;
+    font-size: 4rem;
+    font-weight: 900;
     line-height: 1;
-    color: var(--text);
+    text-shadow: 4px 4px 0px #ffd900;
+    font-family: 'Syne', sans-serif;
   }
-
+  .condition {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-top: 0.5rem;
+  }
   .weather-text {
-    font-size: 1.1rem;
-    margin-bottom: 0.25rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    background: #111;
+    color: #fff;
+    padding: 2px 10px;
+    border: 2px solid #111;
   }
-
   .range {
-    font-size: 0.9rem;
-    color: var(--text-2);
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111;
+    margin-top: 0.5rem;
   }
 
   .keywords-bar {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 1rem;
     margin: 1.5rem 0;
   }
-
-  .keyword-tag {
+  .brutal-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 800;
+    font-size: 1rem;
     padding: 0.4rem 0.8rem;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    font-weight: 600;
+    border: 3px solid #111;
+    box-shadow: 3px 3px 0px #111;
+    background: #fff;
   }
-
-  .keyword-tag.blue {
-    background: #eff6ff;
-    color: #3b82f6;
+  .brutal-tag.blue {
+    background: #4b7bff;
+    color: #fff;
   }
-
-  .keyword-tag.red {
-    background: #fef2f2;
-    color: #ef4444;
+  .brutal-tag.red {
+    background: #ff4b4b;
+    color: #fff;
   }
-
-  .keyword-tag.green {
-    background: #f0fdf4;
-    color: #16a34a;
+  .brutal-tag.green {
+    background: #00e572;
+    color: #111;
   }
-
-  .keyword-tag.purple {
-    background: #faf5ff;
-    color: #9333ea;
+  .brutal-tag.purple {
+    background: #9333ea;
+    color: #fff;
   }
-
-  .keyword-tag.orange {
-    background: #fff7ed;
-    color: #f97316;
+  .brutal-tag.orange {
+    background: #ff9900;
+    color: #111;
   }
-
-  .keyword-tag.gray {
-    background: #f3f4f6;
-    color: #4b5563;
+  .brutal-tag.gray {
+    background: #eee;
   }
 
   .guide-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
   }
-
   .guide-card {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1.25rem;
-    background: #f9f9f9;
-    border-radius: 12px;
+    margin-bottom: 0;
+    box-shadow: 6px 6px 0px #111;
+    transition: transform 0.1s;
   }
-
-  .card-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    flex-shrink: 0;
+  .guide-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0px #111;
   }
-
-  .card-icon.clothing {
-    background: #e0e7ff;
-    color: #4338ca;
-  }
-
-  .card-icon.travel {
-    background: #dbeafe;
-    color: #1e40af;
-  }
-
-  .card-icon.sport {
-    background: #ffedd5;
-    color: #c2410c;
-  }
-
-  .card-body h3 {
-    font-size: 1rem;
-    margin-bottom: 0.4rem;
+  .guide-card .pane-body {
     font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.6;
   }
-
-  .card-body p {
-    font-size: 0.9rem;
-    color: var(--text-2);
-    line-height: 1.5;
+  .guide-card p {
+    margin: 0;
   }
 
   .data-source {
     text-align: right;
-    font-size: 0.75rem;
-    color: #ccc;
-    margin-top: 1rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #555;
+    margin-top: 1.5rem;
+    font-family: monospace;
+    border-top: 4px dashed #111;
+    padding-top: 1rem;
   }
-
-  .error-msg {
-    margin-top: 1rem;
-    padding: 1rem;
-    background: #fef2f2;
-    color: #b91c1c;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
   .empty-state {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 300px;
-    color: #cbd5e1;
+    min-height: 250px;
+    color: #555;
+    font-weight: 800;
+    font-size: 1.2rem;
   }
-
   .huge-icon {
-    font-size: 4rem;
+    font-size: 5rem;
+    text-shadow: 4px 4px 0px #111;
     margin-bottom: 1rem;
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-2);
-    font-size: 0.85rem;
-    border-top: 1px solid var(--border);
-    margin-top: 2rem;
+  .brutal-status {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 1rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    overflow: hidden;
   }
-
-  .animate-fade-in {
-    animation: fadeIn 0.4s ease;
+  .marquee-wrapper {
+    overflow: hidden;
   }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+  }
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
     }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
+    100% {
+      transform: translateX(-50%);
     }
   }
 
-  @media (min-width: 640px) {
+  @media (max-width: 768px) {
+    .brutal-title {
+      font-size: 2rem;
+    }
     .guide-grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: 1fr;
     }
-
-    .guide-card {
+    .weather-header {
       flex-direction: column;
-      align-items: center;
-      text-align: center;
     }
+    .current-weather {
+      align-items: flex-start;
+      text-align: left;
+    }
+    .condition {
+      align-items: flex-start;
+    }
+  }
+
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-status {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0 0 0 #eee;
+  }
+  [data-theme='dark'] .brutal-btn:disabled {
+    box-shadow: 6px 6px 0px #444 !important;
+    border-color: #666;
+    color: #666;
+    background: #222;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #00994c;
+  }
+  [data-theme='dark'] .bg-red {
+    background: #cc0000;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+  }
+  [data-theme='dark'] .bg-dark {
+    background: #333;
+  }
+  [data-theme='dark'] .brutal-input {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-input:focus {
+    background: #333;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .example-cities span {
+    border-bottom-color: #eee;
+    color: #aaa;
+  }
+  [data-theme='dark'] .example-cities span:hover {
+    color: #89b4f8;
+  }
+  [data-theme='dark'] .brutal-error {
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .weather-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .coords {
+    background: #333;
+    border-color: #eee;
+    color: #ddd;
+  }
+  [data-theme='dark'] .temp-big {
+    text-shadow: 4px 4px 0px #b28f00;
+  }
+  [data-theme='dark'] .weather-text {
+    border-color: #eee;
+  }
+  [data-theme='dark'] .range {
+    color: #ccc;
+  }
+  [data-theme='dark'] .brutal-tag {
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-tag.green {
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-tag.orange {
+    color: #fff;
+    background: #cc6600;
+  }
+  [data-theme='dark'] .brutal-tag.gray {
+    background: #444;
+    color: #eee;
+  }
+  [data-theme='dark'] .guide-card {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .guide-card:hover {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .data-source {
+    border-top-color: #eee;
+    color: #aaa;
+  }
+  [data-theme='dark'] .empty-state {
+    color: #aaa;
+  }
+  [data-theme='dark'] .huge-icon {
+    text-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-status {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
   }
 </style>

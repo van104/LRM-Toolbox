@@ -1,177 +1,188 @@
 <template>
-  <div class="unit-converter">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="goHome">
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>单位转换器</h1>
-        <span class="nav-subtitle">Unit Converter</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goHome">← 返回</button>
+        <h1 class="brutal-title">单位<span>.转换()</span></h1>
+        <div style="width: 120px"></div>
+      </header>
 
-    <main class="main-content">
-      <section class="category-section">
-        <div class="category-scroll">
-          <button
-            v-for="(data, key) in unitData"
-            :key="key"
-            :class="['category-chip', { active: currentCategory === key }]"
-            @click="updateCategory(key)"
-          >
-            <span class="chip-icon">{{ getCategoryIcon(key) }}</span>
-            <span>{{ data.name }}</span>
-          </button>
-        </div>
-      </section>
+      <main class="main-content">
+        <section class="category-section">
+          <div class="category-scroll">
+            <button
+              v-for="(data, key) in unitData"
+              :key="key"
+              class="category-chip"
+              :class="{ active: currentCategory === key }"
+              @click="updateCategory(key)"
+            >
+              <span class="chip-icon">{{ getCategoryIcon(key) }}</span>
+              <span>{{ data.name }}</span>
+            </button>
+          </div>
+        </section>
 
-      <section class="converter-card">
-        <div v-if="currentCategory === 'resolution'" class="dpi-section animate-fade-in">
-          <label class="section-label">像素密度 (DPI/PPI)</label>
-          <div class="dpi-row">
-            <input v-model.number="dpi" type="number" class="dpi-input" @input="convert" />
-            <span class="dpi-suffix">像素/英寸</span>
-            <div class="dpi-presets">
-              <span
-                @click="
-                  dpi = 72;
-                  convert();
-                "
-                >72 (屏)</span
-              >
-              <span
-                @click="
-                  dpi = 96;
-                  convert();
-                "
-                >96 (Win)</span
-              >
-              <span
-                @click="
-                  dpi = 300;
-                  convert();
-                "
-                >300 (印)</span
-              >
+        <section class="brutal-pane converter-card">
+          <div class="pane-header bg-yellow">
+            <span
+              >{{ getCategoryIcon(currentCategory) }}
+              {{ unitData[currentCategory]?.name }} 转换</span
+            >
+          </div>
+          <div class="pane-body">
+            <div v-if="currentCategory === 'resolution'" class="dpi-section">
+              <label class="section-label">像素密度 (DPI/PPI)</label>
+              <div class="dpi-row">
+                <input
+                  v-model.number="dpi"
+                  type="number"
+                  class="brutal-input dpi-input"
+                  @input="convert"
+                />
+                <span class="dpi-suffix">像素/英寸</span>
+                <div class="dpi-presets">
+                  <button
+                    class="preset-tag"
+                    @click="
+                      dpi = 72;
+                      convert();
+                    "
+                  >
+                    72 (屏)
+                  </button>
+                  <button
+                    class="preset-tag"
+                    @click="
+                      dpi = 96;
+                      convert();
+                    "
+                  >
+                    96 (Win)
+                  </button>
+                  <button
+                    class="preset-tag"
+                    @click="
+                      dpi = 300;
+                      convert();
+                    "
+                  >
+                    300 (印)
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="input-section">
+              <label class="section-label">输入</label>
+              <div class="value-row">
+                <input
+                  v-model.number="inputValue"
+                  type="number"
+                  placeholder="请输入数值"
+                  class="brutal-input value-input"
+                  @input="convert"
+                />
+                <select v-model="inputUnit" class="brutal-select" @change="convert">
+                  <option v-for="unit in currentUnits" :key="unit.id" :value="unit.id">
+                    {{ unit.name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="swap-row">
+              <div class="divider-line"></div>
+              <button class="swap-btn" @click="swapUnits">⇅</button>
+              <div class="divider-line"></div>
+            </div>
+
+            <div class="output-section">
+              <label class="section-label">结果</label>
+              <div class="value-row">
+                <div class="output-display">{{ outputValue || '—' }}</div>
+                <select v-model="outputUnit" class="brutal-select" @change="convert">
+                  <option v-for="unit in currentUnits" :key="unit.id" :value="unit.id">
+                    {{ unit.name }}
+                  </option>
+                </select>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div class="input-section">
-          <label class="section-label">输入</label>
-          <div class="value-row">
-            <input
-              v-model.number="inputValue"
-              type="number"
-              placeholder="请输入数值"
-              class="value-input"
-              @input="convert"
-            />
-            <select v-model="inputUnit" class="unit-select" @change="convert">
-              <option v-for="unit in currentUnits" :key="unit.id" :value="unit.id">
-                {{ unit.name }}
-              </option>
-            </select>
+        <section class="brutal-pane shortcuts-section">
+          <div class="pane-header bg-blue text-white pt-1 pb-1">
+            <span>⚡ 常用转换</span>
+          </div>
+          <div class="pane-body">
+            <div class="shortcuts-list">
+              <button
+                v-for="(shortcut, key) in shortcuts"
+                :key="key"
+                class="shortcut-item"
+                @click="applyShortcut(key)"
+              >
+                {{ shortcut.label }}
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="brutal-pane history-section">
+          <div class="pane-header bg-dark text-white pt-1 pb-1">
+            <span>📋 转换历史</span>
+            <button v-if="history.length > 0" class="clear-btn" @click="clearHistory">清空</button>
+          </div>
+          <div class="pane-body">
+            <div v-if="history.length === 0" class="history-empty">暂无记录</div>
+            <div class="history-list">
+              <button
+                v-for="(item, index) in history"
+                :key="index"
+                class="history-item"
+                @click="applyHistory(item)"
+              >
+                <span class="history-value"
+                  >{{ item.value }} <small>{{ item.fromUnitName }}</small></span
+                >
+                <span class="history-arrow">→</span>
+                <span class="history-result"
+                  >{{ item.result }} <small>{{ item.toUnitName }}</small></span
+                >
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="brutal-pane features-section">
+          <div class="pane-header bg-green pt-1 pb-1">
+            <span>✅ 功能特点</span>
+          </div>
+          <div class="pane-body">
+            <div class="features-grid">
+              <div v-for="f in features" :key="f" class="feature-item">
+                <span class="feature-check">✓</span>
+                {{ f }}
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <div class="brutal-status">
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span v-for="i in 10" :key="i">© 2026 LRM工具箱 - 单位转换器 // &nbsp;</span>
           </div>
         </div>
-
-        <div class="swap-row">
-          <div class="divider-line"></div>
-          <button class="swap-btn" @click="swapUnits">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M7 16V4M7 4L3 8M7 4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" />
-            </svg>
-          </button>
-          <div class="divider-line"></div>
-        </div>
-
-        <div class="output-section">
-          <label class="section-label">结果</label>
-          <div class="value-row">
-            <div class="output-display">{{ outputValue || '—' }}</div>
-            <select v-model="outputUnit" class="unit-select" @change="convert">
-              <option v-for="unit in currentUnits" :key="unit.id" :value="unit.id">
-                {{ unit.name }}
-              </option>
-            </select>
-          </div>
-        </div>
-      </section>
-
-      <section class="shortcuts-section">
-        <h3 class="section-title">常用转换</h3>
-        <div class="shortcuts-list">
-          <button
-            v-for="(shortcut, key) in shortcuts"
-            :key="key"
-            class="shortcut-item"
-            @click="applyShortcut(key)"
-          >
-            {{ shortcut.label }}
-          </button>
-        </div>
-      </section>
-
-      <section class="history-section">
-        <div class="section-header">
-          <h3 class="section-title">转换历史</h3>
-          <button v-if="history.length > 0" class="clear-btn" @click="clearHistory">清空</button>
-        </div>
-        <div class="history-list">
-          <div v-if="history.length === 0" class="history-empty">暂无记录</div>
-          <div
-            v-for="(item, index) in history"
-            :key="index"
-            class="history-item"
-            @click="applyHistory(item)"
-          >
-            <span class="history-value"
-              >{{ item.value }} <small>{{ item.fromUnitName }}</small></span
-            >
-            <span class="history-arrow">→</span>
-            <span class="history-result"
-              >{{ item.result }} <small>{{ item.toUnitName }}</small></span
-            >
-          </div>
-        </div>
-      </section>
-
-      <section class="features-section">
-        <h3 class="section-title">功能特点</h3>
-        <div class="features-grid">
-          <div v-for="f in features" :key="f" class="feature-item">
-            <span class="feature-check">✓</span>
-            {{ f }}
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="footer">© 2026 LRM工具箱 - 单位转换器</footer>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
   import { ref, computed, onMounted } from 'vue';
-  import { ElMessage } from 'element-plus';
 
   const unitData = {
     length: {
@@ -245,17 +256,14 @@
       name: '存储',
       units: [
         { id: 'byte', name: '字节 (Byte)', symbol: 'B', conversion: 1 },
-
         { id: 'kib', name: 'KiB (二进制)', symbol: 'KiB', conversion: 1024 },
         { id: 'mib', name: 'MiB (二进制)', symbol: 'MiB', conversion: 1048576 },
         { id: 'gib', name: 'GiB (二进制)', symbol: 'GiB', conversion: 1073741824 },
         { id: 'tib', name: 'TiB (二进制)', symbol: 'TiB', conversion: 1099511627776 },
-
         { id: 'kb', name: 'KB (十进制)', symbol: 'KB', conversion: 1000 },
         { id: 'mb', name: 'MB (十进制)', symbol: 'MB', conversion: 1000000 },
         { id: 'gb', name: 'GB (十进制)', symbol: 'GB', conversion: 1000000000 },
         { id: 'tb', name: 'TB (十进制)', symbol: 'TB', conversion: 1000000000000 },
-
         { id: 'bit', name: '比特 (bit)', symbol: 'bit', conversion: 0.125 }
       ]
     },
@@ -375,7 +383,7 @@
   };
 
   const features = [
-    '网速/存储/分辨率转换 (NEW)',
+    '网速/存储/分辨率转换',
     '支持15种单位类型',
     '历史记录保存',
     '一键交换单位',
@@ -454,14 +462,12 @@
     } else if (currentCategory.value === 'resolution') {
       let baseInch;
       const dpiVal = dpi.value || 72;
-
       if (inputUnit.value === 'px') {
         baseInch = value / dpiVal;
       } else {
         const fromUnit = categoryData.units.find(u => u.id === inputUnit.value);
         baseInch = value * fromUnit.conversion;
       }
-
       if (outputUnit.value === 'px') {
         result = baseInch * dpiVal;
       } else {
@@ -498,7 +504,6 @@
     const categoryData = unitData[currentCategory.value];
     const fromUnitName = categoryData.units.find(u => u.id === fromUnit)?.symbol || fromUnit;
     const toUnitName = categoryData.units.find(u => u.id === toUnit)?.symbol || toUnit;
-
     const isDuplicate = history.value.some(
       item =>
         item.category === currentCategory.value &&
@@ -506,7 +511,6 @@
         item.fromUnit === fromUnit &&
         item.toUnit === toUnit
     );
-
     if (!isDuplicate) {
       history.value.unshift({
         category: currentCategory.value,
@@ -518,19 +522,17 @@
         result
       });
       if (history.value.length > historyLimit) history.value = history.value.slice(0, historyLimit);
-      localStorage.setItem('converterHistory', JSON.stringify(history.value));
+      localStorage.setItem('converterHistory_brutal', JSON.stringify(history.value));
     }
   }
 
   function loadHistory() {
-    const saved = localStorage.getItem('converterHistory');
+    const saved = localStorage.getItem('converterHistory_brutal');
     if (saved) history.value = JSON.parse(saved);
   }
-
   function clearHistory() {
     history.value = [];
-    localStorage.removeItem('converterHistory');
-    ElMessage.success('已清空历史记录');
+    localStorage.removeItem('converterHistory_brutal');
   }
 
   function applyHistory(item) {
@@ -557,7 +559,6 @@
 
   function goHome() {
     if (window.history.length > 1) window.history.back();
-    else alert('返回首页');
   }
 
   onMounted(() => {
@@ -567,226 +568,203 @@
 </script>
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
 
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  .unit-converter {
-    --bg: #faf9f7;
-    --card: #ffffff;
-    --border: #e8e6e3;
-    --text: #1a1a1a;
-    --text-secondary: #6b6b6b;
-    --text-muted: #9a9a9a;
-    --accent: #2563eb;
-    --accent-light: #eff6ff;
-    --success: #059669;
-    --shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.04);
-
-    font-family:
-      'Noto Sans SC',
-      -apple-system,
-      BlinkMacSystemFont,
-      sans-serif;
-    background: var(--bg);
-    color: var(--text);
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
     min-height: 100vh;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
-
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    margin: -0.5rem;
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-
-  .nav-back:hover {
-    background: var(--accent-light);
-    color: var(--accent);
-  }
-
-  .nav-center {
-    text-align: center;
-  }
-
-  .nav-center h1 {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text);
-    letter-spacing: 0.02em;
-  }
-
-  .nav-subtitle {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-
-  .nav-spacer {
-    width: 60px;
-  }
-
-  .main-content {
-    max-width: 540px;
+  .brutal-container {
+    max-width: 640px;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #4b7bff;
+  }
+  .brutal-title span {
+    color: #4b7bff;
+    text-shadow: 4px 4px 0px #111;
+  }
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    color: #111;
+  }
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0 0 0 #111;
+  }
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .bg-dark {
+    background: #111;
+    color: #fff;
+  }
+  .bg-green {
+    background: #00e572;
+  }
+  .text-white {
+    color: #fff;
+  }
+  .pt-1 {
+    padding-top: 0.5rem;
+  }
+  .pb-1 {
+    padding-bottom: 0.5rem;
+  }
+  .brutal-pane {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+  .pane-body {
     padding: 1.5rem;
+  }
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
   }
 
   .category-section {
-    margin-bottom: 1.5rem;
     overflow: hidden;
   }
-
   .category-scroll {
     display: flex;
     flex-wrap: nowrap;
     gap: 0.5rem;
     overflow-x: auto;
-    overflow-y: hidden;
-    padding: 0.5rem 0.25rem;
-    -webkit-overflow-scrolling: touch;
+    padding: 0.5rem 0;
     scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
   }
-
-  .category-scroll::-webkit-scrollbar {
-    height: 4px;
-  }
-
-  .category-scroll::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .category-scroll::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 2px;
-  }
-
   .category-chip {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.6rem 1rem;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    background: #fff;
+    border: 3px solid #111;
+    font-size: 0.9rem;
+    font-weight: 800;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.2s;
+    transition: all 0.1s;
+    box-shadow: 3px 3px 0px #111;
   }
-
   .category-chip:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+    background: #fdfae5;
   }
-
   .category-chip.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: white;
+    background: #4b7bff;
+    color: #fff;
+    box-shadow: 0 0 0 #111;
+    transform: translate(3px, 3px);
   }
-
   .chip-icon {
     font-size: 1rem;
   }
 
-  .converter-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: var(--shadow);
-    overflow: hidden;
-  }
-
   .section-label {
     display: block;
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #555;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     margin-bottom: 0.75rem;
   }
-
   .dpi-section {
     margin-bottom: 1.5rem;
     padding-bottom: 1.5rem;
-    border-bottom: 1px dashed var(--border);
+    border-bottom: 3px dashed #111;
   }
-
   .dpi-row {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    flex-wrap: wrap;
   }
-
   .dpi-input {
     width: 80px;
-    padding: 0.5rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
     text-align: center;
-    font-weight: 600;
-    color: var(--text);
   }
-
-  .dpi-input:focus {
-    border-color: var(--accent);
-    outline: none;
-  }
-
   .dpi-suffix {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #555;
   }
-
   .dpi-presets {
     display: flex;
     gap: 0.5rem;
     margin-left: auto;
   }
-
-  .dpi-presets span {
-    font-size: 0.75rem;
-    color: var(--accent);
+  .preset-tag {
+    font-size: 0.8rem;
+    font-weight: 800;
     cursor: pointer;
-    background: var(--accent-light);
+    background: #ffd900;
+    border: 2px solid #111;
     padding: 4px 8px;
-    border-radius: 4px;
+    box-shadow: 2px 2px 0px #111;
+    transition: all 0.1s;
   }
-
-  .dpi-presets span:hover {
-    background: #dbeafe;
+  .preset-tag:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px #111;
   }
 
   .value-row {
@@ -794,250 +772,343 @@
     gap: 0.75rem;
     flex-wrap: wrap;
   }
-
+  .brutal-input {
+    border: 3px solid #111;
+    padding: 0.75rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: 1.1rem;
+    background: #fff;
+    box-shadow: 3px 3px 0px #111;
+    outline: none;
+    transition: all 0.2s;
+  }
+  .brutal-input:focus {
+    background: #ffd900;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+  }
   .value-input {
     flex: 1;
     min-width: 0;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    font-size: 1.25rem;
+  }
+  .brutal-select {
+    border: 3px solid #111;
     padding: 0.75rem;
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: 0.95rem;
+    box-shadow: 3px 3px 0px #111;
+    cursor: pointer;
     outline: none;
-    transition: border-color 0.2s;
+    background: #fff;
+    min-width: 130px;
+    max-width: 170px;
+    flex-shrink: 0;
   }
-
-  .value-input:focus {
-    border-color: var(--accent);
+  .brutal-select:focus {
+    background: #fdfae5;
   }
-
-  .value-input::placeholder {
-    color: var(--text-muted);
-    font-weight: 400;
-  }
-
   .output-display {
     flex: 1;
     min-width: 0;
-    background: var(--accent-light);
-    border: 1px solid transparent;
-    border-radius: 10px;
+    background: #fdfae5;
+    border: 3px solid #111;
     padding: 0.75rem;
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--accent);
-  }
-
-  .unit-select {
-    flex-shrink: 0;
-    min-width: 120px;
-    max-width: 160px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 0.875rem 2.5rem 0.875rem 1rem;
-    font-size: 0.9rem;
-    color: var(--text);
-    cursor: pointer;
-    outline: none;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b6b6b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 14px;
-  }
-
-  .unit-select:focus {
-    border-color: var(--accent);
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #4b7bff;
+    box-shadow: 3px 3px 0px #111;
   }
 
   .swap-row {
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin: 1.25rem 0;
+    margin: 1.5rem 0;
   }
-
   .divider-line {
     flex: 1;
-    height: 1px;
-    background: var(--border);
+    height: 3px;
+    background: #111;
   }
-
   .swap-btn {
-    width: 44px;
-    height: 44px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 50%;
-    color: var(--text-secondary);
+    width: 48px;
+    height: 48px;
+    background: #ffd900;
+    border: 3px solid #111;
+    font-size: 1.5rem;
+    font-weight: 900;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    box-shadow: 3px 3px 0px #111;
+    transition: all 0.15s;
   }
-
   .swap-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    transform: rotate(180deg);
+    transform: translate(-2px, -2px) rotate(180deg);
+    box-shadow: 5px 5px 0px #111;
   }
-
-  .shortcuts-section,
-  .history-section,
-  .features-section {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.25rem;
-    margin-bottom: 1rem;
-    box-shadow: var(--shadow);
-  }
-
-  .section-title {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 1rem;
-  }
-
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .section-header .section-title {
-    margin-bottom: 0;
+  .swap-btn:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0 0 0 #111;
   }
 
   .shortcuts-list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
+    gap: 0.75rem;
   }
-
   .shortcut-item {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    background: #fff;
+    border: 3px solid #111;
     padding: 0.75rem;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 700;
     cursor: pointer;
     text-align: center;
-    transition: all 0.2s;
+    transition: all 0.15s;
+    box-shadow: 3px 3px 0px #111;
   }
-
   .shortcut-item:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: var(--accent-light);
+    background: #ffd900;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
   }
 
   .clear-btn {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-size: 0.8rem;
+    background: #ff4b4b;
+    border: 2px solid #fff;
+    color: #fff;
+    padding: 4px 10px;
+    font-weight: 800;
+    font-size: 0.85rem;
     cursor: pointer;
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
-    transition: all 0.2s;
   }
-
   .clear-btn:hover {
-    color: #dc2626;
-    background: #fef2f2;
+    background: #cc0000;
   }
-
-  .history-list {
-    max-height: 200px;
-    overflow-y: auto;
-  }
-
   .history-empty {
     text-align: center;
     padding: 2rem;
-    color: var(--text-muted);
-    font-size: 0.9rem;
+    color: #888;
+    font-weight: 700;
   }
-
+  .history-list {
+    display: flex;
+    flex-direction: column;
+  }
   .history-item {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     padding: 0.75rem;
-    border-radius: 10px;
+    border-bottom: 2px dashed #ccc;
     cursor: pointer;
     transition: background 0.2s;
+    background: transparent;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    text-align: left;
+    font-weight: 700;
   }
-
+  .history-item:last-child {
+    border-bottom: none;
+  }
   .history-item:hover {
-    background: var(--bg);
+    background: #fdfae5;
   }
-
-  .history-value,
-  .history-result {
-    font-size: 0.9rem;
-  }
-
   .history-value small,
   .history-result small {
-    color: var(--text-muted);
-    font-weight: 400;
+    color: #888;
+    font-weight: 600;
   }
-
   .history-result {
-    color: var(--success);
-    font-weight: 500;
+    color: #00e572;
+    font-weight: 800;
   }
-
   .history-arrow {
-    color: var(--text-muted);
+    color: #555;
+    font-weight: 900;
   }
 
   .features-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
+    gap: 0.75rem;
   }
-
   .feature-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 700;
   }
-
   .feature-check {
-    color: var(--success);
-    font-weight: bold;
+    color: #00e572;
+    font-weight: 900;
+    font-size: 1.1rem;
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    font-size: 0.8rem;
-    color: var(--text-muted);
+  .brutal-status {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 1rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    overflow: hidden;
   }
-
-  .animate-fade-in {
-    animation: fadeIn 0.3s ease;
+  .marquee-wrapper {
+    overflow: hidden;
   }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+  }
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
     }
-
-    to {
-      opacity: 1;
+    100% {
+      transform: translateX(-50%);
     }
+  }
+  @media (max-width: 768px) {
+    .brutal-title {
+      font-size: 2rem;
+    }
+    .shortcuts-list {
+      grid-template-columns: 1fr;
+    }
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Dark Mode */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-status,
+  [data-theme='dark'] .category-chip,
+  [data-theme='dark'] .shortcut-item,
+  [data-theme='dark'] .history-item {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0 0 0 #eee;
+  }
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+  }
+  [data-theme='dark'] .bg-dark {
+    background: #333;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #00994c;
+  }
+  [data-theme='dark'] .category-chip {
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .category-chip:hover {
+    box-shadow: 5px 5px 0px #eee;
+    background: #222;
+  }
+  [data-theme='dark'] .category-chip.active {
+    background: #2a4eb2;
+    color: #fff;
+    box-shadow: 0 0 0 #eee;
+  }
+  [data-theme='dark'] .brutal-input,
+  [data-theme='dark'] .brutal-select {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-input:focus {
+    background: #333;
+    box-shadow: 5px 5px 0px #eee;
+  }
+  [data-theme='dark'] .output-display {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+    color: #89b4f8;
+  }
+  [data-theme='dark'] .swap-btn {
+    background: #b28f00;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .swap-btn:hover {
+    box-shadow: 5px 5px 0px #eee;
+  }
+  [data-theme='dark'] .divider-line {
+    background: #eee;
+  }
+  [data-theme='dark'] .dpi-section {
+    border-bottom-color: #eee;
+  }
+  [data-theme='dark'] .preset-tag {
+    background: #b28f00;
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
+  }
+  [data-theme='dark'] .shortcut-item {
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .shortcut-item:hover {
+    background: #333;
+    box-shadow: 5px 5px 0px #eee;
+  }
+  [data-theme='dark'] .history-item {
+    border-bottom-color: #444;
+  }
+  [data-theme='dark'] .history-item:hover {
+    background: #222;
+  }
+  [data-theme='dark'] .history-result {
+    color: #00994c;
+  }
+  [data-theme='dark'] .feature-check {
+    color: #00994c;
+  }
+  [data-theme='dark'] .section-label {
+    color: #aaa;
+  }
+  [data-theme='dark'] .brutal-status {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
   }
 </style>

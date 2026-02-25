@@ -1,146 +1,119 @@
 <template>
-  <div class="tool-page">
-    <header class="tool-header">
-      <div class="header-left">
-        <el-button text @click="goBack">
-          <el-icon><ArrowLeft /></el-icon><span>返回</span>
-        </el-button>
-      </div>
-      <div class="header-center">
-        <h1 class="tool-title">精确年龄计算器</h1>
-        <span class="tool-subtitle">Age Calculator</span>
-      </div>
-      <div class="header-right">
-        <el-button type="primary" :icon="Timer" @click="resetToNow">重置为现在</el-button>
-      </div>
-    </header>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">年龄<span>.精算()</span></h1>
+        <button class="brutal-btn reset-btn" @click="resetToNow">重置为现在</button>
+      </header>
 
-    <main class="tool-content">
-      <div class="layout-container">
-        <div class="main-column">
-          <section class="config-section glass-card">
-            <div class="input-grid">
-              <div class="input-item">
-                <div class="item-header">
-                  <el-icon class="icon-birth"><Calendar /></el-icon>
-                  <span>出生日期与时间</span>
-                </div>
-                <el-date-picker
-                  v-model="birthDate"
-                  type="datetime"
-                  placeholder="选择出生日期时间"
-                  format="YYYY-MM-DD HH:mm:ss"
-                  style="width: 100%"
-                  @change="calculateAge"
-                />
-              </div>
-              <div class="input-item">
-                <div class="item-header">
-                  <el-icon class="icon-target"><Clock /></el-icon>
-                  <span>计算基准时间</span>
-                </div>
-                <el-date-picker
-                  v-model="targetDate"
-                  type="datetime"
-                  placeholder="选择基准日期时间"
-                  format="YYYY-MM-DD HH:mm:ss"
-                  style="width: 100%"
-                  @change="calculateAge"
-                />
-              </div>
+      <div class="brutal-toolbar">
+        <div class="tools-left">
+          <div class="toolbar-input-group">
+            <span class="toolbar-label">出生日期:</span>
+            <input
+              v-model="birthDateStr"
+              type="datetime-local"
+              class="brutal-input"
+              @change="calculateAge"
+            />
+          </div>
+        </div>
+        <div class="tools-right">
+          <div class="toolbar-input-group">
+            <span class="toolbar-label">基准时间:</span>
+            <input
+              v-model="targetDateStr"
+              type="datetime-local"
+              class="brutal-input"
+              @change="calculateAge"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div v-if="ageResult" class="brutal-grid summary-grid">
+        <div class="brutal-pane summary-card bg-blue">
+          <div class="summary-inner">
+            <span class="summary-val">{{ ageResult.years }}</span>
+            <span class="summary-lab">周岁 (Years)</span>
+          </div>
+        </div>
+        <div class="brutal-pane summary-card bg-green">
+          <div class="summary-inner">
+            <span class="summary-val">{{ ageResult.months }}</span>
+            <span class="summary-lab">个月 (Months)</span>
+          </div>
+        </div>
+        <div class="brutal-pane summary-card bg-pink">
+          <div class="summary-inner">
+            <span class="summary-val">{{ ageResult.days }}</span>
+            <span class="summary-lab">天 (Days)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="brutal-grid detail-grid">
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span>累计生存时间统计</span>
+          </div>
+          <div class="stat-grid">
+            <div class="stat-box">
+              <div class="stat-val">{{ formatNumber(totalStats.months) }}</div>
+              <div class="stat-lab">月 (Total Months)</div>
             </div>
-          </section>
-
-          <div v-if="ageResult" class="results-grid">
-            <div class="summary-cards">
-              <div class="summary-card years">
-                <div class="card-bg"></div>
-                <div class="card-content">
-                  <span class="val">{{ ageResult.years }}</span>
-                  <span class="lab">周岁 (Years)</span>
-                </div>
-              </div>
-              <div class="summary-card months">
-                <div class="card-bg"></div>
-                <div class="card-content">
-                  <span class="val">{{ ageResult.months }}</span>
-                  <span class="lab">个月 (Months)</span>
-                </div>
-              </div>
-              <div class="summary-card days">
-                <div class="card-bg"></div>
-                <div class="card-content">
-                  <span class="val">{{ ageResult.days }}</span>
-                  <span class="lab">天 (Days)</span>
-                </div>
-              </div>
+            <div class="stat-box">
+              <div class="stat-val">{{ formatNumber(totalStats.weeks) }}</div>
+              <div class="stat-lab">周 (Total Weeks)</div>
             </div>
-
-            <section class="metrics-section glass-card">
-              <div class="section-title">
-                <el-icon><DataLine /></el-icon>
-                <span>累计生存时间统计</span>
-              </div>
-              <div class="stat-grid">
-                <div class="stat-box">
-                  <div class="stat-val">{{ formatNumber(totalStats.months) }}</div>
-                  <div class="stat-lab">月 (Total Months)</div>
-                </div>
-                <div class="stat-box">
-                  <div class="stat-val">{{ formatNumber(totalStats.weeks) }}</div>
-                  <div class="stat-lab">周 (Total Weeks)</div>
-                </div>
-                <div class="stat-box">
-                  <div class="stat-val">{{ formatNumber(totalStats.days) }}</div>
-                  <div class="stat-lab">日 (Total Days)</div>
-                </div>
-                <div class="stat-box">
-                  <div class="stat-val">{{ formatNumber(totalStats.hours) }}</div>
-                  <div class="stat-lab">时 (Total Hours)</div>
-                </div>
-                <div class="stat-box">
-                  <div class="stat-val">{{ formatNumber(totalStats.minutes) }}</div>
-                  <div class="stat-lab">分 (Total Minutes)</div>
-                </div>
-                <div class="stat-box">
-                  <div class="stat-val">{{ formatNumber(totalStats.seconds) }}</div>
-                  <div class="stat-lab">秒 (Total Seconds)</div>
-                </div>
-              </div>
-            </section>
+            <div class="stat-box">
+              <div class="stat-val">{{ formatNumber(totalStats.days) }}</div>
+              <div class="stat-lab">日 (Total Days)</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val">{{ formatNumber(totalStats.hours) }}</div>
+              <div class="stat-lab">时 (Total Hours)</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val">{{ formatNumber(totalStats.minutes) }}</div>
+              <div class="stat-lab">分 (Total Minutes)</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val">{{ formatNumber(totalStats.seconds) }}</div>
+              <div class="stat-lab">秒 (Total Seconds)</div>
+            </div>
           </div>
         </div>
 
-        <aside class="side-column">
-          <div v-if="astrology" class="astro-card glass-card">
-            <div class="card-header">
-              <el-icon><Star /></el-icon>
+        <div class="side-column">
+          <div v-if="astrology" class="brutal-pane">
+            <div class="pane-header bg-pink-header">
               <span>传统文化与占星</span>
             </div>
             <div class="astro-grid">
               <div class="astro-item">
-                <div class="ai-label">生肖</div>
-                <div class="ai-value">{{ astrology.zodiac }}</div>
+                <div class="astro-label">生肖</div>
+                <div class="astro-value">{{ astrology.zodiac }}</div>
               </div>
               <div class="astro-item">
-                <div class="ai-label">星座</div>
-                <div class="ai-value">{{ astrology.constellation }}</div>
+                <div class="astro-label">星座</div>
+                <div class="astro-value">{{ astrology.constellation }}</div>
               </div>
               <div class="astro-item">
-                <div class="ai-label">干支</div>
-                <div class="ai-value">{{ astrology.ganzhi }}</div>
+                <div class="astro-label">干支</div>
+                <div class="astro-value">{{ astrology.ganzhi }}</div>
               </div>
               <div class="astro-item highlight">
-                <div class="ai-label">虚岁</div>
-                <div class="ai-value">{{ ageResult ? ageResult.years + 1 : '-' }} 岁</div>
+                <div class="astro-label">虚岁</div>
+                <div class="astro-value">{{ ageResult ? ageResult.years + 1 : '-' }} 岁</div>
               </div>
             </div>
           </div>
 
-          <div v-if="nextBirthday" class="countdown-card glass-card">
-            <div class="card-header">
-              <el-icon><Present /></el-icon>
-              <span>生日倒计时</span>
+          <div v-if="nextBirthday" class="brutal-pane">
+            <div class="pane-header bg-blue">
+              <span class="text-white">生日倒计时</span>
             </div>
             <div class="countdown-body">
               <div class="days-pill">
@@ -154,40 +127,33 @@
             </div>
           </div>
 
-          <div class="tips-card glass-card">
-            <div class="card-header">
-              <el-icon><InfoFilled /></el-icon>
+          <div class="brutal-pane">
+            <div class="pane-header bg-yellow">
               <span>计算说明</span>
             </div>
-            <ul class="premium-list">
-              <li><b>周岁</b>：按照 国际标准 计算。出生时为 0 岁，每过一个公历生日增加一岁。</li>
-              <li>
-                <b>虚岁</b>：中国传统 计算方法。出生时即为 1 岁，每过一个农历春节（初一）增加一岁。
-              </li>
+            <ul class="brutal-list">
+              <li><b>周岁</b>：按照国际标准计算。出生时为 0 岁，每过一个公历生日增加一岁。</li>
+              <li><b>虚岁</b>：中国传统计算方法。出生时即为 1 岁，每过一个农历春节增加一岁。</li>
               <li><b>统计精度</b>：总时长计算基于公历，已自动考虑平闰年差异。</li>
             </ul>
           </div>
-        </aside>
+        </div>
       </div>
-    </main>
 
-    <footer class="footer">© 2026 LRM工具箱 - 精确年龄计算器</footer>
+      <div class="brutal-status info">
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span v-for="i in 10" :key="i">© 2026 LRM工具箱 - 精确年龄计算器 // &nbsp;</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-  import { ref, reactive, onMounted, onUnmounted } from 'vue';
+  import { ref, reactive, computed, onMounted, onUnmounted } from 'vue';
   import { useRouter } from 'vue-router';
-  import {
-    ArrowLeft,
-    Timer,
-    InfoFilled,
-    Calendar,
-    Clock,
-    DataLine,
-    Star,
-    Present
-  } from '@element-plus/icons-vue';
   import dayjs from 'dayjs';
   import duration from 'dayjs/plugin/duration';
   import { Solar } from 'lunar-javascript';
@@ -200,8 +166,12 @@
     else router.push('/');
   };
 
-  const birthDate = ref(dayjs('1995-10-10 10:00:00').toDate());
-  const targetDate = ref(new Date());
+  const birthDateStr = ref('1995-10-10T10:00');
+  const targetDateStr = ref(dayjs().format('YYYY-MM-DDTHH:mm'));
+
+  const birthDate = computed(() => new Date(birthDateStr.value));
+  const targetDate = computed(() => new Date(targetDateStr.value));
+
   const ageResult = ref(null);
   const totalStats = reactive({
     months: 0,
@@ -217,7 +187,7 @@
   let ticker = null;
 
   const resetToNow = () => {
-    targetDate.value = new Date();
+    targetDateStr.value = dayjs().format('YYYY-MM-DDTHH:mm');
     calculateAge();
   };
 
@@ -232,7 +202,6 @@
       return;
     }
 
-    // 1. 周岁计算
     const diff = end.diff(start);
     const dur = dayjs.duration(diff);
 
@@ -242,7 +211,6 @@
       days: dur.days()
     };
 
-    // 2. 总时长统计
     totalStats.months = end.diff(start, 'month');
     totalStats.weeks = end.diff(start, 'week');
     totalStats.days = end.diff(start, 'day');
@@ -250,7 +218,6 @@
     totalStats.minutes = end.diff(start, 'minute');
     totalStats.seconds = end.diff(start, 'second');
 
-    // 3. 传统占星
     const solar = Solar.fromDate(birthDate.value);
     const lunar = solar.getLunar();
     astrology.value = {
@@ -259,7 +226,6 @@
       ganzhi: lunar.getYearInGanZhi() + '年'
     };
 
-    // 4. 生日倒计时
     const thisYearBirthday = dayjs(birthDate.value).year(end.year());
     let nextBday = thisYearBirthday;
     if (thisYearBirthday.isBefore(end)) {
@@ -279,7 +245,7 @@
     calculateAge();
     ticker = setInterval(() => {
       if (dayjs(targetDate.value).diff(dayjs(), 'second') === 0) {
-        targetDate.value = new Date();
+        targetDateStr.value = dayjs().format('YYYY-MM-DDTHH:mm');
         calculateAge();
       }
     }, 1000);
@@ -291,274 +257,312 @@
 </script>
 
 <style scoped>
-  .tool-page {
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: #f8fafc;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+
+  .brutal-container {
+    max-width: 1400px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
   }
 
-  .tool-header {
+  .brutal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    margin-bottom: 2rem;
   }
 
-  .tool-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #1e293b;
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
     margin: 0;
-  }
-  .tool-subtitle {
-    font-size: 0.7rem;
-    color: #94a3b8;
     text-transform: uppercase;
-    display: block;
-  }
-  .header-center {
-    text-align: center;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #4b7bff;
   }
 
-  .tool-content {
-    flex: 1;
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 1.5rem;
+  .brutal-title span {
+    color: #4b7bff;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
   }
 
-  .layout-container {
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 1.5rem;
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
   }
 
-  .main-column {
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  .brutal-btn.reset-btn {
+    background: #4b7bff;
+    color: #fff;
+  }
+
+  .brutal-toolbar {
     display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 1);
-    border-radius: 20px;
-    box-shadow:
-      0 10px 15px -3px rgba(0, 0, 0, 0.05),
-      0 4px 6px -2px rgba(0, 0, 0, 0.02);
-  }
-
-  /* Config Section */
-  .config-section {
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    border: 4px solid #111;
     padding: 1.5rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 8px 8px 0px #111;
+    gap: 2rem;
+    flex-wrap: wrap;
   }
 
-  .input-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-  }
-
-  .item-header {
+  .tools-left,
+  .tools-right {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
-    font-size: 0.9rem;
-    color: #475569;
+    gap: 1rem;
+  }
+
+  .toolbar-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .toolbar-label {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    white-space: nowrap;
+  }
+
+  .brutal-input {
+    border: 3px solid #111;
+    padding: 0.5rem 0.8rem;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
     font-weight: 600;
+    font-size: 1rem;
+    background: #ffd900;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #111;
+    outline: none;
   }
 
-  .icon-birth {
-    color: #f43f5e;
-  }
-  .icon-target {
-    color: #3b82f6;
-  }
-
-  /* Summary Cards */
-  .summary-cards {
+  /* Summary Grid - 3 cards top */
+  .summary-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
   }
 
   .summary-card {
-    position: relative;
-    height: 160px;
-    border-radius: 24px;
-    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.3s;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    min-height: 160px;
+    padding: 1.5rem;
   }
 
-  .summary-card:hover {
-    transform: translateY(-5px);
-  }
-
-  .summary-card.years {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-  }
-  .summary-card.months {
-    background: linear-gradient(135deg, #10b981, #059669);
-  }
-  .summary-card.days {
-    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  }
-
-  .card-bg {
-    position: absolute;
-    top: -20px;
-    right: -20px;
-    width: 100px;
-    height: 100px;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 50%;
-    pointer-events: none;
-  }
-
-  .card-content {
-    color: white;
+  .summary-inner {
     text-align: center;
-    z-index: 1;
+    color: #fff;
   }
 
-  .card-content .val {
+  .summary-val {
     display: block;
-    font-size: 3.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 4rem;
     font-weight: 800;
     line-height: 1;
   }
 
-  .card-content .lab {
-    font-size: 0.9rem;
+  .summary-lab {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
     opacity: 0.9;
-    font-weight: 500;
   }
 
-  /* Metrics Section */
-  .metrics-section {
-    padding: 1.5rem;
+  /* Detail Grid - main + sidebar */
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 2.5rem;
+    margin-bottom: 2.5rem;
   }
 
-  .section-title {
+  .brutal-pane {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 1.25rem;
+    flex-direction: column;
   }
 
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .bg-green {
+    background: #00e572;
+  }
+  .bg-pink {
+    background: #ff4b4b;
+    color: #fff;
+  }
+  .bg-pink-header {
+    background: #ff9fb2;
+  }
+  .text-white {
+    color: #fff;
+  }
+
+  /* Stat Grid */
   .stat-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
+    padding: 1.5rem;
   }
 
   .stat-box {
-    background: white;
+    background: #fdfae5;
     padding: 1.25rem;
-    border-radius: 16px;
-    border: 1px solid #f1f5f9;
-    transition: all 0.2s;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.1s;
   }
 
   .stat-box:hover {
-    border-color: #e2e8f0;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
   }
 
   .stat-val {
     font-size: 1.3rem;
     font-weight: 700;
-    color: #0f172a;
-    font-family: 'JetBrains Mono', monospace;
+    color: #111;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
   }
 
   .stat-lab {
     font-size: 0.75rem;
-    color: #64748b;
+    color: #555;
     margin-top: 4px;
-    font-weight: 500;
+    font-weight: 600;
   }
 
-  /* Sidebar Columns */
+  /* Sidebar */
   .side-column {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 2rem;
   }
 
-  .card-header {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-weight: 700;
-    color: #1e293b;
-    font-size: 1rem;
-    padding: 1.25rem 1.25rem 0.75rem;
-  }
-
-  /* Astro Card */
   .astro-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
-    padding: 0.5rem 1.25rem 1.25rem;
+    padding: 1.25rem;
   }
 
   .astro-item {
-    background: #f8fafc;
+    background: #fdfae5;
     padding: 0.75rem;
-    border-radius: 12px;
+    border: 3px solid #111;
+    box-shadow: 3px 3px 0px #111;
   }
 
   .astro-item.highlight {
-    background: #fff1f2;
-  }
-  .astro-item.highlight .ai-value {
-    color: #e11d48;
+    background: #ff9fb2;
   }
 
-  .ai-label {
+  .astro-item.highlight .astro-value {
+    color: #111;
+    font-weight: 800;
+  }
+
+  .astro-label {
     font-size: 0.75rem;
-    color: #94a3b8;
-    font-weight: 600;
-  }
-  .ai-value {
-    font-size: 1.1rem;
+    color: #555;
     font-weight: 700;
-    color: #334155;
-    margin-top: 2px;
+    text-transform: uppercase;
   }
 
-  /* Countdown Card */
+  .astro-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #111;
+    margin-top: 2px;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+  }
+
+  /* Countdown */
   .countdown-body {
-    padding: 0.5rem 1.25rem 1.25rem;
+    padding: 1.5rem;
     text-align: center;
   }
 
   .days-pill {
-    background: #eff6ff;
+    background: #ffd900;
     display: inline-flex;
     flex-direction: column;
     width: 100%;
     padding: 1.5rem 1rem;
-    border-radius: 16px;
-    color: #1d4ed8;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+    color: #111;
     margin-bottom: 1rem;
   }
 
@@ -566,6 +570,7 @@
     font-size: 3.5rem;
     font-weight: 900;
     line-height: 1;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
   }
 
   .days-pill .unit {
@@ -574,69 +579,251 @@
   }
 
   .desc {
-    font-size: 0.95rem;
-    color: #475569;
+    font-size: 1rem;
+    color: #111;
     margin-bottom: 0.5rem;
+    font-weight: 600;
   }
+
   .desc b {
-    color: #1e293b;
+    color: #ff4b4b;
   }
+
   .target-date {
-    font-size: 0.8rem;
-    color: #94a3b8;
-    font-family: monospace;
+    font-size: 0.85rem;
+    color: #555;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 600;
   }
 
-  /* Tips Card */
-  .tips-card {
-    padding-bottom: 1.25rem;
-  }
-
-  .premium-list {
+  /* Tips List */
+  .brutal-list {
     list-style: none;
-    padding: 0 1.25rem;
+    padding: 1.25rem;
     margin: 0;
   }
 
-  .premium-list li {
-    font-size: 0.8rem;
-    color: #64748b;
+  .brutal-list li {
+    font-size: 0.85rem;
+    color: #333;
     position: relative;
-    padding-left: 1rem;
+    padding-left: 1.25rem;
     margin-bottom: 0.75rem;
-    line-height: 1.5;
+    line-height: 1.6;
+    font-weight: 500;
   }
 
-  .premium-list li::before {
-    content: '';
+  .brutal-list li::before {
+    content: '▪';
     position: absolute;
     left: 0;
-    top: 6px;
-    width: 5px;
-    height: 5px;
-    background: #cbd5e1;
-    border-radius: 50%;
+    color: #ff4b4b;
+    font-weight: 900;
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: #94a3b8;
-    font-size: 0.85rem;
+  /* Status Bar */
+  .brutal-status {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    overflow: hidden;
+    text-transform: uppercase;
   }
 
-  @media (max-width: 900px) {
-    .layout-container {
+  .brutal-status.info {
+    background: #fff;
+  }
+
+  .marquee-wrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .brutal-title {
+      font-size: 2.5rem;
+    }
+    .summary-grid {
       grid-template-columns: 1fr;
     }
-    .input-grid {
+    .detail-grid {
       grid-template-columns: 1fr;
     }
-    .summary-cards {
-      grid-template-columns: 1fr;
+    .brutal-toolbar {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
     }
     .stat-grid {
       grid-template-columns: repeat(2, 1fr);
     }
+  }
+
+  /* --- Dark Mode Overrides --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-toolbar,
+  [data-theme='dark'] .brutal-status,
+  [data-theme='dark'] .brutal-status.info {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-toolbar {
+    box-shadow: 8px 8px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+
+  [data-theme='dark'] .brutal-input {
+    background: #b28f00;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .stat-box {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .stat-box:hover {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .stat-val {
+    color: #eee;
+  }
+  [data-theme='dark'] .stat-lab {
+    color: #aaa;
+  }
+
+  [data-theme='dark'] .astro-item {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .astro-item.highlight {
+    background: #b25465;
+  }
+  [data-theme='dark'] .astro-value {
+    color: #eee;
+  }
+  [data-theme='dark'] .astro-label {
+    color: #aaa;
+  }
+
+  [data-theme='dark'] .days-pill {
+    background: #b28f00;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .desc {
+    color: #eee;
+  }
+  [data-theme='dark'] .desc b {
+    color: #ff9fb2;
+  }
+  [data-theme='dark'] .target-date {
+    color: #aaa;
+  }
+
+  [data-theme='dark'] .brutal-list li {
+    color: #ccc;
+  }
+
+  [data-theme='dark'] .brutal-status {
+    box-shadow: 8px 8px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink-header {
+    background: #b25465;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .brutal-btn.reset-btn {
+    background: #2a4eb2;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .countdown-body {
+    color: #eee;
+  }
+
+  [data-theme='dark'] .summary-inner {
+    color: #fff;
   }
 </style>

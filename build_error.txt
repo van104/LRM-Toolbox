@@ -1,0 +1,139 @@
+
+> lrm-toolbox@1.0.0 build
+> vue-tsc --noEmit && vite build
+
+[36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32m鉁?[39m 964 modules transformed.
+
+鉁?[vite-plugin-imagemin]- compressed image resource successfully: 
+
+
+[plugin vite:dynamic-import-vars] src/data/holidays/index.ts: invalid import "./${year}.json". Variable imports cannot import their own directory, place imports in a separate directory or make the import filename more specific. For example: import(`./foo/${bar}.js`).
+
+鉁?[vite-plugin-compression]:algorithm=gzip - compressed file successfully: 
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/ApiTesterTool-2z7WU3z-.css.gz             13.27kb / gzip: 2.65kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/Base64Tool-BkTC2I7X.css.gz                10.30kb / gzip: 2.02kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/ChromaticAberrationTool-B-jGng_6.css.gz   10.74kb / gzip: 2.25kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/CalorieCalculatorTool-BrLb2iTI.css.gz     10.85kb / gzip: 2.14kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/CodeScreenshotTool-B8SWznLO.css.gz        10.76kb / gzip: 2.45kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/CrontabTool-DStWx8sn.css.gz               12.95kb / gzip: 2.26kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/BatchRenamer-DELX_19a.css.gz              12.42kb / gzip: 2.65kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/DiffComparer-DR5QMOy1.css.gz              10.61kb / gzip: 2.25kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/CornerClipperTool-Db3o4Qa6.css.gz         10.92kb / gzip: 2.34kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/EnvEditorTool-C2_CyiHU.css.gz             10.37kb / gzip: 2.14kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/Game2048Tool-ptAI8O5J.css.gz              10.84kb / gzip: 2.61kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/GifMakerTool-DOifNE7-.css.gz              11.28kb / gzip: 2.38kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/GradientGeneratorTool-DWQyes-u.css.gz     10.31kb / gzip: 2.08kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/IcoConverterTool-zkJ7hozD.css.gz          10.50kb / gzip: 2.22kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/IdPhotoMakerTool-dRLJWh3v.css.gz          12.72kb / gzip: 2.56kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/FormulaEditorTool-HYnxPy1W.css.gz         32.70kb / gzip: 8.82kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/History-DwYLPYuU.css.gz                   10.27kb / gzip: 2.10kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/ImageBgRemoverTool-C_cAmW5L.css.gz        17.19kb / gzip: 3.30kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/ImageGridSplitterTool-DkLuiNGH.css.gz     10.44kb / gzip: 2.24kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/ImageJoinerTool-CmG4qIpe.css.gz           10.63kb / gzip: 2.38kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/ImageCompressTool-D6lwh09Y.css.gz         10.27kb / gzip: 2.25kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/Home-PBXtIbRd.css.gz                      29.46kb / gzip: 5.42kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/ImageResizerTool-DftXnngN.css.gz          13.30kb / gzip: 2.71kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/ImageToPdfTool-DTVOuD4L.css.gz            10.91kb / gzip: 2.15kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/ImageWatermarkTool-B9ophFHv.css.gz        12.43kb / gzip: 2.52kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/ImageConverterTool-D-D-vbu8.css.gz        10.16kb / gzip: 2.18kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/PasswordGenerator-DsZb_s0r.css.gz         12.54kb / gzip: 2.57kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/MortgageCalculatorTool-YuPm2nHr.css.gz    10.06kb / gzip: 2.00kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/TextDiffTool-DnS2CoIR.css.gz              10.08kb / gzip: 2.22kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/RandomDataTool-dbr_Xg5q.css.gz            11.43kb / gzip: 2.26kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/QrCodeTool-BPHQ8-bP.css.gz                10.93kb / gzip: 2.28kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/SqlBuilderTool-JzQBDE2o.css.gz            10.74kb / gzip: 2.21kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/TextCounter-Z_fZC86C.css.gz               10.02kb / gzip: 2.10kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/VisionTestTool-DpwFw5pU.css.gz            12.52kb / gzip: 2.50kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/TaxCalculatorTool-GTy0yLoH.css.gz         10.74kb / gzip: 2.14kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/ToolModal-DiDOxN8Z.css.gz                 13.08kb / gzip: 2.60kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/WaterIntakeTool-4_2BMdav.css.gz           11.77kb / gzip: 2.36kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/TowerDefenseTool-CVN5x4Hf.css.gz          12.12kb / gzip: 2.60kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/AgeCalculatorTool-ywGchRtH.js.gz           11.77kb / gzip: 4.38kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/UtilityBillTool-CNW32k0g.css.gz           12.02kb / gzip: 2.34kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/AiDrawGuessTool-Bh7fDs-d.js.gz             12.37kb / gzip: 5.44kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/BarcodeGeneratorTool-CCt9i8pA.js.gz        70.12kb / gzip: 14.27kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/data-DVOoN4hK.js.gz                        20.65kb / gzip: 8.52kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/edu-yibI1qHK.js.gz                         14.04kb / gzip: 5.64kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/elements-m6eK9E3K.js.gz                    11.09kb / gzip: 2.06kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/dev-BUimk2Cv.js.gz                         19.77kb / gzip: 7.40kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/GomokuTool-D5PsM5h9.js.gz                  11.22kb / gzip: 4.35kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/fun-DqywEurt.js.gz                         20.36kb / gzip: 8.19kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/Home-D7K8WEFD.js.gz                        22.47kb / gzip: 7.96kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/image-NefF99D5.js.gz                       11.17kb / gzip: 4.47kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/ImageBgRemoverTool-BRfBBsDi.js.gz          19.06kb / gzip: 7.76kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/ImageResizerTool-6d3-rmjh.js.gz            10.01kb / gzip: 4.17kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/ImageWatermarkTool-B7AllGY4.js.gz          12.47kb / gzip: 4.67kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/JigsawPuzzleTool-CJe_W2BJ.js.gz            10.13kb / gzip: 4.39kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/LifeSimulatorTool-a7WVIwYG.js.gz           23.57kb / gzip: 8.67kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/marked.esm-uMNuXnsA.js.gz                  40.69kb / gzip: 12.26kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/Md5Tool-BNjm_Sxm.js.gz                     14.18kb / gzip: 4.90kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/life-CyWV4S40.js.gz                        16.00kb / gzip: 6.66kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/MortgageCalculatorTool-DB-GvJqt.js.gz      10.59kb / gzip: 3.65kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/pdf-D6TCPClW.js.gz                         10.68kb / gzip: 3.96kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/PdfProtectionTool-C5ZMya_J.js.gz           23.12kb / gzip: 9.67kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/PdfWatermarkTool-DPHOv7pl.js.gz            10.30kb / gzip: 4.02kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/PhotoBookTool-BSRjbSWO.js.gz               13.36kb / gzip: 5.16kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/ProcessSchedulingTool-Ud_IPN8e.js.gz       15.72kb / gzip: 5.12kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/purify.es-DKmS7_S0.js.gz                   22.05kb / gzip: 8.30kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/RandomDataTool-DlKQnz59.js.gz              10.57kb / gzip: 3.93kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/ScheduleTool-DZiQMg5j.js.gz                14.16kb / gzip: 5.27kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/SqlBuilderTool-CTE9fTDE.js.gz              10.30kb / gzip: 4.10kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/text-C7p9Jw1b.js.gz                        12.31kb / gzip: 4.63kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/TextDiffTool-CJAlTCdr.js.gz                13.94kb / gzip: 5.00kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/song-DvgQBi-v.js.gz                        26.82kb / gzip: 12.14kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/TextExtractor-7fl09rqz.js.gz               11.09kb / gzip: 4.54kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/TimerTool-Be3plG3t.js.gz                   14.16kb / gzip: 4.89kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/tang-sWplsN2B.js.gz                        36.65kb / gzip: 15.15kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/tinycolor-DJ_qK68I.js.gz                   14.80kb / gzip: 5.15kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/UnitConverter-DVcWkNHn.js.gz               13.34kb / gzip: 4.99kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/TowerDefenseTool-Bud1CCmW.js.gz            27.57kb / gzip: 9.67kb
+dist/C:/Users/van/Desktop/LRM-toolbox/lib/gif.js.gz                                        13.14kb / gzip: 4.11kb
+dist/C:/Users/van/Desktop/LRM-toolbox/sw.js.gz                                             39.18kb / gzip: 9.17kb
+dist/C:/Users/van/Desktop/LRM-toolbox/lib/gif.worker.js.gz                                 16.25kb / gzip: 5.20kb
+dist/C:/Users/van/Desktop/LRM-toolbox/workbox-1d305bb8.js.gz                               21.36kb / gzip: 7.26kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/a-BhDKYVCa.js.gz                           65.40kb / gzip: 22.96kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/AsciiArtTool-EXZGQbvd.js.gz                99.55kb / gzip: 23.87kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/ImageCompressTool-BHnJF1l1.js.gz           58.94kb / gzip: 22.87kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/CssFormatterTool-CEjSCl9h.js.gz            101.55kb / gzip: 25.84kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/jszip.min-BX9Byt96.js.gz                   94.07kb / gzip: 27.65kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/WorkoutTimerTool-BqInmgsa.js.gz            87.21kb / gzip: 17.85kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/index-B2-Dad4P.css.gz                     125.92kb / gzip: 34.97kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/index-C5FYwRXT.js.gz                       107.62kb / gzip: 45.56kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/css/vendor-core-Bucx_dsW.css.gz               345.70kb / gzip: 46.87kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/html2canvas.esm-C2s7aB6S.js.gz             193.96kb / gzip: 44.53kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/index.es-CP8eEqnq.js.gz                    152.11kb / gzip: 49.57kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/NameStrokeTool-Do3ekagf.js.gz              77.34kb / gzip: 50.98kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/QrCodeTool-BeV2OhoU.js.gz                  158.94kb / gzip: 56.57kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/mock-B4_5XWCT.js.gz                        134.48kb / gzip: 49.20kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/chart-CkvnnLkd.js.gz                       200.31kb / gzip: 67.22kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/index-BSnXPJO2.js.gz                       300.40kb / gzip: 97.19kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/Maze3DTool-BN_fh7LU.js.gz                  489.17kb / gzip: 121.40kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/DataVisualizer-DTxrZcAG.js.gz              425.03kb / gzip: 141.89kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/index-SVYOHghn.js.gz                       306.16kb / gzip: 134.10kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/PDFButton-CeU87mJw.js.gz                   506.89kb / gzip: 200.80kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/MindMapTool-Bxl7qN4V.js.gz                 669.90kb / gzip: 225.68kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/vendor-pdf-D6RKO28V.js.gz                  811.05kb / gzip: 244.19kb
+dist/C:/Users/van/Desktop/LRM-toolbox/lib/pdf.worker.min.js.gz                             1053.36kb / gzip: 291.09kb
+dist/C:/Users/van/Desktop/LRM-toolbox/lib/pdf.worker.min.mjs.gz                            1053.36kb / gzip: 291.09kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/FormulaEditorTool-Pdy9LjBE.js.gz           1060.43kb / gzip: 291.78kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/vendor-core-hz0pKXDP.js.gz                 1413.78kb / gzip: 445.08kb
+dist/C:/Users/van/Desktop/LRM-toolbox/assets/js/TextConverter-Ble3fb1B.js.gz               1098.62kb / gzip: 476.88kb
+
+
+鉁?[39m Build failed in 6.74s
+error during build:
+[vite-plugin-pwa:build] [plugin vite-plugin-pwa:build] src/components/tools/life/PlugStandardTool.vue?vue&type=style&index=0&scoped=db0ab755&lang.css: There was an error during the build:
+  Invalid declaration: `block`
+Additionally, handling the error in the 'buildEnd' hook caused the following error:
+  Invalid declaration: `block`
+file: C:/Users/van/Desktop/LRM-toolbox/src/components/tools/life/PlugStandardTool.vue?vue&type=style&index=0&scoped=db0ab755&lang.css
+    at getRollupError (file:///C:/Users/van/Desktop/LRM-toolbox/node_modules/rollup/dist/es/shared/parseAst.js:402:41)
+    at file:///C:/Users/van/Desktop/LRM-toolbox/node_modules/rollup/dist/es/shared/node-entry.js:23444:39
+    at async catchUnfinishedHookActions (file:///C:/Users/van/Desktop/LRM-toolbox/node_modules/rollup/dist/es/shared/node-entry.js:22902:16)
+    at async rollupInternal (file:///C:/Users/van/Desktop/LRM-toolbox/node_modules/rollup/dist/es/shared/node-entry.js:23427:5)
+    at async buildEnvironment (file:///C:/Users/van/Desktop/LRM-toolbox/node_modules/vite/dist/node/chunks/config.js:33541:12)
+    at async Object.build (file:///C:/Users/van/Desktop/LRM-toolbox/node_modules/vite/dist/node/chunks/config.js:33900:19)
+    at async Object.buildApp (file:///C:/Users/van/Desktop/LRM-toolbox/node_modules/vite/dist/node/chunks/config.js:33897:153)
+    at async CAC.<anonymous> (file:///C:/Users/van/Desktop/LRM-toolbox/node_modules/vite/dist/node/cli.js:629:3)

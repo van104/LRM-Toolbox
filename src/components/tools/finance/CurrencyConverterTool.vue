@@ -379,6 +379,13 @@
   .input-with-select {
     display: flex;
     gap: 12px;
+    width: 100%;
+  }
+
+  .brutal-input {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .flex-2 {

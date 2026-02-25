@@ -1,141 +1,133 @@
 <template>
-  <div class="clothing-size-tool">
-    <nav class="nav-bar">
-      <button class="nav-back" @click="$router.back()">
-        <el-icon>
-          <Back />
-        </el-icon>
-        返回
-      </button>
-      <div class="nav-center">
-        <h1>服装尺码助手</h1>
-        <span class="nav-subtitle">Size Guide</span>
-      </div>
-      <div class="nav-spacer"></div>
-    </nav>
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="$router.back()">← 返回</button>
+        <h1 class="brutal-title">尺码<span>.查询()</span></h1>
+        <div style="width: 120px"></div>
+      </header>
 
-    <main class="main-content">
-      <div class="category-tabs glass-card">
-        <button
-          v-for="cat in categories"
-          :key="cat.id"
-          :class="['tab-btn', { active: currentCategory === cat.id }]"
-          @click="currentCategory = cat.id"
-        >
-          <span class="tab-icon">{{ cat.icon }}</span>
-          <span>{{ cat.name }}</span>
-        </button>
+      <!-- Category Tabs -->
+      <div class="brutal-toolbar">
+        <div class="tools-left">
+          <button
+            v-for="cat in categories"
+            :key="cat.id"
+            class="brutal-action-btn"
+            :class="{ primary: currentCategory === cat.id }"
+            @click="currentCategory = cat.id"
+          >
+            <span class="tab-emoji">{{ cat.icon }}</span>
+            {{ cat.name }}
+          </button>
+        </div>
       </div>
 
-      <div v-if="subCategories.length > 1" class="sub-category-tabs">
+      <!-- Sub Category -->
+      <div v-if="subCategories.length > 1" class="sub-tabs">
         <button
           v-for="sub in subCategories"
           :key="sub.id"
-          :class="['sub-tab', { active: currentSubCategory === sub.id }]"
+          class="sub-tab-btn"
+          :class="{ active: currentSubCategory === sub.id }"
           @click="currentSubCategory = sub.id"
         >
           {{ sub.name }}
         </button>
       </div>
 
-      <section class="converter-section glass-card">
-        <div class="input-area">
-          <label>我已知的尺码：</label>
-          <div class="selector-group">
-            <select v-model="selectedRegion" class="region-select">
-              <option v-for="region in currentRegions" :key="region.code" :value="region.code">
-                {{ region.name }} ({{ region.code }})
-              </option>
-            </select>
-            <select v-model="selectedSize" class="size-select">
-              <option v-for="size in availableSizes" :key="size" :value="size">
-                {{ size }}
-              </option>
-            </select>
+      <div class="brutal-grid converter-layout">
+        <!-- Converter -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-blue">
+            <span class="text-white">尺码转换</span>
           </div>
-        </div>
+          <div class="converter-body">
+            <div class="input-area">
+              <label class="brutal-label">我已知的尺码：</label>
+              <div class="selector-group">
+                <select v-model="selectedRegion" class="brutal-select">
+                  <option v-for="region in currentRegions" :key="region.code" :value="region.code">
+                    {{ region.name }} ({{ region.code }})
+                  </option>
+                </select>
+                <select v-model="selectedSize" class="brutal-select">
+                  <option v-for="size in availableSizes" :key="size" :value="size">
+                    {{ size }}
+                  </option>
+                </select>
+              </div>
+            </div>
 
-        <div class="divider">
-          <el-icon>
-            <ArrowDown />
-          </el-icon>
-        </div>
+            <div class="divider-arrow">▼ 对应其他标准</div>
 
-        <div class="result-area">
-          <label>对应其他标准：</label>
-          <div class="result-grid">
-            <div
-              v-for="(val, code) in convertedSizes"
-              :key="code"
-              class="result-card"
-              :class="{ highlight: code === 'CN' }"
-            >
-              <span class="region-label">{{ getRegionName(code) }}</span>
-              <span class="size-value">{{ val || '-' }}</span>
+            <div class="result-grid">
+              <div
+                v-for="(val, code) in convertedSizes"
+                :key="code"
+                class="result-card"
+                :class="{ highlight: code === 'CN' }"
+              >
+                <span class="region-label">{{ getRegionName(code) }}</span>
+                <span class="size-value">{{ val || '-' }}</span>
+              </div>
             </div>
           </div>
         </div>
-      </section>
 
-      <section class="table-section glass-card">
-        <div class="section-header">
-          <h3>完整对照表</h3>
+        <!-- Full Table -->
+        <div class="brutal-pane">
+          <div class="pane-header bg-yellow">
+            <span>完整对照表</span>
+          </div>
+          <div class="table-wrapper">
+            <table class="brutal-table">
+              <thead>
+                <tr>
+                  <th v-for="region in currentRegions" :key="region.code">
+                    {{ region.name }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(row, idx) in currentTableData"
+                  :key="idx"
+                  :class="{ active: isRowActive(row) }"
+                >
+                  <td v-for="region in currentRegions" :key="region.code">
+                    {{ row[region.code] || '-' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div class="table-wrapper">
-          <table class="size-table">
-            <thead>
-              <tr>
-                <th v-for="region in currentRegions" :key="region.code">
-                  {{ region.name }}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="(row, idx) in currentTableData"
-                :key="idx"
-                :class="{ active: isRowActive(row) }"
-              >
-                <td v-for="region in currentRegions" :key="region.code">
-                  {{ row[region.code] || '-' }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </main>
+      </div>
 
-    <div class="disclaimer-wrap" style="max-width: 900px; margin: 0 auto; padding: 0 1.5rem 2rem">
-      <div
-        class="disclaimer-card"
-        style="
-          display: flex;
-          gap: 0.8rem;
-          padding: 1rem;
-          background: #f8fafc;
-          color: #475569;
-          border-radius: 12px;
-          font-size: 0.8rem;
-          align-items: start;
-        "
-      >
-        <el-icon>
-          <InfoFilled />
-        </el-icon>
-        <span
-          >尺码对照表为通用参考标准。由于不同品牌、款式的剪裁差异，建议结合具体商品的尺寸测量表或咨询客服进行选择。</span
-        >
+      <!-- Disclaimer -->
+      <div class="brutal-pane disclaimer-pane">
+        <div class="disclaimer-content">
+          <span class="disc-icon">⚠</span>
+          <span>
+            尺码对照表为通用参考标准。由于不同品牌、款式的剪裁差异，建议结合具体商品的尺寸表或咨询客服进行选择。
+          </span>
+        </div>
+      </div>
+
+      <div class="brutal-status info">
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span v-for="i in 10" :key="i">© 2026 LRM工具箱 - 服装尺码助手 // &nbsp;</span>
+          </div>
+        </div>
       </div>
     </div>
-
-    <footer class="footer">© 2026 LRM工具箱 - 服装尺码助手</footer>
   </div>
 </template>
 
 <script setup>
   import { ref, computed, watch } from 'vue';
-  import { Back, ArrowDown, InfoFilled } from '@element-plus/icons-vue';
 
   const categories = [
     { id: 'women', name: '女装', icon: '👗' },
@@ -187,7 +179,6 @@
       { INTL: 'XL', CN: '175/96A', US: '10', UK: '14', EU: '42', IT: '46', JP: '13' },
       { INTL: 'XXL', CN: '180/100A', US: '12', UK: '16', EU: '44', IT: '48', JP: '15' }
     ],
-
     men_clothes: [
       { INTL: 'XS', CN: '160/76A', US: '34', UK: '34', EU: '44' },
       { INTL: 'S', CN: '165/80A', US: '36', UK: '36', EU: '46' },
@@ -197,7 +188,6 @@
       { INTL: 'XXL', CN: '185/96A', US: '44', UK: '44', EU: '54' },
       { INTL: '3XL', CN: '190/100A', US: '46', UK: '46', EU: '56' }
     ],
-
     women_shoes: [
       { CN: '35', US: '5', UK: '3', EU: '36', JP: '22.5' },
       { CN: '36', US: '6', UK: '4', EU: '37', JP: '23' },
@@ -206,7 +196,6 @@
       { CN: '39', US: '8.5', UK: '6.5', EU: '40', JP: '24.5' },
       { CN: '40', US: '9', UK: '7', EU: '41', JP: '25' }
     ],
-
     men_shoes: [
       { CN: '39', US: '6.5', UK: '6', EU: '39', JP: '24.5' },
       { CN: '40', US: '7', UK: '6.5', EU: '40', JP: '25' },
@@ -216,7 +205,6 @@
       { CN: '44', US: '10', UK: '9.5', EU: '44', JP: '28' },
       { CN: '45', US: '11', UK: '10.5', EU: '45', JP: '29' }
     ],
-
     kids_clothes: [
       { CN: '52', US: 'Newborn', UK: 'Newborn', EU: '50', Age: '0-1M' },
       { CN: '59', US: '3M', UK: '0-3M', EU: '56', Age: '1-3M' },
@@ -302,147 +290,201 @@
 </script>
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
 
-  .clothing-size-tool {
-    --bg: #faf9f7;
-    --card: #ffffff;
-    --border: #e8e6e3;
-    --text: #1a1a1a;
-    --text-secondary: #6b6b6b;
-    --accent: #2563eb;
-    --accent-light: #eff6ff;
-
-    font-family: 'Noto Sans SC', sans-serif;
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
     min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
   }
 
-  .nav-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-    font-size: 0.9rem;
-    padding: 0.5rem;
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-
-  .nav-back:hover {
-    background: var(--accent-light);
-    color: var(--accent);
-  }
-
-  .nav-center {
-    text-align: center;
-  }
-
-  .nav-center h1 {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 1.25rem;
-    font-weight: 600;
-  }
-
-  .nav-subtitle {
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .nav-spacer {
-    width: 60px;
-  }
-
-  .main-content {
-    max-width: 900px;
+  .brutal-container {
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
   }
 
-  .glass-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  }
-
-  .category-tabs {
+  .brutal-header {
     display: flex;
-    justify-content: space-around;
-    padding: 0.75rem;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #ff9fb2;
+  }
+
+  .brutal-title span {
+    color: #ff4b4b;
+    text-shadow: 4px 4px 0px #111;
+    letter-spacing: 0;
+  }
+
+  .brutal-btn {
+    background: #fff;
+    border: 4px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 6px 6px 0px #111;
+    transition: all 0.1s;
+    text-transform: uppercase;
+  }
+
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px #111;
+  }
+
+  .brutal-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  /* Toolbar */
+  .brutal-toolbar {
+    display: flex;
+    background: #fff;
+    border: 4px solid #111;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 8px 8px 0px #111;
+  }
+
+  .tools-left {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .brutal-action-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.6rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.1s;
+    display: flex;
+    align-items: center;
     gap: 0.5rem;
   }
 
-  .tab-btn {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.75rem;
-    background: transparent;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    color: var(--text-secondary);
-    transition: all 0.2s;
+  .brutal-action-btn.primary {
+    background: #00e572;
   }
 
-  .tab-btn.active {
-    background: var(--accent-light);
-    color: var(--accent);
-    font-weight: 600;
+  .brutal-action-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
   }
 
-  .tab-icon {
-    font-size: 1.5rem;
+  .brutal-action-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px #111;
   }
 
-  .sub-category-tabs {
+  .tab-emoji {
+    font-size: 1.3rem;
+  }
+
+  /* Sub Tabs */
+  .sub-tabs {
     display: flex;
     gap: 1rem;
     margin-bottom: 1.5rem;
-    overflow-x: auto;
-    padding-bottom: 0.5rem;
+    flex-wrap: wrap;
   }
 
-  .sub-tab {
+  .sub-tab-btn {
     padding: 0.5rem 1rem;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    cursor: pointer;
+    background: #fff;
+    border: 3px solid #111;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 700;
     font-size: 0.9rem;
-    white-space: nowrap;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #111;
+    transition: all 0.1s;
   }
 
-  .sub-tab.active {
-    background: var(--text);
-    color: white;
-    border-color: var(--text);
+  .sub-tab-btn.active {
+    background: #111;
+    color: #fff;
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
   }
 
-  .converter-section {
+  .sub-tab-btn:hover:not(.active) {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
+  }
+
+  /* Layout */
+  .converter-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .brutal-pane {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
+    transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brutal-pane:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0px #111;
+  }
+
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: 1px;
+  }
+
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #4b7bff;
+    color: #fff;
+  }
+  .text-white {
+    color: #fff;
+  }
+
+  .converter-body {
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -454,99 +496,328 @@
     gap: 0.75rem;
   }
 
+  .brutal-label {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+  }
+
   .selector-group {
     display: flex;
     gap: 1rem;
   }
 
-  select {
+  .brutal-select {
     flex: 1;
-    padding: 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--bg);
+    border: 3px solid #111;
+    padding: 0.6rem 0.8rem;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    font-weight: 600;
     font-size: 1rem;
+    background: #ffd900;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #111;
     outline: none;
   }
 
-  .divider {
-    display: flex;
-    justify-content: center;
-    color: var(--accent);
+  .divider-arrow {
+    text-align: center;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #4b7bff;
   }
 
   .result-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 0.75rem;
-    margin-top: 0.75rem;
   }
 
   .result-card {
-    background: var(--bg);
-    border-radius: 8px;
+    background: #fdfae5;
     padding: 0.75rem;
     text-align: center;
-    border: 1px solid transparent;
+    border: 3px solid #111;
+    box-shadow: 3px 3px 0px #111;
+    transition: all 0.1s;
+  }
+
+  .result-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px #111;
   }
 
   .result-card.highlight {
-    background: var(--accent-light);
-    border-color: var(--accent);
-    color: var(--accent);
+    background: #4b7bff;
+    color: #fff;
   }
 
   .region-label {
     display: block;
     font-size: 0.75rem;
-    color: var(--text-secondary);
+    color: #555;
     margin-bottom: 0.25rem;
+    font-weight: 700;
+  }
+
+  .result-card.highlight .region-label {
+    color: rgba(255, 255, 255, 0.8);
   }
 
   .size-value {
     font-size: 1.1rem;
-    font-weight: 600;
+    font-weight: 800;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
   }
 
+  /* Table */
   .table-wrapper {
     overflow-x: auto;
+    flex: 1;
   }
 
-  .size-table {
+  .brutal-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.9rem;
   }
 
-  .size-table th,
-  .size-table td {
+  .brutal-table th,
+  .brutal-table td {
     padding: 0.75rem;
     text-align: center;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 2px solid #eee;
+    border-right: 1px solid #eee;
   }
 
-  .size-table th {
-    background: var(--bg);
-    font-weight: 600;
-    color: var(--text-secondary);
+  .brutal-table th {
+    background: #ffd900;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    position: sticky;
+    top: 0;
   }
 
-  .size-table tr.active {
-    background: var(--accent-light);
+  .brutal-table tr.active {
+    background: #89b4f8;
+    color: #111;
+    font-weight: 700;
   }
 
-  .footer {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-secondary);
+  .brutal-table tbody tr:hover:not(.active) {
+    background: #fdfae5;
+  }
+
+  /* Disclaimer */
+  .disclaimer-pane {
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 6px 6px 0px #111;
+  }
+
+  .disclaimer-content {
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
     font-size: 0.85rem;
-    border-top: 1px solid var(--border);
-    margin-top: 2rem;
+    font-weight: 600;
+    color: #555;
   }
 
-  @media (max-width: 600px) {
+  .disc-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  /* Status Bar */
+  .brutal-status {
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    padding: 1rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    overflow: hidden;
+    text-transform: uppercase;
+  }
+
+  .brutal-status.info {
+    background: #fff;
+  }
+
+  .marquee-wrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 20s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .brutal-title {
+      font-size: 2rem;
+    }
+    .converter-layout {
+      grid-template-columns: 1fr;
+    }
     .selector-group {
       flex-direction: column;
     }
+    .brutal-header {
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+  }
+
+  /* --- Dark Mode --- */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-toolbar,
+  [data-theme='dark'] .brutal-status,
+  [data-theme='dark'] .brutal-status.info,
+  [data-theme='dark'] .brutal-action-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 9px 9px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-toolbar {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn {
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:hover {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-action-btn.primary {
+    background: #00994c;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 12px 12px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-pane:hover {
+    box-shadow: 16px 16px 0px #eee;
+  }
+
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+
+  [data-theme='dark'] .brutal-select {
+    background: #b28f00;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .sub-tab-btn {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .sub-tab-btn.active {
+    background: #eee;
+    color: #111;
+    box-shadow: 0px 0px 0px #eee;
+  }
+
+  [data-theme='dark'] .result-card {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 3px 3px 0px #eee;
+  }
+  [data-theme='dark'] .result-card:hover {
+    box-shadow: 5px 5px 0px #eee;
+  }
+  [data-theme='dark'] .result-card.highlight {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .region-label {
+    color: #aaa;
+  }
+
+  [data-theme='dark'] .brutal-table th {
+    background: #b28f00;
+    color: #111;
+  }
+  [data-theme='dark'] .brutal-table td {
+    border-bottom-color: #333;
+    border-right-color: #333;
+  }
+  [data-theme='dark'] .brutal-table tr.active {
+    background: #405d9e;
+    color: #fff;
+  }
+  [data-theme='dark'] .brutal-table tbody tr:hover:not(.active) {
+    background: #222;
+  }
+
+  [data-theme='dark'] .disclaimer-pane {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .disclaimer-content {
+    color: #aaa;
+  }
+
+  [data-theme='dark'] .brutal-status {
+    box-shadow: 8px 8px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .divider-arrow {
+    color: #89b4f8;
   }
 </style>
