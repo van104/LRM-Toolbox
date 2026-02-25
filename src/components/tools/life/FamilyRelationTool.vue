@@ -60,6 +60,69 @@
               </button>
             </div>
           </div>
+
+          <!-- 新功能: 反向查询 -->
+          <div class="brutal-pane reverse-pane">
+            <div class="pane-header bg-green">
+              <span>🔍 反向查询 (输入称呼 → 知道关系)</span>
+            </div>
+            <div class="pane-body reverse-body">
+              <div class="reverse-input-wrap">
+                <input
+                  v-model="reverseQuery"
+                  type="text"
+                  class="brutal-input reverse-input"
+                  placeholder="输入称呼，如：伯母、姑父、外甥..."
+                  @input="handleReverseSearch"
+                />
+                <button v-if="reverseQuery" class="clear-btn" @click="clearReverse">✖</button>
+              </div>
+
+              <div v-if="reverseResults.length > 0" class="reverse-results">
+                <div
+                  v-for="(item, idx) in reverseResults"
+                  :key="idx"
+                  class="reverse-item"
+                  @click="applyReverseResult(item)"
+                >
+                  <div class="reverse-title">{{ item.title }}</div>
+                  <div class="reverse-chain">
+                    <span class="chain-start">我</span>
+                    <template v-for="(step, si) in item.chain" :key="si">
+                      <span class="chain-arrow-icon">→</span>
+                      <span class="chain-step">{{ getStepLabel(step) }}</span>
+                    </template>
+                    <span class="chain-arrow-icon">=</span>
+                    <span class="chain-result">{{ item.title }}</span>
+                  </div>
+                </div>
+              </div>
+              <div v-else-if="reverseQuery && reverseQuery.length >= 1" class="reverse-empty">
+                未找到相关称呼 🧐
+              </div>
+            </div>
+          </div>
+
+          <!-- 新功能: 常用预设 -->
+          <div class="brutal-pane preset-pane">
+            <div class="pane-header bg-orange">
+              <span>⚡ 常用称呼 (一键查询)</span>
+            </div>
+            <div class="pane-body">
+              <div class="preset-grid">
+                <button
+                  v-for="preset in filteredPresets"
+                  :key="preset.label + preset.chain.join()"
+                  class="preset-btn"
+                  :class="{ 'preset-active': isPresetActive(preset) }"
+                  @click="applyPreset(preset)"
+                >
+                  <span class="preset-emoji">{{ preset.emoji }}</span>
+                  <span class="preset-label">{{ preset.label }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- 右侧说明 -->
@@ -90,6 +153,14 @@
                   <p>我(男) → 父 → 兄 → 妻 = <strong>伯母</strong></p>
                   <p>我(女) → 母 → 姐 = <strong>大姨</strong></p>
                   <p>我(男) → 兄 → 子 = <strong>侄子</strong></p>
+                </div>
+              </div>
+
+              <div class="guide-new">
+                <div class="example-title">🆕 新功能</div>
+                <div class="example-content">
+                  <p>🔍 <strong>反向查询</strong>：输入称呼查对应关系链</p>
+                  <p>⚡ <strong>常用预设</strong>：过年常用称呼一键生成</p>
                 </div>
               </div>
 
@@ -125,15 +196,12 @@
     女: '女儿',
 
     // ========== 表1: 长辈的亲属（父、母） ==========
-    // 直系长辈
     '父,父': '爷爷',
     '父,母': '奶奶',
     '母,父': '外公',
     '母,母': '外婆',
-    // 父母的配偶（逻辑闭环）
     '父,妻': '妈妈',
     '母,夫': '爸爸',
-    // 旁系长辈
     '父,兄': '伯父',
     '父,弟': '叔叔',
     '父,姐': '姑妈',
@@ -142,7 +210,6 @@
     '母,弟': '舅舅',
     '母,姐': '大姨',
     '母,妹': '小姨',
-    // 父母的子女 → 兄弟姐妹（闭环）
     '父,子': '兄弟',
     '父,女': '姐妹',
     '母,子': '兄弟',
@@ -153,10 +220,8 @@
     '夫,母': '婆婆',
     '妻,父': '岳父',
     '妻,母': '岳母',
-    // 配偶的配偶 → 自己
     '夫,妻': '自己',
     '妻,夫': '自己',
-    // 配偶的兄弟姐妹
     '夫,兄': '大伯子',
     '夫,弟': '小叔子',
     '夫,姐': '大姑子',
@@ -165,19 +230,16 @@
     '妻,弟': '小舅子',
     '妻,姐': '大姨子',
     '妻,妹': '小姨子',
-    // 配偶的子女（继子/继女简化）
     '夫,子': '儿子',
     '夫,女': '女儿',
     '妻,子': '儿子',
     '妻,女': '女儿',
 
     // ========== 表3: 平辈的亲属（兄、弟、姐、妹） ==========
-    // 兄弟姐妹的配偶
     '兄,妻': '嫂子',
     '弟,妻': '弟妹',
     '姐,夫': '姐夫',
     '妹,夫': '妹夫',
-    // 兄弟姐妹之间互推（16种组合）
     '兄,兄': '哥哥',
     '兄,弟': '弟弟',
     '兄,姐': '姐姐',
@@ -194,7 +256,6 @@
     '妹,弟': '弟弟',
     '妹,姐': '姐姐',
     '妹,妹': '妹妹',
-    // 兄弟姐妹的父母（指向自己的父母，闭环）
     '兄,父': '爸爸',
     '弟,父': '爸爸',
     '姐,父': '爸爸',
@@ -203,7 +264,6 @@
     '弟,母': '妈妈',
     '姐,母': '妈妈',
     '妹,母': '妈妈',
-    // 兄弟姐妹的子女
     '兄,子': '侄子',
     '弟,子': '侄子',
     '兄,女': '侄女',
@@ -214,15 +274,12 @@
     '妹,女': '外甥女',
 
     // ========== 表4: 晚辈的亲属（子、女） ==========
-    // 子女的配偶
     '子,妻': '儿媳妇',
     '女,夫': '女婿',
-    // 子女的父母（回指自己/配偶）
     '子,父': '自己',
     '子,母': '老婆',
     '女,父': '自己',
     '女,母': '老婆',
-    // 孙辈
     '子,子': '孙子',
     '子,女': '孙女',
     '女,子': '外孙',
@@ -280,7 +337,25 @@
     '子,女,子': '外曾孙',
     '子,女,女': '外曾孙女',
     '女,子,子': '曾孙',
-    '女,子,女': '曾孙女'
+    '女,子,女': '曾孙女',
+
+    // ========== 3级 - 堂表亲 ==========
+    '父,兄,子': '堂哥/堂弟',
+    '父,兄,女': '堂姐/堂妹',
+    '父,弟,子': '堂哥/堂弟',
+    '父,弟,女': '堂姐/堂妹',
+    '父,姐,子': '表哥/表弟',
+    '父,姐,女': '表姐/表妹',
+    '父,妹,子': '表哥/表弟',
+    '父,妹,女': '表姐/表妹',
+    '母,兄,子': '表哥/表弟',
+    '母,兄,女': '表姐/表妹',
+    '母,弟,子': '表哥/表弟',
+    '母,弟,女': '表姐/表妹',
+    '母,姐,子': '表哥/表弟',
+    '母,姐,女': '表姐/表妹',
+    '母,妹,子': '表哥/表弟',
+    '母,妹,女': '表姐/表妹'
   };
 
   const currentGender = computed(() => {
@@ -345,57 +420,175 @@
     女: '女儿'
   };
 
+  const getStepLabel = (step: string) => labelMap[step] || step;
+
   const expressionText = computed(() => {
     if (chain.value.length === 0) return '我';
     const labels = chain.value.map(k => labelMap[k] || k);
     return '我 的 ' + labels.join(' 的 ');
   });
 
-  // 性别感知的结果（这些关系的称呼取决于"我"的性别）
+  // 性别感知的结果
   const genderAwareResults: Record<string, { male: string; female: string }> = {
-    // ===== 父母的子女 → 取决于性别判断是否可能是自己 =====
     '父,子': { male: '兄弟或自己', female: '哥哥或弟弟' },
     '父,女': { male: '姐姐或妹妹', female: '姐妹或自己' },
     '母,子': { male: '兄弟或自己', female: '哥哥或弟弟' },
     '母,女': { male: '姐姐或妹妹', female: '姐妹或自己' },
-
-    // ===== 子女的父母 → 取决于性别判断指自己还是配偶 =====
     '子,父': { male: '自己', female: '老公' },
     '子,母': { male: '老婆', female: '自己' },
     '女,父': { male: '自己', female: '老公' },
     '女,母': { male: '老婆', female: '自己' },
-
-    // ===== 平辈互推（反方向 = 有歧义） =====
-    // 规律：一个往"大"走一个往"小"走时，结果人物可能在我的两侧
-    //
-    // 结果为男性的反方向组合：
-    // 哥哥的弟弟 / 弟弟的哥哥 / 姐姐的弟弟 / 妹妹的哥哥
     '兄,弟': { male: '哥哥、弟弟或自己', female: '哥哥或弟弟' },
     '弟,兄': { male: '哥哥、弟弟或自己', female: '哥哥或弟弟' },
     '姐,弟': { male: '哥哥、弟弟或自己', female: '哥哥或弟弟' },
     '妹,兄': { male: '哥哥、弟弟或自己', female: '哥哥或弟弟' },
-    //
-    // 结果为女性的反方向组合：
-    // 姐姐的妹妹 / 妹妹的姐姐 / 哥哥的妹妹 / 弟弟的姐姐
     '姐,妹': { male: '姐姐或妹妹', female: '姐姐、妹妹或自己' },
     '妹,姐': { male: '姐姐或妹妹', female: '姐姐、妹妹或自己' },
     '兄,妹': { male: '姐姐或妹妹', female: '姐姐、妹妹或自己' },
     '弟,姐': { male: '姐姐或妹妹', female: '姐姐、妹妹或自己' }
-    //
-    // 注：同方向组合（兄→兄、兄→姐、弟→弟、弟→妹、姐→姐、姐→兄、妹→妹、妹→弟）
-    // 没有歧义，直接使用 relationDict 中的固定结果
   };
 
   const resultText = computed(() => {
     if (chain.value.length === 0) return '我';
     const key = chain.value.join(',');
-    // 优先检查性别感知的结果
     const genderResult = genderAwareResults[key];
     if (genderResult) {
       return myGender.value === 1 ? genderResult.male : genderResult.female;
     }
     return relationDict[key] || '未知亲戚';
   });
+
+  // ============ 反向查询功能 ============
+  interface ReverseResult {
+    title: string;
+    chain: string[];
+    key: string;
+  }
+
+  const reverseQuery = ref('');
+  const reverseResults = ref<ReverseResult[]>([]);
+
+  // 构建反向索引：称呼 → 关系链列表
+  const buildReverseIndex = (): Record<string, ReverseResult[]> => {
+    const index: Record<string, ReverseResult[]> = {};
+    for (const [key, val] of Object.entries(relationDict)) {
+      // 跳过一些不太有意义的映射
+      if (['自己', '兄弟', '姐妹'].includes(val)) continue;
+      const chainArr = key.split(',');
+      if (!index[val]) index[val] = [];
+      // 去重
+      const exists = index[val].some(r => r.key === key);
+      if (!exists) {
+        index[val].push({ title: val, chain: chainArr, key });
+      }
+    }
+    return index;
+  };
+
+  const reverseIndex = buildReverseIndex();
+
+  const handleReverseSearch = () => {
+    const q = reverseQuery.value.trim();
+    if (!q) {
+      reverseResults.value = [];
+      return;
+    }
+    const results: ReverseResult[] = [];
+    for (const [title, items] of Object.entries(reverseIndex)) {
+      if (title.includes(q)) {
+        results.push(...items);
+      }
+    }
+    // 按关系链长度排序（短的在前）
+    results.sort((a, b) => a.chain.length - b.chain.length);
+    reverseResults.value = results.slice(0, 20);
+  };
+
+  const clearReverse = () => {
+    reverseQuery.value = '';
+    reverseResults.value = [];
+  };
+
+  const applyReverseResult = (item: ReverseResult) => {
+    chain.value = [...item.chain];
+    // 滚动到顶部计算器区域
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // ============ 常用预设功能 ============
+  // gender: 'both' = 男女通用, 'male' = 仅男性, 'female' = 仅女性
+  interface Preset {
+    label: string;
+    emoji: string;
+    chain: string[];
+    gender: 'both' | 'male' | 'female';
+  }
+
+  const presets: Preset[] = [
+    // 通用长辈
+    { label: '爷爷', emoji: '👴', chain: ['父', '父'], gender: 'both' },
+    { label: '奶奶', emoji: '👵', chain: ['父', '母'], gender: 'both' },
+    { label: '外公', emoji: '👴', chain: ['母', '父'], gender: 'both' },
+    { label: '外婆', emoji: '👵', chain: ['母', '母'], gender: 'both' },
+    { label: '伯父', emoji: '👨', chain: ['父', '兄'], gender: 'both' },
+    { label: '伯母', emoji: '👩', chain: ['父', '兄', '妻'], gender: 'both' },
+    { label: '叔叔', emoji: '👨', chain: ['父', '弟'], gender: 'both' },
+    { label: '婶婶', emoji: '👩', chain: ['父', '弟', '妻'], gender: 'both' },
+    { label: '舅舅', emoji: '👨', chain: ['母', '兄'], gender: 'both' },
+    { label: '舅妈', emoji: '👩', chain: ['母', '兄', '妻'], gender: 'both' },
+    { label: '姑姑', emoji: '👩', chain: ['父', '妹'], gender: 'both' },
+    { label: '姑父', emoji: '👨', chain: ['父', '妹', '夫'], gender: 'both' },
+    { label: '大姨', emoji: '👩', chain: ['母', '姐'], gender: 'both' },
+    { label: '小姨', emoji: '👩', chain: ['母', '妹'], gender: 'both' },
+    { label: '姨父', emoji: '👨', chain: ['母', '姐', '夫'], gender: 'both' },
+    // 通用平辈/晚辈
+    { label: '侄子', emoji: '👦', chain: ['兄', '子'], gender: 'both' },
+    { label: '侄女', emoji: '👧', chain: ['兄', '女'], gender: 'both' },
+    { label: '外甥', emoji: '👦', chain: ['姐', '子'], gender: 'both' },
+    { label: '外甥女', emoji: '👧', chain: ['姐', '女'], gender: 'both' },
+    { label: '嫂子', emoji: '👩', chain: ['兄', '妻'], gender: 'both' },
+    { label: '姐夫', emoji: '👨', chain: ['姐', '夫'], gender: 'both' },
+    { label: '孙子', emoji: '👶', chain: ['子', '子'], gender: 'both' },
+    { label: '孙女', emoji: '👶', chain: ['子', '女'], gender: 'both' },
+    { label: '外孙', emoji: '👶', chain: ['女', '子'], gender: 'both' },
+    // 仅男性 (有"妻"链)
+    { label: '岳父', emoji: '👴', chain: ['妻', '父'], gender: 'male' },
+    { label: '岳母', emoji: '👵', chain: ['妻', '母'], gender: 'male' },
+    { label: '大舅子', emoji: '👨', chain: ['妻', '兄'], gender: 'male' },
+    { label: '小姨子', emoji: '👩', chain: ['妻', '妹'], gender: 'male' },
+    { label: '儿媳', emoji: '👩', chain: ['子', '妻'], gender: 'male' },
+    { label: '女婿', emoji: '👨', chain: ['女', '夫'], gender: 'male' },
+    { label: '亲家公', emoji: '🤝', chain: ['子', '妻', '父'], gender: 'male' },
+    { label: '亲家母', emoji: '🤝', chain: ['子', '妻', '母'], gender: 'male' },
+    // 仅女性 (有"夫"链)
+    { label: '公公', emoji: '👴', chain: ['夫', '父'], gender: 'female' },
+    { label: '婆婆', emoji: '👵', chain: ['夫', '母'], gender: 'female' },
+    { label: '大伯子', emoji: '👨', chain: ['夫', '兄'], gender: 'female' },
+    { label: '小姑子', emoji: '👩', chain: ['夫', '妹'], gender: 'female' },
+    { label: '儿媳', emoji: '👩', chain: ['子', '妻'], gender: 'female' },
+    { label: '女婿', emoji: '👨', chain: ['女', '夫'], gender: 'female' },
+    { label: '亲家公', emoji: '🤝', chain: ['女', '夫', '父'], gender: 'female' },
+    { label: '亲家母', emoji: '🤝', chain: ['女', '夫', '母'], gender: 'female' }
+  ];
+
+  // 根据当前性别筛选可用的预设
+  const filteredPresets = computed(() => {
+    return presets.filter(
+      p =>
+        p.gender === 'both' ||
+        (myGender.value === 1 && p.gender === 'male') ||
+        (myGender.value === 0 && p.gender === 'female')
+    );
+  });
+
+  const applyPreset = (preset: Preset) => {
+    chain.value = [...preset.chain];
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const isPresetActive = (preset: Preset) => {
+    return chain.value.join(',') === preset.chain.join(',');
+  };
 </script>
 
 <style scoped>
@@ -524,6 +717,12 @@
   .bg-pink {
     background: #ff7be5;
   }
+  .bg-green {
+    background: #00e572;
+  }
+  .bg-orange {
+    background: #ff9900;
+  }
   .text-white {
     color: #fff;
   }
@@ -607,39 +806,6 @@
     text-shadow: none;
   }
 
-  /* Chain Detail Tags */
-  .chain-detail {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    width: 100%;
-    justify-content: flex-end;
-  }
-  .chain-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    border: 2px solid #111;
-    padding: 2px 8px;
-    background: #fff;
-    box-shadow: 2px 2px 0px #111;
-    font-size: 0.85rem;
-    font-weight: 800;
-  }
-  .chain-key {
-    color: #ff4b4b;
-    font-family: 'Syne', sans-serif;
-    font-weight: 900;
-    font-size: 1rem;
-  }
-  .chain-arrow {
-    color: #aaa;
-    font-weight: 400;
-  }
-  .chain-val {
-    color: #111;
-  }
-
   /* Keyboard */
   .key-grid {
     display: grid;
@@ -703,6 +869,161 @@
     color: #fff !important;
   }
 
+  /* ========== 反向查询 ========== */
+  .reverse-body {
+    gap: 1rem;
+  }
+  .reverse-input-wrap {
+    position: relative;
+    display: flex;
+  }
+  .brutal-input {
+    width: 100%;
+    border: 4px solid #111;
+    padding: 1rem 3rem 1rem 1rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: 1.2rem;
+    box-shadow: 4px 4px 0px #111;
+    outline: none;
+    transition: all 0.2s;
+    box-sizing: border-box;
+    color: #111;
+    background: #fff;
+  }
+  .brutal-input:focus {
+    background: #fdfae5;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+  .clear-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #111;
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .clear-btn:hover {
+    background: #ff4b4b;
+  }
+
+  .reverse-results {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-height: 350px;
+    overflow-y: auto;
+  }
+  .reverse-item {
+    border: 3px solid #111;
+    padding: 1rem;
+    box-shadow: 4px 4px 0px #111;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: #fff;
+  }
+  .reverse-item:hover {
+    background: #ffd900;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+  .reverse-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+  .reverse-chain {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .chain-start {
+    background: #111;
+    color: #ffd900;
+    padding: 2px 8px;
+    font-weight: 900;
+  }
+  .chain-arrow-icon {
+    color: #999;
+    font-size: 1.2rem;
+  }
+  .chain-step {
+    background: #fdfae5;
+    border: 2px solid #111;
+    padding: 2px 8px;
+    font-weight: 800;
+  }
+  .chain-result {
+    background: #ff4b4b;
+    color: #fff;
+    padding: 2px 10px;
+    font-weight: 900;
+    font-size: 1.05rem;
+  }
+  .reverse-empty {
+    text-align: center;
+    padding: 2rem;
+    font-weight: 800;
+    color: #888;
+    border: 3px dashed #ccc;
+  }
+
+  /* ========== 常用预设 ========== */
+  .preset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.75rem;
+  }
+  .preset-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    padding: 0.75rem 0.5rem;
+    border: 3px solid #111;
+    background: #fff;
+    box-shadow: 4px 4px 0px #111;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+  }
+  .preset-btn:hover {
+    background: #ffd900;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #111;
+  }
+  .preset-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 #111;
+  }
+  .preset-btn.preset-active {
+    background: #111;
+    color: #ffd900;
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 #111;
+  }
+  .preset-emoji {
+    font-size: 1.5rem;
+  }
+  .preset-label {
+    font-weight: 900;
+    font-size: 0.95rem;
+  }
+
   /* Sidebar */
   .info-sidebar {
     display: flex;
@@ -746,7 +1067,8 @@
     font-size: 0.95rem;
   }
 
-  .guide-example {
+  .guide-example,
+  .guide-new {
     border: 2px dashed #111;
     padding: 1.2rem;
     background: #fdfae5;
@@ -839,6 +1161,14 @@
     background: #9d174d;
     color: #fff;
   }
+  [data-theme='dark'] .bg-green {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-orange {
+    background: #cc6600;
+    color: #fff;
+  }
 
   [data-theme='dark'] .gender-btn {
     background: #222;
@@ -864,21 +1194,6 @@
   [data-theme='dark'] .result-line.unknown {
     color: #555;
     text-shadow: none;
-  }
-
-  [data-theme='dark'] .chain-tag {
-    background: #111;
-    border-color: #eee;
-    box-shadow: 2px 2px 0px #eee;
-  }
-  [data-theme='dark'] .chain-key {
-    color: #ff9fb2;
-  }
-  [data-theme='dark'] .chain-val {
-    color: #eee;
-  }
-  [data-theme='dark'] .chain-arrow {
-    color: #666;
   }
 
   [data-theme='dark'] .key-btn {
@@ -920,7 +1235,8 @@
   [data-theme='dark'] .step-text {
     color: #eee;
   }
-  [data-theme='dark'] .guide-example {
+  [data-theme='dark'] .guide-example,
+  [data-theme='dark'] .guide-new {
     background: #222;
     border-color: #eee;
   }
@@ -931,5 +1247,64 @@
     background: #eee;
     color: #111;
     border-color: #eee;
+  }
+
+  /* Dark mode - Reverse Search */
+  [data-theme='dark'] .brutal-input {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .brutal-input:focus {
+    background: #333;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .clear-btn {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .clear-btn:hover {
+    background: #cc0000;
+    color: #fff;
+  }
+  [data-theme='dark'] .reverse-item {
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+    background: #222;
+  }
+  [data-theme='dark'] .reverse-item:hover {
+    background: #b28f00;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .chain-start {
+    background: #eee;
+    color: #111;
+  }
+  [data-theme='dark'] .chain-step {
+    background: #333;
+    border-color: #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .reverse-empty {
+    color: #aaa;
+    border-color: #555;
+  }
+
+  /* Dark mode - Presets */
+  [data-theme='dark'] .preset-btn {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
+    color: #eee;
+  }
+  [data-theme='dark'] .preset-btn:hover {
+    background: #b28f00;
+    color: #111;
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .preset-btn.preset-active {
+    background: #eee;
+    color: #111;
   }
 </style>
