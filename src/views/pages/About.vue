@@ -19,6 +19,17 @@
         </p>
       </section>
 
+      <!-- Banner -->
+      <div class="brutal-banner-wrapper">
+        <div class="brutal-banner-box">
+          <img
+            src="/banner.png"
+            alt="LRM 工具箱 - 高效实用的在线工具集合"
+            class="brutal-banner-img"
+          />
+        </div>
+      </div>
+
       <section class="brutal-content-section bg-blue text-white">
         <h2 class="section-title variant-light">02 // 核心总线</h2>
         <ul>
@@ -262,6 +273,34 @@
     box-shadow: 4px 4px 0px #111;
   }
 
+  /* === Banner === */
+  .brutal-banner-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 3rem;
+  }
+
+  .brutal-banner-box {
+    max-width: 600px;
+    width: 100%;
+    border: 4px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    overflow: hidden;
+    transition: all 0.2s;
+    background: #fff;
+  }
+
+  .brutal-banner-box:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 11px 11px 0px #111;
+  }
+
+  .brutal-banner-img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
   /* --- Dark Mode Overrides --- */
   [data-theme='dark'] .brutal-page-container {
     background-color: #111;
@@ -279,6 +318,15 @@
   [data-theme='dark'] .brutal-page-title {
     color: #eee;
     text-shadow: 5px 5px 0px #cc0000;
+  }
+
+  [data-theme='dark'] .brutal-banner-box {
+    border-color: #eee;
+    box-shadow: 8px 8px 0px #eee;
+    background: #1a1a1a;
+  }
+  [data-theme='dark'] .brutal-banner-box:hover {
+    box-shadow: 11px 11px 0px #eee;
   }
 
   [data-theme='dark'] .brutal-btn-secondary {

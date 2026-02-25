@@ -52,3 +52,7 @@ src/data/成语.txt
 
 # 配置文件
 配置文件.txt
+
+# AI Skills
+.agents/
+skills/
