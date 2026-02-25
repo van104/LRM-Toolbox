@@ -69,7 +69,36 @@
     "feedbackSuccess": "Feedback submitted successfully, thank you!",
     "feedbackError": "Failed to submit, please try again later",
     "disclaimerTitle": "Disclaimer",
-    "disclaimerContent": "<p><strong>1. Tools For Reference Only</strong><br>Tools on this site are for learning and reference only. No guarantee of accuracy or completeness. Tool outputs do not constitute professional advice.</p><p><strong>2. Health & Finance Disclaimer</strong><br>Results from health and finance tools are for reference only and do not constitute medical diagnoses, treatment recommendations, or investment advice. Please consult professionals for related needs.</p><p><strong>3. User Responsibility</strong><br>The site assumes no responsibility for any consequences of using these tools. Please verify tool suitability before use.</p><p><strong>4. Data Security</strong><br>The site is not responsible for data loss due to network or system failures. We recommend backing up important data before using tools.</p><p><strong>5. Open Source Disclaimer</strong><br>This project is released under an open source license. We are not liable for any issues arising from the use, modification, or distribution of the code.</p><p><strong>6. Service Changes</strong><br>The site reserves the right to modify, interrupt, or discontinue services without prior notice.</p><p><strong>7. Contact</strong><br>Contact powelabraham67@gmail.com for any issues.</p>",
+    "disclaimerPoints": [
+      {
+        "title": "1. Tools For Reference Only",
+        "text": "Tools on this site are for learning and reference only. No guarantee of accuracy or completeness. Tool outputs do not constitute professional advice."
+      },
+      {
+        "title": "2. Health & Finance Disclaimer",
+        "text": "Results from health and finance tools are for reference only and do not constitute medical diagnoses, treatment recommendations, or investment advice. Please consult professionals for related needs."
+      },
+      {
+        "title": "3. User Responsibility",
+        "text": "The site assumes no responsibility for any consequences of using these tools. Please verify tool suitability before use."
+      },
+      {
+        "title": "4. Data Security",
+        "text": "The site is not responsible for data loss due to network or system failures. We recommend backing up important data before using tools."
+      },
+      {
+        "title": "5. Open Source Disclaimer",
+        "text": "This project is released under an open source license. We are not liable for any issues arising from the use, modification, or distribution of the code."
+      },
+      {
+        "title": "6. Service Changes",
+        "text": "The site reserves the right to modify, interrupt, or discontinue services without prior notice."
+      },
+      {
+        "title": "7. Contact",
+        "text": "Contact {email} for any issues."
+      }
+    ],
     "understood": "I Understand"
   },
   "toolCard": {

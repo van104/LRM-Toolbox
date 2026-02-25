@@ -78,7 +78,7 @@
           <div class="action-row">
             <div ref="previewRef" class="preview-box">
               <!-- eslint-disable-next-line vue/no-v-html -->
-              <div class="render-target" v-html="renderedHtml"></div>
+              <div class="render-target" v-html="sanitizedRenderedHtml"></div>
             </div>
             <button class="export-btn" @click="exportImage">
               <el-icon>
@@ -102,6 +102,7 @@
   import 'mathlive';
   import { MathfieldElement } from 'mathlive';
   import html2canvas from 'html2canvas';
+  import DOMPurify from 'dompurify';
   import katex from 'katex';
   import 'katex/dist/katex.min.css';
 
@@ -203,6 +204,8 @@
       return '<span style="color:red">Error</span>';
     }
   });
+
+  const sanitizedRenderedHtml = computed(() => DOMPurify.sanitize(renderedHtml.value));
 
   const onInput = evt => {
     latex.value = evt.target.value;

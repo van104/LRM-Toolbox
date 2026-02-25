@@ -105,6 +105,17 @@ const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || '').trim();
 
 // ========== 输入验证工具 ==========
 
+// HTML 实体转义 — 防止存储型 XSS
+function escapeHtml(str) {
+  if (typeof str !== 'string') return str;
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // 反馈数据验证
 function validateFeedbackInput(body) {
   const { type, content, contact } = body;
@@ -144,9 +155,9 @@ app.post('/lrm-api/feedback', feedbackSubmitLimiter, async (req, res) => {
 
     const newFeedback = {
       id: Date.now().toString() + Math.floor(Math.random() * 1000),
-      type: type.trim(),
-      content: content.trim(),
-      contact: contact ? contact.trim() : '',
+      type: escapeHtml(type.trim()),
+      content: escapeHtml(content.trim()),
+      contact: contact ? escapeHtml(contact.trim()) : '',
       status: 'pending',
       timestamp: new Date().toISOString(),
       userAgent: req.headers['user-agent']

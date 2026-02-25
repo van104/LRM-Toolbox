@@ -73,7 +73,7 @@
               <div v-if="hasChecked" class="report-content">
                 <div class="highlight-wrapper">
                   <!-- eslint-disable-next-line vue/no-v-html -->
-                  <div class="highlight-text" v-html="highlightedText"></div>
+                  <div class="highlight-text" v-html="sanitizedHighlightedText"></div>
                 </div>
 
                 <div v-if="sensitiveWords.length > 0" class="sensitive-list">
@@ -104,6 +104,7 @@
 
 <script setup lang="ts">
   import { ref, computed } from 'vue';
+  import DOMPurify from 'dompurify';
   import { ElMessage } from 'element-plus';
 
   const inputText = ref('');
@@ -134,6 +135,16 @@
     return [...new Set(sensitiveWords.value)];
   });
 
+  // HTML 实体转义，防止 XSS
+  const escapeHtml = (str: string) => {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  };
+
   const checkText = () => {
     if (!inputText.value.trim()) {
       ElMessage.warning('请输入需要检测的文本');
@@ -146,19 +157,21 @@
 
     // Simulate processing delay
     setTimeout(() => {
-      let text = inputText.value;
+      // 先转义用户输入，防止 XSS
+      let text = escapeHtml(inputText.value);
       const foundWords: string[] = [];
 
       MOCK_DICT.forEach(word => {
-        if (text.includes(word)) {
+        const escapedWord = escapeHtml(word);
+        if (text.includes(escapedWord)) {
           // Find all occurrences
-          const regex = new RegExp(word, 'g');
+          const regex = new RegExp(escapedWord, 'g');
           const matches = text.match(regex);
           if (matches) {
             foundWords.push(...matches);
           }
           // Highlight
-          text = text.replace(regex, `<mark class="sh-mark">${word}</mark>`);
+          text = text.replace(regex, `<mark class="sh-mark">${escapedWord}</mark>`);
         }
       });
 
@@ -174,6 +187,14 @@
       }
     }, 500);
   };
+
+  // DOMPurify 消毒后的高亮内容
+  const sanitizedHighlightedText = computed(() =>
+    DOMPurify.sanitize(highlightedText.value, {
+      ALLOWED_TAGS: ['mark', 'br'],
+      ALLOWED_ATTR: ['class']
+    })
+  );
 
   const clearText = () => {
     inputText.value = '';

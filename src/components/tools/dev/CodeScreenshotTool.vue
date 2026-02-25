@@ -157,7 +157,7 @@
                   <div class="window-body">
                     <pre :class="`language-${language.toLowerCase()}`">
                       <!-- eslint-disable-next-line vue/no-v-html -->
-                      <code v-html="highlightedCode"></code>
+                      <code v-html="sanitizedHighlightedCode"></code>
                     </pre>
                   </div>
                 </div>
@@ -173,6 +173,7 @@
 <script setup lang="ts">
   import { ref, computed, watch } from 'vue';
   import { ElMessage } from 'element-plus';
+  import DOMPurify from 'dompurify';
   import html2canvas from 'html2canvas';
 
   const exporting = ref(false);
@@ -251,9 +252,11 @@ const getUser = (id: number): User => {
     message = "Hello, LRM Toolbox!"
     print(message)
     return True`,
-    Go: `package main
+    Go:
+      `package main
 
-import "fmt"
+import` +
+      ` "fmt"
 
 func main() {
     fmt.Println("Hello, LRM Toolbox!")
@@ -287,6 +290,8 @@ Efficient and convenient developer tools collection.
 
     return code;
   });
+
+  const sanitizedHighlightedCode = computed(() => DOMPurify.sanitize(highlightedCode.value));
 
   const exportImage = async () => {
     if (!captureRef.value) return;
@@ -588,6 +593,7 @@ Efficient and convenient developer tools collection.
 
   .brutal-range {
     -webkit-appearance: none;
+    appearance: none;
     width: 100%;
     height: 10px;
     background: #e0e0e0;
@@ -596,6 +602,7 @@ Efficient and convenient developer tools collection.
   }
   .brutal-range::-webkit-slider-thumb {
     -webkit-appearance: none;
+    appearance: none;
     width: 22px;
     height: 22px;
     background: #0ea5e9;

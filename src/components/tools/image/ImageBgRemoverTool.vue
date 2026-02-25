@@ -434,11 +434,29 @@
   let offscreenCtx: CanvasRenderingContext2D | null = null;
   let originalImage: HTMLImageElement | null = null;
 
+  const encryptKey = (str: string) => {
+    if (!str) return '';
+    try {
+      return btoa(encodeURIComponent(str));
+    } catch {
+      return str;
+    }
+  };
+
+  const decryptKey = (str: string | null) => {
+    if (!str) return '';
+    try {
+      return decodeURIComponent(atob(str));
+    } catch {
+      return str; // Fallback for old unencrypted strings
+    }
+  };
+
   const apiConfig = reactive({
     provider: localStorage.getItem('bg_remover_provider') || 'builtin',
-    apiKey: localStorage.getItem('bg_remover_key') || '',
-    baiduSecret: localStorage.getItem('bg_remover_baidu_secret') || '',
-    customHeaders: localStorage.getItem('bg_remover_headers') || ''
+    apiKey: decryptKey(localStorage.getItem('bg_remover_key')),
+    baiduSecret: decryptKey(localStorage.getItem('bg_remover_baidu_secret')),
+    customHeaders: decryptKey(localStorage.getItem('bg_remover_headers'))
   });
 
   const outputConfig = reactive({
@@ -475,12 +493,12 @@
 
     processing.value = true;
 
-    localStorage.setItem('bg_remover_key', apiConfig.apiKey);
+    localStorage.setItem('bg_remover_key', encryptKey(apiConfig.apiKey));
     if (apiConfig.provider === 'baidu') {
-      localStorage.setItem('bg_remover_baidu_secret', apiConfig.baiduSecret);
+      localStorage.setItem('bg_remover_baidu_secret', encryptKey(apiConfig.baiduSecret));
     }
     if (apiConfig.provider === 'custom') {
-      localStorage.setItem('bg_remover_headers', apiConfig.customHeaders);
+      localStorage.setItem('bg_remover_headers', encryptKey(apiConfig.customHeaders));
     }
 
     try {

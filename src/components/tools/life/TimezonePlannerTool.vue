@@ -442,6 +442,7 @@
 
   .brutal-range-slider {
     -webkit-appearance: none;
+    appearance: none;
     width: 100%;
     height: 16px;
     background: #111;

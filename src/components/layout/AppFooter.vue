@@ -212,8 +212,20 @@
       class="brutal-dialog brutal-dialog-pink"
       append-to-body
     >
-      <!-- eslint-disable-next-line vue/no-v-html -->
-      <div class="disclaimer-content brutal-raw-text" v-html="t('footer.disclaimerContent')"></div>
+      <div class="disclaimer-content">
+        <div
+          v-for="(item, idx) in tm('footer.disclaimerPoints')"
+          :key="idx"
+          class="disclaimer-item mb-4"
+        >
+          <div class="disclaimer-point-title">
+            <strong>{{ rt(item.title) }}</strong>
+          </div>
+          <div class="disclaimer-point-text">
+            {{ rt(item.text, { email: 'powelabraham67@gmail.com' }) }}
+          </div>
+        </div>
+      </div>
       <template #footer>
         <div class="brutal-dialog-actions" style="justify-content: center">
           <button class="brutal-btn-primary width-full" @click="showDisclaimer = false">
@@ -234,7 +246,7 @@
 
   import { submitFeedbackToBackend } from '@/api/feedback';
 
-  const { t } = useI18n();
+  const { t, tm, rt } = useI18n();
   const showFeedback = ref(false);
   const showChangelog = ref(false);
   const showDisclaimer = ref(false);

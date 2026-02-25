@@ -85,7 +85,7 @@
               <div
                 v-if="activeTab === 'html'"
                 class="preview-box markdown-body"
-                v-html="resultText"
+                v-html="sanitizedResult"
               ></div>
               <!-- eslint-enable vue/no-v-html -->
               <div v-else class="preview-box">
@@ -101,6 +101,7 @@
 
 <script setup>
   import { ref, computed } from 'vue';
+  import DOMPurify from 'dompurify';
   import { useCopy } from '@/composables/useCopy';
 
   const inputText = ref('');
@@ -133,6 +134,16 @@
       .filter(row => row.length > 0);
   });
 
+  // HTML 实体转义，防止 XSS
+  const escapeHtml = str => {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  };
+
   const resultText = computed(() => {
     const data = parsedData.value;
     if (data.length === 0) return '';
@@ -155,18 +166,21 @@
     } else {
       let html = '<table class="brutal-preview-table">\n';
       html += '  <thead>\n    <tr>\n';
-      header.forEach(h => (html += `      <th>${h}</th>\n`));
+      header.forEach(h => (html += `      <th>${escapeHtml(h)}</th>\n`));
       html += '    </tr>\n  </thead>\n';
       html += '  <tbody>\n';
       body.forEach(row => {
         html += '    <tr>\n';
-        row.forEach(c => (html += `      <td>${c}</td>\n`));
+        row.forEach(c => (html += `      <td>${escapeHtml(c)}</td>\n`));
         html += '    </tr>\n';
       });
       html += '  </tbody>\n</table>';
       return html;
     }
   });
+
+  // 对 v-html 渲染的内容进行 DOMPurify 消毒
+  const sanitizedResult = computed(() => DOMPurify.sanitize(resultText.value));
 
   const copyResult = async () => {
     copyToClipboard(resultText.value, { success: '已复制代码到剪贴板' });

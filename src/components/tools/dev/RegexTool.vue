@@ -100,7 +100,7 @@
             ref="highlightRef"
             class="highlight-layer"
             aria-hidden="true"
-            v-html="highlightedContent"
+            v-html="sanitizedHighlightedContent"
           ></div>
           <!-- eslint-enable vue/no-v-html -->
 
@@ -146,6 +146,7 @@
   import { useRouter } from 'vue-router';
   import { ArrowDown, Warning, MagicStick } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
+  import DOMPurify from 'dompurify';
 
   const router = useRouter();
 
@@ -247,36 +248,29 @@
         .replace(/'/g, '&#039;');
     };
 
-    if (!compiledRegex.value) return escapeHtml(testText.value) + '<br>'; // 添加br确保空行显示
+    if (!compiledRegex.value) return escapeHtml(testText.value) + '<br>';
 
     try {
       let html = '';
       let lastIndex = 0;
       const text = testText.value;
 
-      // 使用 matchGroups 防止二次正则执行不一致
       for (const match of matchGroups.value) {
-        // 添加普通文本
         html += escapeHtml(text.slice(lastIndex, match.index));
-
-        // 添加高亮文本
         const matchedStr = match[0];
         html += `<span class="highlight-match">${escapeHtml(matchedStr)}</span>`;
-
         lastIndex = match.index + matchedStr.length;
       }
 
       html += escapeHtml(text.slice(lastIndex));
-
-      if (html.endsWith('\n')) {
-        html += '<br>';
-      }
-
+      if (html.endsWith('\n')) html += '<br>';
       return html;
     } catch {
       return escapeHtml(testText.value);
     }
   });
+
+  const sanitizedHighlightedContent = computed(() => DOMPurify.sanitize(highlightedContent.value));
 
   function syncScroll(e) {
     const scrollTop = e.target.scrollTop;
