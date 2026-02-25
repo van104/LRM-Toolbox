@@ -150,7 +150,7 @@ export default defineConfig(({ mode }) => {
       minify: 'terser',
       terserOptions: {
         compress: {
-          drop_console: true, // 生产环境移除 console.log
+          drop_console: false, // 允许生产环境保留控制台日志（如欢迎信息）
           drop_debugger: true // 生产环境移除 debugger
         },
         mangle: true // 开启变量混淆
