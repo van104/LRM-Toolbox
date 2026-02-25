@@ -52,11 +52,11 @@
 
 **目标**: 强化 TypeScript 类型约束，规范前后端交互。
 
-- [ ] **集中管理类型定义**:
+- [x] **集中管理类型定义**:
   - 创建 `src/types` 目录。
   - 定义 `Tool.d.ts` (工具元数据接口), `User.d.ts` (用户数据接口), `API.d.ts` (通用响应结构)。
   - 从组件中剥离接口定义，统一引用。
-- [ ] **封装 HTTP 请求层**:
+- [x] **封装 HTTP 请求层**:
   - 创建 `src/utils/request.ts`。
   - 封装 `fetch` 或 `axios`，统一处理请求拦截、响应拦截、全局错误提示（ElMessage）。
   - 重构 `src/api/feedback.ts` 等文件使用新的请求工具。
