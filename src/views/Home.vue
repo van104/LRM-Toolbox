@@ -138,7 +138,7 @@
         </section>
 
         <section v-else class="tools-grid-wrapper">
-          <div class="tools-grid">
+          <div v-if="!isShowAll" class="tools-grid">
             <ToolCard
               v-for="tool in visibleTools"
               :key="tool.id"
@@ -149,6 +149,29 @@
               @toggle-favorite="handleToggleFavorite"
             />
           </div>
+
+          <!-- Virtual Scroller for "View All" mode -->
+          <div v-else class="virtual-grid-container">
+            <RecycleScroller
+              v-slot="{ item }"
+              class="brutal-scroller"
+              :items="visibleTools"
+              :item-size="260"
+              :grid-items="gridColumns"
+              key-field="id"
+              list-class="tools-grid"
+              item-class="scroller-item"
+            >
+              <ToolCard
+                :tool="item"
+                :is-favorite="userStore.isFavorite(item.id)"
+                @click="handleToolClick"
+                @view-detail="openToolModal"
+                @toggle-favorite="handleToggleFavorite"
+              />
+            </RecycleScroller>
+          </div>
+
           <div v-if="hasMoreTools && !isShowAll" class="show-more-wrapper">
             <button class="brutal-btn-secondary" @click="handleShowAll">
               {{ t('home.viewAll', { count: filteredTools.length }) }}
@@ -183,7 +206,7 @@
 </template>
 
 <script setup>
-  import { ref, computed, onMounted, watch } from 'vue';
+  import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useI18n } from 'vue-i18n';
 
@@ -230,6 +253,17 @@
   const allTools = ref([]);
   const displayedTools = ref([]);
   const recommendedTools = ref([]);
+
+  // Grid columns for virtual scroller
+  const gridColumns = ref(4);
+  const updateColumns = () => {
+    const width = window.innerWidth;
+    if (width < 768) gridColumns.value = 1;
+    else if (width < 1024) gridColumns.value = 2;
+    else if (width < 1440) gridColumns.value = 3;
+    else if (width < 1800) gridColumns.value = 4;
+    else gridColumns.value = 5;
+  };
 
   const getExpandedCategories = () => {
     try {
@@ -375,6 +409,13 @@
 
   onMounted(() => {
     window.addEventListener('scroll', handleScroll);
+    updateColumns();
+    window.addEventListener('resize', updateColumns);
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll);
+    window.removeEventListener('resize', updateColumns);
   });
 
   const scrollToTop = () => {
@@ -875,6 +916,30 @@
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 2.5rem;
   }
+
+  /* Scroller Styles */
+  .virtual-grid-container {
+    height: 100vh; /* Set a fixed height or use auto calculation if possible */
+    min-height: 800px;
+  }
+
+  .brutal-scroller {
+    height: 100%;
+    width: 100%;
+  }
+
+  .scroller-item {
+    padding: 0;
+  }
+
+  /* Ensure ToolCard inside scroller has correct spacing */
+  :deep(.scroller-item) {
+    padding-bottom: 2.5rem;
+    padding-right: 2.5rem;
+    box-sizing: border-box;
+  }
+
+  /* Remove right padding for the last item in row is handled by grid-items or just let it be */
 
   .show-more-wrapper {
     display: flex;
