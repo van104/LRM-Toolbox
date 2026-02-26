@@ -1,16 +1,23 @@
 <template>
   <svg
+    t="1772096573914"
+    class="icon"
+    viewBox="0 0 1024 1024"
+    version="1.1"
     xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
+    p-id="8119"
+    width="200"
+    height="200"
   >
-    <!-- Placeholder: Replace with actual icon path -->
-    <circle cx="12" cy="12" r="10" />
-    <line x1="12" y1="8" x2="12" y2="16" />
-    <line x1="8" y1="12" x2="16" y2="12" />
+    <path
+      d="M768 896H256a128.1 128.1 0 0 1-128-128V640a32 32 0 1 1 64 0v128a64.1 64.1 0 0 0 64 64h512a64.1 64.1 0 0 0 64-64V640a32 32 0 1 1 64 0v128a128.1 128.1 0 0 1-128 128zM864 416a32 32 0 0 1-32-32V256a64.1 64.1 0 0 0-64-64H256a64.1 64.1 0 0 0-64 64v128a32 32 0 1 1-64 0V256a128.1 128.1 0 0 1 128-128h512a128.1 128.1 0 0 1 128 128v128a32 32 0 0 1-32 32z"
+      fill="#333333"
+      p-id="8120"
+    ></path>
+    <path
+      d="M437.3 704a32 32 0 0 1-32-32v-320a32 32 0 0 1 64 0v320a32 32 0 0 1-32 32zM288 704a32 32 0 0 1-32-32v-320a32 32 0 1 1 64 0v320a32 32 0 0 1-32 32zM586.7 704a32 32 0 0 1-32-32v-320a32 32 0 1 1 64 0v320a32 32 0 0 1-32 32zM736 704a32 32 0 0 1-32-32v-320a32 32 0 1 1 64 0v320a32 32 0 0 1-32 32z"
+      fill="#333333"
+      p-id="8121"
+    ></path>
   </svg>
 </template>
