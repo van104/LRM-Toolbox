@@ -9,7 +9,9 @@
           <!-- 头部 -->
           <div class="modal-header">
             <div class="modal-icon">
-              <el-icon :size="36"><component :is="tool.icon" /></el-icon>
+              <el-icon :size="36">
+                <component :is="tool.svgIcon ? ToolIcons[tool.svgIcon] : tool.icon" />
+              </el-icon>
             </div>
             <div class="modal-title-group">
               <h2 class="modal-title">{{ tool.name }}</h2>
@@ -63,6 +65,7 @@
   import { useRouter } from 'vue-router';
   import { useI18n } from 'vue-i18n';
   import { useUserStore } from '@/stores/user';
+  import * as ToolIcons from '@/components/icons/tools';
 
   const props = defineProps({
     visible: {
