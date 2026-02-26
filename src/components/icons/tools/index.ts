@@ -132,6 +132,7 @@ export { default as NeumorphismGeneratorIcon } from './design/NeumorphismGenerat
 export { default as PasswordGeneratorIcon } from './dev/PasswordGeneratorIcon.vue';
 
 export { default as PdfCompressionIcon } from './pdf/PdfCompressionIcon.vue';
+
 export { default as PdfCropIcon } from './pdf/PdfCropIcon.vue';
 export { default as PdfGrayscaleIcon } from './pdf/PdfGrayscaleIcon.vue';
 export { default as PdfMetadataIcon } from './pdf/PdfMetadataIcon.vue';
