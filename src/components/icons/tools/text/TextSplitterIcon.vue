@@ -1,16 +1,18 @@
 <template>
   <svg
+    t="1772094573087"
+    class="icon"
+    viewBox="0 0 1024 1024"
+    version="1.1"
     xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
+    p-id="96576"
+    width="200"
+    height="200"
   >
-    <!-- Placeholder: Replace with actual icon path -->
-    <circle cx="12" cy="12" r="10" />
-    <line x1="12" y1="8" x2="12" y2="16" />
-    <line x1="8" y1="12" x2="16" y2="12" />
+    <path
+      d="M512 0C228.693333 0 0 228.693333 0 512s228.693333 512 512 512 512-228.693333 512-512S795.306667 0 512 0z m-58.026667 395.946667h-136.533333v307.2h-34.133333v-307.2h-102.4v-34.133334h273.066666v34.133334z m85.333334 385.706666h-34.133334V215.04h34.133334v566.613333z m320.853333-385.706666h-119.466667v307.2h-34.133333v-307.2h-119.466667v-34.133334h273.066667v34.133334z"
+      fill="#707070"
+      p-id="96577"
+    ></path>
   </svg>
 </template>

@@ -1,19 +1,18 @@
 <template>
   <svg
+    t="1772093401757"
+    class="icon"
+    viewBox="0 0 1024 1024"
+    version="1.1"
     xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
+    p-id="29399"
+    width="200"
+    height="200"
   >
-    <path d="M5 12h14" />
-    <path d="M12 5v14" />
-    <circle cx="12" cy="12" r="9" />
-    <line x1="12" y1="2" x2="12" y2="4" />
-    <line x1="12" y1="20" x2="12" y2="22" />
-    <line x1="2" y1="12" x2="4" y2="12" />
-    <line x1="20" y1="12" x2="22" y2="12" />
+    <path
+      d="M292.544 146.304H475.52V256H292.48zM182.848 365.696H475.52V475.52H182.848zM109.696 585.152H475.52v109.696H109.696z m-36.544 219.392h877.696v73.152H73.152zM548.48 146.304h182.912V256H548.48z m0 219.392h292.608V475.52H548.48z m0 219.456h365.76v109.696H548.48z"
+      fill="#090000"
+      p-id="29400"
+    ></path>
   </svg>
 </template>

@@ -9,13 +9,7 @@
     "usage": "1. 在表格中查找目标字符\n2. 通过搜索框快速滤定位\n3. 点击编码一键复制",
     "route": "/tools/ascii-table",
     "isLocal": true,
-    "tags": [
-      "ASCII",
-      "对照表",
-      "编码",
-      "十六进制",
-      "开发"
-    ],
+    "tags": ["ASCII", "对照表", "编码", "十六进制", "开发"],
     "svgIcon": "AsciiTableIcon"
   },
   {
@@ -28,13 +22,7 @@
     "usage": "1. 普通替换：查找/替换\n2. 批量：输入 old,new 每行一条\n3. 行处理：添加前后缀或过滤",
     "route": "/tools/batch-replacer",
     "isLocal": true,
-    "tags": [
-      "替换",
-      "正则",
-      "批量",
-      "清洗",
-      "修饰"
-    ],
+    "tags": ["替换", "正则", "批量", "清洗", "修饰"],
     "svgIcon": "BatchReplacerIcon"
   },
   {
@@ -47,13 +35,7 @@
     "usage": "1. 输入文字或点击盲文符号\n2. 实时查看双向转换结果\n3. 适合特殊辅助与无障碍设计参考",
     "route": "/tools/braille-translator",
     "isLocal": true,
-    "tags": [
-      "盲文",
-      "Braille",
-      "翻译",
-      "无障碍",
-      "教育"
-    ],
+    "tags": ["盲文", "Braille", "翻译", "无障碍", "教育"],
     "svgIcon": "BrailleTranslatorIcon"
   },
   {
@@ -66,13 +48,7 @@
     "usage": "1. 输入变量名\n2. 选择目标格式或查看全格式预览\n3. 快速应用到代码中",
     "route": "/tools/variable-converter",
     "isLocal": true,
-    "tags": [
-      "代码",
-      "变量名",
-      "驼峰",
-      "格式转换",
-      "开发"
-    ],
+    "tags": ["代码", "变量名", "驼峰", "格式转换", "开发"],
     "svgIcon": "CamelSnakeKebabIcon"
   },
   {
@@ -85,12 +61,7 @@
     "usage": "1. 粘贴混乱排版的文本\n2. 一键执行美化\n3. 复制规范文本",
     "route": "/tools/copywriting-guide",
     "isLocal": true,
-    "tags": [
-      "排版",
-      "中英文",
-      "空格",
-      "标点"
-    ],
+    "tags": ["排版", "中英文", "空格", "标点"],
     "svgIcon": "CopywritingGuideIcon"
   },
   {
@@ -103,12 +74,7 @@
     "usage": "1. 输入或上传原始/修改文本\n2. 选择比较模式并点击比较\n3. 查看差异结果（支持自动跳转）",
     "route": "/tools/diff-comparer",
     "isLocal": true,
-    "tags": [
-      "文本",
-      "比较",
-      "差异",
-      "Diff"
-    ],
+    "tags": ["文本", "比较", "差异", "Diff"],
     "svgIcon": "DiffComparerIcon"
   },
   {
@@ -121,13 +87,7 @@
     "usage": "1. 在主界面直接输入内容\n2. 或点击\"打开悬浮窗\"获得置顶小窗口",
     "route": "/tools/sticky-note",
     "isLocal": true,
-    "tags": [
-      "记事本",
-      "便签",
-      "悬浮窗",
-      "速记",
-      "笔记"
-    ],
+    "tags": ["记事本", "便签", "悬浮窗", "速记", "笔记"],
     "svgIcon": "FloatingNoteIcon"
   },
   {
@@ -140,12 +100,7 @@
     "usage": "粘贴文章，点击提取。",
     "route": "/tools/keyword-extractor",
     "isLocal": true,
-    "tags": [
-      "关键词",
-      "提取",
-      "SEO",
-      "摘要"
-    ],
+    "tags": ["关键词", "提取", "SEO", "摘要"],
     "svgIcon": "KeywordExtractorIcon"
   },
   {
@@ -158,13 +113,7 @@
     "usage": "粘贴文本，选择分隔符，转换预览或复制。",
     "route": "/tools/list-to-table",
     "isLocal": true,
-    "tags": [
-      "表格",
-      "Markdown",
-      "HTML",
-      "转换",
-      "文档"
-    ],
+    "tags": ["表格", "Markdown", "HTML", "转换", "文档"],
     "svgIcon": "ListToTableIcon"
   },
   {
@@ -177,13 +126,7 @@
     "usage": "1. 选择文本风格\n2. 设置生成长度\n3. 点击生成并拷贝结果",
     "route": "/tools/lorem-ipsum",
     "isLocal": true,
-    "tags": [
-      "Lorem",
-      "占位文本",
-      "排版",
-      "测试",
-      "设计"
-    ],
+    "tags": ["Lorem", "占位文本", "排版", "测试", "设计"],
     "svgIcon": "LoremIpsumIcon"
   },
   {
@@ -196,11 +139,7 @@
     "usage": "1. 在左侧编写 Markdown\n2. 右侧实时预览效果\n3. 可导出为 HTML",
     "route": "/tools/markdown",
     "isLocal": true,
-    "tags": [
-      "Markdown",
-      "预览",
-      "编辑"
-    ],
+    "tags": ["Markdown", "预览", "编辑"],
     "svgIcon": "MarkdownPreviewIcon"
   },
   {
@@ -213,12 +152,7 @@
     "usage": "1. 输入 Markdown 表格\n2. 实时预览 HTML 效果\n3. 复制 HTML 代码",
     "route": "/tools/md-table-converter",
     "isLocal": true,
-    "tags": [
-      "Markdown",
-      "表格",
-      "HTML",
-      "转换"
-    ],
+    "tags": ["Markdown", "表格", "HTML", "转换"],
     "svgIcon": "MdTableConverterIcon"
   },
   {
@@ -231,12 +165,7 @@
     "usage": "输入汉字，点击查询即可看到按声调分类的同韵字。",
     "route": "/tools/rhyme",
     "isLocal": true,
-    "tags": [
-      "押韵",
-      "文案",
-      "创作",
-      "诗词"
-    ],
+    "tags": ["押韵", "文案", "创作", "诗词"],
     "svgIcon": "RhymeFinderIcon"
   },
   {
@@ -249,12 +178,7 @@
     "usage": "1. 输入待检测文本\n2. 系统自动高亮敏感词\n3. 查看检测报告",
     "route": "/tools/sensitive-word-check",
     "isLocal": true,
-    "tags": [
-      "敏感词",
-      "违禁词",
-      "检测",
-      "审核"
-    ],
+    "tags": ["敏感词", "违禁词", "检测", "审核"],
     "svgIcon": "SensitiveWordCheckIcon"
   },
   {
@@ -267,13 +191,7 @@
     "usage": "粘贴段落，系统自动识别标点并生成句长统计报告。",
     "route": "/tools/sentence-stats",
     "isLocal": true,
-    "tags": [
-      "文案",
-      "排版",
-      "写作",
-      "统计",
-      "分析"
-    ],
+    "tags": ["文案", "排版", "写作", "统计", "分析"],
     "svgIcon": "SentenceStatsIcon"
   },
   {
@@ -286,13 +204,7 @@
     "usage": "1. 输入原始标题\n2. 实时生成 Slug 路径\n3. 获取格式化后的 URL 片段",
     "route": "/tools/slug-generator",
     "isLocal": true,
-    "tags": [
-      "URL",
-      "Slug",
-      "SEO",
-      "转换",
-      "链接"
-    ],
+    "tags": ["URL", "Slug", "SEO", "转换", "链接"],
     "svgIcon": "SlugGeneratorIcon"
   },
   {
@@ -305,13 +217,7 @@
     "usage": "1. 输入或粘贴文本\n2. 点击中间的功能按钮进行处理\n3. 实时预览结果并一键复制",
     "route": "/tools/text-cleaner",
     "isLocal": true,
-    "tags": [
-      "文本",
-      "清洗",
-      "格式化",
-      "去重",
-      "排序"
-    ],
+    "tags": ["文本", "清洗", "格式化", "去重", "排序"],
     "svgIcon": "TextCleanerIcon"
   },
   {
@@ -324,13 +230,7 @@
     "usage": "1. 输入文本\n2. 点击中间的转换按钮\n3. 结果显示在右侧",
     "route": "/tools/text-converter",
     "isLocal": true,
-    "tags": [
-      "转换",
-      "繁简",
-      "拼音",
-      "编码",
-      "工具"
-    ],
+    "tags": ["转换", "繁简", "拼音", "编码", "工具"],
     "svgIcon": "TextConverterIcon"
   },
   {
@@ -343,12 +243,7 @@
     "usage": "1. 输入或粘贴文本\n2. 实时查看各项统计指标\n3. 支持导出统计报告",
     "route": "/tools/text-counter",
     "isLocal": true,
-    "tags": [
-      "统计",
-      "字数",
-      "分析",
-      "字符"
-    ],
+    "tags": ["统计", "字数", "分析", "字符"],
     "svgIcon": "TextCounterIcon"
   },
   {
@@ -361,11 +256,7 @@
     "usage": "1. 在左右两侧分别输入文本\n2. 点击对比按钮\n3. 查看差异高亮结果",
     "route": "/tools/text-diff",
     "isLocal": true,
-    "tags": [
-      "文本",
-      "对比",
-      "差异"
-    ],
+    "tags": ["文本", "对比", "差异"],
     "svgIcon": "TextDiffIcon"
   },
   {
@@ -378,13 +269,7 @@
     "usage": "1. 输入或粘贴源文本\n2. 点击中间的提取按钮或输入正则\n3. 查看并复制提取结果",
     "route": "/tools/text-extractor",
     "isLocal": true,
-    "tags": [
-      "文本",
-      "提取",
-      "正则",
-      "筛选",
-      "邮箱"
-    ],
+    "tags": ["文本", "提取", "正则", "筛选", "邮箱"],
     "svgIcon": "TextExtractorIcon"
   },
   {
@@ -397,33 +282,10 @@
     "usage": "1. 粘贴长文本\n2. 调节每行字数与分行模式\n3. 预览并复制结果",
     "route": "/tools/text-linebreak",
     "isLocal": true,
-    "tags": [
-      "排版",
-      "文案",
-      "换行",
-      "歌词",
-      "编辑"
-    ],
+    "tags": ["排版", "文案", "换行", "歌词", "编辑"],
     "svgIcon": "TextLineBreakIcon"
   },
-  {
-    "id": "text-polisher",
-    "name": "文案美化润色助手",
-    "category": "text",
-    "icon": "MagicStick",
-    "summary": "多种风格文本重写建议",
-    "description": "提供商务、幽默、文艺等多种风格的文本重写建议，辅助文案创作。",
-    "usage": "1. 输入原始文案\n2. 选择目标风格\n3. 获取润色后的文案建议",
-    "route": "/tools/text-polisher",
-    "isLocal": true,
-    "tags": [
-      "文案",
-      "润色",
-      "重写",
-      "创作"
-    ],
-    "svgIcon": "TextPolisherIcon"
-  },
+
   {
     "id": "text-security",
     "name": "文本加密与脱敏",
@@ -434,13 +296,7 @@
     "usage": "1. 选择脱敏/加密/混淆模式\n2. 点击预设按钮或输入参数\n3. 获取安全文本",
     "route": "/tools/text-encryption",
     "isLocal": true,
-    "tags": [
-      "加密",
-      "脱敏",
-      "混淆",
-      "摩尔斯",
-      "安全"
-    ],
+    "tags": ["加密", "脱敏", "混淆", "摩尔斯", "安全"],
     "svgIcon": "TextSecurityIcon"
   },
   {
@@ -453,13 +309,7 @@
     "usage": "1. 选择拆分/拼接/表格模式\n2. 设置分隔符或参数\n3. 点击执行按钮",
     "route": "/tools/text-splitter",
     "isLocal": true,
-    "tags": [
-      "拆分",
-      "拼接",
-      "CSV",
-      "列表",
-      "工具"
-    ],
+    "tags": ["拆分", "拼接", "CSV", "列表", "工具"],
     "svgIcon": "TextSplitterIcon"
   },
   {
@@ -472,31 +322,7 @@
     "usage": "1. 编写模板 ({{var}})\n2. 粘贴 JSON/CSV 数据\n3. 生成并复制结果",
     "route": "/tools/text-template",
     "isLocal": true,
-    "tags": [
-      "模板",
-      "批量",
-      "生成",
-      "MailMerge",
-      "CSV"
-    ],
+    "tags": ["模板", "批量", "生成", "MailMerge", "CSV"],
     "svgIcon": "TextTemplateIcon"
-  },
-  {
-    "id": "tone-converter",
-    "name": "语气句式转换",
-    "category": "text",
-    "icon": "ChatDotRound",
-    "summary": "疑问/委婉/正式语气转换",
-    "description": "将句子转换为疑问句、委婉语气、正式书面语或客服体，辅助文案修改。",
-    "usage": "输入句子，选择目标语气。",
-    "route": "/tools/tone-converter",
-    "isLocal": true,
-    "tags": [
-      "语气",
-      "文案",
-      "沟通",
-      "转换"
-    ],
-    "svgIcon": "ToneConverterIcon"
   }
 ]

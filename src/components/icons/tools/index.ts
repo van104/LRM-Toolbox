@@ -130,9 +130,7 @@ export { default as MyNetworkIcon } from './dev/MyNetworkIcon.vue';
 export { default as NameStrokeIcon } from './edu/NameStrokeIcon.vue';
 export { default as NeumorphismGeneratorIcon } from './design/NeumorphismGeneratorIcon.vue';
 export { default as PasswordGeneratorIcon } from './dev/PasswordGeneratorIcon.vue';
-export { default as PdfAccessibilityCheckIcon } from './pdf/PdfAccessibilityCheckIcon.vue';
-export { default as PdfAttachmentExtractorIcon } from './pdf/PdfAttachmentExtractorIcon.vue';
-export { default as PdfComparisonIcon } from './pdf/PdfComparisonIcon.vue';
+
 export { default as PdfCompressionIcon } from './pdf/PdfCompressionIcon.vue';
 export { default as PdfCropIcon } from './pdf/PdfCropIcon.vue';
 export { default as PdfGrayscaleIcon } from './pdf/PdfGrayscaleIcon.vue';
@@ -144,7 +142,7 @@ export { default as PdfProtectionIcon } from './pdf/PdfProtectionIcon.vue';
 export { default as PdfRepairIcon } from './pdf/PdfRepairIcon.vue';
 export { default as PdfRotationIcon } from './pdf/PdfRotationIcon.vue';
 export { default as PdfScaleIcon } from './pdf/PdfScaleIcon.vue';
-export { default as PdfSignatureIcon } from './pdf/PdfSignatureIcon.vue';
+
 export { default as PdfSplitMergeIcon } from './pdf/PdfSplitMergeIcon.vue';
 export { default as PdfTextExtractorIcon } from './pdf/PdfTextExtractorIcon.vue';
 export { default as PdfToEpubIcon } from './pdf/PdfToEpubIcon.vue';
@@ -195,11 +193,11 @@ export { default as SocialMediaSizesIcon } from './design/SocialMediaSizesIcon.v
 export { default as SocialMockupIcon } from './fun/SocialMockupIcon.vue';
 export { default as SoupTimerIcon } from './life/SoupTimerIcon.vue';
 export { default as SpecialTextIcon } from './fun/SpecialTextIcon.vue';
-export { default as SpineExercisesIcon } from './health/SpineExercisesIcon.vue';
+
 export { default as SpinnerWheelIcon } from './fun/SpinnerWheelIcon.vue';
 export { default as SqlBuilderIcon } from './dev/SqlBuilderIcon.vue';
 export { default as SslCheckerIcon } from './dev/SslCheckerIcon.vue';
-export { default as StressTestIcon } from './health/StressTestIcon.vue';
+
 export { default as StringEscaperIcon } from './dev/StringEscaperIcon.vue';
 export { default as SubnetCalculatorIcon } from './dev/SubnetCalculatorIcon.vue';
 export { default as SudokuIcon } from './fun/SudokuIcon.vue';
@@ -214,7 +212,7 @@ export { default as TextCounterIcon } from './text/TextCounterIcon.vue';
 export { default as TextDiffIcon } from './text/TextDiffIcon.vue';
 export { default as TextExtractorIcon } from './text/TextExtractorIcon.vue';
 export { default as TextLineBreakIcon } from './text/TextLineBreakIcon.vue';
-export { default as TextPolisherIcon } from './text/TextPolisherIcon.vue';
+
 export { default as TextSecurityIcon } from './text/TextSecurityIcon.vue';
 export { default as TextSplitterIcon } from './text/TextSplitterIcon.vue';
 export { default as TextTemplateIcon } from './text/TextTemplateIcon.vue';
@@ -223,12 +221,12 @@ export { default as TimerToolIcon } from './life/TimerToolIcon.vue';
 export { default as TimestampIcon } from './dev/TimestampIcon.vue';
 export { default as TimezonePlannerIcon } from './life/TimezonePlannerIcon.vue';
 export { default as TipSplitterIcon } from './life/TipSplitterIcon.vue';
-export { default as ToneConverterIcon } from './text/ToneConverterIcon.vue';
+
 export { default as TowerDefenseIcon } from './fun/TowerDefenseIcon.vue';
 export { default as TravelChecklistIcon } from './life/TravelChecklistIcon.vue';
 export { default as TruthDareIcon } from './fun/TruthDareIcon.vue';
 export { default as TruthTableGenIcon } from './edu/TruthTableGenIcon.vue';
-export { default as TypingTestIcon } from './edu/TypingTestIcon.vue';
+
 export { default as UaParserIcon } from './dev/UaParserIcon.vue';
 export { default as UnitConverterIcon } from './life/UnitConverterIcon.vue';
 export { default as UnitDimensionIcon } from './edu/UnitDimensionIcon.vue';
@@ -243,9 +241,9 @@ export { default as VolumeWeightIcon } from './life/VolumeWeightIcon.vue';
 export { default as WasteClassifierIcon } from './life/WasteClassifierIcon.vue';
 export { default as WaterIntakeIcon } from './health/WaterIntakeIcon.vue';
 export { default as WeatherGuideIcon } from './life/WeatherGuideIcon.vue';
-export { default as WebToPdfIcon } from './pdf/WebToPdfIcon.vue';
+
 export { default as WhiteNoiseIcon } from './fun/WhiteNoiseIcon.vue';
-export { default as WordDecompositionIcon } from './edu/WordDecompositionIcon.vue';
+
 export { default as WordGuessIcon } from './fun/WordGuessIcon.vue';
 export { default as WorkdayCalculatorIcon } from './life/WorkdayCalculatorIcon.vue';
 export { default as WorkoutTimerIcon } from './health/WorkoutTimerIcon.vue';

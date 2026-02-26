@@ -77,21 +77,13 @@ const healthRoutes: RouteRecordRaw[] = [
     name: 'HeartRateZoneTool',
     component: () => import('@/components/tools/health/HeartRateZoneTool.vue')
   },
-  {
-    path: '/tools/spine-exercises',
-    name: 'SpineExercisesTool',
-    component: () => import('@/components/tools/health/SpineExercisesTool.vue')
-  },
+
   {
     path: '/tools/allergen-table',
     name: 'AllergenTableTool',
     component: () => import('@/components/tools/health/AllergenTableTool.vue')
   },
-  {
-    path: '/tools/stress-test',
-    name: 'StressTestTool',
-    component: () => import('@/components/tools/health/StressTestTool.vue')
-  },
+
   {
     path: '/tools/eye-care-guide',
     name: 'EyeCareGuideTool',

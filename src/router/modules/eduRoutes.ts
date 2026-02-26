@@ -22,11 +22,7 @@ const eduRoutes: RouteRecordRaw[] = [
     name: 'ChinesePoetryTool',
     component: () => import('@/components/tools/edu/ChinesePoetryTool.vue')
   },
-  {
-    path: '/tools/typing-test',
-    name: 'TypingTestTool',
-    component: () => import('@/components/tools/edu/TypingTestTool.vue')
-  },
+
   {
     path: '/tools/formula-editor',
     name: 'FormulaEditorTool',
@@ -37,11 +33,7 @@ const eduRoutes: RouteRecordRaw[] = [
     name: 'PeriodicTableTool',
     component: () => import('@/components/tools/edu/PeriodicTableTool.vue')
   },
-  {
-    path: '/tools/word-decomp',
-    name: 'WordDecompTool',
-    component: () => import('@/components/tools/edu/WordDecompTool.vue')
-  },
+
   {
     path: '/tools/fraction-calculator',
     name: 'FractionTool',

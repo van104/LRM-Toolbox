@@ -9,13 +9,7 @@
     "usage": "1. 上传多张图片\n2. 拖拽调整顺序\n3. 设置页面参数\n4. 生成并下载 PDF",
     "route": "/tools/image-to-pdf",
     "isLocal": true,
-    "tags": [
-      "图片",
-      "PDF",
-      "合并",
-      "转换",
-      "文档"
-    ],
+    "tags": ["图片", "PDF", "合并", "转换", "文档"],
     "svgIcon": "ImageToPdfIcon"
   },
   {
@@ -28,71 +22,10 @@
     "usage": "1. 输入 Markdown 或 HTML 内容\n2. 实时预览效果\n3. 设置页面大小\n4. 生成 PDF",
     "route": "/tools/markdown-to-pdf",
     "isLocal": true,
-    "tags": [
-      "Markdown",
-      "HTML",
-      "PDF",
-      "转换",
-      "文档"
-    ],
+    "tags": ["Markdown", "HTML", "PDF", "转换", "文档"],
     "svgIcon": "MarkdownToPdfIcon"
   },
-  {
-    "id": "pdf-accessibility-check",
-    "name": "PDF 合规性检查",
-    "category": "pdf",
-    "icon": "CircleCheck",
-    "summary": "检查 PDF 无障碍标准合规性",
-    "description": "分析 PDF 文件是否符合 PDF/UA 或 WCAG 等无障碍标准。检查项包括标签结构、替代文本、阅读顺序、字体嵌入等，确保文档对视障人士友好。",
-    "usage": "1. 上传 PDF 文件\n2. 系统自动扫描文档结构\n3. 查看合规性报告和问题列表\n4. 获取修复建议",
-    "route": "/tools/pdf-accessibility-check",
-    "isLocal": true,
-    "tags": [
-      "PDF",
-      "合规",
-      "无障碍",
-      "检查",
-      "PDF/UA"
-    ],
-    "svgIcon": "PdfAccessibilityCheckIcon"
-  },
-  {
-    "id": "pdf-attachment-extractor",
-    "name": "PDF 附件提取",
-    "category": "pdf",
-    "icon": "Paperclip",
-    "summary": "提取 PDF 内嵌附件",
-    "description": "PDF 附件提取工具。检测并提取嵌套在 PDF 内部的各种文件附件（如 Excel 表格、XML 等数据文件）。",
-    "usage": "1. 上传包含附件的 PDF 文件\n2. 扫描并预览附件列表\n3. 点击下载单个附件或全部",
-    "route": "/tools/pdf-attachment-extractor",
-    "isLocal": true,
-    "tags": [
-      "PDF",
-      "附件",
-      "提取",
-      "文件"
-    ],
-    "svgIcon": "PdfAttachmentExtractorIcon"
-  },
-  {
-    "id": "pdf-comparison",
-    "name": "PDF 文档对比",
-    "category": "pdf",
-    "icon": "Switch",
-    "summary": "可视化对比两个 PDF 的差异",
-    "description": "并排或叠加对比两个版本的 PDF 文件，高亮显示文本变化、图像差异和布局变动。适用于合同审核、设计稿校对。",
-    "usage": "1. 分别上传旧版和新版 PDF\n2. 选择对比模式（并排/叠加/差异图）\n3. 查看差异高亮区域\n4. 导出差异报告",
-    "route": "/tools/pdf-comparison",
-    "isLocal": true,
-    "tags": [
-      "PDF",
-      "对比",
-      "差异",
-      "校对",
-      "Diff"
-    ],
-    "svgIcon": "PdfComparisonIcon"
-  },
+
   {
     "id": "pdf-compression",
     "name": "PDF 压缩",
@@ -103,13 +36,7 @@
     "usage": "1. 上传 PDF 文件\n2. 选择\"无损优化\"或\"强力压缩\"\n3. 点击开始并下载结果",
     "route": "/tools/pdf-compression",
     "isLocal": true,
-    "tags": [
-      "PDF",
-      "压缩",
-      "瘦身",
-      "优化",
-      "减小体积"
-    ],
+    "tags": ["PDF", "压缩", "瘦身", "优化", "减小体积"],
     "svgIcon": "PdfCompressionIcon"
   },
   {
@@ -122,13 +49,7 @@
     "usage": "1. 上传 PDF 文件\n2. 设置四边裁剪边距\n3. 选择应用范围\n4. 裁剪并下载",
     "route": "/tools/pdf-crop",
     "isLocal": true,
-    "tags": [
-      "PDF",
-      "裁剪",
-      "白边",
-      "页边距",
-      "调整"
-    ],
+    "tags": ["PDF", "裁剪", "白边", "页边距", "调整"],
     "svgIcon": "PdfCropIcon"
   },
   {
@@ -141,13 +62,7 @@
     "usage": "1. 上传 PDF 文件\n2. 选择灰度或纯黑白模式\n3. 预览效果并下载",
     "route": "/tools/pdf-grayscale",
     "isLocal": true,
-    "tags": [
-      "PDF",
-      "灰度",
-      "黑白",
-      "打印",
-      "转换"
-    ],
+    "tags": ["PDF", "灰度", "黑白", "打印", "转换"],
     "svgIcon": "PdfGrayscaleIcon"
   },
   {
@@ -160,13 +75,7 @@
     "usage": "1. 上传 PDF 文件\n2. 编辑需要修改的属性\n3. 保存并下载",
     "route": "/tools/pdf-metadata",
     "isLocal": true,
-    "tags": [
-      "PDF",
-      "元数据",
-      "属性",
-      "标题",
-      "作者"
-    ],
+    "tags": ["PDF", "元数据", "属性", "标题", "作者"],
     "svgIcon": "PdfMetadataIcon"
   },
   {
@@ -179,13 +88,7 @@
     "usage": "1. 选择基础 PDF\n2. 选择叠加 PDF（水印/印章）\n3. 设置叠加模式和范围\n4. 合并并下载",
     "route": "/tools/pdf-overlay",
     "isLocal": true,
-    "tags": [
-      "PDF",
-      "叠加",
-      "水印",
-      "印章",
-      "覆盖"
-    ],
+    "tags": ["PDF", "叠加", "水印", "印章", "覆盖"],
     "svgIcon": "PdfOverlayIcon"
   },
   {
@@ -198,13 +101,7 @@
     "usage": "1. 上传 PDF 文件\n2. 设置页码位置和格式\n3. 预览并下载",
     "route": "/tools/pdf-page-number",
     "isLocal": true,
-    "tags": [
-      "PDF",
-      "页码",
-      "页脚",
-      "页眉",
-      "标记"
-    ],
+    "tags": ["PDF", "页码", "页脚", "页眉", "标记"],
     "svgIcon": "PdfPageNumberIcon"
   },
   {
@@ -217,14 +114,7 @@
     "usage": "1. 上传 PDF 文件\n2. 拖拽页面卡片重排顺序\n3. 选中页面可删除，点击按钮可插入空白页\n4. 保存并下载",
     "route": "/tools/pdf-page-organizer",
     "isLocal": true,
-    "tags": [
-      "PDF",
-      "页面",
-      "排序",
-      "组织",
-      "删除",
-      "空白页"
-    ],
+    "tags": ["PDF", "页面", "排序", "组织", "删除", "空白页"],
     "svgIcon": "PdfPageOrganizerIcon"
   },
   {
@@ -237,14 +127,7 @@
     "usage": "1. 选择\"加密保护\"或\"移除密码\"\n2. 上传文件并输入密码\n3. 处理完成后下载",
     "route": "/tools/pdf-protection",
     "isLocal": true,
-    "tags": [
-      "PDF",
-      "密码",
-      "加密",
-      "解密",
-      "安全",
-      "保护"
-    ],
+    "tags": ["PDF", "密码", "加密", "解密", "安全", "保护"],
     "svgIcon": "PdfProtectionIcon"
   },
   {
@@ -257,13 +140,7 @@
     "usage": "1. 上传损坏的 PDF\n2. 点击开始修复\n3. 查看修复日志\n4. 下载修复后的文件",
     "route": "/tools/pdf-repair",
     "isLocal": true,
-    "tags": [
-      "PDF",
-      "修复",
-      "损坏",
-      "恢复",
-      "救援"
-    ],
+    "tags": ["PDF", "修复", "损坏", "恢复", "救援"],
     "svgIcon": "PdfRepairIcon"
   },
   {
@@ -276,13 +153,7 @@
     "usage": "1. 上传 PDF 文件\n2. 点击工具栏批量旋转或单独旋转指定页\n3. 保存并下载",
     "route": "/tools/pdf-rotation",
     "isLocal": true,
-    "tags": [
-      "PDF",
-      "旋转",
-      "方向",
-      "调整",
-      "页面"
-    ],
+    "tags": ["PDF", "旋转", "方向", "调整", "页面"],
     "svgIcon": "PdfRotationIcon"
   },
   {
@@ -295,34 +166,10 @@
     "usage": "1. 上传 PDF 文件\n2. 选择目标尺寸（A4, A3等）\n3. 选择缩放模式（适应或填充）\n4. 调整并下载",
     "route": "/tools/pdf-scale",
     "isLocal": true,
-    "tags": [
-      "PDF",
-      "缩放",
-      "尺寸",
-      "调整",
-      "A4"
-    ],
+    "tags": ["PDF", "缩放", "尺寸", "调整", "A4"],
     "svgIcon": "PdfScaleIcon"
   },
-  {
-    "id": "pdf-signature",
-    "name": "PDF 电子签名",
-    "category": "pdf",
-    "icon": "EditPen",
-    "summary": "手写或上传签名添加到 PDF",
-    "description": "PDF 电子签名工具。支持手写绘制签名或上传签名图片，可拖放到 PDF 的任意位置，生成带签名的文档。",
-    "usage": "1. 上传 PDF 文件\n2. 手写或上传签名\n3. 点击 PDF 预览放置签名位置\n4. 保存并下载",
-    "route": "/tools/pdf-signature",
-    "isLocal": true,
-    "tags": [
-      "PDF",
-      "签名",
-      "电子签名",
-      "手写",
-      "盖章"
-    ],
-    "svgIcon": "PdfSignatureIcon"
-  },
+
   {
     "id": "pdf-split-merge",
     "name": "PDF 拆分与合并",
@@ -333,13 +180,7 @@
     "usage": "拆分：上传 PDF → 选择页面范围 → 提取\n合并：上传多个 PDF → 调整顺序 → 合并下载",
     "route": "/tools/pdf-split-merge",
     "isLocal": true,
-    "tags": [
-      "PDF",
-      "拆分",
-      "合并",
-      "提取",
-      "页面"
-    ],
+    "tags": ["PDF", "拆分", "合并", "提取", "页面"],
     "svgIcon": "PdfSplitMergeIcon"
   },
   {
@@ -352,14 +193,7 @@
     "usage": "1. 上传 PDF 文件\n2. 点击提取文本\n3. 复制或下载文本内容",
     "route": "/tools/pdf-text-extractor",
     "isLocal": true,
-    "tags": [
-      "PDF",
-      "文本",
-      "提取",
-      "OCR",
-      "复制",
-      "TXT"
-    ],
+    "tags": ["PDF", "文本", "提取", "OCR", "复制", "TXT"],
     "svgIcon": "PdfTextExtractorIcon"
   },
   {
@@ -372,13 +206,7 @@
     "usage": "1. 上传文档类 PDF（扫描件效果不佳）\n2. 设置标题识别层级（可选）\n3. 转换并预览效果\n4. 下载 EPUB 文件",
     "route": "/tools/pdf-to-epub",
     "isLocal": true,
-    "tags": [
-      "PDF",
-      "EPUB",
-      "电子书",
-      "转换",
-      "阅读"
-    ],
+    "tags": ["PDF", "EPUB", "电子书", "转换", "阅读"],
     "svgIcon": "PdfToEpubIcon"
   },
   {
@@ -391,13 +219,7 @@
     "usage": "1. 上传 PDF 文件\n2. 选择输出格式和质量\n3. 勾选需要导出的页面\n4. 点击下载",
     "route": "/tools/pdf-to-image",
     "isLocal": true,
-    "tags": [
-      "PDF",
-      "图片",
-      "转换",
-      "PNG",
-      "JPG"
-    ],
+    "tags": ["PDF", "图片", "转换", "PNG", "JPG"],
     "svgIcon": "PdfToImageIcon"
   },
   {
@@ -410,32 +232,7 @@
     "usage": "1. 上传 PDF 文件\n2. 选择文字或图片水印\n3. 调整水印参数\n4. 下载带水印的 PDF",
     "route": "/tools/pdf-watermark",
     "isLocal": true,
-    "tags": [
-      "PDF",
-      "水印",
-      "版权",
-      "保护",
-      "文字"
-    ],
+    "tags": ["PDF", "水印", "版权", "保护", "文字"],
     "svgIcon": "PdfWatermarkIcon"
-  },
-  {
-    "id": "web-to-pdf",
-    "name": "网页转 PDF",
-    "category": "pdf",
-    "icon": "Monitor",
-    "summary": "将 URL 网页保存为 PDF 文档",
-    "description": "输入任意公开网页地址，将其完整抓取并渲染为 PDF。支持去除广告、自定义页面尺寸（A4/长图）、保留链接跳转。",
-    "usage": "1. 输入目标网页 URL\n2. 设置页面参数（是否去广告、纸张大小）\n3. 预览生成效果\n4. 下载 PDF",
-    "route": "/tools/web-to-pdf",
-    "isLocal": true,
-    "tags": [
-      "网页",
-      "PDF",
-      "转换",
-      "抓取",
-      "保存"
-    ],
-    "svgIcon": "WebToPdfIcon"
   }
 ]

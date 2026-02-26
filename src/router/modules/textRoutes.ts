@@ -59,10 +59,7 @@ const textRoutes: RouteRecordRaw[] = [
     path: '/tools/sentence-stats',
     component: () => import('@/components/tools/text/SentenceStatsTool.vue')
   },
-  {
-    path: '/tools/tone-converter',
-    component: () => import('@/components/tools/text/ToneConverterTool.vue')
-  },
+
   {
     path: '/tools/text-converter',
     component: () => import('@/components/tools/text/TextConverter.vue')
@@ -104,11 +101,7 @@ const textRoutes: RouteRecordRaw[] = [
     name: 'SensitiveWordCheckTool',
     component: () => import('@/components/tools/text/SensitiveWordCheckTool.vue')
   },
-  {
-    path: '/tools/text-polisher',
-    name: 'TextPolisherTool',
-    component: () => import('@/components/tools/text/TextPolisherTool.vue')
-  },
+
   {
     path: '/tools/copywriting-guide',
     name: 'CopywritingGuideTool',

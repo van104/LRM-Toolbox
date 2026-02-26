@@ -1,21 +1,73 @@
 <template>
   <svg
+    t="1772093277486"
+    class="icon"
+    viewBox="0 0 1024 1024"
+    version="1.1"
     xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
+    p-id="18988"
+    width="200"
+    height="200"
   >
-    <circle cx="6" cy="6" r="1.5" fill="currentColor" />
-    <circle cx="12" cy="6" r="1.5" />
-    <circle cx="18" cy="6" r="1.5" />
-    <circle cx="6" cy="12" r="1.5" fill="currentColor" />
-    <circle cx="12" cy="12" r="1.5" fill="currentColor" />
-    <circle cx="18" cy="12" r="1.5" />
-    <circle cx="6" cy="18" r="1.5" fill="currentColor" />
-    <circle cx="12" cy="18" r="1.5" />
-    <circle cx="18" cy="18" r="1.5" fill="currentColor" />
+    <path
+      d="M353.6 368m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z"
+      fill="#333333"
+      p-id="18989"
+    ></path>
+    <path
+      d="M385.6 240m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z"
+      fill="#333333"
+      p-id="18990"
+    ></path>
+    <path
+      d="M529.6 224m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z"
+      fill="#333333"
+      p-id="18991"
+    ></path>
+    <path
+      d="M657.6 224m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z"
+      fill="#333333"
+      p-id="18992"
+    ></path>
+    <path
+      d="M516.8 416m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z"
+      fill="#333333"
+      p-id="18993"
+    ></path>
+    <path
+      d="M529.6 544m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z"
+      fill="#333333"
+      p-id="18994"
+    ></path>
+    <path
+      d="M369.6 560m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z"
+      fill="#333333"
+      p-id="18995"
+    ></path>
+    <path
+      d="M305.6 672m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z"
+      fill="#333333"
+      p-id="18996"
+    ></path>
+    <path
+      d="M369.6 768m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z"
+      fill="#333333"
+      p-id="18997"
+    ></path>
+    <path
+      d="M529.6 768m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z"
+      fill="#333333"
+      p-id="18998"
+    ></path>
+    <path
+      d="M705.6 768m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z"
+      fill="#333333"
+      p-id="18999"
+    ></path>
+    <path
+      d="M801.6 112c17.6 0 32 14.4 32 32v704c0 17.6-14.4 32-32 32h-576c-17.6 0-32-14.4-32-32V144c0-17.6 14.4-32 32-32h576m0-64h-576c-52.8 0-96 43.2-96 96v704c0 52.8 43.2 96 96 96h576c52.8 0 96-43.2 96-96V144c0-54.4-43.2-96-96-96z"
+      fill="#333333"
+      p-id="19000"
+    ></path>
   </svg>
 </template>

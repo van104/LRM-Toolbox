@@ -1,15 +1,21 @@
 <template>
   <svg
+    t="1772093614942"
+    class="icon"
+    viewBox="0 0 1024 1024"
+    version="1.1"
     xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
+    p-id="43487"
+    width="200"
+    height="200"
   >
-    <path d="M4 12V4h16v16h-8" />
-    <path d="M4 8h16M4 12h16M8 4v16" />
-    <path d="M2 13h4M2 17h4M2 21h4" />
+    <path
+      d="M64 106.688v128h85.312V192h85.376v213.312h-64v85.376H384V405.312H320V192h85.312v42.688h85.376v-128H64z m853.312 42.624H618.688v85.376h256V832H192V618.688H106.688v256c0 23.552 19.072 42.624 42.624 42.624h768a42.688 42.688 0 0 0 42.688-42.624V192a42.688 42.688 0 0 0-42.688-42.688z"
+      p-id="43488"
+    ></path>
+    <path
+      d="M915.2 534.528c-197.952 0-358.4 161.28-358.4 360.32H467.2c0-248.768 200.576-450.432 448-450.432v90.112z"
+      p-id="43489"
+    ></path>
   </svg>
 </template>
