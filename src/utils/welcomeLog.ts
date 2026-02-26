@@ -5,7 +5,7 @@ export function printWelcomeLog(): void {
   const bodyText = `
   🚀 欢迎使用 LRM 开发者工具箱！                        
   👉 本项目旨在提供高效的开发体验，完全免费开源。         
-  📝 Github: https://github.com/van104/LRM-Toolbox.git
+  📝 Github: https://github.com/van104/LRM-Toolbox    
   ⚠️ 请勿将本工具用于任何非法用途。                      `;
 
   const titleStyle = `
