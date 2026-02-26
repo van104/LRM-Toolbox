@@ -151,6 +151,18 @@
           <div class="changelog-item featured">
             <div class="version-tag">LATEST</div>
             <div class="item-header">
+              <span class="version-num">v2.5.0</span>
+              <span class="version-date">2026-02-26</span>
+            </div>
+            <ul class="change-list">
+              <li><span class="tag tag-ui">视觉</span>全站工具分类图标全面更新</li>
+              <li><span class="tag tag-ui">图标</span>升级 250+ 工具的独立专属 SVG 图标</li>
+              <li><span class="tag tag-ui">优化</span>适配 Neobrutalism 风格的视觉表现力</li>
+            </ul>
+          </div>
+
+          <div class="changelog-item">
+            <div class="item-header">
               <span class="version-num">v2.0.0</span>
               <span class="version-date">2026-02-23</span>
             </div>

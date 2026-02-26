@@ -1,7 +1,7 @@
 {
   "name": "lrm-toolbox",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.5.0",
   "type": "module",
   "description": "LRM工具箱 - 一个功能强大的在线开发者工具箱 (Online Toolbox for Developers)，集成 100+ 实用工具。",
   "author": "van104",

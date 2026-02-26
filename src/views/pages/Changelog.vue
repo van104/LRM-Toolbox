@@ -15,7 +15,7 @@
             <span class="stat-name">工具模块</span>
           </div>
           <div class="stat-item">
-            <span class="stat-val">v2.0.0</span>
+            <span class="stat-val">v2.5.0</span>
             <span class="stat-name">最新版本</span>
           </div>
           <div class="stat-item">
@@ -76,6 +76,23 @@
   });
 
   const releases = ref([
+    {
+      version: 'v2.5.0',
+      date: '2026-02-26',
+      title: '视觉重塑：图标系统全面升级',
+      groups: [
+        {
+          label: '视觉更新',
+          icon: '✨',
+          items: [
+            '替换全站所有工具分类图标',
+            '全面升级 250+ 工具的独立 SVG 图标',
+            '优化图标在 Neobrutalism 风格下的视觉表现'
+          ]
+        }
+      ],
+      note: '这次更新我们彻底重塑了全站的图标系统，让每一个工具都拥有了独特的视觉灵魂。'
+    },
     {
       version: 'v2.0.0',
       date: '2026-02-23',
