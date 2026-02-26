@@ -1,16 +1,23 @@
 <template>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  >
-    <!-- Placeholder: Replace with actual icon path -->
-    <circle cx="12" cy="12" r="10" />
-    <line x1="12" y1="8" x2="12" y2="16" />
-    <line x1="8" y1="12" x2="16" y2="12" />
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <g stroke="#000000" fill="none">
+      <polyline
+        points="35,165 100,35 165,165"
+        stroke-width="44"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <line x1="52" y1="130" x2="148" y2="130" stroke-width="36" stroke-linecap="butt" />
+    </g>
+    <circle cx="100" cy="47" r="14" fill="#FFFFFF" />
+    <line
+      x1="68"
+      y1="130"
+      x2="132"
+      y2="130"
+      stroke="#FFFFFF"
+      stroke-width="10"
+      stroke-linecap="round"
+    />
   </svg>
 </template>
