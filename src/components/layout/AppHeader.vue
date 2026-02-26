@@ -1,6 +1,6 @@
 ```
 <template>
-  <header class="app-header glass">
+  <header class="app-header">
     <div class="header-content">
       <router-link to="/" class="logo" :title="t('nav.backToHome')">
         <LrmLogo :size="32" />
@@ -31,10 +31,10 @@
             :class="['nav-item', { active: activeCategory === cat.id }]"
             @click="handleCategoryClick($event, cat.id)"
           >
-            <el-icon :size="18">
+            <el-icon :size="20" class="nav-icon">
               <component :is="cat.svgIcon ? iconMap[cat.svgIcon] : iconMap[cat.icon]" />
             </el-icon>
-            <span>{{ t('category.' + cat.id) }}</span>
+            <span class="nav-text">{{ t('category.' + cat.id) }}</span>
             <span class="count-badge">{{ getCategoryCount(cat.id) }}</span>
           </button>
           <div ref="indicatorRef" class="nav-indicator"></div>
@@ -403,14 +403,15 @@
 
   .nav-menu {
     display: flex;
-    gap: 0.5rem;
-    padding: 0.25rem;
+    gap: 0.75rem;
+    padding: 0.5rem;
     background: transparent;
     position: relative;
     overflow-x: auto;
     scrollbar-width: none;
     cursor: grab;
     user-select: none;
+    align-items: center;
   }
 
   .nav-menu.is-dragging {
@@ -425,31 +426,32 @@
   .nav-item {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1.25rem;
+    gap: 0.65rem;
+    padding: 0.6rem 1rem;
     color: #111;
     font-size: 0.95rem;
     font-weight: 800;
     white-space: nowrap;
-    transition: transform 0.1s;
+    transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
     z-index: 1;
     border: 3px solid transparent;
     background: transparent;
     cursor: pointer;
+    border-radius: 0;
+  }
+
+  .nav-item .nav-icon {
+    transition: transform 0.2s;
   }
 
   .nav-item:hover {
-    transform: translate(-2px, -2px);
-    border-color: #111;
-    box-shadow: 4px 4px 0px #111;
-    background: #fff;
-    color: #111;
+    transform: translateY(-2px);
+    color: #4b7bff;
   }
 
-  .nav-item:active {
-    transform: translate(2px, 2px);
-    box-shadow: 0px 0px 0px #111;
+  .nav-item:hover .nav-icon {
+    transform: scale(1.1);
   }
 
   .nav-item.active {
@@ -458,37 +460,31 @@
 
   .nav-indicator {
     position: absolute;
-    bottom: 2px;
-    top: 2px;
-    height: auto;
-    border: 3px solid #111;
+    height: calc(100% - 1rem);
+    border: 4px solid #111;
     background: #ffd900;
     box-shadow: 4px 4px 0px #111;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     z-index: 0;
     opacity: 0;
+    pointer-events: none;
+  }
+
+  .nav-text {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    letter-spacing: -0.01em;
   }
 
   /* Dark mode variants */
-  [data-theme='dark'] .nav-menu {
-    background: transparent;
-  }
   [data-theme='dark'] .nav-item {
     color: #eee;
   }
   [data-theme='dark'] .nav-item:hover {
-    border-color: #eee;
-    box-shadow: 4px 4px 0px #eee;
-    background: #222;
-    color: #eee;
+    color: #2a4eb2;
   }
   [data-theme='dark'] .nav-item.active {
     color: #111;
   }
-  [data-theme='dark'] .nav-item:active {
-    box-shadow: 0px 0px 0px #eee;
-  }
-
   [data-theme='dark'] .nav-indicator {
     background: #b28f00;
     border-color: #eee;
@@ -496,20 +492,29 @@
   }
 
   .count-badge {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 900;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 800;
     background: #111;
     color: #fff;
-    padding: 2px 6px;
-    border: 2px solid #111;
+    padding: 1px 6px;
+    border: 3px solid #111;
     transition: all 0.2s;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    line-height: 1;
   }
 
-  .nav-item:hover .count-badge,
+  .nav-item:hover .count-badge {
+    background: #4b7bff;
+    border-color: #111;
+  }
+
   .nav-item.active .count-badge {
     background: #fff;
     color: #111;
+    border-color: #111;
   }
 
   [data-theme='dark'] .count-badge {
@@ -517,10 +522,10 @@
     color: #111;
     border-color: #eee;
   }
-  [data-theme='dark'] .nav-item:hover .count-badge,
   [data-theme='dark'] .nav-item.active .count-badge {
-    background: #222;
+    background: #111;
     color: #eee;
+    border-color: #111;
   }
 
   .count-badge.mobile {

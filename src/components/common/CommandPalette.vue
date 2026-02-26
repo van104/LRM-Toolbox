@@ -1,14 +1,14 @@
 <template>
   <transition name="fade">
     <div v-if="visible" class="palette-overlay" @mousedown.self="close">
-      <div class="palette-content glass-effect scale-in">
+      <div class="palette-content scale-in">
         <div class="palette-header">
           <el-icon class="search-icon"><Search /></el-icon>
           <input
             ref="inputRef"
             v-model="query"
             type="text"
-            placeholder="搜索工具或命令... (Pinyin support)"
+            :placeholder="t('home.searchPlaceholder', { count: totalToolsCount })"
             class="palette-input"
             @keydown.down.prevent="moveDown"
             @keydown.up.prevent="moveUp"
@@ -38,7 +38,7 @@
 
           <!-- 搜索结果 -->
           <template v-if="query">
-            <div class="section-title">搜索结果 ({{ filteredTools.length }})</div>
+            <div class="section-title">RESULTS.FIND({{ filteredTools.length }})</div>
             <div
               v-for="(tool, index) in filteredTools"
               :key="tool.id"
@@ -47,12 +47,26 @@
               @mouseenter="selectedIndex = index"
               @click="selectTool(tool)"
             >
-              <el-icon class="item-icon">
-                <component :is="tool.icon || 'Tools'" />
-              </el-icon>
+              <div class="item-icon-box" :class="getRandomColorClass(tool.id)">
+                <img
+                  v-if="tool.customIcon"
+                  :src="tool.customIcon"
+                  class="item-custom-icon"
+                  alt="icon"
+                />
+                <el-icon v-else-if="tool.svgIcon" class="item-icon">
+                  <component :is="getToolIcon(tool.svgIcon)" />
+                </el-icon>
+                <el-icon v-else class="item-icon">
+                  <component :is="tool.icon || Tools" />
+                </el-icon>
+              </div>
               <div class="item-info">
                 <span class="item-name">{{ tool.name }}</span>
                 <span class="item-summary">{{ tool.summary }}</span>
+              </div>
+              <div v-if="tool.category" class="item-category-tag">
+                {{ t('category.' + tool.category) }}
               </div>
             </div>
           </template>
@@ -75,8 +89,26 @@
 <script setup lang="ts">
   import { ref, watch, onMounted, onUnmounted, computed, nextTick, type Component } from 'vue';
   import { useRouter } from 'vue-router';
-  import { Search, HomeFilled, InfoFilled } from '@element-plus/icons-vue';
-  import { searchToolsAsync, type Tool } from '@/data/tools';
+  import { useI18n } from 'vue-i18n';
+  import { Search, HomeFilled, InfoFilled, Tools } from '@element-plus/icons-vue';
+  import { searchToolsAsync, loadAllTools, type Tool } from '@/data/tools';
+  import * as ToolIcons from '@/components/icons/tools';
+
+  const { t } = useI18n();
+  const totalToolsCount = ref(0);
+
+  const getToolIcon = (name: string) => (ToolIcons as Record<string, Component>)[name];
+
+  // Generate deterministic color class based on string
+  const getRandomColorClass = (str: string) => {
+    if (!str) return 'bg-yellow';
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const colorClasses = ['bg-yellow', 'bg-blue', 'bg-pink', 'bg-green'];
+    return colorClasses[Math.abs(hash) % colorClasses.length];
+  };
 
   interface Command {
     id: string;
@@ -187,8 +219,10 @@
     }
   };
 
-  onMounted(() => {
+  onMounted(async () => {
     window.addEventListener('keydown', handleKeyDown);
+    const tools = await loadAllTools();
+    totalToolsCount.value = tools.length;
   });
 
   onUnmounted(() => {
@@ -203,8 +237,8 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
     z-index: 10000;
     display: flex;
     justify-content: center;
@@ -212,36 +246,43 @@
   }
 
   .palette-content {
-    width: 90%;
-    max-width: 640px;
-    max-height: 480px;
-    background: var(--bg-primary, #ffffff);
-    border-radius: 12px;
-    box-shadow:
-      0 20px 25px -5px rgba(0, 0, 0, 0.1),
-      0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    width: 95%;
+    max-width: 680px;
+    max-height: 520px;
+    background: #fff;
+    border: 4px solid #111;
+    box-shadow: 12px 12px 0px #111;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
   }
 
-  .dark .palette-content {
-    background: #1e1e1e;
-    border-color: #333;
+  [data-theme='dark'] .palette-content {
+    background: #1a1a1a;
+    border-color: #eee;
+    box-shadow: 12px 12px 0px #eee;
+    color: #eee;
   }
 
   .palette-header {
     display: flex;
     align-items: center;
-    padding: 12px 16px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1rem 1.5rem;
+    border-bottom: 4px solid #111;
+    background: #fff;
+  }
+
+  [data-theme='dark'] .palette-header {
+    background: #1a1a1a;
+    border-bottom-color: #eee;
   }
 
   .search-icon {
-    font-size: 20px;
-    color: #94a3b8;
-    margin-right: 12px;
+    font-size: 24px;
+    color: #4b7bff;
+    margin-right: 1rem;
+    font-weight: 900;
   }
 
   .palette-input {
@@ -249,104 +290,247 @@
     background: transparent;
     border: none;
     outline: none;
-    font-size: 16px;
-    color: var(--text-primary);
-    height: 32px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111;
+    height: 40px;
+    font-family: inherit;
+  }
+
+  [data-theme='dark'] .palette-input {
+    color: #eee;
   }
 
   .kbd-hint {
-    font-size: 12px;
-    background: rgba(0, 0, 0, 0.05);
-    padding: 2px 6px;
-    border-radius: 4px;
-    color: #64748b;
+    font-size: 0.75rem;
+    background: #111;
+    padding: 4px 8px;
+    color: #fff;
+    font-weight: 800;
+    border: 2px solid #111;
+    box-shadow: 3px 3px 0px #ffd900;
   }
 
   .results-container {
     overflow-y: auto;
     flex: 1;
-    padding: 8px;
+    padding: 1rem;
+    background: #fdfae5;
+  }
+
+  [data-theme='dark'] .results-container {
+    background: #111;
+  }
+
+  /* Custom scrollbar for results */
+  .results-container::-webkit-scrollbar {
+    width: 10px;
+  }
+  .results-container::-webkit-scrollbar-track {
+    background: #111;
+  }
+  .results-container::-webkit-scrollbar-thumb {
+    background: #ffd900;
+    border: 3px solid #111;
   }
 
   .section-title {
-    font-size: 12px;
-    font-weight: 600;
-    color: #94a3b8;
-    padding: 8px 12px;
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: #fff;
+    background: #111;
+    padding: 4px 12px;
+    width: fit-content;
+    margin-bottom: 0.75rem;
     text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 4px 4px 0px #ff4b4b;
   }
 
   .result-item {
     display: flex;
     align-items: center;
-    padding: 10px 12px;
-    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    border: 3px solid transparent;
     cursor: pointer;
-    transition: all 0.2s;
-    gap: 12px;
+    transition: all 0.1s;
+    gap: 1rem;
+    background: #fff;
+    border: 3px solid #111;
+    box-shadow: 4px 4px 0px #111;
+  }
+
+  [data-theme='dark'] .result-item {
+    background: #222;
+    border-color: #eee;
+    box-shadow: 4px 4px 0px #eee;
   }
 
   .result-item.active {
-    background: var(--primary-color-light, #e0f2fe);
-    color: var(--primary-color, #0ea5e9);
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0px #111;
+    background: #ffd900;
   }
 
-  .dark .result-item.active {
-    background: rgba(14, 165, 233, 0.2);
+  [data-theme='dark'] .result-item.active {
+    background: #b28f00;
+    box-shadow: 7px 7px 0px #eee;
+  }
+
+  .item-icon-box {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #111;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  /* LRM Brand Colors */
+  .bg-yellow {
+    background: #ffeba0;
+    color: #111;
+  }
+  .bg-blue {
+    background: #89b4f8;
+    color: #111;
+  }
+  .bg-pink {
+    background: #ff9fb2;
+    color: #111;
+  }
+  .bg-green {
+    background: #81e6b3;
+    color: #111;
   }
 
   .item-icon {
-    font-size: 20px;
-    opacity: 0.7;
+    font-size: 24px;
+    color: #111 !important; /* Force icons to be dark on light backgrounds */
+  }
+
+  .item-custom-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+  }
+
+  [data-theme='dark'] .item-icon-box {
+    border-color: #eee;
+  }
+
+  [data-theme='dark'] .bg-yellow {
+    background: #a98d36;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #405d9e;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #b25465;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #3c9165;
+    color: #fff;
+  }
+
+  [data-theme='dark'] .item-icon {
+    color: #fff !important;
+  }
+
+  [data-theme='dark'] .item-custom-icon {
+    filter: brightness(0) invert(1);
   }
 
   .item-info {
     display: flex;
     flex-direction: column;
     flex: 1;
+    min-width: 0;
   }
 
   .item-name {
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #111;
+  }
+
+  [data-theme='dark'] .item-name {
+    color: #eee;
   }
 
   .item-summary {
-    font-size: 12px;
-    opacity: 0.6;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  [data-theme='dark'] .item-summary {
+    color: #aaa;
+  }
+
+  .item-category-tag {
+    font-size: 0.65rem;
+    font-weight: 900;
+    background: #111;
+    color: #fff;
+    padding: 2px 6px;
+    text-transform: uppercase;
   }
 
   .item-shortcut {
-    font-size: 12px;
-    opacity: 0.4;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #ff4b4b;
+    border-left: 2px solid #111;
+    padding-left: 0.5rem;
   }
 
   .no-results {
-    padding: 40px;
+    padding: 3rem;
     text-align: center;
-    color: #94a3b8;
+    font-weight: 900;
+    color: #111;
+    text-transform: uppercase;
+    font-size: 1.25rem;
+  }
+
+  [data-theme='dark'] .no-results {
+    color: #eee;
   }
 
   .palette-footer {
-    padding: 12px 16px;
-    background: rgba(0, 0, 0, 0.02);
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 0.75rem 1.5rem;
+    background: #111;
+    color: #fff;
+    border-top: 4px solid #111;
   }
 
   .footer-hint {
     display: flex;
-    gap: 16px;
-    color: #94a3b8;
-    font-size: 12px;
+    gap: 1.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
   }
 
   kbd {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 3px;
-    padding: 1px 4px;
-    margin: 0 2px;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-    font-family: sans-serif;
+    background: #fff;
+    color: #111;
+    border: 2px solid #111;
+    border-radius: 0;
+    padding: 1px 6px;
+    margin: 0 4px;
+    box-shadow: 2px 2px 0px #ffd900;
+    font-family: inherit;
+    font-size: 0.7rem;
   }
 
   /* Animations */
