@@ -55,6 +55,11 @@ const pageRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/pages/Changelog.vue')
   },
   {
+    path: '/feedback',
+    name: 'Feedback',
+    component: () => import('@/views/pages/Feedback.vue')
+  },
+  {
     path: '/test-bench',
     name: 'TestBench',
     component: () => import('@/views/ToolTestBench.vue')
@@ -117,7 +122,8 @@ router.afterEach(to => {
         '/terms': '服务条款',
         '/favorites': '我的收藏',
         '/history': '最近使用',
-        '/changelog': '版本演进'
+        '/changelog': '版本演进',
+        '/feedback': '反馈建议'
       };
       if (pageMap[to.path]) {
         title = `${pageMap[to.path]} - LRM 工具箱`;

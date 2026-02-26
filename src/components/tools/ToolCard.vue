@@ -30,6 +30,13 @@
             <el-icon :size="14"><InfoFilled /></el-icon>
           </button>
           <button
+            class="brutal-action-small feedback-btn"
+            :title="t('toolCard.feedback')"
+            @click.stop="handleFeedbackClick"
+          >
+            <el-icon :size="14"><ChatLineRound /></el-icon>
+          </button>
+          <button
             class="brutal-action-small"
             :class="{ active: isFavorite }"
             :title="isFavorite ? t('toolCard.removeFavorite') : t('toolCard.addFavorite')"
@@ -82,12 +89,21 @@
 <script setup>
   import { computed } from 'vue';
   import { useI18n } from 'vue-i18n';
-  import { Star, StarFilled, InfoFilled } from '@element-plus/icons-vue';
+  import { Star, StarFilled, InfoFilled, ChatLineRound } from '@element-plus/icons-vue';
+  import { useRouter } from 'vue-router';
   import { categories } from '@/data/tools';
   import * as ToolIcons from '@/components/icons/tools';
   import * as CategoryIcons from '@/components/icons/categories';
 
   const { t } = useI18n();
+  const router = useRouter();
+
+  const handleFeedbackClick = () => {
+    router.push({
+      path: '/feedback',
+      query: { tool: props.tool.name }
+    });
+  };
 
   const props = defineProps({
     tool: {
@@ -243,6 +259,11 @@
   .brutal-action-small.active {
     background: #ff4b4b;
     color: #fff;
+  }
+
+  .brutal-action-small.feedback-btn:hover {
+    background: #00e572;
+    color: #111;
   }
 
   /* ======== Body ======== */

@@ -60,7 +60,7 @@
                 <router-link to="/changelog">{{ t('footer.changelog') }}</router-link>
               </li>
               <li>
-                <a href="#" @click.prevent="showFeedback = true">{{ t('footer.feedback') }}</a>
+                <router-link to="/feedback">{{ t('footer.feedback') }}</router-link>
               </li>
             </ul>
           </div>
