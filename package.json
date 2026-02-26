@@ -5,7 +5,7 @@
   "type": "module",
   "description": "LRM工具箱 - 一个功能强大的在线开发者工具箱 (Online Toolbox for Developers)，集成 100+ 实用工具。",
   "author": "van104",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "homepage": "https://github.com/van104/LRM-Toolbox#readme",
   "repository": {
     "type": "git",
