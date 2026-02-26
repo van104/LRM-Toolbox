@@ -32,46 +32,44 @@
       </div>
 
       <div v-if="filteredHistory.length > 0" class="brutal-timeline-container">
-        <DynamicScroller
-          :items="flatHistory"
-          :min-item-size="100"
-          key-field="id"
-          page-mode
-          class="scroller"
-        >
-          <template #default="{ item, index, active }">
-            <DynamicScrollerItem
-              :item="item"
-              :active="active"
-              :size-dependencies="[item.type]"
-              :data-index="index"
-            >
-              <div v-if="item.type === 'header'" class="timeline-group-header">
-                <div class="brutal-timeline-title">{{ item.title }}</div>
+        <div v-for="item in flatHistory" :key="item.id" class="history-rendered-item">
+          <div v-if="item.type === 'header'" class="timeline-group-header">
+            <div class="brutal-timeline-title">{{ item.title }}</div>
+          </div>
+          <div v-else class="history-item-wrapper">
+            <div class="brutal-history-item" @click="goToTool(item.data)">
+              <div class="time-column">
+                <div class="brutal-time-badge">{{ formatTime(item.data.usedAt) }}</div>
               </div>
-              <div v-else class="brutal-history-item" @click="goToTool(item.data)">
-                <div class="time-column">
-                  <div class="brutal-time-badge">{{ formatTime(item.data.usedAt) }}</div>
+
+              <div class="brutal-item-card" :class="getRandomColorBorderClass(item.data.id)">
+                <div class="item-icon-box" :class="getRandomColorClass(item.data.id)">
+                  <img
+                    v-if="resolveTool(item.data).customIcon"
+                    :src="resolveTool(item.data).customIcon"
+                    class="custom-icon"
+                    alt=""
+                  />
+                  <el-icon v-else-if="resolveTool(item.data).svgIcon" :size="24">
+                    <component :is="ToolIcons[resolveTool(item.data).svgIcon]" />
+                  </el-icon>
+                  <el-icon v-else :size="24">
+                    <component :is="resolveTool(item.data).icon" />
+                  </el-icon>
                 </div>
 
-                <div class="brutal-item-card" :class="getRandomColorBorderClass(item.data.id)">
-                  <div class="item-icon-box" :class="getRandomColorClass(item.data.id)">
-                    <el-icon :size="24"><component :is="item.data.icon" /></el-icon>
-                  </div>
+                <div class="item-details">
+                  <div class="item-name">{{ resolveTool(item.data).name }}</div>
+                  <div class="item-date">{{ formatDate(item.data.usedAt) }}</div>
+                </div>
 
-                  <div class="item-details">
-                    <div class="item-name">{{ item.data.name }}</div>
-                    <div class="item-date">{{ formatDate(item.data.usedAt) }}</div>
-                  </div>
-
-                  <div class="item-action-arrow">
-                    <el-icon :size="24"><ArrowRight /></el-icon>
-                  </div>
+                <div class="item-action-arrow">
+                  <el-icon :size="24"><ArrowRight /></el-icon>
                 </div>
               </div>
-            </DynamicScrollerItem>
-          </template>
-        </DynamicScroller>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div v-else class="brutal-empty-state">
@@ -91,17 +89,25 @@
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue';
+  import { ref, computed, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { ElMessageBox, ElMessage } from 'element-plus';
   import { Clock, Delete, ArrowLeft, ArrowRight, Search } from '@element-plus/icons-vue';
-  import { tools } from '@/data/tools';
+  import { tools, loadAllTools } from '@/data/tools';
   import { useUserStore } from '@/stores/user';
+  import * as ToolIcons from '@/components/icons/tools';
   import dayjs from 'dayjs';
 
   const router = useRouter();
   const userStore = useUserStore();
   const searchKeyword = ref('');
+  const allTools = ref([...tools]); // start with whatever is already loaded
+
+  onMounted(async () => {
+    if (allTools.value.length === 0) {
+      allTools.value = await loadAllTools();
+    }
+  });
 
   const filteredHistory = computed(() => {
     if (!searchKeyword.value) return userStore.history;
@@ -111,10 +117,10 @@
 
   const groupedHistory = computed(() => {
     const groups = {
-      today: { title: 'T O D A Y //', items: [] },
-      yesterday: { title: 'Y E S T E R D A Y //', items: [] },
-      week: { title: 'L A S T   7   D A Y S //', items: [] },
-      older: { title: 'A R C H I V E D //', items: [] }
+      today: { title: '今 天  ', items: [] },
+      yesterday: { title: '昨 天  ', items: [] },
+      week: { title: '过 去 七 天  ', items: [] },
+      older: { title: '更 久 以 前  ', items: [] }
     };
 
     const today = dayjs().startOf('day');
@@ -141,13 +147,18 @@
     const groups = groupedHistory.value;
     const flat = [];
     groups.forEach(group => {
-      flat.push({ type: 'header', title: group.title, id: `header-${group.title}` });
+      flat.push({ type: 'header', title: group.title, id: `header-${group.title}-v3` });
       group.items.forEach(item => {
-        flat.push({ type: 'item', data: item, id: `${item.id}-${item.usedAt}` });
+        flat.push({ type: 'item', data: item, id: `${item.id}-${item.usedAt}-v3` });
       });
     });
     return flat;
   });
+
+  function resolveTool(item) {
+    const tool = allTools.value.find(t => t.id === item.id);
+    return tool || item;
+  }
 
   function formatTime(isoString) {
     return dayjs(isoString).format('HH:mm');
@@ -401,7 +412,7 @@
   }
 
   .timeline-group-header {
-    margin: 2rem 0 1.5rem 150px;
+    padding: 2rem 0 1.5rem 150px;
     position: relative;
     z-index: 2;
   }
@@ -419,10 +430,13 @@
     letter-spacing: 2px;
   }
 
+  .history-item-wrapper {
+    padding-bottom: 1.5rem;
+  }
+
   .brutal-history-item {
     display: flex;
     align-items: center;
-    margin-bottom: 1.5rem;
     position: relative;
     cursor: pointer;
     z-index: 2;
@@ -525,6 +539,12 @@
     box-shadow: 3px 3px 0px #111;
   }
 
+  .item-icon-box .custom-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+
   .item-details {
     flex: 1;
   }
@@ -614,7 +634,7 @@
       left: 20px;
     }
     .timeline-group-header {
-      margin-left: 40px;
+      padding-left: 40px;
     }
     .time-column {
       display: none;
@@ -737,6 +757,11 @@
     border-color: #eee;
     box-shadow: 3px 3px 0px #eee;
   }
+
+  [data-theme='dark'] .item-icon-box .custom-icon {
+    filter: brightness(0) invert(1);
+  }
+
   [data-theme='dark'] .item-name {
     color: #eee;
   }
