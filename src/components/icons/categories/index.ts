@@ -1,0 +1,11 @@
+export { default as DevCategoryIcon } from './DevCategoryIcon.vue';
+export { default as TextCategoryIcon } from './TextCategoryIcon.vue';
+export { default as ImageCategoryIcon } from './ImageCategoryIcon.vue';
+export { default as PdfCategoryIcon } from './PdfCategoryIcon.vue';
+export { default as DesignCategoryIcon } from './DesignCategoryIcon.vue';
+export { default as FinanceCategoryIcon } from './FinanceCategoryIcon.vue';
+export { default as HealthCategoryIcon } from './HealthCategoryIcon.vue';
+export { default as LifeCategoryIcon } from './LifeCategoryIcon.vue';
+export { default as EduCategoryIcon } from './EduCategoryIcon.vue';
+export { default as FunCategoryIcon } from './FunCategoryIcon.vue';
+export { default as AllCategoryIcon } from './AllCategoryIcon.vue';

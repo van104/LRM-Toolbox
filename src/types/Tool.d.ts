@@ -5,6 +5,7 @@ export interface ToolMetadata {
   name: string;
   description: string;
   icon: string;
+  svgIcon?: string;
   category: string;
   path: string;
   component?: Component;

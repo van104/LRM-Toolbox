@@ -6,12 +6,18 @@
         <div class="header-left">
           <div class="card-icon-wrapper">
             <img v-if="tool.customIcon" :src="tool.customIcon" class="custom-icon" alt="icon" />
+            <el-icon v-else-if="tool.svgIcon" :size="32">
+              <component :is="ToolIcons[tool.svgIcon]" />
+            </el-icon>
             <el-icon v-else :size="32">
               <component :is="tool.icon" />
             </el-icon>
           </div>
           <span v-if="category" class="brutal-tag category-tag header-tag">
-            <el-icon class="opt-icon"><component :is="category.icon" /></el-icon>
+            <el-icon class="opt-icon">
+              <component :is="CategoryIcons[category.svgIcon]" v-if="category.svgIcon" />
+              <component :is="category.icon" v-else />
+            </el-icon>
             {{ t('category.' + category.id) }}
           </span>
         </div>
@@ -47,6 +53,9 @@
           </div>
           <div class="card-body-deco" :class="getRandomColorClass(tool.id) + '-deco'">
             <img v-if="tool.customIcon" :src="tool.customIcon" class="deco-icon custom" alt="" />
+            <el-icon v-else-if="tool.svgIcon" class="deco-icon">
+              <component :is="ToolIcons[tool.svgIcon]" />
+            </el-icon>
             <el-icon v-else class="deco-icon">
               <component :is="tool.icon" />
             </el-icon>
@@ -75,6 +84,8 @@
   import { useI18n } from 'vue-i18n';
   import { Star, StarFilled, InfoFilled } from '@element-plus/icons-vue';
   import { categories } from '@/data/tools';
+  import * as ToolIcons from '@/components/icons/tools';
+  import * as CategoryIcons from '@/components/icons/categories';
 
   const { t } = useI18n();
 

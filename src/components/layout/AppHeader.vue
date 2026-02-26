@@ -32,7 +32,7 @@
             @click="handleCategoryClick($event, cat.id)"
           >
             <el-icon :size="18">
-              <component :is="iconMap[cat.icon]" />
+              <component :is="cat.svgIcon ? iconMap[cat.svgIcon] : iconMap[cat.icon]" />
             </el-icon>
             <span>{{ t('category.' + cat.id) }}</span>
             <span class="count-badge">{{ getCategoryCount(cat.id) }}</span>
@@ -112,7 +112,7 @@
           @click="handleMobileNavClick(cat.id)"
         >
           <el-icon :size="24">
-            <component :is="iconMap[cat.icon]" />
+            <component :is="cat.svgIcon ? iconMap[cat.svgIcon] : iconMap[cat.icon]" />
           </el-icon>
           <span>{{ t('category.' + cat.id) }}</span>
           <span class="count-badge mobile">{{ getCategoryCount(cat.id) }}</span>
@@ -129,6 +129,7 @@
   import { useThemeStore } from '@/stores/theme';
   import { useUserStore } from '@/stores/user';
   import { categories, loadAllTools } from '@/data/tools';
+  import * as CategoryIcons from '@/components/icons/categories';
   import {
     Search,
     Sunny,
@@ -158,7 +159,8 @@
     Service,
     Coffee,
     Notebook,
-    IceTea
+    IceTea,
+    ...CategoryIcons
   };
 
   const props = defineProps({

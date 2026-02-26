@@ -95,7 +95,7 @@
       >
         <div class="brutal-section-header">
           <h2 class="brutal-section-title bg-title-pink">
-            <el-icon><StarFilled /></el-icon>
+            <el-icon><RecommendIcon /></el-icon>
             随机推荐
           </h2>
           <div class="bg-title-shadow"></div>
@@ -120,7 +120,13 @@
         <div v-if="!searchKeyword" class="brutal-section-header">
           <h2 class="brutal-section-title bg-title">
             <el-icon>
-              <component :is="iconMap[currentCategoryInfo?.icon] || Grid" />
+              <component
+                :is="
+                  currentCategoryInfo?.svgIcon
+                    ? iconMap[currentCategoryInfo.svgIcon]
+                    : iconMap[currentCategoryInfo?.icon] || Grid
+                "
+              />
             </el-icon>
             {{ t('category.' + (currentCategoryInfo?.id || 'all')) }}
           </h2>
@@ -196,9 +202,10 @@
     Service,
     Coffee,
     Notebook,
-    IceTea,
-    StarFilled
+    IceTea
   } from '@element-plus/icons-vue';
+  import * as CategoryIcons from '@/components/icons/categories';
+  import { RecommendIcon } from '@/components/icons/system';
   import AppHeader from '@/components/layout/AppHeader.vue';
   import AppFooter from '@/components/layout/AppFooter.vue';
   import ToolCard from '@/components/tools/ToolCard.vue';
@@ -255,7 +262,8 @@
     Service,
     Coffee,
     Notebook,
-    IceTea
+    IceTea,
+    ...CategoryIcons
   };
 
   const currentCategoryInfo = computed(() => {

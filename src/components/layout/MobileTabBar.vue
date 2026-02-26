@@ -50,7 +50,7 @@
             @click="selectCategory(cat.id)"
           >
             <el-icon class="cat-icon">
-              <component :is="cat.icon" />
+              <component :is="cat.svgIcon ? iconMap[cat.svgIcon] : cat.icon" />
             </el-icon>
             <span class="cat-name">{{ cat.name }}</span>
           </div>
@@ -61,10 +61,11 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue';
+  import { ref, computed, type Component } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { HomeFilled, Menu, User, Grid } from '@element-plus/icons-vue';
   import { categories } from '@/data/tools';
+  import * as CategoryIcons from '@/components/icons/categories';
 
   const route = useRoute();
   const router = useRouter();
@@ -76,6 +77,11 @@
   const selectCategory = (id: string) => {
     router.push({ path: '/', query: { category: id === 'all' ? undefined : id } });
     showCategoryDrawer.value = false;
+  };
+
+  const iconMap: Record<string, Component> = {
+    Grid,
+    ...CategoryIcons
   };
 </script>
 
