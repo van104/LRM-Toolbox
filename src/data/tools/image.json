@@ -1,29 +1,5 @@
 [
   {
-    "id": "image-compress",
-    "name": "图片压缩",
-    "category": "image",
-    "icon": "PictureFilled",
-    "summary": "在线无损压缩图片，支持批量处理",
-    "description": "智能压缩 JPG、PNG、WebP 等格式图片，在保持画质的同时大幅减小文件体积。",
-    "usage": "1. 拖拽或选择图片上传\n2. 调整压缩质量参数\n3. 下载压缩后的图片",
-    "route": "/tools/image-compress",
-    "isLocal": true,
-    "tags": ["图片", "压缩", "优化"]
-  },
-  {
-    "id": "batch-renamer",
-    "name": "图片重命名",
-    "category": "image",
-    "icon": "Picture",
-    "summary": "批量图片文件重命名工具",
-    "description": "支持批量导入图片，自定义前缀、添加序号/时间戳、格式转换（WebP等），支持单个文件独立命名及实时预览。",
-    "usage": "1. 拖拽或点击上传图片\n2. 设置重命名规则（前缀、后缀、格式）\n3. 可手动修改个别文件名\n4. 点击批量下载",
-    "route": "/tools/batch-renamer",
-    "isLocal": true,
-    "tags": ["图片", "重命名", "批量", "格式转换"]
-  },
-  {
     "id": "audio-library",
     "name": "在线音频库",
     "category": "image",
@@ -33,19 +9,14 @@
     "usage": "1. 拖拽或点击上传音频文件\n2. 管理我的音频列表\n3. 生成分享链接或下载\n4. 支持公开/私有权限控制",
     "isLocal": false,
     "route": "https://www.lrm123.site/tools/audio/",
-    "tags": ["音频", "素材", "云存储", "分享", "MP3"]
-  },
-  {
-    "id": "qr-code",
-    "name": "二维码生成/解析",
-    "category": "image",
-    "icon": "FullScreen",
-    "summary": "二维码生成与图片识别解析",
-    "description": "支持自定义颜色、Logo、边距生成二维码，同时支持上传或粘贴二维码图片进行内容解析。",
-    "usage": "1. 生成：输入文本 -> 设置样式 -> 下载\n2. 解析：上传/拖拽/粘贴图片 -> 查看结果",
-    "route": "/tools/qrcode",
-    "isLocal": true,
-    "tags": ["二维码", "生成", "解析", "扫码"]
+    "tags": [
+      "音频",
+      "素材",
+      "云存储",
+      "分享",
+      "MP3"
+    ],
+    "svgIcon": "AudioLibraryIcon"
   },
   {
     "id": "barcode-generator",
@@ -57,55 +28,143 @@
     "usage": "1. 输入条码内容\n2. 选择条码格式\n3. 调整尺寸和颜色\n4. 下载图片",
     "route": "/tools/barcode-generator",
     "isLocal": true,
-    "tags": ["条形码", "Barcode", "生成", "EAN", "UPC"]
+    "tags": [
+      "条形码",
+      "Barcode",
+      "生成",
+      "EAN",
+      "UPC"
+    ],
+    "svgIcon": "BarcodeGeneratorIcon"
   },
   {
-    "id": "image-converter",
-    "name": "图片格式转换",
+    "id": "batch-renamer",
+    "name": "图片重命名",
     "category": "image",
     "icon": "Picture",
-    "summary": "支持 PNG, JPG, WEBP, BMP 等常见格式互转",
-    "description": "专业的图片格式转换工具，支持批量将图片转换为 PNG, JPG, WEBP 格式，支持自定义压缩质量。",
-    "usage": "1. 上传或拖拽图片文件\n2. 选择目标格式和质量\n3. 点击转换并下载",
-    "route": "/tools/image-converter",
+    "summary": "批量图片文件重命名工具",
+    "description": "支持批量导入图片，自定义前缀、添加序号/时间戳、格式转换（WebP等），支持单个文件独立命名及实时预览。",
+    "usage": "1. 拖拽或点击上传图片\n2. 设置重命名规则（前缀、后缀、格式）\n3. 可手动修改个别文件名\n4. 点击批量下载",
+    "route": "/tools/batch-renamer",
     "isLocal": true,
-    "tags": ["图片", "格式转换", "PNG", "JPG", "WEBP"]
+    "tags": [
+      "图片",
+      "重命名",
+      "批量",
+      "格式转换"
+    ],
+    "svgIcon": "BatchRenamerIcon"
   },
   {
-    "id": "image-resizer",
-    "name": "图片尺寸调整",
-    "category": "image",
-    "icon": "ScaleToOriginal",
-    "summary": "按比例或固定尺寸批量调整图片大小",
-    "description": "支持按百分比缩放或指定像素宽高调整图片尺寸，支持锁定纵横比与批量处理，提供即时质量预览。",
-    "usage": "1. 上传图片\n2. 设置缩放模式（百分比/固定尺寸）\n3. 调整参数预览效果\n4. 开始处理并下载",
-    "route": "/tools/image-resizer",
-    "isLocal": true,
-    "tags": ["图片", "尺寸", "缩放", "Resizer", "优化"]
-  },
-  {
-    "id": "image-watermark",
-    "name": "图片水印添加",
+    "id": "chromatic-aberration",
+    "name": "色散效果模拟",
     "category": "image",
     "icon": "MagicStick",
-    "summary": "批量添加文字或图片水印",
-    "description": "支持批量添加文字水印或图片水印。可自定义位置、透明度、旋转角度、缩放比例。支持全屏平铺模式，所有处理均在本地完成。",
-    "usage": "1. 上传一张或多张图片\n2. 选择“文字”或“图片”水印模式\n3. 调整位置、透明度、旋转等参数\n4. 预览无误后点击批量下载",
-    "route": "/tools/image-watermark",
+    "summary": "为图片添加赛博朋克风格的色散特效",
+    "description": "通过 RGB 通道分离与位移，模拟镜头色散（Chromatic Aberration）效果，常用于赛博朋克、故障艺术（Glitch Art）风格的图片创作。",
+    "usage": "1. 上传图片\n2. 调整红/蓝/绿通道的位移距离与方向\n3. 设置模糊度与透明度\n4. 实时预览并下载",
+    "route": "/tools/chromatic-aberration",
     "isLocal": true,
-    "tags": ["图片", "水印", "批量", "版权保护"]
+    "tags": [
+      "图片",
+      "特效",
+      "色散",
+      "故障艺术",
+      "滤镜"
+    ],
+    "svgIcon": "ChromaticAberrationIcon"
   },
   {
-    "id": "image-joiner",
-    "name": "图片拼接工具",
+    "id": "corner-clipper",
+    "name": "图片圆角裁切",
     "category": "image",
-    "icon": "Grid",
-    "summary": "横向、纵向或网格拼图",
-    "description": "支持将多张图片拼接为一张长图或拼图。提供纵向拼接、横向拼接以及智能网格模式，支持自定义外边距、图片间距、圆角以及背景颜色。",
-    "usage": "1. 上传多张图片\n2. 选择拼接模式（纵向/横向/网格）\n3. 调整间距、圆角与背景色\n4. 点击导出生成的拼图",
-    "route": "/tools/image-joiner",
+    "icon": "Scissor",
+    "summary": "自定义图片圆角、描边与阴影",
+    "description": "简单好用的图片圆角处理工具。支持自定义四个角的圆角半径、添加边框描边、设置阴影效果，并支持透明背景导出。",
+    "usage": "1. 上传图片\n2. 拖动滑块调整圆角大小\n3. 设置边框颜色和宽度（可选）\n4. 调整阴影效果（可选）\n5. 下载处理后的图片",
+    "route": "/tools/corner-clipper",
     "isLocal": true,
-    "tags": ["图片", "拼接", "拼图", "长图", "Collage"]
+    "tags": [
+      "图片",
+      "裁切",
+      "圆角",
+      "边框",
+      "阴影"
+    ],
+    "svgIcon": "CornerClipperIcon"
+  },
+  {
+    "id": "exif-viewer",
+    "name": "图片 EXIF 查看/移除",
+    "category": "image",
+    "icon": "InfoFilled",
+    "summary": "查看和清除图片 EXIF 元数据",
+    "description": "专业的图片元数据管理工具。可以读取图片的拍摄时间、相机型号、曝光参数、GPS 地理位置等 EXIF 信息，并支持一键擦除隐私元数据。",
+    "usage": "1. 上传图片\n2. 查看解析出的 EXIF 数据\n3. 点击“移除元数据”并保存图片",
+    "route": "/tools/exif-viewer",
+    "isLocal": true,
+    "tags": [
+      "EXIF",
+      "元数据",
+      "隐私",
+      "信息"
+    ],
+    "svgIcon": "ExifViewerIcon"
+  },
+  {
+    "id": "gif-maker",
+    "name": "GIF 制作器",
+    "category": "image",
+    "icon": "VideoPlay",
+    "summary": "多图合成 GIF 动图，调节帧率",
+    "description": "在线 GIF 制作工具。支持将多张静态图片合成为 GIF 动图，可自定义图片顺序、帧间隔时间和画面尺寸。",
+    "usage": "1. 上传多张图片\n2. 调整顺序和参数\n3. 点击生成并下载",
+    "route": "/tools/gif-maker",
+    "isLocal": true,
+    "tags": [
+      "GIF",
+      "动图",
+      "合成",
+      "制作",
+      "动画"
+    ],
+    "svgIcon": "GifMakerIcon"
+  },
+  {
+    "id": "ico-converter",
+    "name": "ICO 图标转换器",
+    "category": "image",
+    "icon": "Picture",
+    "summary": "生成各种尺寸的 Windows ICO 图标",
+    "description": "一键将图片转换为 ICO 格式图标。支持 16x16 到 256x256 多种常用规格，可合并多尺寸到一个文件，适合网站 Favicon 或软件图标制作。",
+    "usage": "1. 上传图片（推荐正方形）\n2. 选择需要的图标尺寸\n3. 点击“生成 ICO”并下载",
+    "route": "/tools/ico-converter",
+    "isLocal": true,
+    "tags": [
+      "ICO",
+      "图标",
+      "Favicon",
+      "格式转换"
+    ],
+    "svgIcon": "IcoConverterIcon"
+  },
+  {
+    "id": "id-photo-maker",
+    "name": "证件照制作",
+    "category": "image",
+    "icon": "User",
+    "summary": "快速制作标准证件照、背景替换",
+    "description": "智能证件照处理工具。内置一寸、二寸、签证等多种标准规格，支持智能抠图替换背景色（红、蓝、白），导出高清电子版。",
+    "usage": "1. 上传人像照片\n2. 选择证件规格和背景颜色\n3. 调整位置并下载结果",
+    "route": "/tools/id-photo-maker",
+    "isLocal": true,
+    "tags": [
+      "证件照",
+      "裁剪",
+      "背景",
+      "照片"
+    ],
+    "svgIcon": "IdPhotoMakerIcon"
   },
   {
     "id": "image-bg-remover",
@@ -118,91 +177,50 @@
     "usage": "1. 上传图片\n2. 在右侧设置面板配置 API Key\n3. 点击“开始抠图”并下载结果",
     "route": "/tools/bg-remover",
     "isLocal": true,
-    "tags": ["抠图", "去背景", "AI", "透明图片", "Remove.bg"]
+    "tags": [
+      "抠图",
+      "去背景",
+      "AI",
+      "透明图片",
+      "Remove.bg"
+    ],
+    "svgIcon": "ImageBgRemoverIcon"
   },
   {
-    "id": "photo-book",
-    "name": "照片书制作",
+    "id": "image-compress",
+    "name": "图片压缩",
     "category": "image",
-    "icon": "Notebook",
-    "summary": "照片排版与创意拼贴制作",
-    "description": "专业的照片书页排版工具。支持多种网格布局、自由拼贴模式，可添加背景纹理、贴纸素材和文字标题。导出高清图像，适合打印画册或社交分享。",
-    "usage": "1. 选择布局模版或自由模式\n2. 上传并拖拽照片到指定区域\n3. 调整位置、旋转及素材装饰\n4. 生成并下载高分辨率图片",
-    "route": "/tools/photo-book",
+    "icon": "PictureFilled",
+    "summary": "在线无损压缩图片，支持批量处理",
+    "description": "智能压缩 JPG、PNG、WebP 等格式图片，在保持画质的同时大幅减小文件体积。",
+    "usage": "1. 拖拽或选择图片上传\n2. 调整压缩质量参数\n3. 下载压缩后的图片",
+    "route": "/tools/image-compress",
     "isLocal": true,
-    "tags": ["排版", "拼贴", "画册", "打印", "设计"]
+    "tags": [
+      "图片",
+      "压缩",
+      "优化"
+    ],
+    "svgIcon": "ImageCompressIcon"
   },
   {
-    "id": "image-palette",
-    "name": "图片色卡提取",
-    "category": "image",
-    "icon": "Brush",
-    "summary": "自动提取图片主色调生成色卡",
-    "description": "图片配色分析工具。上传图片即可智能提取能够代表图片风格的 8 种主要颜色，生成色卡并支持一键复制颜色代码。",
-    "usage": "1. 上传图片\n2. 自动提取颜色展示\n3. 点击色块复制色值",
-    "route": "/tools/image-palette",
-    "isLocal": true,
-    "tags": ["图片", "颜色", "配色", "色卡", "提取"]
-  },
-  {
-    "id": "gif-maker",
-    "name": "GIF 制作器",
-    "category": "image",
-    "icon": "VideoPlay",
-    "summary": "多图合成 GIF 动图，调节帧率",
-    "description": "在线 GIF 制作工具。支持将多张静态图片合成为 GIF 动图，可自定义图片顺序、帧间隔时间和画面尺寸。",
-    "usage": "1. 上传多张图片\n2. 调整顺序和参数\n3. 点击生成并下载",
-    "route": "/tools/gif-maker",
-    "isLocal": true,
-    "tags": ["GIF", "动图", "合成", "制作", "动画"]
-  },
-  {
-    "id": "exif-viewer",
-    "name": "图片 EXIF 查看/移除",
-    "category": "image",
-    "icon": "InfoFilled",
-    "summary": "查看和清除图片 EXIF 元数据",
-    "description": "专业的图片元数据管理工具。可以读取图片的拍摄时间、相机型号、曝光参数、GPS 地理位置等 EXIF 信息，并支持一键擦除隐私元数据。",
-    "usage": "1. 上传图片\n2. 查看解析出的 EXIF 数据\n3. 点击“移除元数据”并保存图片",
-    "route": "/tools/exif-viewer",
-    "isLocal": true,
-    "tags": ["EXIF", "元数据", "隐私", "信息"]
-  },
-  {
-    "id": "ico-converter",
-    "name": "ICO 图标转换器",
+    "id": "image-converter",
+    "name": "图片格式转换",
     "category": "image",
     "icon": "Picture",
-    "summary": "生成各种尺寸的 Windows ICO 图标",
-    "description": "一键将图片转换为 ICO 格式图标。支持 16x16 到 256x256 多种常用规格，可合并多尺寸到一个文件，适合网站 Favicon 或软件图标制作。",
-    "usage": "1. 上传图片（推荐正方形）\n2. 选择需要的图标尺寸\n3. 点击“生成 ICO”并下载",
-    "route": "/tools/ico-converter",
+    "summary": "支持 PNG, JPG, WEBP, BMP 等常见格式互转",
+    "description": "专业的图片格式转换工具，支持批量将图片转换为 PNG, JPG, WEBP 格式，支持自定义压缩质量。",
+    "usage": "1. 上传或拖拽图片文件\n2. 选择目标格式和质量\n3. 点击转换并下载",
+    "route": "/tools/image-converter",
     "isLocal": true,
-    "tags": ["ICO", "图标", "Favicon", "格式转换"]
-  },
-  {
-    "id": "id-photo-maker",
-    "name": "证件照制作",
-    "category": "image",
-    "icon": "User",
-    "summary": "快速制作标准证件照、背景替换",
-    "description": "智能证件照处理工具。内置一寸、二寸、签证等多种标准规格，支持智能抠图替换背景色（红、蓝、白），导出高清电子版。",
-    "usage": "1. 上传人像照片\n2. 选择证件规格和背景颜色\n3. 调整位置并下载结果",
-    "route": "/tools/id-photo-maker",
-    "isLocal": true,
-    "tags": ["证件照", "裁剪", "背景", "照片"]
-  },
-  {
-    "id": "video-to-gif",
-    "name": "视频转 GIF",
-    "category": "image",
-    "icon": "VideoCamera",
-    "summary": "截取视频片段并转换为 GIF 动图",
-    "description": "支持将 MP4、WebM 视频片段制作成 GIF。可精确控制开始与结束时间、帧率和缩放尺寸，生成高质量的动态表情包或演示动图。",
-    "usage": "1. 上传视频文件\n2. 选取时间段和参数\n3. 点击“生成 GIF”并保存",
-    "route": "/tools/video-to-gif",
-    "isLocal": true,
-    "tags": ["视频", "GIF", "动图", "视频剪辑"]
+    "tags": [
+      "图片",
+      "格式转换",
+      "PNG",
+      "JPG",
+      "WEBP"
+    ],
+    "svgIcon": "ImageConverterIcon"
   },
   {
     "id": "image-grid-splitter",
@@ -214,31 +232,89 @@
     "usage": "1. 上传一张大图\n2. 选择切割行列数量\n3. 点击“开始切图”并打包下载",
     "route": "/tools/image-grid-splitter",
     "isLocal": true,
-    "tags": ["切图", "九宫格", "网格", "排版", "社交媒体"]
+    "tags": [
+      "切图",
+      "九宫格",
+      "网格",
+      "排版",
+      "社交媒体"
+    ],
+    "svgIcon": "ImageGridSplitterIcon"
   },
   {
-    "id": "corner-clipper",
-    "name": "图片圆角裁切",
+    "id": "image-joiner",
+    "name": "图片拼接工具",
     "category": "image",
-    "icon": "Scissor",
-    "summary": "自定义图片圆角、描边与阴影",
-    "description": "简单好用的图片圆角处理工具。支持自定义四个角的圆角半径、添加边框描边、设置阴影效果，并支持透明背景导出。",
-    "usage": "1. 上传图片\n2. 拖动滑块调整圆角大小\n3. 设置边框颜色和宽度（可选）\n4. 调整阴影效果（可选）\n5. 下载处理后的图片",
-    "route": "/tools/corner-clipper",
+    "icon": "Grid",
+    "summary": "横向、纵向或网格拼图",
+    "description": "支持将多张图片拼接为一张长图或拼图。提供纵向拼接、横向拼接以及智能网格模式，支持自定义外边距、图片间距、圆角以及背景颜色。",
+    "usage": "1. 上传多张图片\n2. 选择拼接模式（纵向/横向/网格）\n3. 调整间距、圆角与背景色\n4. 点击导出生成的拼图",
+    "route": "/tools/image-joiner",
     "isLocal": true,
-    "tags": ["图片", "裁切", "圆角", "边框", "阴影"]
+    "tags": [
+      "图片",
+      "拼接",
+      "拼图",
+      "长图",
+      "Collage"
+    ],
+    "svgIcon": "ImageJoinerIcon"
   },
   {
-    "id": "svg-path-editor",
-    "name": "SVG 路径编辑器",
+    "id": "image-palette",
+    "name": "图片色卡提取",
     "category": "image",
-    "icon": "EditPen",
-    "summary": "SVG Path 路径可视化编辑与预览",
-    "description": "专注于 SVG Path 路径数据的编辑工具。支持输入路径数据实时预览，提供常用转换（如绝对/相对坐标转换、缩放、平移），方便开发者微调图标或插画路径。",
-    "usage": "1. 粘贴 SVG Path 数据（d 属性）\n2. 在预览区查看形状\n3. 使用工具栏进行转换或手动微调代码\n4. 复制结果",
-    "route": "/tools/svg-path-editor",
+    "icon": "Brush",
+    "summary": "自动提取图片主色调生成色卡",
+    "description": "图片配色分析工具。上传图片即可智能提取能够代表图片风格的 8 种主要颜色，生成色卡并支持一键复制颜色代码。",
+    "usage": "1. 上传图片\n2. 自动提取颜色展示\n3. 点击色块复制色值",
+    "route": "/tools/image-palette",
     "isLocal": true,
-    "tags": ["SVG", "Path", "编辑", "矢量图", "代码"]
+    "tags": [
+      "图片",
+      "颜色",
+      "配色",
+      "色卡",
+      "提取"
+    ],
+    "svgIcon": "ImagePaletteIcon"
+  },
+  {
+    "id": "image-resizer",
+    "name": "图片尺寸调整",
+    "category": "image",
+    "icon": "ScaleToOriginal",
+    "summary": "按比例或固定尺寸批量调整图片大小",
+    "description": "支持按百分比缩放或指定像素宽高调整图片尺寸，支持锁定纵横比与批量处理，提供即时质量预览。",
+    "usage": "1. 上传图片\n2. 设置缩放模式（百分比/固定尺寸）\n3. 调整参数预览效果\n4. 开始处理并下载",
+    "route": "/tools/image-resizer",
+    "isLocal": true,
+    "tags": [
+      "图片",
+      "尺寸",
+      "缩放",
+      "Resizer",
+      "优化"
+    ],
+    "svgIcon": "ImageResizerIcon"
+  },
+  {
+    "id": "image-watermark",
+    "name": "图片水印添加",
+    "category": "image",
+    "icon": "MagicStick",
+    "summary": "批量添加文字或图片水印",
+    "description": "支持批量添加文字水印或图片水印。可自定义位置、透明度、旋转角度、缩放比例。支持全屏平铺模式，所有处理均在本地完成。",
+    "usage": "1. 上传一张或多张图片\n2. 选择“文字”或“图片”水印模式\n3. 调整位置、透明度、旋转等参数\n4. 预览无误后点击批量下载",
+    "route": "/tools/image-watermark",
+    "isLocal": true,
+    "tags": [
+      "图片",
+      "水印",
+      "批量",
+      "版权保护"
+    ],
+    "svgIcon": "ImageWatermarkIcon"
   },
   {
     "id": "metadata-cleaner",
@@ -250,19 +326,87 @@
     "usage": "1. 拖拽或选择多张图片\n2. 查看检测到的元数据概览\n3. 点击“一键清理”\n4. 下载纯净版图片",
     "route": "/tools/metadata-cleaner",
     "isLocal": true,
-    "tags": ["图片", "隐私", "Exif", "元数据", "清理"]
+    "tags": [
+      "图片",
+      "隐私",
+      "Exif",
+      "元数据",
+      "清理"
+    ],
+    "svgIcon": "MetadataCleanerIcon"
   },
   {
-    "id": "chromatic-aberration",
-    "name": "色散效果模拟",
+    "id": "photo-book",
+    "name": "照片书制作",
     "category": "image",
-    "icon": "MagicStick",
-    "summary": "为图片添加赛博朋克风格的色散特效",
-    "description": "通过 RGB 通道分离与位移，模拟镜头色散（Chromatic Aberration）效果，常用于赛博朋克、故障艺术（Glitch Art）风格的图片创作。",
-    "usage": "1. 上传图片\n2. 调整红/蓝/绿通道的位移距离与方向\n3. 设置模糊度与透明度\n4. 实时预览并下载",
-    "route": "/tools/chromatic-aberration",
+    "icon": "Notebook",
+    "summary": "照片排版与创意拼贴制作",
+    "description": "专业的照片书页排版工具。支持多种网格布局、自由拼贴模式，可添加背景纹理、贴纸素材和文字标题。导出高清图像，适合打印画册或社交分享。",
+    "usage": "1. 选择布局模版或自由模式\n2. 上传并拖拽照片到指定区域\n3. 调整位置、旋转及素材装饰\n4. 生成并下载高分辨率图片",
+    "route": "/tools/photo-book",
     "isLocal": true,
-    "tags": ["图片", "特效", "色散", "故障艺术", "滤镜"]
+    "tags": [
+      "排版",
+      "拼贴",
+      "画册",
+      "打印",
+      "设计"
+    ],
+    "svgIcon": "PhotoBookIcon"
+  },
+  {
+    "id": "qr-code",
+    "name": "二维码生成/解析",
+    "category": "image",
+    "icon": "FullScreen",
+    "summary": "二维码生成与图片识别解析",
+    "description": "支持自定义颜色、Logo、边距生成二维码，同时支持上传或粘贴二维码图片进行内容解析。",
+    "usage": "1. 生成：输入文本 -> 设置样式 -> 下载\n2. 解析：上传/拖拽/粘贴图片 -> 查看结果",
+    "route": "/tools/qrcode",
+    "isLocal": true,
+    "tags": [
+      "二维码",
+      "生成",
+      "解析",
+      "扫码"
+    ],
+    "svgIcon": "QrCodeIcon"
+  },
+  {
+    "id": "svg-path-editor",
+    "name": "SVG 路径编辑器",
+    "category": "image",
+    "icon": "EditPen",
+    "summary": "SVG Path 路径可视化编辑与预览",
+    "description": "专注于 SVG Path 路径数据的编辑工具。支持输入路径数据实时预览，提供常用转换（如绝对/相对坐标转换、缩放、平移），方便开发者微调图标或插画路径。",
+    "usage": "1. 粘贴 SVG Path 数据（d 属性）\n2. 在预览区查看形状\n3. 使用工具栏进行转换或手动微调代码\n4. 复制结果",
+    "route": "/tools/svg-path-editor",
+    "isLocal": true,
+    "tags": [
+      "SVG",
+      "Path",
+      "编辑",
+      "矢量图",
+      "代码"
+    ],
+    "svgIcon": "SvgPathEditorIcon"
+  },
+  {
+    "id": "video-to-gif",
+    "name": "视频转 GIF",
+    "category": "image",
+    "icon": "VideoCamera",
+    "summary": "截取视频片段并转换为 GIF 动图",
+    "description": "支持将 MP4、WebM 视频片段制作成 GIF。可精确控制开始与结束时间、帧率和缩放尺寸，生成高质量的动态表情包或演示动图。",
+    "usage": "1. 上传视频文件\n2. 选取时间段和参数\n3. 点击“生成 GIF”并保存",
+    "route": "/tools/video-to-gif",
+    "isLocal": true,
+    "tags": [
+      "视频",
+      "GIF",
+      "动图",
+      "视频剪辑"
+    ],
+    "svgIcon": "VideoToGifIcon"
   }
 ]
-

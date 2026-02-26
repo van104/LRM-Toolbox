@@ -1,173 +1,5 @@
 [
   {
-    "id": "process-scheduling",
-    "name": "CPU 调度算法",
-    "category": "edu",
-    "icon": "Cpu",
-    "summary": "操作系统进程调度算法可视化",
-    "description": "支持 FCFS、SJF、SRTF、RR、Priority 等多种调度算法的可视化演示。动态生成甘特图，计算周转时间与带权周转时间，支持自定义进程与动画播放。",
-    "usage": "1. 选择调度算法（如 FCFS, RR）\n2. 设置进程数量与参数（到达/服务时间）\n3. 点击运行查看甘特图与结果\n4. 可播放执行动画",
-    "route": "/tools/process-scheduling",
-    "isLocal": true,
-    "tags": ["OS", "调度", "算法", "可视化", "CPU"]
-  },
-  {
-    "id": "pinyin-tool",
-    "name": "拼音查询器",
-    "category": "edu",
-    "icon": "EditPen",
-    "summary": "汉字转拼音与语音标注助手",
-    "description": "支持将汉字转换为完整拼音。提供多种声调标注模式（符号/数字/无声调）以及“对照模式”，可为朗诵文案进行逐字注音。",
-    "usage": "1. 输入或粘贴汉字文本\n2. 选择声调格式和展示模式\n3. 复制结果或查看拼音对照",
-    "route": "/tools/pinyin",
-    "isLocal": true,
-    "tags": ["拼音", "汉字", "注音", "转拼音", "语文", "朗诵"]
-  },
-  {
-    "id": "formula-editor",
-    "name": "公式编辑器",
-    "category": "edu",
-    "icon": "Edit",
-    "summary": "可视化数学公式编辑与导出",
-    "description": "所见即所得的数学公式编辑器。支持数学、物理、化学公式的可视化输入，自动生成标准 LaTeX 代码，支持导出高清公式图片，适配文档与课件制作。",
-    "usage": "1. 在编辑器中点击输入或使用下方快捷符号\n2. 实时生成 LaTeX 代码与预览图\n3. 点击“复制”获取代码，或“导出图片”保存结果",
-    "route": "/tools/formula-editor",
-    "isLocal": true,
-    "tags": ["公式", "数学", "LaTeX", "物理", "化学", "编辑器"]
-  },
-  {
-    "id": "name-stroke",
-    "name": "名字笔画计算",
-    "category": "edu",
-    "icon": "Edit",
-    "summary": "姓名笔画数查询与计算",
-    "description": "输入姓名自动拆解并计算每个汉字的笔画数及总笔画。支持简体和繁体字输入，适用于学生作业自查、姓名民俗研究等场景。",
-    "usage": "1. 输入中文姓名\n2. 自动显示每个字的笔画\n3. 查看总笔画数统计",
-    "route": "/tools/name-stroke",
-    "isLocal": true,
-    "tags": ["笔画", "姓名", "汉字", "计算器", "语文"]
-  },
-  {
-    "id": "word-decomposition",
-    "name": "拆字组词工具",
-    "category": "edu",
-    "icon": "Memo",
-    "summary": "偏旁、结构与常用组词查询",
-    "description": "输入汉字，展示偏旁、结构、常用组词，学生识字、文案创作。",
-    "usage": "输入汉字即可实时查看该字的详细解析。",
-    "route": "/tools/word-decomp",
-    "isLocal": true,
-    "tags": ["汉字", "拆字", "组词", "语文", "教育"]
-  },
-  {
-    "id": "fraction-solver",
-    "name": "分数约分通分器",
-    "category": "edu",
-    "icon": "Opportunity",
-    "summary": "分数简化与加减乘除计算",
-    "description": "输入分子分母，自动约分、最简分数、带分数转换，支持分数加减乘除。",
-    "usage": "1. 切换模式 2. 输入分数值 3. 执行计算/转换。",
-    "route": "/tools/fraction-calculator",
-    "isLocal": true,
-    "tags": ["分数", "数学", "约分", "计算", "教育"]
-  },
-  {
-    "id": "proportion-solver",
-    "name": "比例求解计算器",
-    "category": "edu",
-    "icon": "Coordinate",
-    "summary": "已知三项求第四项",
-    "description": "已知三项求第四项，解决应用题、配比、比例尺计算。",
-    "usage": "在 A:B=C:D 中填入任意三个已知项，第四项填 x 或留空，点击求解。",
-    "route": "/tools/proportion-calculator",
-    "isLocal": true,
-    "tags": ["比例", "数学", "计算", "教育", "比例尺"]
-  },
-  {
-    "id": "chinese-poetry",
-    "name": "诗词检索与赏析",
-    "category": "edu",
-    "icon": "Notebook",
-    "summary": "聚合名篇与名句赏析卡片",
-    "description": "聚合唐诗、宋词、元曲经典数据库；支持按主题、作者关键词搜索，并提供古风样式的名句分享卡片生成。",
-    "usage": "1. 输入关键词搜索诗词\n2. 点击某首诗进入详情赏析\n3. 切换纵向排版或生成名句分享图",
-    "route": "/tools/poetry",
-    "isLocal": true,
-    "tags": ["诗词", "文学", "文化", "教育", "古诗", "诗"]
-  },
-  {
-    "id": "chinese-dictionary",
-    "name": "成语助手",
-    "category": "edu",
-    "icon": "Reading",
-    "summary": "词义查询与趣味成语挑战",
-    "description": "提供成语释义、近反义词查询，并内置互动式成语接龙游戏，寓教于乐。",
-    "usage": "1. 进入\"成语接龙\"输入词语开始挑战\n2. 切换到\"词义查询\"搜索特定成语",
-    "route": "/tools/chinese-dict",
-    "isLocal": true,
-    "tags": ["词典", "成语", "汉语", "文化"]
-  },
-  {
-    "id": "copybook-generator",
-    "name": "电子字帖生成器",
-    "category": "edu",
-    "icon": "EditPen",
-    "summary": "自定义田字格/米字格字帖",
-    "description": "自定义练习文字，一键生成标准田字格、米字格或方格电子字帖，支持设置临摹透明度并导出为高清图片或直接打印。",
-    "usage": "1. 输入想要练习的内容\n2. 面板设置格线类型与颜色\n3. 导出 PNG 或进行打印预览",
-    "route": "/tools/copybook-generator",
-    "isLocal": true,
-    "tags": ["字帖", "书法", "临摹", "练字"]
-  },
-  {
-    "id": "periodic-table",
-    "name": "化学元素周期表",
-    "category": "edu",
-    "icon": "Grid",
-    "summary": "交互式周期表与元素查询",
-    "description": "专业的交互式元素周期表。支持按名称、符号、原子序数搜索元素，悬停高亮同类元素，查看详细属性（原子量、电子排布、常见化合价、发现史）。",
-    "usage": "1. 使用搜索框快速查找元素\n2. 悬停图例查看分类\n3. 点击元素查看化合价等详情",
-    "route": "/tools/periodic-table",
-    "isLocal": true,
-    "tags": ["化学", "元素", "周期表", "化合价", "搜索"]
-  },
-  {
-    "id": "typing-test",
-    "name": "打字速度测试",
-    "category": "edu",
-    "icon": "Edit",
-    "summary": "测试打字速度(WPM)和准确率",
-    "description": "在线打字练习工具。支持英文单词和代码片段两种模式，实时统计 WPM (每分钟单词数) 和准确率，助你提升键盘输入效率。",
-    "usage": "1. 选择模式和时间\n2. 将光标聚焦输入框\n3. 开始盲打练习",
-    "route": "/tools/typing-test",
-    "isLocal": true,
-    "tags": ["打字", "WPM", "练习", "测试", "键盘", "代码"]
-  },
-  {
-    "id": "gcd-lcm",
-    "name": "GCD & LCM 计算器",
-    "category": "edu",
-    "icon": "Operation",
-    "summary": "最大公约数与最小公倍数计算",
-    "description": "输入多个数字，一键计算它们的最大公约数 (GCD) 和最小公倍数 (LCM)，适用于数学作业检查与分数运算辅助。",
-    "usage": "1. 输入数字（逗号分隔）\n2. 点击计算获取结果",
-    "route": "/tools/gcd-lcm",
-    "isLocal": true,
-    "tags": ["数学", "计算", "GCD", "LCM", "公约数", "公倍数"]
-  },
-  {
-    "id": "root-calculator",
-    "name": "平方根/立方根计算器",
-    "category": "edu",
-    "icon": "DataAnalysis",
-    "summary": "常用根式精确计算工具",
-    "description": "支持平方根、立方根及任意次根的计算。支持整数与小数输入，快速获得高精度结果，辅助数理化习题解答。",
-    "usage": "1. 输入数字\n2. 选择或输入根指数\n3. 查看计算结果",
-    "route": "/tools/root-calculator",
-    "isLocal": true,
-    "tags": ["数学", "根号", "开方", "计算", "平方根", "立方根"]
-  },
-  {
     "id": "arithmetic-series",
     "name": "等差数列求和器",
     "category": "edu",
@@ -177,79 +9,14 @@
     "usage": "1. 填入已知参数（至少3项）\n2. 点击计算获取结果\n3. 可单独计算指定项",
     "route": "/tools/arithmetic-series",
     "isLocal": true,
-    "tags": ["数学", "数列", "等差", "求和", "通项公式"]
-  },
-  {
-    "id": "unit-dimension",
-    "name": "物理单位量纲查询",
-    "category": "edu",
-    "icon": "ScaleToOriginal",
-    "summary": "基本物理量与量纲检索",
-    "description": "查询常用物理量的国际单位 (SI) 及其量纲表达式 (L, M, T, I...)。帮助检查物理公式推导与单位换算。",
-    "usage": "1. 搜索物理量名称或符号\n2. 查看对应的单位与量纲",
-    "route": "/tools/unit-dimension",
-    "isLocal": true,
-    "tags": ["物理", "单位", "量纲", "SI", "公式"]
-  },
-  {
-    "id": "resistor-calc",
-    "name": "电阻色环读取器",
-    "category": "edu",
-    "icon": "Operation",
-    "summary": "4色环/5色环电阻阻值计算",
-    "description": "电子爱好者必备工具。支持标准的4色环和5色环电阻计算，图形化选择色环颜色，实时显示阻值与误差范围，内置色环记忆口诀。",
-    "usage": "1. 选择色环位数 (4/5)\n2. 依次点击色环颜色\n3. 即时查看阻值结果",
-    "route": "/tools/resistor-color-code",
-    "isLocal": true,
-    "tags": ["电子", "电阻", "色环", "计算", "电路"]
-  },
-  {
-    "id": "voltage-power",
-    "name": "电压/电流/功率换算",
-    "category": "edu",
-    "icon": "TrendCharts",
-    "summary": "欧姆定律与电功率计算 (P=UI)",
-    "description": "基于 P=UI 公式进行参数换算。输入任意两个已知量（功率、电压、电流），自动计算第三个参数，适用于电工计算与物理作业检查。",
-    "usage": "1. 选择待计算的目标参数\n2. 输入已知的两个参数\n3. 点击计算",
-    "route": "/tools/voltage-power",
-    "isLocal": true,
-    "tags": ["物理", "电学", "功率", "电压", "电流", "P=UI"]
-  },
-  {
-    "id": "concentration-calc",
-    "name": "浓度配比计算器",
-    "category": "edu",
-    "icon": "ScaleToOriginal",
-    "summary": "溶液稀释与比例配制计算",
-    "description": "包含两种模式：1) 溶液稀释计算 (C1V1=C2V2)，用于实验室配置；2) 比例配液计算 (1:X)，用于清洁剂、农药等日常配比场景。",
-    "usage": "1. 切换模式：稀释 / 配比\n2. 填入已知条件\n3. 获取原液与溶剂用量",
-    "route": "/tools/concentration",
-    "isLocal": true,
-    "tags": ["化学", "浓度", "稀释", "配比", "溶液"]
-  },
-  {
-    "id": "citation-generator",
-    "name": "APA/MLA 引用生成器",
-    "category": "edu",
-    "icon": "Collection",
-    "summary": "学术论文引用格式快速生成",
-    "description": "支持 APA 和 MLA 两种主流学术引用格式。只需输入作者、标题、年份等信息，即可一键生成标准的书籍、网页或期刊引用文本，无论是写论文还是做作业都非常实用。",
-    "usage": "1. 选择引用格式 (APA/MLA)\n2. 选择来源类型 (书籍/网页/期刊)\n3. 填写详细信息\n4. 复制生成的引用文本",
-    "route": "/tools/citation-generator",
-    "isLocal": true,
-    "tags": ["引用", "APA", "MLA", "论文", "学术", "写作"]
-  },
-  {
-    "id": "function-grapher",
-    "name": "函数图像绘制器",
-    "category": "edu",
-    "icon": "DataLine",
-    "summary": "数学函数可视化绘图工具",
-    "description": "输入函数表达式（如 y=x^2, y=sin(x)），即可实时绘制出对应的二维平面直角坐标系图像。支持自定义坐标轴范围和缩放，帮助直观理解函数性质。",
-    "usage": "1. 输入函数表达式\n2. 设置坐标轴范围 (可选)\n3. 点击绘制查看图像",
-    "route": "/tools/function-grapher",
-    "isLocal": true,
-    "tags": ["数学", "函数", "图像", "绘图", "可视化"]
+    "tags": [
+      "数学",
+      "数列",
+      "等差",
+      "求和",
+      "通项公式"
+    ],
+    "svgIcon": "ArithmeticSeriesIcon"
   },
   {
     "id": "base-calculator",
@@ -261,19 +28,109 @@
     "usage": "1. 设置数值 A 和 B 的进制\n2. 输入数值\n3. 选择加法或减法\n4. 查看全进制计算结果",
     "route": "/tools/base-calculator",
     "isLocal": true,
-    "tags": ["进制", "计算", "二进制", "十六进制", "转换"]
+    "tags": [
+      "进制",
+      "计算",
+      "二进制",
+      "十六进制",
+      "转换"
+    ],
+    "svgIcon": "BaseCalculatorIcon"
   },
   {
-    "id": "roman-numeral",
-    "name": "罗马数字转换器",
+    "id": "chinese-dictionary",
+    "name": "成语助手",
     "category": "edu",
-    "icon": "AlarmClock",
-    "summary": "罗马数字与阿拉伯数字互转",
-    "description": "快速进行罗马数字（如 IV, MCMLXXXIV）与普通阿拉伯数字之间的双向转换。支持 1-3999 范围内的标准罗马数字格式校验与生成。",
-    "usage": "1. 选择转换模式\n2. 输入数字或罗马字符\n3. 获取转换结果",
-    "route": "/tools/roman-numeral",
+    "icon": "Reading",
+    "summary": "词义查询与趣味成语挑战",
+    "description": "提供成语释义、近反义词查询，并内置互动式成语接龙游戏，寓教于乐。",
+    "usage": "1. 进入\"成语接龙\"输入词语开始挑战\n2. 切换到\"词义查询\"搜索特定成语",
+    "route": "/tools/chinese-dict",
     "isLocal": true,
-    "tags": ["罗马数字", "转换", "历史", "数字"]
+    "tags": [
+      "词典",
+      "成语",
+      "汉语",
+      "文化"
+    ],
+    "svgIcon": "ChineseDictionaryIcon"
+  },
+  {
+    "id": "chinese-poetry",
+    "name": "诗词检索与赏析",
+    "category": "edu",
+    "icon": "Notebook",
+    "summary": "聚合名篇与名句赏析卡片",
+    "description": "聚合唐诗、宋词、元曲经典数据库；支持按主题、作者关键词搜索，并提供古风样式的名句分享卡片生成。",
+    "usage": "1. 输入关键词搜索诗词\n2. 点击某首诗进入详情赏析\n3. 切换纵向排版或生成名句分享图",
+    "route": "/tools/poetry",
+    "isLocal": true,
+    "tags": [
+      "诗词",
+      "文学",
+      "文化",
+      "教育",
+      "古诗",
+      "诗"
+    ],
+    "svgIcon": "ChinesePoetryIcon"
+  },
+  {
+    "id": "citation-generator",
+    "name": "APA/MLA 引用生成器",
+    "category": "edu",
+    "icon": "Collection",
+    "summary": "学术论文引用格式快速生成",
+    "description": "支持 APA 和 MLA 两种主流学术引用格式。只需输入作者、标题、年份等信息，即可一键生成标准的书籍、网页或期刊引用文本，无论是写论文还是做作业都非常实用。",
+    "usage": "1. 选择引用格式 (APA/MLA)\n2. 选择来源类型 (书籍/网页/期刊)\n3. 填写详细信息\n4. 复制生成的引用文本",
+    "route": "/tools/citation-generator",
+    "isLocal": true,
+    "tags": [
+      "引用",
+      "APA",
+      "MLA",
+      "论文",
+      "学术",
+      "写作"
+    ],
+    "svgIcon": "CitationGeneratorIcon"
+  },
+  {
+    "id": "concentration-calc",
+    "name": "浓度配比计算器",
+    "category": "edu",
+    "icon": "ScaleToOriginal",
+    "summary": "溶液稀释与比例配制计算",
+    "description": "包含两种模式：1) 溶液稀释计算 (C1V1=C2V2)，用于实验室配置；2) 比例配液计算 (1:X)，用于清洁剂、农药等日常配比场景。",
+    "usage": "1. 切换模式：稀释 / 配比\n2. 填入已知条件\n3. 获取原液与溶剂用量",
+    "route": "/tools/concentration",
+    "isLocal": true,
+    "tags": [
+      "化学",
+      "浓度",
+      "稀释",
+      "配比",
+      "溶液"
+    ],
+    "svgIcon": "ConcentrationCalcIcon"
+  },
+  {
+    "id": "copybook-generator",
+    "name": "电子字帖生成器",
+    "category": "edu",
+    "icon": "EditPen",
+    "summary": "自定义田字格/米字格字帖",
+    "description": "自定义练习文字，一键生成标准田字格、米字格或方格电子字帖，支持设置临摹透明度并导出为高清图片或直接打印。",
+    "usage": "1. 输入想要练习的内容\n2. 面板设置格线类型与颜色\n3. 导出 PNG 或进行打印预览",
+    "route": "/tools/copybook-generator",
+    "isLocal": true,
+    "tags": [
+      "字帖",
+      "书法",
+      "临摹",
+      "练字"
+    ],
+    "svgIcon": "CopybookGeneratorIcon"
   },
   {
     "id": "cornell-note-gen",
@@ -285,31 +142,14 @@
     "usage": "1. 设置页面标题和格线风格\n2. 调整线索区与笔记区的比例\n3. 点击打印或导出 PDF 即可使用",
     "route": "/tools/cornell-note-gen",
     "isLocal": true,
-    "tags": ["笔记", "康奈尔", "模板", "学习", "复习"]
-  },
-  {
-    "id": "truth-table-gen",
-    "name": "逻辑真值表生成器",
-    "category": "edu",
-    "icon": "Grid",
-    "summary": "逻辑表达式自动生成真值表",
-    "description": "输入复杂的逻辑表达式（支持 AND, OR, NOT, XOR, 蕴含等），自动生成完整的真值表。支持多变量运算，实时解析逻辑关系，适合计算机科学与离散数学学习。",
-    "usage": "1. 输入逻辑变量 (P, Q, R...)\n2. 输入逻辑运算表达式\n3. 点击生成查看完整真值表",
-    "route": "/tools/truth-table-gen",
-    "isLocal": true,
-    "tags": ["逻辑", "真值表", "数学", "离散数学", "计算机"]
-  },
-  {
-    "id": "morse-trainer",
-    "name": "摩斯密码练习器",
-    "category": "edu",
-    "icon": "Cpu",
-    "summary": "互动式摩斯电码听力与录入练习",
-    "description": "集学习、练习于一体的摩斯密码工具。支持文本转码、实时发声演示，并提供听力训练营和盲打录入模式，带你从零基础掌握 Morse Code。",
-    "usage": "1. 学习区查看编码对照表\n2. 听力训练：听音辩码\n3. 录入练习：按提示敲击电码块",
-    "route": "/tools/morse-trainer",
-    "isLocal": true,
-    "tags": ["摩斯密码", "练习", "电码", "互动", "编码"]
+    "tags": [
+      "笔记",
+      "康奈尔",
+      "模板",
+      "学习",
+      "复习"
+    ],
+    "svgIcon": "CornellNoteGenIcon"
   },
   {
     "id": "ebbinghaus-planner",
@@ -321,6 +161,360 @@
     "usage": "1. 选择学习的主题和日期\n2. 一键点击“生成计划表”\n3. 查看每天需要复习的列表并导出",
     "route": "/tools/ebbinghaus-planner",
     "isLocal": true,
-    "tags": ["记忆曲线", "计划", "复习", "学习", "艾宾浩斯"]
+    "tags": [
+      "记忆曲线",
+      "计划",
+      "复习",
+      "学习",
+      "艾宾浩斯"
+    ],
+    "svgIcon": "EbbinghausPlannerIcon"
+  },
+  {
+    "id": "formula-editor",
+    "name": "公式编辑器",
+    "category": "edu",
+    "icon": "Edit",
+    "summary": "可视化数学公式编辑与导出",
+    "description": "所见即所得的数学公式编辑器。支持数学、物理、化学公式的可视化输入，自动生成标准 LaTeX 代码，支持导出高清公式图片，适配文档与课件制作。",
+    "usage": "1. 在编辑器中点击输入或使用下方快捷符号\n2. 实时生成 LaTeX 代码与预览图\n3. 点击“复制”获取代码，或“导出图片”保存结果",
+    "route": "/tools/formula-editor",
+    "isLocal": true,
+    "tags": [
+      "公式",
+      "数学",
+      "LaTeX",
+      "物理",
+      "化学",
+      "编辑器"
+    ],
+    "svgIcon": "FormulaEditorIcon"
+  },
+  {
+    "id": "fraction-solver",
+    "name": "分数约分通分器",
+    "category": "edu",
+    "icon": "Opportunity",
+    "summary": "分数简化与加减乘除计算",
+    "description": "输入分子分母，自动约分、最简分数、带分数转换，支持分数加减乘除。",
+    "usage": "1. 切换模式 2. 输入分数值 3. 执行计算/转换。",
+    "route": "/tools/fraction-calculator",
+    "isLocal": true,
+    "tags": [
+      "分数",
+      "数学",
+      "约分",
+      "计算",
+      "教育"
+    ],
+    "svgIcon": "FractionSolverIcon"
+  },
+  {
+    "id": "function-grapher",
+    "name": "函数图像绘制器",
+    "category": "edu",
+    "icon": "DataLine",
+    "summary": "数学函数可视化绘图工具",
+    "description": "输入函数表达式（如 y=x^2, y=sin(x)），即可实时绘制出对应的二维平面直角坐标系图像。支持自定义坐标轴范围和缩放，帮助直观理解函数性质。",
+    "usage": "1. 输入函数表达式\n2. 设置坐标轴范围 (可选)\n3. 点击绘制查看图像",
+    "route": "/tools/function-grapher",
+    "isLocal": true,
+    "tags": [
+      "数学",
+      "函数",
+      "图像",
+      "绘图",
+      "可视化"
+    ],
+    "svgIcon": "FunctionGrapherIcon"
+  },
+  {
+    "id": "gcd-lcm",
+    "name": "GCD & LCM 计算器",
+    "category": "edu",
+    "icon": "Operation",
+    "summary": "最大公约数与最小公倍数计算",
+    "description": "输入多个数字，一键计算它们的最大公约数 (GCD) 和最小公倍数 (LCM)，适用于数学作业检查与分数运算辅助。",
+    "usage": "1. 输入数字（逗号分隔）\n2. 点击计算获取结果",
+    "route": "/tools/gcd-lcm",
+    "isLocal": true,
+    "tags": [
+      "数学",
+      "计算",
+      "GCD",
+      "LCM",
+      "公约数",
+      "公倍数"
+    ],
+    "svgIcon": "GcdLcmIcon"
+  },
+  {
+    "id": "morse-trainer",
+    "name": "摩斯密码练习器",
+    "category": "edu",
+    "icon": "Cpu",
+    "summary": "互动式摩斯电码听力与录入练习",
+    "description": "集学习、练习于一体的摩斯密码工具。支持文本转码、实时发声演示，并提供听力训练营和盲打录入模式，带你从零基础掌握 Morse Code。",
+    "usage": "1. 学习区查看编码对照表\n2. 听力训练：听音辩码\n3. 录入练习：按提示敲击电码块",
+    "route": "/tools/morse-trainer",
+    "isLocal": true,
+    "tags": [
+      "摩斯密码",
+      "练习",
+      "电码",
+      "互动",
+      "编码"
+    ],
+    "svgIcon": "MorseTrainerIcon"
+  },
+  {
+    "id": "name-stroke",
+    "name": "名字笔画计算",
+    "category": "edu",
+    "icon": "Edit",
+    "summary": "姓名笔画数查询与计算",
+    "description": "输入姓名自动拆解并计算每个汉字的笔画数及总笔画。支持简体和繁体字输入，适用于学生作业自查、姓名民俗研究等场景。",
+    "usage": "1. 输入中文姓名\n2. 自动显示每个字的笔画\n3. 查看总笔画数统计",
+    "route": "/tools/name-stroke",
+    "isLocal": true,
+    "tags": [
+      "笔画",
+      "姓名",
+      "汉字",
+      "计算器",
+      "语文"
+    ],
+    "svgIcon": "NameStrokeIcon"
+  },
+  {
+    "id": "periodic-table",
+    "name": "化学元素周期表",
+    "category": "edu",
+    "icon": "Grid",
+    "summary": "交互式周期表与元素查询",
+    "description": "专业的交互式元素周期表。支持按名称、符号、原子序数搜索元素，悬停高亮同类元素，查看详细属性（原子量、电子排布、常见化合价、发现史）。",
+    "usage": "1. 使用搜索框快速查找元素\n2. 悬停图例查看分类\n3. 点击元素查看化合价等详情",
+    "route": "/tools/periodic-table",
+    "isLocal": true,
+    "tags": [
+      "化学",
+      "元素",
+      "周期表",
+      "化合价",
+      "搜索"
+    ],
+    "svgIcon": "PeriodicTableIcon"
+  },
+  {
+    "id": "pinyin-tool",
+    "name": "拼音查询器",
+    "category": "edu",
+    "icon": "EditPen",
+    "summary": "汉字转拼音与语音标注助手",
+    "description": "支持将汉字转换为完整拼音。提供多种声调标注模式（符号/数字/无声调）以及“对照模式”，可为朗诵文案进行逐字注音。",
+    "usage": "1. 输入或粘贴汉字文本\n2. 选择声调格式和展示模式\n3. 复制结果或查看拼音对照",
+    "route": "/tools/pinyin",
+    "isLocal": true,
+    "tags": [
+      "拼音",
+      "汉字",
+      "注音",
+      "转拼音",
+      "语文",
+      "朗诵"
+    ],
+    "svgIcon": "PinyinToolIcon"
+  },
+  {
+    "id": "process-scheduling",
+    "name": "CPU 调度算法",
+    "category": "edu",
+    "icon": "Cpu",
+    "summary": "操作系统进程调度算法可视化",
+    "description": "支持 FCFS、SJF、SRTF、RR、Priority 等多种调度算法的可视化演示。动态生成甘特图，计算周转时间与带权周转时间，支持自定义进程与动画播放。",
+    "usage": "1. 选择调度算法（如 FCFS, RR）\n2. 设置进程数量与参数（到达/服务时间）\n3. 点击运行查看甘特图与结果\n4. 可播放执行动画",
+    "route": "/tools/process-scheduling",
+    "isLocal": true,
+    "tags": [
+      "OS",
+      "调度",
+      "算法",
+      "可视化",
+      "CPU"
+    ],
+    "svgIcon": "ProcessSchedulingIcon"
+  },
+  {
+    "id": "proportion-solver",
+    "name": "比例求解计算器",
+    "category": "edu",
+    "icon": "Coordinate",
+    "summary": "已知三项求第四项",
+    "description": "已知三项求第四项，解决应用题、配比、比例尺计算。",
+    "usage": "在 A:B=C:D 中填入任意三个已知项，第四项填 x 或留空，点击求解。",
+    "route": "/tools/proportion-calculator",
+    "isLocal": true,
+    "tags": [
+      "比例",
+      "数学",
+      "计算",
+      "教育",
+      "比例尺"
+    ],
+    "svgIcon": "ProportionSolverIcon"
+  },
+  {
+    "id": "resistor-calc",
+    "name": "电阻色环读取器",
+    "category": "edu",
+    "icon": "Operation",
+    "summary": "4色环/5色环电阻阻值计算",
+    "description": "电子爱好者必备工具。支持标准的4色环和5色环电阻计算，图形化选择色环颜色，实时显示阻值与误差范围，内置色环记忆口诀。",
+    "usage": "1. 选择色环位数 (4/5)\n2. 依次点击色环颜色\n3. 即时查看阻值结果",
+    "route": "/tools/resistor-color-code",
+    "isLocal": true,
+    "tags": [
+      "电子",
+      "电阻",
+      "色环",
+      "计算",
+      "电路"
+    ],
+    "svgIcon": "ResistorCalcIcon"
+  },
+  {
+    "id": "roman-numeral",
+    "name": "罗马数字转换器",
+    "category": "edu",
+    "icon": "AlarmClock",
+    "summary": "罗马数字与阿拉伯数字互转",
+    "description": "快速进行罗马数字（如 IV, MCMLXXXIV）与普通阿拉伯数字之间的双向转换。支持 1-3999 范围内的标准罗马数字格式校验与生成。",
+    "usage": "1. 选择转换模式\n2. 输入数字或罗马字符\n3. 获取转换结果",
+    "route": "/tools/roman-numeral",
+    "isLocal": true,
+    "tags": [
+      "罗马数字",
+      "转换",
+      "历史",
+      "数字"
+    ],
+    "svgIcon": "RomanNumeralIcon"
+  },
+  {
+    "id": "root-calculator",
+    "name": "平方根/立方根计算器",
+    "category": "edu",
+    "icon": "DataAnalysis",
+    "summary": "常用根式精确计算工具",
+    "description": "支持平方根、立方根及任意次根的计算。支持整数与小数输入，快速获得高精度结果，辅助数理化习题解答。",
+    "usage": "1. 输入数字\n2. 选择或输入根指数\n3. 查看计算结果",
+    "route": "/tools/root-calculator",
+    "isLocal": true,
+    "tags": [
+      "数学",
+      "根号",
+      "开方",
+      "计算",
+      "平方根",
+      "立方根"
+    ],
+    "svgIcon": "RootCalculatorIcon"
+  },
+  {
+    "id": "truth-table-gen",
+    "name": "逻辑真值表生成器",
+    "category": "edu",
+    "icon": "Grid",
+    "summary": "逻辑表达式自动生成真值表",
+    "description": "输入复杂的逻辑表达式（支持 AND, OR, NOT, XOR, 蕴含等），自动生成完整的真值表。支持多变量运算，实时解析逻辑关系，适合计算机科学与离散数学学习。",
+    "usage": "1. 输入逻辑变量 (P, Q, R...)\n2. 输入逻辑运算表达式\n3. 点击生成查看完整真值表",
+    "route": "/tools/truth-table-gen",
+    "isLocal": true,
+    "tags": [
+      "逻辑",
+      "真值表",
+      "数学",
+      "离散数学",
+      "计算机"
+    ],
+    "svgIcon": "TruthTableGenIcon"
+  },
+  {
+    "id": "typing-test",
+    "name": "打字速度测试",
+    "category": "edu",
+    "icon": "Edit",
+    "summary": "测试打字速度(WPM)和准确率",
+    "description": "在线打字练习工具。支持英文单词和代码片段两种模式，实时统计 WPM (每分钟单词数) 和准确率，助你提升键盘输入效率。",
+    "usage": "1. 选择模式和时间\n2. 将光标聚焦输入框\n3. 开始盲打练习",
+    "route": "/tools/typing-test",
+    "isLocal": true,
+    "tags": [
+      "打字",
+      "WPM",
+      "练习",
+      "测试",
+      "键盘",
+      "代码"
+    ],
+    "svgIcon": "TypingTestIcon"
+  },
+  {
+    "id": "unit-dimension",
+    "name": "物理单位量纲查询",
+    "category": "edu",
+    "icon": "ScaleToOriginal",
+    "summary": "基本物理量与量纲检索",
+    "description": "查询常用物理量的国际单位 (SI) 及其量纲表达式 (L, M, T, I...)。帮助检查物理公式推导与单位换算。",
+    "usage": "1. 搜索物理量名称或符号\n2. 查看对应的单位与量纲",
+    "route": "/tools/unit-dimension",
+    "isLocal": true,
+    "tags": [
+      "物理",
+      "单位",
+      "量纲",
+      "SI",
+      "公式"
+    ],
+    "svgIcon": "UnitDimensionIcon"
+  },
+  {
+    "id": "voltage-power",
+    "name": "电压/电流/功率换算",
+    "category": "edu",
+    "icon": "TrendCharts",
+    "summary": "欧姆定律与电功率计算 (P=UI)",
+    "description": "基于 P=UI 公式进行参数换算。输入任意两个已知量（功率、电压、电流），自动计算第三个参数，适用于电工计算与物理作业检查。",
+    "usage": "1. 选择待计算的目标参数\n2. 输入已知的两个参数\n3. 点击计算",
+    "route": "/tools/voltage-power",
+    "isLocal": true,
+    "tags": [
+      "物理",
+      "电学",
+      "功率",
+      "电压",
+      "电流",
+      "P=UI"
+    ],
+    "svgIcon": "VoltagePowerIcon"
+  },
+  {
+    "id": "word-decomposition",
+    "name": "拆字组词工具",
+    "category": "edu",
+    "icon": "Memo",
+    "summary": "偏旁、结构与常用组词查询",
+    "description": "输入汉字，展示偏旁、结构、常用组词，学生识字、文案创作。",
+    "usage": "输入汉字即可实时查看该字的详细解析。",
+    "route": "/tools/word-decomp",
+    "isLocal": true,
+    "tags": [
+      "汉字",
+      "拆字",
+      "组词",
+      "语文",
+      "教育"
+    ],
+    "svgIcon": "WordDecompositionIcon"
   }
 ]

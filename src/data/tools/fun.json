@@ -1,365 +1,5 @@
 [
   {
-    "id": "ascii-art",
-    "name": "ASCII 艺术生成",
-    "category": "fun",
-    "icon": "MagicStick",
-    "summary": "文字转字符画 Banner / 图片转 ASCII",
-    "description": "集成 Figlet 库将文字转换为 3D/手写体字符画，支持多种字体；同时提供图片转 ASCII 字符画功能，支持自定义字符集和分辨率。",
-    "usage": "1. 文字模式：输入文本 -> 选择字体\n2. 图片模式：上传图片 -> 调整宽度与字符集",
-    "route": "/tools/ascii-art",
-    "isLocal": true,
-    "tags": ["ASCII", "字符画", "Figlet", "Banner", "图片转字符"]
-  },
-  {
-    "id": "gomoku",
-    "name": "五子棋",
-    "category": "fun",
-    "icon": "Grid",
-    "summary": "经典五子棋对弈游戏",
-    "description": "支持人机对战与双人对弈两种模式。可自由选择棋盘大小（9×9 至 19×19）、先后手以及 AI 难度。简洁优雅的棋盘界面，后续将支持对接 AI 模型 API。",
-    "usage": "1. 选择游戏模式（人机/双人）\n2. 设置棋盘大小与先后手\n3. 点击棋盘落子",
-    "route": "/tools/gomoku",
-    "isLocal": true,
-    "tags": ["游戏", "五子棋", "棋类", "AI", "对弈"]
-  },
-  {
-    "id": "tictactoe",
-    "name": "井字棋",
-    "category": "fun",
-    "icon": "Grid",
-    "summary": "经典 3×3 井字棋游戏",
-    "description": "经典的井字棋游戏，支持人机对战与双人对弈。AI 采用 Minimax 算法，困难模式下几乎不可战胜！",
-    "usage": "1. 选择游戏模式（人机/双人）\n2. 设置先后手和 AI 难度\n3. 点击格子落子",
-    "route": "/tools/tic-tac-toe",
-    "isLocal": true,
-    "tags": ["游戏", "井字棋", "棋类", "AI", "对弈"]
-  },
-  {
-    "id": "minesweeper",
-    "name": "扫雷",
-    "category": "fun",
-    "icon": "Grid",
-    "summary": "经典逻辑排雷游戏",
-    "description": "经典的扫雷游戏，支持初级（9×9）、中级（16×16）、高级（30×16）三种难度，还可自定义棋盘大小和地雷数量。支持右键插旗、双键快揭等经典操作。",
-    "usage": "1. 选择难度\n2. 左键揭开格子，右键插旗\n3. 根据数字推理找出所有地雷",
-    "route": "/tools/minesweeper",
-    "isLocal": true,
-    "tags": ["游戏", "扫雷", "逻辑", "益智", "经典"]
-  },
-  {
-    "id": "jigsaw-puzzle",
-    "name": "拼图游戏",
-    "category": "fun",
-    "icon": "Picture",
-    "summary": "自定义图片拼图游戏",
-    "description": "支持自定义上传图片生成拼图，提供多种难度选择（3x3 到 10x10）。经典的拼图玩法，自动吸附对齐，记录通关时间。",
-    "usage": "1. 选择预设图片或上传自己的图片\n2. 设置难度（切片数量）\n3. 拖动拼图块完成复原",
-    "route": "/tools/jigsaw-puzzle",
-    "isLocal": true,
-    "tags": ["游戏", "拼图", "益智", "图片", "Jigsaw"]
-  },
-  {
-    "id": "word-guess",
-    "name": "猜词游戏",
-    "category": "fun",
-    "icon": "Edit",
-    "summary": "Wordle 风格猜词游戏",
-    "description": "经典的 Wordle 风格猜词游戏，支持英文单词（5字母）和中文成语（4字）两种模式。包含每日挑战逻辑统计和无限练习模式。",
-    "usage": "1. 选择语言模式（英文/中文）\n2. 输入猜测词汇并回车\n3. 根据绿色（位置正确）、黄色（字符存在）提示完成解谜",
-    "route": "/tools/word-guess",
-    "isLocal": true,
-    "tags": ["游戏", "Wordle", "成语", "单词", "益智"]
-  },
-  {
-    "id": "reaction-test",
-    "name": "反应力测试",
-    "category": "fun",
-    "icon": "Timer",
-    "summary": "测试视觉与点击反应速度",
-    "description": "专业的视觉反应速度测试工具。等待红色变为绿色时立即点击，系统将精确记录您的毫秒级反应时间，并提供全球排名模拟对比。",
-    "usage": "1. 点击蓝色区域开始测试\n2. 等待背景由红变绿\n3. 变绿瞬间立即点击\n4. 查看成绩和排名",
-    "route": "/tools/reaction-test",
-    "isLocal": true,
-    "tags": ["游戏", "测试", "反应力", "速度"]
-  },
-  {
-    "id": "sudoku",
-    "name": "数独",
-    "category": "fun",
-    "icon": "Grid",
-    "summary": "经典数独益智游戏",
-    "description": "经典的9x9数独益智游戏。支持简单/中等/困难三种难度，包含笔记功能、自动校验、提示系统和计时器。",
-    "usage": "1. 选择难度开始新游戏\n2. 点击格子选中，再点击数字填入\n3. 使用笔记功能记录可能的数字\n4. 利用提示和检查功能辅助解题",
-    "route": "/tools/sudoku",
-    "isLocal": true,
-    "tags": ["游戏", "数独", "益智", "逻辑"]
-  },
-  {
-    "id": "memory-card",
-    "name": "记忆翻牌",
-    "category": "fun",
-    "icon": "Files",
-    "summary": "考验记忆力的翻牌配对游戏",
-    "description": "经典的记忆翻牌游戏。在有限的步数和时间内，通过记忆卡片位置，找出所有相同的配对。支持 4x4 和 6x6 两种难度模式。",
-    "usage": "1. 点击卡片将其翻转\n2. 连续翻出两张相同的卡片即可消除\n3. 消除所有卡片即可通关",
-    "route": "/tools/memory-card",
-    "isLocal": true,
-    "tags": ["游戏", "记忆", "翻牌", "益智"]
-  },
-  {
-    "id": "hanoi",
-    "name": "汉诺塔",
-    "category": "fun",
-    "icon": "Operation",
-    "summary": "经典的数学逻辑益智游戏",
-    "description": "汉诺塔（Tower of Hanoi）是一个著名的数学谜题。目标是将所有圆盘从起始柱移动到目标柱，每次只能移动一个圆盘，且大圆盘不能放在小圆盘上。",
-    "usage": "1. 点击柱子选择最上方的圆盘\n2. 点击另一个柱子将其放入\n3. 将所有圆盘移至最右侧柱子即可胜利",
-    "route": "/tools/tower-hanoi",
-    "isLocal": true,
-    "tags": ["游戏", "汉诺塔", "益智", "逻辑", "数学"]
-  },
-  {
-    "id": "flappy-bird",
-    "name": "管道小鸟",
-    "category": "fun",
-    "icon": "Promotion",
-    "summary": "极简风格的飞行闯关游戏",
-    "description": "控制小鸟飞行，穿过随机生成的管道障碍。看似简单，实则极具挑战性！考验你的反应速度和节奏感。",
-    "usage": "1. 点击屏幕或按下空格键控制小鸟向上飞\n2. 不操作时小鸟会受重力下坠\n3. 穿过管道缝隙得分，撞到管道或地面则游戏结束",
-    "route": "/tools/flappy-bird",
-    "isLocal": true,
-    "tags": ["游戏", "动作", "反应", "经典"]
-  },
-  {
-    "id": "match-3",
-    "name": "消消乐",
-    "category": "fun",
-    "icon": "Grid",
-    "summary": "经典的消除类益智游戏",
-    "description": "休闲解压的消消乐游戏。交换相邻的图标，凑齐3个或以上相同图标即可消除得分。支持连击奖励。",
-    "usage": "1. 点击选中一个图标\n2. 点击相邻的图标进行交换\n3. 若交换后形成3个及以上连线，则消除并得分",
-    "route": "/tools/match-3",
-    "isLocal": true,
-    "tags": ["游戏", "消除", "益智", "连击"]
-  },
-  {
-    "id": "simple-shooter",
-    "name": "2D射击",
-    "category": "fun",
-    "icon": "Aim",
-    "summary": "俯视角射击生存游戏",
-    "description": "控制角色在封闭空间内移动，使用鼠标瞄准并射击不断涌来的敌人。",
-    "usage": "1. WASD 控制移动\n2. 鼠标控制瞄准方向\n3. 点击左键射击",
-    "route": "/tools/simple-shooter",
-    "isLocal": true,
-    "tags": ["游戏", "射击", "动作", "生存"]
-  },
-  {
-    "id": "tower-defense",
-    "name": "塔防小游戏",
-    "category": "fun",
-    "icon": "VideoPlay",
-    "summary": "策略塔防游戏",
-    "description": "经典的塔防小游戏。建造防御塔，阻止敌人到达终点。拥有不同类型的防御塔和无限的敌人波次。",
-    "usage": "1. 点击右侧面板选择防御塔\n2. 点击地图空白区域建造\n3. 点击“下一波敌人”开始战斗",
-    "route": "/tools/tower-defense",
-    "isLocal": true,
-    "tags": ["游戏", "策略", "塔防", "益智"]
-  },
-  {
-    "id": "snake",
-    "name": "贪吃蛇",
-    "category": "fun",
-    "icon": "Promotion",
-    "summary": "经典复古贪吃蛇",
-    "description": "控制贪吃蛇吃掉食物不断变长，小心不要撞到墙壁或自己。支持多种皮肤主题和加速模式。",
-    "usage": "1. 方向键控制移动\n2. 空格键加速\n3. P键暂停",
-    "route": "/tools/snake",
-    "isLocal": true,
-    "tags": ["游戏", "贪吃蛇", "经典", "反应"]
-  },
-  {
-    "id": "tetris",
-    "name": "俄罗斯方块",
-    "category": "fun",
-    "icon": "Grid",
-    "summary": "经典方块消除游戏",
-    "description": "重温经典的俄罗斯方块游戏！支持方块旋转、快速/直接下落、暂存功能（Hold）。包含等级系统，随着分数增加游戏速度逐渐加快。",
-    "usage": "1. 方向键左右移动，上键旋转\n2. 下键加速下落，空格键直接掉落\n3. C键暂存或交换当前方块",
-    "route": "/tools/tetris",
-    "isLocal": true,
-    "tags": ["游戏", "俄罗斯方块", "Tetris", "经典", "益智"]
-  },
-  {
-    "id": "maze-3d",
-    "name": "3D 迷宫",
-    "category": "fun",
-    "icon": "Location",
-    "summary": "3D 迷宫探索游戏",
-    "description": "使用 Three.js 构建的 3D 迷宫探索游戏。在错综复杂的迷宫中寻找出口，挑战不同难度和关卡。",
-    "usage": "1. WASD 或方向键控制移动\n2. 寻找绿色光柱出口\n3. 随着关卡提升迷宫会变大",
-    "route": "/tools/maze-3d",
-    "isLocal": true,
-    "tags": ["游戏", "3D", "Three.js", "迷宫"]
-  },
-  {
-    "id": "virtual-pet",
-    "name": "虚拟宠物",
-    "category": "fun",
-    "icon": "Avatar",
-    "summary": "桌面像素电子宠物",
-    "description": "重温童年回忆的电子宠物。你需要喂食、陪玩、清理，精心照顾它从一颗蛋进化成成体。包含丰富的表情交互和状态系统。",
-    "usage": "1. 点击蛋孵化\n2. 定时喂食和玩耍保持状态\n3. 及时清理便便以免生病\n4. 长期照顾可以进化",
-    "route": "/tools/virtual-pet",
-    "isLocal": true,
-    "tags": ["游戏", "养成", "宠物", "像素"]
-  },
-  {
-    "id": "text-adventure",
-    "name": "文字冒险",
-    "category": "fun",
-    "icon": "Reading",
-    "summary": "沉浸式互动小说",
-    "description": "基于选择的互动小说游戏。可以在武侠、奇幻等多种背景中展开冒险，你的每一个选择都会影响剧情走向和最终结局。",
-    "usage": "1. 选择一个剧本开始游戏\n2. 阅读剧情并做出选择\n3. 管理你的生命值和金币\n4. 达成不同结局",
-    "route": "/tools/text-adventure",
-    "isLocal": true,
-    "tags": ["游戏", "小说", "剧情", "RPG"]
-  },
-  {
-    "id": "life-simulator",
-    "name": "模拟人生 (文字版)",
-    "category": "fun",
-    "icon": "User",
-    "summary": "文字版人生模拟器",
-    "description": "从出生到老去的完整人生模拟。每一次点击都是一年，包含随机事件、职业选择、资产管理等元素。你的天赋决定起点，但选择决定终点。",
-    "usage": "1. 随机生成初始天赋\n2. 每年点击\"下一年\"推进时间\n3. 处理发生的随机事件\n4. 努力工作赚钱，保持健康快乐",
-    "route": "/tools/life-simulator",
-    "isLocal": true,
-    "tags": ["游戏", "模拟", "文字", "养成"]
-  },
-  {
-    "id": "pinball",
-    "name": "弹球消消乐",
-    "category": "fun",
-    "icon": "Aim",
-    "summary": "经典弹球/打砖块游戏",
-    "description": "一款物理特效精美的经典弹球游戏。通过移动挡板反弹小球，消除所有关卡中的砖块。包含多种砖块类型和关卡设计。",
-    "usage": "1. 鼠标左右移动控制下方挡板\n2. 消除所有砖块即可通关\n3. 保护小球不要掉落到底部",
-    "route": "/tools/pinball",
-    "isLocal": true,
-    "tags": ["游戏", "物理", "休闲", "经典"]
-  },
-  {
-    "id": "game-2048",
-    "name": "2048",
-    "category": "fun",
-    "icon": "Grid",
-    "summary": "数字合并益智游戏",
-    "description": "经典的 2048 数字游戏。滑动方向键合并相同的数字块，挑战合成 2048！支持 4×4、5×5、6×6 多种规格棋盘。",
-    "usage": "1. 使用方向键或滑动屏幕移动方块\n2. 相同数字碰撞会合并\n3. 努力合成更大的数字",
-    "route": "/tools/game-2048",
-    "isLocal": true,
-    "tags": ["游戏", "2048", "益智", "数学", "合并"]
-  },
-  {
-    "id": "emoji-picker",
-    "name": "Emoji 表情检索",
-    "category": "fun",
-    "icon": "Sugar",
-    "summary": "分类 Emoji 复制",
-    "description": "提供按心情、节日、食物、动物等分类的 Emoji 表情面板，点击即可复制。",
-    "usage": "选择分类，点击表情。",
-    "route": "/tools/emoji-picker",
-    "isLocal": true,
-    "tags": ["Emoji", "表情", "复制", "社交"]
-  },
-  {
-    "id": "special-text",
-    "name": "特殊文字生成",
-    "category": "fun",
-    "icon": "MagicStick",
-    "summary": "花体/空心/下划线生成",
-    "description": "生成花体英文 (Script)、空心字 (Hollow)、删除线、下划线等特殊样式文本，用于社交平台昵称或文案。",
-    "usage": "输入文本，选择样式，点击复制。",
-    "route": "/tools/special-text",
-    "isLocal": true,
-    "tags": ["花体字", "特殊字体", "昵称", "生成器"]
-  },
-  {
-    "id": "lucky-draw",
-    "name": "抽奖大转盘",
-    "category": "fun",
-    "icon": "MagicStick",
-    "summary": "自定义抽奖项与概率模拟",
-    "description": "专业的抽奖工具，支持自定义奖项名称、权重配置、概率实时预览及抽奖记录功能。",
-    "usage": "1. 点击\"添加奖项\"设置选项内容\n2. 调整各奖项的权重（概率）\n3. 点击转盘中央\"开始\"按钮即可抽奖",
-    "route": "/tools/decision-wheel",
-    "isLocal": true,
-    "tags": ["抽奖", "大转盘", "概率", "游戏", "活动"]
-  },
-  {
-    "id": "social-mockup",
-    "name": "社交媒体模拟",
-    "category": "fun",
-    "icon": "Monitor",
-    "summary": "模拟朋友圈等社交媒体截图",
-    "description": "创意排版工具，模拟微信朋友圈、微博等社交平台的发布内容，支持头像上传、图片网格预览。",
-    "usage": "1. 上传头像并填写用户名\n2. 输入文字内容并选择配图\n3. 调整点赞列表及时间位置\n4. 生成截图并导出分享",
-    "route": "/tools/social-media-mockup",
-    "isLocal": true,
-    "tags": ["模拟", "截图", "朋友圈", "微信", "设计", "模版"]
-  },
-  {
-    "id": "pixel-art",
-    "name": "像素画编辑器",
-    "category": "fun",
-    "icon": "Brush",
-    "summary": "8bit 风格网格绘图工具",
-    "description": "支持多种网格规格的像素风格绘画工具，内置经典调色盘，支持透明背景导出。",
-    "usage": "1. 选择画布大小（8x8 到 64x64）\n2. 在调色盘选择颜色并绘画\n3. 开启/关闭网格辅助线\n4. 导出高清 PNG 图片",
-    "route": "/tools/pixel-art",
-    "isLocal": true,
-    "tags": ["像素画", "设计", "绘图", "8-bit", "图标"]
-  },
-  {
-    "id": "quote-generator",
-    "name": "语录生成器",
-    "category": "fun",
-    "icon": "EditPen",
-    "summary": "语录聚合电影、诗词、程序员经典语录",
-    "description": "精选各领域名言警句，支持多种语体切换，提供优雅的背景样式和排版预览。",
-    "usage": "1. 选择语录分类切换内容\n2. 点击\"换一句\"随机刷新\n3. 调整字号与背景色\n4. 一键复制或保存语录文字",
-    "route": "/tools/quote-generator",
-    "isLocal": true,
-    "tags": ["语录", "文案", "句子", "励志", "名人名言"]
-  },
-  {
-    "id": "world-timeline",
-    "name": "世界时间线",
-    "category": "fun",
-    "icon": "Watch",
-    "summary": "全球城市实时时间与活动预览",
-    "description": "可视化展示全球主要时区的时间差，并提供\"人类活动建议\"图标，直观了解世界各地的生活节奏。",
-    "usage": "1. 快速查看不同城市的当前本地时间\n2. 通过状态图标查看当地处于什么活动阶段\n3. 支持 12/24 小时制同步更新",
-    "route": "/tools/world-timeline",
-    "isLocal": true,
-    "tags": ["时间", "时区", "世界钟", "工具"]
-  },
-  {
-    "id": "random-number-generator",
-    "name": "随机数生成器",
-    "category": "fun",
-    "icon": "More",
-    "summary": "自定义范围生成随机数字",
-    "description": "支持自定义数值范围（最小值/最大值）和生成数量度。可选择是否去重、是否自动排序。适用于抽奖、分组、数学练习等场景。",
-    "usage": "1. 设置数值范围（如 1-100）\n2. 输入生成数量\n3. 勾选\"不重复\"或\"排序\"（可选）\n4. 点击生成并复制结果",
-    "route": "/tools/random-number",
-    "isLocal": true,
-    "tags": ["随机数", "抽奖", "生成", "工具", "数学"]
-  },
-  {
     "id": "ai-draw-guess",
     "name": "AI 你画我猜",
     "category": "fun",
@@ -370,7 +10,33 @@
     "usage": "1. 在“设置”中配置您的 API Key\n2. 在左侧画布进行绘画\n3. 点击“让 AI 猜一猜”\n4. 查看 AI 的奇妙猜测结果",
     "route": "/tools/ai-draw-guess",
     "isLocal": true,
-    "tags": ["AI", "绘图", "视觉识别", "趣味", "多模态"]
+    "tags": [
+      "AI",
+      "绘图",
+      "视觉识别",
+      "趣味",
+      "多模态"
+    ],
+    "svgIcon": "AiDrawGuessIcon"
+  },
+  {
+    "id": "ascii-art",
+    "name": "ASCII 艺术生成",
+    "category": "fun",
+    "icon": "MagicStick",
+    "summary": "文字转字符画 Banner / 图片转 ASCII",
+    "description": "集成 Figlet 库将文字转换为 3D/手写体字符画，支持多种字体；同时提供图片转 ASCII 字符画功能，支持自定义字符集和分辨率。",
+    "usage": "1. 文字模式：输入文本 -> 选择字体\n2. 图片模式：上传图片 -> 调整宽度与字符集",
+    "route": "/tools/ascii-art",
+    "isLocal": true,
+    "tags": [
+      "ASCII",
+      "字符画",
+      "Figlet",
+      "Banner",
+      "图片转字符"
+    ],
+    "svgIcon": "AsciiArtIcon"
   },
   {
     "id": "blood-type",
@@ -382,55 +48,14 @@
     "usage": "1. 选择父亲的血型\n2. 选择母亲的血型\n3. 查看推算结果",
     "route": "/tools/blood-type",
     "isLocal": true,
-    "tags": ["血型", "遗传", "生物", "科普", "父母"]
-  },
-  {
-    "id": "morse-code",
-    "name": "摩斯密码翻译器",
-    "category": "fun",
-    "icon": "ChatLineRound",
-    "summary": "文字与摩斯密码互转",
-    "description": "提供文字与摩斯密码的双向转换，内置标准电码表，支持音频播放摩斯电码，可调节语速和音调。",
-    "usage": "1. 输入文字或摩斯电码\n2. 点击转换按钮查看结果\n3. 点击播放按钮听取电码声音",
-    "route": "/tools/morse-code",
-    "isLocal": true,
-    "tags": ["摩斯密码", "翻译", "加密", "电报", "电码"]
-  },
-  {
-    "id": "truth-dare",
-    "name": "真心话大冒险",
-    "category": "fun",
-    "icon": "Smoking",
-    "summary": "聚会必备真心话大冒险生成器",
-    "description": "海量真心话与大冒险题目库，支持按聚会场景（同学/情侣/同事）筛选，随机抽取，拒绝尴尬，活跃氛围。",
-    "usage": "1. 选择题目分类和场景\n2. 点击\"真心话\"或\"大冒险\"按钮随机抽取题目\n3. 按照抽中题目进行惩罚或回答",
-    "route": "/tools/truth-dare",
-    "isLocal": true,
-    "tags": ["社交", "聚会", "真心话", "大冒险", "娱乐"]
-  },
-  {
-    "id": "white-noise",
-    "name": "白噪音生成器",
-    "category": "fun",
-    "icon": "Headset",
-    "summary": "助眠、专注的背景音效",
-    "description": "内置雨声、森林、海浪、篝火、咖啡馆等多种高品质白噪音音效。支持多音效叠加混合，内置定时器功能，助力专注与睡眠。",
-    "usage": "1. 选择一个或多个音效滑块控制音量\n2. 调节音效混合比例\n3. 设置定时关闭时间（可选）",
-    "route": "/tools/white-noise",
-    "isLocal": true,
-    "tags": ["音频", "噪音", "白噪音", "专注", "助眠", "放松"]
-  },
-  {
-    "id": "spinner-wheel",
-    "name": "决策大转盘",
-    "category": "fun",
-    "icon": "ColdDrink",
-    "summary": "纠结症克星，快速决策小工具",
-    "description": "针对\"中午吃什么\"、\"谁去拿快递\"等生活小纠结。内置多种模板，支持一键切换选项，极速转出结果，让选择不再困难。",
-    "usage": "1. 选择一个预设模版（如餐饮、活动等）\n2. 如有需要可自定义修改选项列表\n3. 点击或滑动转盘获取决策结果",
-    "route": "/tools/spinner-wheel",
-    "isLocal": true,
-    "tags": ["决策", "选择", "大转盘", "抽取", "生活工具"]
+    "tags": [
+      "血型",
+      "遗传",
+      "生物",
+      "科普",
+      "父母"
+    ],
+    "svgIcon": "BloodTypeIcon"
   },
   {
     "id": "book-of-answers",
@@ -442,7 +67,14 @@
     "usage": "1. 闭上眼，在心中默念你的问题\n2. 点击“翻开答案”或者点击封面\n3. 得到你的命运指引",
     "route": "/tools/book-of-answers",
     "isLocal": true,
-    "tags": ["决策", "趣味", "占卜", "仪式感", "心理建议"]
+    "tags": [
+      "决策",
+      "趣味",
+      "占卜",
+      "仪式感",
+      "心理建议"
+    ],
+    "svgIcon": "BookOfAnswersIcon"
   },
   {
     "id": "cyber-muyu",
@@ -454,19 +86,255 @@
     "usage": "1. 点击木鱼即可敲击\n2. 可设置自动敲击频率\n3. 自定义浮现文字（如：功德+1, 烦恼-1）",
     "route": "/tools/cyber-muyu",
     "isLocal": true,
-    "tags": ["解压", "佛系", "专注", "沉浸", "趣味"]
+    "tags": [
+      "解压",
+      "佛系",
+      "专注",
+      "沉浸",
+      "趣味"
+    ],
+    "svgIcon": "CyberMuyuIcon"
   },
   {
-    "id": "script-killer-helper",
-    "name": "剧本杀角色分配",
+    "id": "emoji-picker",
+    "name": "Emoji 表情检索",
+    "category": "fun",
+    "icon": "Sugar",
+    "summary": "分类 Emoji 复制",
+    "description": "提供按心情、节日、食物、动物等分类的 Emoji 表情面板，点击即可复制。",
+    "usage": "选择分类，点击表情。",
+    "route": "/tools/emoji-picker",
+    "isLocal": true,
+    "tags": [
+      "Emoji",
+      "表情",
+      "复制",
+      "社交"
+    ],
+    "svgIcon": "EmojiPickerIcon"
+  },
+  {
+    "id": "flappy-bird",
+    "name": "管道小鸟",
+    "category": "fun",
+    "icon": "Promotion",
+    "summary": "极简风格的飞行闯关游戏",
+    "description": "控制小鸟飞行，穿过随机生成的管道障碍。看似简单，实则极具挑战性！考验你的反应速度和节奏感。",
+    "usage": "1. 点击屏幕或按下空格键控制小鸟向上飞\n2. 不操作时小鸟会受重力下坠\n3. 穿过管道缝隙得分，撞到管道或地面则游戏结束",
+    "route": "/tools/flappy-bird",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "动作",
+      "反应",
+      "经典"
+    ],
+    "svgIcon": "FlappyBirdIcon"
+  },
+  {
+    "id": "game-2048",
+    "name": "2048",
+    "category": "fun",
+    "icon": "Grid",
+    "summary": "数字合并益智游戏",
+    "description": "经典的 2048 数字游戏。滑动方向键合并相同的数字块，挑战合成 2048！支持 4×4、5×5、6×6 多种规格棋盘。",
+    "usage": "1. 使用方向键或滑动屏幕移动方块\n2. 相同数字碰撞会合并\n3. 努力合成更大的数字",
+    "route": "/tools/game-2048",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "2048",
+      "益智",
+      "数学",
+      "合并"
+    ],
+    "svgIcon": "Game2048Icon"
+  },
+  {
+    "id": "gomoku",
+    "name": "五子棋",
+    "category": "fun",
+    "icon": "Grid",
+    "summary": "经典五子棋对弈游戏",
+    "description": "支持人机对战与双人对弈两种模式。可自由选择棋盘大小（9×9 至 19×19）、先后手以及 AI 难度。简洁优雅的棋盘界面，后续将支持对接 AI 模型 API。",
+    "usage": "1. 选择游戏模式（人机/双人）\n2. 设置棋盘大小与先后手\n3. 点击棋盘落子",
+    "route": "/tools/gomoku",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "五子棋",
+      "棋类",
+      "AI",
+      "对弈"
+    ],
+    "svgIcon": "GomokuIcon"
+  },
+  {
+    "id": "hanoi",
+    "name": "汉诺塔",
+    "category": "fun",
+    "icon": "Operation",
+    "summary": "经典的数学逻辑益智游戏",
+    "description": "汉诺塔（Tower of Hanoi）是一个著名的数学谜题。目标是将所有圆盘从起始柱移动到目标柱，每次只能移动一个圆盘，且大圆盘不能放在小圆盘上。",
+    "usage": "1. 点击柱子选择最上方的圆盘\n2. 点击另一个柱子将其放入\n3. 将所有圆盘移至最右侧柱子即可胜利",
+    "route": "/tools/tower-hanoi",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "汉诺塔",
+      "益智",
+      "逻辑",
+      "数学"
+    ],
+    "svgIcon": "HanoiIcon"
+  },
+  {
+    "id": "jigsaw-puzzle",
+    "name": "拼图游戏",
+    "category": "fun",
+    "icon": "Picture",
+    "summary": "自定义图片拼图游戏",
+    "description": "支持自定义上传图片生成拼图，提供多种难度选择（3x3 到 10x10）。经典的拼图玩法，自动吸附对齐，记录通关时间。",
+    "usage": "1. 选择预设图片或上传自己的图片\n2. 设置难度（切片数量）\n3. 拖动拼图块完成复原",
+    "route": "/tools/jigsaw-puzzle",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "拼图",
+      "益智",
+      "图片",
+      "Jigsaw"
+    ],
+    "svgIcon": "JigsawPuzzleIcon"
+  },
+  {
+    "id": "life-simulator",
+    "name": "模拟人生 (文字版)",
     "category": "fun",
     "icon": "User",
-    "summary": "主持人辅助：随机分配角色与剧本",
-    "description": "剧本杀主持人（DM）的得力助手。支持自定义玩家姓名、角色池导入，一键随机分配角色并私密展示。包含简单的剧本进度管理和线索下发提醒。",
-    "usage": "1. 输入参与玩家姓名列表\n2. 录入或选择预设剧本角色池\n3. 点击“一键分配”，将手机/平板递给每位玩家确定身份",
-    "route": "/tools/script-killer-helper",
+    "summary": "文字版人生模拟器",
+    "description": "从出生到老去的完整人生模拟。每一次点击都是一年，包含随机事件、职业选择、资产管理等元素。你的天赋决定起点，但选择决定终点。",
+    "usage": "1. 随机生成初始天赋\n2. 每年点击\"下一年\"推进时间\n3. 处理发生的随机事件\n4. 努力工作赚钱，保持健康快乐",
+    "route": "/tools/life-simulator",
     "isLocal": true,
-    "tags": ["社交", "剧本杀", "桌游", "分配器", "娱乐"]
+    "tags": [
+      "游戏",
+      "模拟",
+      "文字",
+      "养成"
+    ],
+    "svgIcon": "LifeSimulatorIcon"
+  },
+  {
+    "id": "lucky-draw",
+    "name": "抽奖大转盘",
+    "category": "fun",
+    "icon": "MagicStick",
+    "summary": "自定义抽奖项与概率模拟",
+    "description": "专业的抽奖工具，支持自定义奖项名称、权重配置、概率实时预览及抽奖记录功能。",
+    "usage": "1. 点击\"添加奖项\"设置选项内容\n2. 调整各奖项的权重（概率）\n3. 点击转盘中央\"开始\"按钮即可抽奖",
+    "route": "/tools/decision-wheel",
+    "isLocal": true,
+    "tags": [
+      "抽奖",
+      "大转盘",
+      "概率",
+      "游戏",
+      "活动"
+    ],
+    "svgIcon": "LuckyDrawIcon"
+  },
+  {
+    "id": "match-3",
+    "name": "消消乐",
+    "category": "fun",
+    "icon": "Grid",
+    "summary": "经典的消除类益智游戏",
+    "description": "休闲解压的消消乐游戏。交换相邻的图标，凑齐3个或以上相同图标即可消除得分。支持连击奖励。",
+    "usage": "1. 点击选中一个图标\n2. 点击相邻的图标进行交换\n3. 若交换后形成3个及以上连线，则消除并得分",
+    "route": "/tools/match-3",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "消除",
+      "益智",
+      "连击"
+    ],
+    "svgIcon": "Match3Icon"
+  },
+  {
+    "id": "maze-3d",
+    "name": "3D 迷宫",
+    "category": "fun",
+    "icon": "Location",
+    "summary": "3D 迷宫探索游戏",
+    "description": "使用 Three.js 构建的 3D 迷宫探索游戏。在错综复杂的迷宫中寻找出口，挑战不同难度和关卡。",
+    "usage": "1. WASD 或方向键控制移动\n2. 寻找绿色光柱出口\n3. 随着关卡提升迷宫会变大",
+    "route": "/tools/maze-3d",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "3D",
+      "Three.js",
+      "迷宫"
+    ],
+    "svgIcon": "Maze3DIcon"
+  },
+  {
+    "id": "memory-card",
+    "name": "记忆翻牌",
+    "category": "fun",
+    "icon": "Files",
+    "summary": "考验记忆力的翻牌配对游戏",
+    "description": "经典的记忆翻牌游戏。在有限的步数和时间内，通过记忆卡片位置，找出所有相同的配对。支持 4x4 和 6x6 两种难度模式。",
+    "usage": "1. 点击卡片将其翻转\n2. 连续翻出两张相同的卡片即可消除\n3. 消除所有卡片即可通关",
+    "route": "/tools/memory-card",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "记忆",
+      "翻牌",
+      "益智"
+    ],
+    "svgIcon": "MemoryCardIcon"
+  },
+  {
+    "id": "minesweeper",
+    "name": "扫雷",
+    "category": "fun",
+    "icon": "Grid",
+    "summary": "经典逻辑排雷游戏",
+    "description": "经典的扫雷游戏，支持初级（9×9）、中级（16×16）、高级（30×16）三种难度，还可自定义棋盘大小和地雷数量。支持右键插旗、双键快揭等经典操作。",
+    "usage": "1. 选择难度\n2. 左键揭开格子，右键插旗\n3. 根据数字推理找出所有地雷",
+    "route": "/tools/minesweeper",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "扫雷",
+      "逻辑",
+      "益智",
+      "经典"
+    ],
+    "svgIcon": "MinesweeperIcon"
+  },
+  {
+    "id": "morse-code",
+    "name": "摩斯密码翻译器",
+    "category": "fun",
+    "icon": "ChatLineRound",
+    "summary": "文字与摩斯密码互转",
+    "description": "提供文字与摩斯密码的双向转换，内置标准电码表，支持音频播放摩斯电码，可调节语速和音调。",
+    "usage": "1. 输入文字或摩斯电码\n2. 点击转换按钮查看结果\n3. 点击播放按钮听取电码声音",
+    "route": "/tools/morse-code",
+    "isLocal": true,
+    "tags": [
+      "摩斯密码",
+      "翻译",
+      "加密",
+      "电报",
+      "电码"
+    ],
+    "svgIcon": "MorseCodeIcon"
   },
   {
     "id": "persona-generator",
@@ -478,6 +346,405 @@
     "usage": "1. 选择人物背景风格（现代、奇幻、赛博朋克等）\n2. 点击“生成设定”\n3. 锁定满意部分项，重新随机其余项",
     "route": "/tools/persona-generator",
     "isLocal": true,
-    "tags": ["创作", "人设", "灵感", "编剧", "文字", "RPG"]
+    "tags": [
+      "创作",
+      "人设",
+      "灵感",
+      "编剧",
+      "文字",
+      "RPG"
+    ],
+    "svgIcon": "PersonaGeneratorIcon"
+  },
+  {
+    "id": "pinball",
+    "name": "弹球消消乐",
+    "category": "fun",
+    "icon": "Aim",
+    "summary": "经典弹球/打砖块游戏",
+    "description": "一款物理特效精美的经典弹球游戏。通过移动挡板反弹小球，消除所有关卡中的砖块。包含多种砖块类型和关卡设计。",
+    "usage": "1. 鼠标左右移动控制下方挡板\n2. 消除所有砖块即可通关\n3. 保护小球不要掉落到底部",
+    "route": "/tools/pinball",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "物理",
+      "休闲",
+      "经典"
+    ],
+    "svgIcon": "PinballIcon"
+  },
+  {
+    "id": "pixel-art",
+    "name": "像素画编辑器",
+    "category": "fun",
+    "icon": "Brush",
+    "summary": "8bit 风格网格绘图工具",
+    "description": "支持多种网格规格的像素风格绘画工具，内置经典调色盘，支持透明背景导出。",
+    "usage": "1. 选择画布大小（8x8 到 64x64）\n2. 在调色盘选择颜色并绘画\n3. 开启/关闭网格辅助线\n4. 导出高清 PNG 图片",
+    "route": "/tools/pixel-art",
+    "isLocal": true,
+    "tags": [
+      "像素画",
+      "设计",
+      "绘图",
+      "8-bit",
+      "图标"
+    ],
+    "svgIcon": "PixelArtIcon"
+  },
+  {
+    "id": "quote-generator",
+    "name": "语录生成器",
+    "category": "fun",
+    "icon": "EditPen",
+    "summary": "语录聚合电影、诗词、程序员经典语录",
+    "description": "精选各领域名言警句，支持多种语体切换，提供优雅的背景样式和排版预览。",
+    "usage": "1. 选择语录分类切换内容\n2. 点击\"换一句\"随机刷新\n3. 调整字号与背景色\n4. 一键复制或保存语录文字",
+    "route": "/tools/quote-generator",
+    "isLocal": true,
+    "tags": [
+      "语录",
+      "文案",
+      "句子",
+      "励志",
+      "名人名言"
+    ],
+    "svgIcon": "QuoteGeneratorIcon"
+  },
+  {
+    "id": "random-number-generator",
+    "name": "随机数生成器",
+    "category": "fun",
+    "icon": "More",
+    "summary": "自定义范围生成随机数字",
+    "description": "支持自定义数值范围（最小值/最大值）和生成数量度。可选择是否去重、是否自动排序。适用于抽奖、分组、数学练习等场景。",
+    "usage": "1. 设置数值范围（如 1-100）\n2. 输入生成数量\n3. 勾选\"不重复\"或\"排序\"（可选）\n4. 点击生成并复制结果",
+    "route": "/tools/random-number",
+    "isLocal": true,
+    "tags": [
+      "随机数",
+      "抽奖",
+      "生成",
+      "工具",
+      "数学"
+    ],
+    "svgIcon": "RandomNumberGeneratorIcon"
+  },
+  {
+    "id": "reaction-test",
+    "name": "反应力测试",
+    "category": "fun",
+    "icon": "Timer",
+    "summary": "测试视觉与点击反应速度",
+    "description": "专业的视觉反应速度测试工具。等待红色变为绿色时立即点击，系统将精确记录您的毫秒级反应时间，并提供全球排名模拟对比。",
+    "usage": "1. 点击蓝色区域开始测试\n2. 等待背景由红变绿\n3. 变绿瞬间立即点击\n4. 查看成绩和排名",
+    "route": "/tools/reaction-test",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "测试",
+      "反应力",
+      "速度"
+    ],
+    "svgIcon": "ReactionTestIcon"
+  },
+  {
+    "id": "script-killer-helper",
+    "name": "剧本杀角色分配",
+    "category": "fun",
+    "icon": "User",
+    "summary": "主持人辅助：随机分配角色与剧本",
+    "description": "剧本杀主持人（DM）的得力助手。支持自定义玩家姓名、角色池导入，一键随机分配角色并私密展示。包含简单的剧本进度管理和线索下发提醒。",
+    "usage": "1. 输入参与玩家姓名列表\n2. 录入或选择预设剧本角色池\n3. 点击“一键分配”，将手机/平板递给每位玩家确定身份",
+    "route": "/tools/script-killer-helper",
+    "isLocal": true,
+    "tags": [
+      "社交",
+      "剧本杀",
+      "桌游",
+      "分配器",
+      "娱乐"
+    ],
+    "svgIcon": "ScriptKillerHelperIcon"
+  },
+  {
+    "id": "simple-shooter",
+    "name": "2D射击",
+    "category": "fun",
+    "icon": "Aim",
+    "summary": "俯视角射击生存游戏",
+    "description": "控制角色在封闭空间内移动，使用鼠标瞄准并射击不断涌来的敌人。",
+    "usage": "1. WASD 控制移动\n2. 鼠标控制瞄准方向\n3. 点击左键射击",
+    "route": "/tools/simple-shooter",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "射击",
+      "动作",
+      "生存"
+    ],
+    "svgIcon": "SimpleShooterIcon"
+  },
+  {
+    "id": "snake",
+    "name": "贪吃蛇",
+    "category": "fun",
+    "icon": "Promotion",
+    "summary": "经典复古贪吃蛇",
+    "description": "控制贪吃蛇吃掉食物不断变长，小心不要撞到墙壁或自己。支持多种皮肤主题和加速模式。",
+    "usage": "1. 方向键控制移动\n2. 空格键加速\n3. P键暂停",
+    "route": "/tools/snake",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "贪吃蛇",
+      "经典",
+      "反应"
+    ],
+    "svgIcon": "SnakeIcon"
+  },
+  {
+    "id": "social-mockup",
+    "name": "社交媒体模拟",
+    "category": "fun",
+    "icon": "Monitor",
+    "summary": "模拟朋友圈等社交媒体截图",
+    "description": "创意排版工具，模拟微信朋友圈、微博等社交平台的发布内容，支持头像上传、图片网格预览。",
+    "usage": "1. 上传头像并填写用户名\n2. 输入文字内容并选择配图\n3. 调整点赞列表及时间位置\n4. 生成截图并导出分享",
+    "route": "/tools/social-media-mockup",
+    "isLocal": true,
+    "tags": [
+      "模拟",
+      "截图",
+      "朋友圈",
+      "微信",
+      "设计",
+      "模版"
+    ],
+    "svgIcon": "SocialMockupIcon"
+  },
+  {
+    "id": "special-text",
+    "name": "特殊文字生成",
+    "category": "fun",
+    "icon": "MagicStick",
+    "summary": "花体/空心/下划线生成",
+    "description": "生成花体英文 (Script)、空心字 (Hollow)、删除线、下划线等特殊样式文本，用于社交平台昵称或文案。",
+    "usage": "输入文本，选择样式，点击复制。",
+    "route": "/tools/special-text",
+    "isLocal": true,
+    "tags": [
+      "花体字",
+      "特殊字体",
+      "昵称",
+      "生成器"
+    ],
+    "svgIcon": "SpecialTextIcon"
+  },
+  {
+    "id": "spinner-wheel",
+    "name": "决策大转盘",
+    "category": "fun",
+    "icon": "ColdDrink",
+    "summary": "纠结症克星，快速决策小工具",
+    "description": "针对\"中午吃什么\"、\"谁去拿快递\"等生活小纠结。内置多种模板，支持一键切换选项，极速转出结果，让选择不再困难。",
+    "usage": "1. 选择一个预设模版（如餐饮、活动等）\n2. 如有需要可自定义修改选项列表\n3. 点击或滑动转盘获取决策结果",
+    "route": "/tools/spinner-wheel",
+    "isLocal": true,
+    "tags": [
+      "决策",
+      "选择",
+      "大转盘",
+      "抽取",
+      "生活工具"
+    ],
+    "svgIcon": "SpinnerWheelIcon"
+  },
+  {
+    "id": "sudoku",
+    "name": "数独",
+    "category": "fun",
+    "icon": "Grid",
+    "summary": "经典数独益智游戏",
+    "description": "经典的9x9数独益智游戏。支持简单/中等/困难三种难度，包含笔记功能、自动校验、提示系统和计时器。",
+    "usage": "1. 选择难度开始新游戏\n2. 点击格子选中，再点击数字填入\n3. 使用笔记功能记录可能的数字\n4. 利用提示和检查功能辅助解题",
+    "route": "/tools/sudoku",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "数独",
+      "益智",
+      "逻辑"
+    ],
+    "svgIcon": "SudokuIcon"
+  },
+  {
+    "id": "tetris",
+    "name": "俄罗斯方块",
+    "category": "fun",
+    "icon": "Grid",
+    "summary": "经典方块消除游戏",
+    "description": "重温经典的俄罗斯方块游戏！支持方块旋转、快速/直接下落、暂存功能（Hold）。包含等级系统，随着分数增加游戏速度逐渐加快。",
+    "usage": "1. 方向键左右移动，上键旋转\n2. 下键加速下落，空格键直接掉落\n3. C键暂存或交换当前方块",
+    "route": "/tools/tetris",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "俄罗斯方块",
+      "Tetris",
+      "经典",
+      "益智"
+    ],
+    "svgIcon": "TetrisIcon"
+  },
+  {
+    "id": "text-adventure",
+    "name": "文字冒险",
+    "category": "fun",
+    "icon": "Reading",
+    "summary": "沉浸式互动小说",
+    "description": "基于选择的互动小说游戏。可以在武侠、奇幻等多种背景中展开冒险，你的每一个选择都会影响剧情走向和最终结局。",
+    "usage": "1. 选择一个剧本开始游戏\n2. 阅读剧情并做出选择\n3. 管理你的生命值和金币\n4. 达成不同结局",
+    "route": "/tools/text-adventure",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "小说",
+      "剧情",
+      "RPG"
+    ],
+    "svgIcon": "TextAdventureIcon"
+  },
+  {
+    "id": "tictactoe",
+    "name": "井字棋",
+    "category": "fun",
+    "icon": "Grid",
+    "summary": "经典 3×3 井字棋游戏",
+    "description": "经典的井字棋游戏，支持人机对战与双人对弈。AI 采用 Minimax 算法，困难模式下几乎不可战胜！",
+    "usage": "1. 选择游戏模式（人机/双人）\n2. 设置先后手和 AI 难度\n3. 点击格子落子",
+    "route": "/tools/tic-tac-toe",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "井字棋",
+      "棋类",
+      "AI",
+      "对弈"
+    ],
+    "svgIcon": "TictactoeIcon"
+  },
+  {
+    "id": "tower-defense",
+    "name": "塔防小游戏",
+    "category": "fun",
+    "icon": "VideoPlay",
+    "summary": "策略塔防游戏",
+    "description": "经典的塔防小游戏。建造防御塔，阻止敌人到达终点。拥有不同类型的防御塔和无限的敌人波次。",
+    "usage": "1. 点击右侧面板选择防御塔\n2. 点击地图空白区域建造\n3. 点击“下一波敌人”开始战斗",
+    "route": "/tools/tower-defense",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "策略",
+      "塔防",
+      "益智"
+    ],
+    "svgIcon": "TowerDefenseIcon"
+  },
+  {
+    "id": "truth-dare",
+    "name": "真心话大冒险",
+    "category": "fun",
+    "icon": "Smoking",
+    "summary": "聚会必备真心话大冒险生成器",
+    "description": "海量真心话与大冒险题目库，支持按聚会场景（同学/情侣/同事）筛选，随机抽取，拒绝尴尬，活跃氛围。",
+    "usage": "1. 选择题目分类和场景\n2. 点击\"真心话\"或\"大冒险\"按钮随机抽取题目\n3. 按照抽中题目进行惩罚或回答",
+    "route": "/tools/truth-dare",
+    "isLocal": true,
+    "tags": [
+      "社交",
+      "聚会",
+      "真心话",
+      "大冒险",
+      "娱乐"
+    ],
+    "svgIcon": "TruthDareIcon"
+  },
+  {
+    "id": "virtual-pet",
+    "name": "虚拟宠物",
+    "category": "fun",
+    "icon": "Avatar",
+    "summary": "桌面像素电子宠物",
+    "description": "重温童年回忆的电子宠物。你需要喂食、陪玩、清理，精心照顾它从一颗蛋进化成成体。包含丰富的表情交互和状态系统。",
+    "usage": "1. 点击蛋孵化\n2. 定时喂食和玩耍保持状态\n3. 及时清理便便以免生病\n4. 长期照顾可以进化",
+    "route": "/tools/virtual-pet",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "养成",
+      "宠物",
+      "像素"
+    ],
+    "svgIcon": "VirtualPetIcon"
+  },
+  {
+    "id": "white-noise",
+    "name": "白噪音生成器",
+    "category": "fun",
+    "icon": "Headset",
+    "summary": "助眠、专注的背景音效",
+    "description": "内置雨声、森林、海浪、篝火、咖啡馆等多种高品质白噪音音效。支持多音效叠加混合，内置定时器功能，助力专注与睡眠。",
+    "usage": "1. 选择一个或多个音效滑块控制音量\n2. 调节音效混合比例\n3. 设置定时关闭时间（可选）",
+    "route": "/tools/white-noise",
+    "isLocal": true,
+    "tags": [
+      "音频",
+      "噪音",
+      "白噪音",
+      "专注",
+      "助眠",
+      "放松"
+    ],
+    "svgIcon": "WhiteNoiseIcon"
+  },
+  {
+    "id": "word-guess",
+    "name": "猜词游戏",
+    "category": "fun",
+    "icon": "Edit",
+    "summary": "Wordle 风格猜词游戏",
+    "description": "经典的 Wordle 风格猜词游戏，支持英文单词（5字母）和中文成语（4字）两种模式。包含每日挑战逻辑统计和无限练习模式。",
+    "usage": "1. 选择语言模式（英文/中文）\n2. 输入猜测词汇并回车\n3. 根据绿色（位置正确）、黄色（字符存在）提示完成解谜",
+    "route": "/tools/word-guess",
+    "isLocal": true,
+    "tags": [
+      "游戏",
+      "Wordle",
+      "成语",
+      "单词",
+      "益智"
+    ],
+    "svgIcon": "WordGuessIcon"
+  },
+  {
+    "id": "world-timeline",
+    "name": "世界时间线",
+    "category": "fun",
+    "icon": "Watch",
+    "summary": "全球城市实时时间与活动预览",
+    "description": "可视化展示全球主要时区的时间差，并提供\"人类活动建议\"图标，直观了解世界各地的生活节奏。",
+    "usage": "1. 快速查看不同城市的当前本地时间\n2. 通过状态图标查看当地处于什么活动阶段\n3. 支持 12/24 小时制同步更新",
+    "route": "/tools/world-timeline",
+    "isLocal": true,
+    "tags": [
+      "时间",
+      "时区",
+      "世界钟",
+      "工具"
+    ],
+    "svgIcon": "WorldTimelineIcon"
   }
 ]

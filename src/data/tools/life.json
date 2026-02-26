@@ -1,51 +1,22 @@
 [
   {
-    "id": "unit-converter",
-    "name": "单位转换器",
+    "id": "age-calculator",
+    "name": "精确年龄计算器",
     "category": "life",
-    "icon": "DataAnalysis",
-    "summary": "支持12种单位类型的在线换算工具",
-    "description": "支持长度、重量、温度、面积、体积、时间、速度、数据、压强、能量、功率、角度等单位互转，包含中国传统单位。",
-    "usage": "1. 选择单位类别\n2. 输入数值和源单位\n3. 选择目标单位查看结果",
-    "route": "/tools/unit-converter",
+    "icon": "User",
+    "summary": "精确到秒的周岁、虚岁与时间长度",
+    "description": "不仅能算出您的周岁和虚岁，还能精确展示您已经在地球上生活了多少年、月、日、小时甚至秒，并推算下一个生日的倒计时。",
+    "usage": "1. 输入您的出生日期和具体时间\n2. 查看多维度的年龄统计结果\n3. 了解您的生肖、星座及生日统计数据",
+    "route": "/tools/age-calculator",
     "isLocal": true,
-    "tags": ["单位", "转换", "换算", "长度", "重量"]
-  },
-  {
-    "id": "currency-converter",
-    "name": "汇率换算",
-    "category": "life",
-    "icon": "Money",
-    "summary": "多国货币实时汇率换算与趋势查询",
-    "description": "支持全球主流货币的实时汇率换算，提供最近30天汇率走势图，支持快捷货币对切换和结果分享，适合海淘、旅行和跨境结算场景。",
-    "usage": "1. 选择源货币和目标货币\n2. 输入金额，自动计算结果\n3. 点击互换按钮可反向计算\n4. 查看下方趋势图了解近期走势",
-    "route": "/tools/currency-converter",
-    "isLocal": true,
-    "tags": ["汇率", "货币", "换算", "金融", "旅行"]
-  },
-  {
-    "id": "travel-checklist",
-    "name": "旅行打包清单",
-    "category": "life",
-    "icon": "Suitcase",
-    "summary": "不同目的地的行李核对单",
-    "description": "提供海边、登山、出国、商务等不同场景的打包清单模板。支持自定义添加物品，进度实时保存，确保出行无遗漏。",
-    "usage": "1. 选择旅行场景（海边/登山/出国等）\n2. 浏览预设清单，勾选已打包物品\n3. 可手动添加个性化物品\n4. 一键重置或复制清单",
-    "route": "/tools/travel-checklist",
-    "isLocal": true,
-    "tags": ["旅行", "清单", "打包", "出行", "整理"]
-  },
-  {
-    "id": "first-aid-manual",
-    "name": "家庭急救手册",
-    "category": "life",
-    "icon": "FirstAidKit",
-    "summary": "常见急救措施极简指南",
-    "description": "提供气管异物、烫伤、扭伤、心脏骤停等常见突发状况的急救指引。图文并茂，步骤清晰，关键时刻的救命助手。",
-    "usage": "1. 在首页快速搜索或选择急救场景\n2. 按照步骤图示进行处理\n3. 注意：仅供参考，紧急情况请务必拨打急救电话",
-    "route": "/tools/first-aid-manual",
-    "isLocal": true,
-    "tags": ["急救", "健康", "安全", "指南", "手册"]
+    "tags": [
+      "年龄",
+      "生日",
+      "时间计算",
+      "周岁",
+      "虚岁"
+    ],
+    "svgIcon": "AgeCalculatorIcon"
   },
   {
     "id": "anniversary-countdown",
@@ -57,43 +28,14 @@
     "usage": "1. 添加新纪念日\n2. 设置日期、标题和样式\n3. 预览并保存\n4. 在列表中直观查看所有重要日子",
     "route": "/tools/anniversary-countdown",
     "isLocal": true,
-    "tags": ["纪念日", "倒计时", "提醒", "组件", "美化"]
-  },
-  {
-    "id": "zip-code-search",
-    "name": "邮编区号查询",
-    "category": "life",
-    "icon": "MapLocation",
-    "summary": "行政区划、邮编及区号检索",
-    "description": "支持按省市区级联查询全国各地的邮政编码和固定电话区号，也支持通过邮编或区号反查对应地区。",
-    "usage": "1. 输入城市名、邮编或区号进行搜索\n2. 或使用省市区级联选择器查找\n3. 复制查询结果",
-    "route": "/tools/zip-code-search",
-    "isLocal": true,
-    "tags": ["邮编", "区号", "查询", "地址", "行政区划"]
-  },
-  {
-    "id": "clothing-size",
-    "name": "服装尺码助手",
-    "category": "life",
-    "icon": "Trophy",
-    "summary": "国标/欧美/日韩服装鞋码对照",
-    "description": "专业的服装鞋帽尺码转换工具，涵盖男装、女装、童装及鞋码。支持中国国标、欧美、日韩等国际标准互转，助您海淘购物无忧。",
-    "usage": "1. 选择类别（男/女/童/鞋）\n2. 选择您当前的标准和已知尺码\n3. 即时查看对应国家/地区的标准尺码\n4. 下方提供完整对照表供参考",
-    "route": "/tools/clothing-size",
-    "isLocal": true,
-    "tags": ["尺码", "服装", "鞋码", "海淘", "购物", "换算"]
-  },
-  {
-    "id": "date-calculator",
-    "name": "日期差计算器",
-    "category": "life",
-    "icon": "Calendar",
-    "summary": "日期间隔计算与推算",
-    "description": "专业的日期时间计算工具。支持计算两个日期之间的天数、月数、周数；也支持根据基准日期向前或向后推算新的日期。适用倒计时、工龄计算、纪念日查询。",
-    "usage": "1. 间隔计算：选择开始与结束日期，查看详细时间差\n2. 日期推算：选择基准日期，输入增减天数，获取新日期",
-    "route": "/tools/date-calculator",
-    "isLocal": true,
-    "tags": ["日期", "计算器", "时间", "间隔", "倒计时"]
+    "tags": [
+      "纪念日",
+      "倒计时",
+      "提醒",
+      "组件",
+      "美化"
+    ],
+    "svgIcon": "AnniversaryCountdownIcon"
   },
   {
     "id": "birthday-reminder",
@@ -105,31 +47,15 @@
     "usage": "1. 点击添加按钮，输入事件名称和日期\n2. 自动计算下次发生时间的倒计时\n3. 生日类型还会显示当前周岁和虚岁\n4. 临近30天内的日期会高亮显示",
     "route": "/tools/birthday-reminder",
     "isLocal": true,
-    "tags": ["生日", "纪念日", "提醒", "年龄", "倒计时", "节日"]
-  },
-  {
-    "id": "workday-calculator",
-    "name": "工作日计算器",
-    "category": "life",
-    "icon": "Suitcase",
-    "summary": "精准计算工期与考勤天数",
-    "description": "自动剔除周末，支持自定义节假日和补班日期。输入起止时间，即可快速计算实际工作天数。适用于项目管理、HR考勤统计及工程排期。",
-    "usage": "1. 设置起止日期\n2. 默认勾选“剔除周末”\n3. 在右侧管理特殊的节假日（如春节）和补班日\n4. 即时获取精确工作日天数",
-    "route": "/tools/workday-calculator",
-    "isLocal": true,
-    "tags": ["工作日", "考勤", "工期", "排期", "节假日"]
-  },
-  {
-    "id": "lunar-converter",
-    "name": "农历阳历转换",
-    "category": "life",
-    "icon": "Moon",
-    "summary": "公农历互转与黄历查询",
-    "description": "全面的中国传统历法工具。支持公历与农历日期的相互转换，提供每日宜忌、干支纪年、节气、生肖及星座信息，是您查看黄道吉日的好帮手。",
-    "usage": "1. 选择“公历转农历”或“农历转公历”模式\n2. 设定日期\n3. 查看对应的日期信息、宜忌、节气等详情",
-    "route": "/tools/lunar-converter",
-    "isLocal": true,
-    "tags": ["农历", "阴历", "阳历", "公历", "黄历", "宜忌"]
+    "tags": [
+      "生日",
+      "纪念日",
+      "提醒",
+      "年龄",
+      "倒计时",
+      "节日"
+    ],
+    "svgIcon": "BirthdayReminderIcon"
   },
   {
     "id": "calculator",
@@ -141,175 +67,14 @@
     "usage": "1. 可使用键盘或屏幕按钮输入\n2. 点击 \"Sci\" 展开科学计算面板\n3. 支持 M+/MR 等记忆功能\n4. 底部自动记录计算历史",
     "route": "/tools/calculator",
     "isLocal": true,
-    "tags": ["计算器", "科学", "数学", "算术", "工具"]
-  },
-  {
-    "id": "decision-maker",
-    "name": "随机决策/吃什么",
-    "category": "life",
-    "icon": "Refresh",
-    "summary": "自定义转盘，解决你的纠结症",
-    "description": "支持自定义选项转盘，点击随机抽取。适配“中午吃什么”、“真心话大冒险”等多种生活纠结场景。",
-    "usage": "1. 在右侧编辑或选择预设选项\n2. 点击转盘中心的“开始”按钮\n3. 等待转盘停止获取结果",
-    "route": "/tools/decision-maker",
-    "isLocal": true,
-    "tags": ["决策", "随机", "转盘", "吃什么", "纠结"]
-  },
-  {
-    "id": "waste-classifier",
-    "name": "垃圾分类助手",
-    "category": "life",
-    "icon": "Delete",
-    "summary": "聚合全国垃圾分类查询库",
-    "description": "专业的垃圾分类指南。涵盖可回收物、厨余垃圾、有害垃圾和其他垃圾的详细分类要求，支持快速搜索查询。",
-    "usage": "1. 输入垃圾名称检索分类\n2. 查看不同类别的投放要求与示例",
-    "route": "/tools/waste-classifier",
-    "isLocal": true,
-    "tags": ["垃圾分类", "环保", "搜索", "指南"]
-  },
-  {
-    "id": "holiday-schedule",
-    "name": "调休放假安排表",
-    "category": "life",
-    "icon": "Calendar",
-    "summary": "可视化展示当年调休补班表",
-    "description": "直观查看“哪天休、哪天补”。基于国务院发布的官方放假安排，提供倒计时与详细的调休建议。",
-    "usage": "1. 切换年份查看放假表\n2. 查看红色标记的放假时间与黑色标记的补班时间",
-    "route": "/tools/holiday",
-    "isLocal": true,
-    "tags": ["放假", "调休", "日历", "假期", "补班"]
-  },
-  {
-    "id": "public-services",
-    "name": "常用公共服务合集",
-    "category": "life",
-    "icon": "Service",
-    "summary": "政务、交通、物流一站式链接",
-    "description": "精选高频使用的公共服务入口。包括违章查询、社保查询、公积金、快递单号聚合等，一键跳转官方平台。",
-    "usage": "1. 通过分类或搜索找到所需服务\n2. 点击卡片直接跳转至官方相关网站",
-    "route": "/tools/public-services",
-    "isLocal": true,
-    "tags": ["政务", "社保", "违章", "快递", "快捷导航"]
-  },
-  {
-    "id": "volume-weight",
-    "name": "快递体积重计算",
-    "category": "life",
-    "icon": "Box",
-    "summary": "体积重量与计费重量计算",
-    "description": "快速就算快递包裹的体积重量。支持自定义抛比系数（6000/5000/8000），自动对比实际重量，判断计费重量与是否为抛货，寄件发货必备。",
-    "usage": "1. 输入包裹长、宽、高 (cm)\n2. 输入实际重量 (kg)\n3. 选择抛比系数（默认 6000）\n4. 查看体积重与计费重量",
-    "route": "/tools/volume-weight",
-    "isLocal": true,
-    "tags": ["快递", "体积重", "抛货", "物流", "计费"]
-  },
-  {
-    "id": "weather-guide",
-    "name": "天气生活指南",
-    "category": "life",
-    "icon": "Sunny",
-    "summary": "天气查询与生活指数建议",
-    "description": "查询全球城市天气，并生成穿衣、出行、运动等生活指南关键词。数据支持由 Open-Meteo 提供。",
-    "usage": "1. 输入城市名称（支持中文城市名，如\"Beijing\"或\"北京\"）\n2. 点击查询\n3. 查看实时天气及生活建议",
-    "route": "/tools/weather-guide",
-    "isLocal": false,
-    "tags": ["天气", "生活", "穿衣", "运动", "查询", "API"]
-  },
-  {
-    "id": "plug-standard",
-    "name": "各国插座查询",
-    "category": "life",
-    "icon": "Place",
-    "summary": "出国旅行插座与电压查询",
-    "description": "查询全球主要国家和地区的电源插座类型、电压标准及频率。提供可视化插座图鉴，帮助您准备旅行转换插头。",
-    "usage": "1. 搜索国家名称（如\"日本\"、\"英国\"）\n2. 查看该国的电压、频率及插座类型\n3. 对照图鉴确认转换头",
-    "route": "/tools/plug-standard",
-    "isLocal": true,
-    "tags": ["旅行", "插座", "电压", "出国", "转换头"]
-  },
-  {
-    "id": "schedule",
-    "name": "课程表管理",
-    "category": "life",
-    "icon": "Calendar",
-    "summary": "支持自动识别的个人课程表",
-    "description": "一款专为大学生设计的个人课程表工具。支持手动添加、文本识别导入、JSON数据迁移以及自动周次计算功能，跨端体验友好。",
-    "usage": "1. 设置开学日期 2. 手动添加或粘贴文案解析课程 3. 自动同步当前周次课程显示",
-    "route": "/tools/schedule",
-    "isLocal": true,
-    "tags": ["课程表", "学习", "计划", "大学生", "日程"]
-  },
-  {
-    "id": "timer-tool",
-    "name": "高级计时系统",
-    "category": "life",
-    "icon": "Timer",
-    "summary": "多功能倒计时与正计时工具",
-    "description": "集成了倒计时、正计时（秒表）、目标时间倒计时功能。支持快速预设、自定义时间、计次记录、声音提醒及浏览器通知。",
-    "usage": "1. 选择倒计时或正计时模式\n2. 点击预设或自定义时间开始\n3. 正计时支持计次功能",
-    "route": "/tools/timer",
-    "isLocal": true,
-    "tags": ["计时器", "倒计时", "秒表", "时间管理", "提醒"]
-  },
-  {
-    "id": "soup-timer",
-    "name": "煲汤时长计算器",
-    "category": "life",
-    "icon": "Timer",
-    "summary": "食材类型与烹饪时长推荐",
-    "description": "按肉类、骨类、菌菇、素菜等分类，提供最佳煲汤烹饪时长建议与小贴士，助您煲出营养美味好汤。",
-    "usage": "1. 选择食材类别（如“肉类”、“菌菇”）\n2. 查看对应食材的最佳煲煮时间\n3. 参考下方的烹饪小贴士",
-    "route": "/tools/soup-timer",
-    "isLocal": true,
-    "tags": ["煲汤", "烹饪", "时长", "厨房", "美食"]
-  },
-  {
-    "id": "timezone-planner",
-    "name": "世界时区会议规划",
-    "category": "life",
-    "icon": "Clock",
-    "summary": "多城时区对比与会议时间规划",
-    "description": "一目了然对比全球多个城市的本地时间，智能推荐最适合开启跨国会议的“绿色”时间段，避免在深夜打扰同事。",
-    "usage": "1. 添加需要对比的城市\n2. 拖动时间滑块同步查看各城时间\n3. 查看智能推荐的最佳会议时段",
-    "route": "/tools/timezone-planner",
-    "isLocal": true,
-    "tags": ["时区", "世界时间", "会议", "规划", "跨国"]
-  },
-  {
-    "id": "age-calculator",
-    "name": "精确年龄计算器",
-    "category": "life",
-    "icon": "User",
-    "summary": "精确到秒的周岁、虚岁与时间长度",
-    "description": "不仅能算出您的周岁和虚岁，还能精确展示您已经在地球上生活了多少年、月、日、小时甚至秒，并推算下一个生日的倒计时。",
-    "usage": "1. 输入您的出生日期和具体时间\n2. 查看多维度的年龄统计结果\n3. 了解您的生肖、星座及生日统计数据",
-    "route": "/tools/age-calculator",
-    "isLocal": true,
-    "tags": ["年龄", "生日", "时间计算", "周岁", "虚岁"]
-  },
-  {
-    "id": "fuel-cost",
-    "name": "燃油费用计算器",
-    "category": "life",
-    "icon": "Van",
-    "summary": "自驾出行油费估算与成本分析",
-    "description": "根据单价、油耗量和行驶路程，快速计算自驾出行的燃油成本。支持多线路成本对比，帮助您更好地规划出行预算。",
-    "usage": "1. 输入油价、平均油耗及拟行驶里程\n2. 实时获取预计总油费和每公里成本\n3. 支持分摊人头计算每人成本",
-    "route": "/tools/fuel-cost",
-    "isLocal": true,
-    "tags": ["油费", "自驾", "出行", "成本", "计算器"]
-  },
-  {
-    "id": "tip-splitter",
-    "name": "小费/分账计算器",
-    "category": "life",
-    "icon": "Money",
-    "summary": "聚餐买单、小费与分账快速计算",
-    "description": "快速计算餐后小费及多人分账报销。支持自定义小费比例，支持平均分摊或指定人数，让买单过程简单透明。",
-    "usage": "1. 输入账单总金额\n2. 选择或自定义小费百分比\n3. 输入用餐人数\n4. 查看总计及每人应付金额",
-    "route": "/tools/tip-splitter",
-    "isLocal": true,
-    "tags": ["分账", "小费", "聚餐", "账单", "买单"]
+    "tags": [
+      "计算器",
+      "科学",
+      "数学",
+      "算术",
+      "工具"
+    ],
+    "svgIcon": "CalculatorIcon"
   },
   {
     "id": "car-loan",
@@ -321,7 +86,168 @@
     "usage": "1. 输入车辆总价、首比例及贷款利率\n2. 选择分期年限与还款方式\n3. 查看详细的月供金额及利息总支出",
     "route": "/tools/car-loan",
     "isLocal": true,
-    "tags": ["车贷", "贷款", "购车", "金融", "还款计划"]
+    "tags": [
+      "车贷",
+      "贷款",
+      "购车",
+      "金融",
+      "还款计划"
+    ],
+    "svgIcon": "CarLoanIcon"
+  },
+  {
+    "id": "clothing-size",
+    "name": "服装尺码助手",
+    "category": "life",
+    "icon": "Trophy",
+    "summary": "国标/欧美/日韩服装鞋码对照",
+    "description": "专业的服装鞋帽尺码转换工具，涵盖男装、女装、童装及鞋码。支持中国国标、欧美、日韩等国际标准互转，助您海淘购物无忧。",
+    "usage": "1. 选择类别（男/女/童/鞋）\n2. 选择您当前的标准和已知尺码\n3. 即时查看对应国家/地区的标准尺码\n4. 下方提供完整对照表供参考",
+    "route": "/tools/clothing-size",
+    "isLocal": true,
+    "tags": [
+      "尺码",
+      "服装",
+      "鞋码",
+      "海淘",
+      "购物",
+      "换算"
+    ],
+    "svgIcon": "ClothingSizeIcon"
+  },
+  {
+    "id": "currency-converter",
+    "name": "汇率换算",
+    "category": "life",
+    "icon": "Money",
+    "summary": "多国货币实时汇率换算与趋势查询",
+    "description": "支持全球主流货币的实时汇率换算，提供最近30天汇率走势图，支持快捷货币对切换和结果分享，适合海淘、旅行和跨境结算场景。",
+    "usage": "1. 选择源货币和目标货币\n2. 输入金额，自动计算结果\n3. 点击互换按钮可反向计算\n4. 查看下方趋势图了解近期走势",
+    "route": "/tools/currency-converter",
+    "isLocal": true,
+    "tags": [
+      "汇率",
+      "货币",
+      "换算",
+      "金融",
+      "旅行"
+    ],
+    "svgIcon": "CurrencyConverterIcon"
+  },
+  {
+    "id": "date-calculator",
+    "name": "日期差计算器",
+    "category": "life",
+    "icon": "Calendar",
+    "summary": "日期间隔计算与推算",
+    "description": "专业的日期时间计算工具。支持计算两个日期之间的天数、月数、周数；也支持根据基准日期向前或向后推算新的日期。适用倒计时、工龄计算、纪念日查询。",
+    "usage": "1. 间隔计算：选择开始与结束日期，查看详细时间差\n2. 日期推算：选择基准日期，输入增减天数，获取新日期",
+    "route": "/tools/date-calculator",
+    "isLocal": true,
+    "tags": [
+      "日期",
+      "计算器",
+      "时间",
+      "间隔",
+      "倒计时"
+    ],
+    "svgIcon": "DateCalculatorIcon"
+  },
+  {
+    "id": "decision-maker",
+    "name": "随机决策/吃什么",
+    "category": "life",
+    "icon": "Refresh",
+    "summary": "自定义转盘，解决你的纠结症",
+    "description": "支持自定义选项转盘，点击随机抽取。适配“中午吃什么”、“真心话大冒险”等多种生活纠结场景。",
+    "usage": "1. 在右侧编辑或选择预设选项\n2. 点击转盘中心的“开始”按钮\n3. 等待转盘停止获取结果",
+    "route": "/tools/decision-maker",
+    "isLocal": true,
+    "tags": [
+      "决策",
+      "随机",
+      "转盘",
+      "吃什么",
+      "纠结"
+    ],
+    "svgIcon": "DecisionMakerIcon"
+  },
+  {
+    "id": "family-relation",
+    "name": "亲戚称呼计算器",
+    "category": "life",
+    "icon": "User",
+    "summary": "过年不尬聊，一键推算亲戚称呼",
+    "description": "通过逐步点击关系按钮（父、母、兄、弟等），自动推算出对应的亲戚称谓。覆盖直系、旁系、姻亲、曾祖辈等主流亲属关系链条，让复杂的家庭关系一目了然。",
+    "usage": "1. 选择自己的性别\n2. 按照关系链依次点击（如 父→兄→妻）\n3. 屏幕显示推算结果（如 伯母）\n4. 点击「退」撤销或「C」清空",
+    "route": "/tools/family-relation",
+    "isLocal": true,
+    "tags": [
+      "亲戚",
+      "称呼",
+      "家庭",
+      "过年",
+      "称谓",
+      "计算器"
+    ],
+    "svgIcon": "FamilyRelationIcon"
+  },
+  {
+    "id": "first-aid-manual",
+    "name": "家庭急救手册",
+    "category": "life",
+    "icon": "FirstAidKit",
+    "summary": "常见急救措施极简指南",
+    "description": "提供气管异物、烫伤、扭伤、心脏骤停等常见突发状况的急救指引。图文并茂，步骤清晰，关键时刻的救命助手。",
+    "usage": "1. 在首页快速搜索或选择急救场景\n2. 按照步骤图示进行处理\n3. 注意：仅供参考，紧急情况请务必拨打急救电话",
+    "route": "/tools/first-aid-manual",
+    "isLocal": true,
+    "tags": [
+      "急救",
+      "健康",
+      "安全",
+      "指南",
+      "手册"
+    ],
+    "svgIcon": "FirstAidManualIcon"
+  },
+  {
+    "id": "fuel-cost",
+    "name": "燃油费用计算器",
+    "category": "life",
+    "icon": "Van",
+    "summary": "自驾出行油费估算与成本分析",
+    "description": "根据单价、油耗量和行驶路程，快速计算自驾出行的燃油成本。支持多线路成本对比，帮助您更好地规划出行预算。",
+    "usage": "1. 输入油价、平均油耗及拟行驶里程\n2. 实时获取预计总油费和每公里成本\n3. 支持分摊人头计算每人成本",
+    "route": "/tools/fuel-cost",
+    "isLocal": true,
+    "tags": [
+      "油费",
+      "自驾",
+      "出行",
+      "成本",
+      "计算器"
+    ],
+    "svgIcon": "FuelCostIcon"
+  },
+  {
+    "id": "holiday-schedule",
+    "name": "调休放假安排表",
+    "category": "life",
+    "icon": "Calendar",
+    "summary": "可视化展示当年调休补班表",
+    "description": "直观查看“哪天休、哪天补”。基于国务院发布的官方放假安排，提供倒计时与详细的调休建议。",
+    "usage": "1. 切换年份查看放假表\n2. 查看红色标记的放假时间与黑色标记的补班时间",
+    "route": "/tools/holiday",
+    "isLocal": true,
+    "tags": [
+      "放假",
+      "调休",
+      "日历",
+      "假期",
+      "补班"
+    ],
+    "svgIcon": "HolidayScheduleIcon"
   },
   {
     "id": "instrument-tuner",
@@ -333,18 +259,299 @@
     "usage": "1. 允许浏览器使用麦克风权限\n2. 拨动琴弦或发声\n3. 根据界面指示（偏高或偏低）调整音高",
     "route": "/tools/instrument-tuner",
     "isLocal": true,
-    "tags": ["调音器", "乐器", "音乐", "吉他", "频率检测"]
+    "tags": [
+      "调音器",
+      "乐器",
+      "音乐",
+      "吉他",
+      "频率检测"
+    ],
+    "svgIcon": "InstrumentTunerIcon"
   },
   {
-    "id": "family-relation",
-    "name": "亲戚称呼计算器",
+    "id": "lunar-converter",
+    "name": "农历阳历转换",
     "category": "life",
-    "icon": "User",
-    "summary": "过年不尬聊，一键推算亲戚称呼",
-    "description": "通过逐步点击关系按钮（父、母、兄、弟等），自动推算出对应的亲戚称谓。覆盖直系、旁系、姻亲、曾祖辈等主流亲属关系链条，让复杂的家庭关系一目了然。",
-    "usage": "1. 选择自己的性别\n2. 按照关系链依次点击（如 父→兄→妻）\n3. 屏幕显示推算结果（如 伯母）\n4. 点击「退」撤销或「C」清空",
-    "route": "/tools/family-relation",
+    "icon": "Moon",
+    "summary": "公农历互转与黄历查询",
+    "description": "全面的中国传统历法工具。支持公历与农历日期的相互转换，提供每日宜忌、干支纪年、节气、生肖及星座信息，是您查看黄道吉日的好帮手。",
+    "usage": "1. 选择“公历转农历”或“农历转公历”模式\n2. 设定日期\n3. 查看对应的日期信息、宜忌、节气等详情",
+    "route": "/tools/lunar-converter",
     "isLocal": true,
-    "tags": ["亲戚", "称呼", "家庭", "过年", "称谓", "计算器"]
+    "tags": [
+      "农历",
+      "阴历",
+      "阳历",
+      "公历",
+      "黄历",
+      "宜忌"
+    ],
+    "svgIcon": "LunarConverterIcon"
+  },
+  {
+    "id": "plug-standard",
+    "name": "各国插座查询",
+    "category": "life",
+    "icon": "Place",
+    "summary": "出国旅行插座与电压查询",
+    "description": "查询全球主要国家和地区的电源插座类型、电压标准及频率。提供可视化插座图鉴，帮助您准备旅行转换插头。",
+    "usage": "1. 搜索国家名称（如\"日本\"、\"英国\"）\n2. 查看该国的电压、频率及插座类型\n3. 对照图鉴确认转换头",
+    "route": "/tools/plug-standard",
+    "isLocal": true,
+    "tags": [
+      "旅行",
+      "插座",
+      "电压",
+      "出国",
+      "转换头"
+    ],
+    "svgIcon": "PlugStandardIcon"
+  },
+  {
+    "id": "public-services",
+    "name": "常用公共服务合集",
+    "category": "life",
+    "icon": "Service",
+    "summary": "政务、交通、物流一站式链接",
+    "description": "精选高频使用的公共服务入口。包括违章查询、社保查询、公积金、快递单号聚合等，一键跳转官方平台。",
+    "usage": "1. 通过分类或搜索找到所需服务\n2. 点击卡片直接跳转至官方相关网站",
+    "route": "/tools/public-services",
+    "isLocal": true,
+    "tags": [
+      "政务",
+      "社保",
+      "违章",
+      "快递",
+      "快捷导航"
+    ],
+    "svgIcon": "PublicServicesIcon"
+  },
+  {
+    "id": "schedule",
+    "name": "课程表管理",
+    "category": "life",
+    "icon": "Calendar",
+    "summary": "支持自动识别的个人课程表",
+    "description": "一款专为大学生设计的个人课程表工具。支持手动添加、文本识别导入、JSON数据迁移以及自动周次计算功能，跨端体验友好。",
+    "usage": "1. 设置开学日期 2. 手动添加或粘贴文案解析课程 3. 自动同步当前周次课程显示",
+    "route": "/tools/schedule",
+    "isLocal": true,
+    "tags": [
+      "课程表",
+      "学习",
+      "计划",
+      "大学生",
+      "日程"
+    ],
+    "svgIcon": "ScheduleIcon"
+  },
+  {
+    "id": "soup-timer",
+    "name": "煲汤时长计算器",
+    "category": "life",
+    "icon": "Timer",
+    "summary": "食材类型与烹饪时长推荐",
+    "description": "按肉类、骨类、菌菇、素菜等分类，提供最佳煲汤烹饪时长建议与小贴士，助您煲出营养美味好汤。",
+    "usage": "1. 选择食材类别（如“肉类”、“菌菇”）\n2. 查看对应食材的最佳煲煮时间\n3. 参考下方的烹饪小贴士",
+    "route": "/tools/soup-timer",
+    "isLocal": true,
+    "tags": [
+      "煲汤",
+      "烹饪",
+      "时长",
+      "厨房",
+      "美食"
+    ],
+    "svgIcon": "SoupTimerIcon"
+  },
+  {
+    "id": "timer-tool",
+    "name": "高级计时系统",
+    "category": "life",
+    "icon": "Timer",
+    "summary": "多功能倒计时与正计时工具",
+    "description": "集成了倒计时、正计时（秒表）、目标时间倒计时功能。支持快速预设、自定义时间、计次记录、声音提醒及浏览器通知。",
+    "usage": "1. 选择倒计时或正计时模式\n2. 点击预设或自定义时间开始\n3. 正计时支持计次功能",
+    "route": "/tools/timer",
+    "isLocal": true,
+    "tags": [
+      "计时器",
+      "倒计时",
+      "秒表",
+      "时间管理",
+      "提醒"
+    ],
+    "svgIcon": "TimerToolIcon"
+  },
+  {
+    "id": "timezone-planner",
+    "name": "世界时区会议规划",
+    "category": "life",
+    "icon": "Clock",
+    "summary": "多城时区对比与会议时间规划",
+    "description": "一目了然对比全球多个城市的本地时间，智能推荐最适合开启跨国会议的“绿色”时间段，避免在深夜打扰同事。",
+    "usage": "1. 添加需要对比的城市\n2. 拖动时间滑块同步查看各城时间\n3. 查看智能推荐的最佳会议时段",
+    "route": "/tools/timezone-planner",
+    "isLocal": true,
+    "tags": [
+      "时区",
+      "世界时间",
+      "会议",
+      "规划",
+      "跨国"
+    ],
+    "svgIcon": "TimezonePlannerIcon"
+  },
+  {
+    "id": "tip-splitter",
+    "name": "小费/分账计算器",
+    "category": "life",
+    "icon": "Money",
+    "summary": "聚餐买单、小费与分账快速计算",
+    "description": "快速计算餐后小费及多人分账报销。支持自定义小费比例，支持平均分摊或指定人数，让买单过程简单透明。",
+    "usage": "1. 输入账单总金额\n2. 选择或自定义小费百分比\n3. 输入用餐人数\n4. 查看总计及每人应付金额",
+    "route": "/tools/tip-splitter",
+    "isLocal": true,
+    "tags": [
+      "分账",
+      "小费",
+      "聚餐",
+      "账单",
+      "买单"
+    ],
+    "svgIcon": "TipSplitterIcon"
+  },
+  {
+    "id": "travel-checklist",
+    "name": "旅行打包清单",
+    "category": "life",
+    "icon": "Suitcase",
+    "summary": "不同目的地的行李核对单",
+    "description": "提供海边、登山、出国、商务等不同场景的打包清单模板。支持自定义添加物品，进度实时保存，确保出行无遗漏。",
+    "usage": "1. 选择旅行场景（海边/登山/出国等）\n2. 浏览预设清单，勾选已打包物品\n3. 可手动添加个性化物品\n4. 一键重置或复制清单",
+    "route": "/tools/travel-checklist",
+    "isLocal": true,
+    "tags": [
+      "旅行",
+      "清单",
+      "打包",
+      "出行",
+      "整理"
+    ],
+    "svgIcon": "TravelChecklistIcon"
+  },
+  {
+    "id": "unit-converter",
+    "name": "单位转换器",
+    "category": "life",
+    "icon": "DataAnalysis",
+    "summary": "支持12种单位类型的在线换算工具",
+    "description": "支持长度、重量、温度、面积、体积、时间、速度、数据、压强、能量、功率、角度等单位互转，包含中国传统单位。",
+    "usage": "1. 选择单位类别\n2. 输入数值和源单位\n3. 选择目标单位查看结果",
+    "route": "/tools/unit-converter",
+    "isLocal": true,
+    "tags": [
+      "单位",
+      "转换",
+      "换算",
+      "长度",
+      "重量"
+    ],
+    "svgIcon": "UnitConverterIcon"
+  },
+  {
+    "id": "volume-weight",
+    "name": "快递体积重计算",
+    "category": "life",
+    "icon": "Box",
+    "summary": "体积重量与计费重量计算",
+    "description": "快速就算快递包裹的体积重量。支持自定义抛比系数（6000/5000/8000），自动对比实际重量，判断计费重量与是否为抛货，寄件发货必备。",
+    "usage": "1. 输入包裹长、宽、高 (cm)\n2. 输入实际重量 (kg)\n3. 选择抛比系数（默认 6000）\n4. 查看体积重与计费重量",
+    "route": "/tools/volume-weight",
+    "isLocal": true,
+    "tags": [
+      "快递",
+      "体积重",
+      "抛货",
+      "物流",
+      "计费"
+    ],
+    "svgIcon": "VolumeWeightIcon"
+  },
+  {
+    "id": "waste-classifier",
+    "name": "垃圾分类助手",
+    "category": "life",
+    "icon": "Delete",
+    "summary": "聚合全国垃圾分类查询库",
+    "description": "专业的垃圾分类指南。涵盖可回收物、厨余垃圾、有害垃圾和其他垃圾的详细分类要求，支持快速搜索查询。",
+    "usage": "1. 输入垃圾名称检索分类\n2. 查看不同类别的投放要求与示例",
+    "route": "/tools/waste-classifier",
+    "isLocal": true,
+    "tags": [
+      "垃圾分类",
+      "环保",
+      "搜索",
+      "指南"
+    ],
+    "svgIcon": "WasteClassifierIcon"
+  },
+  {
+    "id": "weather-guide",
+    "name": "天气生活指南",
+    "category": "life",
+    "icon": "Sunny",
+    "summary": "天气查询与生活指数建议",
+    "description": "查询全球城市天气，并生成穿衣、出行、运动等生活指南关键词。数据支持由 Open-Meteo 提供。",
+    "usage": "1. 输入城市名称（支持中文城市名，如\"Beijing\"或\"北京\"）\n2. 点击查询\n3. 查看实时天气及生活建议",
+    "route": "/tools/weather-guide",
+    "isLocal": false,
+    "tags": [
+      "天气",
+      "生活",
+      "穿衣",
+      "运动",
+      "查询",
+      "API"
+    ],
+    "svgIcon": "WeatherGuideIcon"
+  },
+  {
+    "id": "workday-calculator",
+    "name": "工作日计算器",
+    "category": "life",
+    "icon": "Suitcase",
+    "summary": "精准计算工期与考勤天数",
+    "description": "自动剔除周末，支持自定义节假日和补班日期。输入起止时间，即可快速计算实际工作天数。适用于项目管理、HR考勤统计及工程排期。",
+    "usage": "1. 设置起止日期\n2. 默认勾选“剔除周末”\n3. 在右侧管理特殊的节假日（如春节）和补班日\n4. 即时获取精确工作日天数",
+    "route": "/tools/workday-calculator",
+    "isLocal": true,
+    "tags": [
+      "工作日",
+      "考勤",
+      "工期",
+      "排期",
+      "节假日"
+    ],
+    "svgIcon": "WorkdayCalculatorIcon"
+  },
+  {
+    "id": "zip-code-search",
+    "name": "邮编区号查询",
+    "category": "life",
+    "icon": "MapLocation",
+    "summary": "行政区划、邮编及区号检索",
+    "description": "支持按省市区级联查询全国各地的邮政编码和固定电话区号，也支持通过邮编或区号反查对应地区。",
+    "usage": "1. 输入城市名、邮编或区号进行搜索\n2. 或使用省市区级联选择器查找\n3. 复制查询结果",
+    "route": "/tools/zip-code-search",
+    "isLocal": true,
+    "tags": [
+      "邮编",
+      "区号",
+      "查询",
+      "地址",
+      "行政区划"
+    ],
+    "svgIcon": "ZipCodeSearchIcon"
   }
 ]

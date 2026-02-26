@@ -1,75 +1,22 @@
 [
   {
-    "id": "text-template",
-    "name": "文本模板引擎",
+    "id": "ascii-table",
+    "name": "ASCII 码对照表",
     "category": "text",
-    "icon": "DocumentCopy",
-    "summary": "简易邮件合并/批量生成工具",
-    "description": "通过 Mustache 风格占位符 ({{var}}) 和 JSON/CSV 数据源，批量生成结构化文本。支持实时变量提取与自定义分隔符拼接。",
-    "usage": "1. 编写模板 ({{var}})\n2. 粘贴 JSON/CSV 数据\n3. 生成并复制结果",
-    "route": "/tools/text-template",
+    "icon": "Collection",
+    "summary": "完整的 ASCII/扩展 ASCII 对照参考",
+    "description": "提供完整的 0-255 ASCII 字符对照表。支持二进制、八进制、十六进制、十进制与 HTML 实体编码的快速检索查询。",
+    "usage": "1. 在表格中查找目标字符\n2. 通过搜索框快速滤定位\n3. 点击编码一键复制",
+    "route": "/tools/ascii-table",
     "isLocal": true,
-    "tags": ["模板", "批量", "生成", "MailMerge", "CSV"]
-  },
-  {
-    "id": "text-cleaner",
-    "name": "文本清洗",
-    "category": "text",
-    "icon": "MagicStick",
-    "summary": "一站式文本格式化与清洗工具",
-    "description": "提供去重、去空行、去空格、排序、大小写转换、全半角转换、标点规整等多种文本处理功能，支持批量操作。",
-    "usage": "1. 输入或粘贴文本\n2. 点击中间的功能按钮进行处理\n3. 实时预览结果并一键复制",
-    "route": "/tools/text-cleaner",
-    "isLocal": true,
-    "tags": ["文本", "清洗", "格式化", "去重", "排序"]
-  },
-  {
-    "id": "text-extractor",
-    "name": "文本提取器",
-    "category": "text",
-    "icon": "Filter",
-    "summary": "快速提取邮箱、网址、手机号等信息",
-    "description": "专业的文本信息提取工具，支持一键提取邮箱、URL、手机号、身份证、IP地址等常用信息，同时支持自定义正则表达式提取和关键词行过滤。",
-    "usage": "1. 输入或粘贴源文本\n2. 点击中间的提取按钮或输入正则\n3. 查看并复制提取结果",
-    "route": "/tools/text-extractor",
-    "isLocal": true,
-    "tags": ["文本", "提取", "正则", "筛选", "邮箱"]
-  },
-  {
-    "id": "text-converter",
-    "name": "文本转换器",
-    "category": "text",
-    "icon": "Switch",
-    "summary": "简繁/拼音/金额/进制/编码全能转换",
-    "description": "集简繁转换、拼音标注、数字金额大写、进制转换、URL/Unicode 编码转换于一体的多功能文本处理工具。",
-    "usage": "1. 输入文本\n2. 点击中间的转换按钮\n3. 结果显示在右侧",
-    "route": "/tools/text-converter",
-    "isLocal": true,
-    "tags": ["转换", "繁简", "拼音", "编码", "工具"]
-  },
-  {
-    "id": "text-splitter",
-    "name": "文本拆分与拼接",
-    "category": "text",
-    "icon": "Scissor",
-    "summary": "文本分割/合并/列表格式化",
-    "description": "强大的文本结构化工具，支持按分隔符或长度拆分文本、自定义拼接、CSV 列提取及列表格式转换。",
-    "usage": "1. 选择拆分/拼接/表格模式\n2. 设置分隔符或参数\n3. 点击执行按钮",
-    "route": "/tools/text-splitter",
-    "isLocal": true,
-    "tags": ["拆分", "拼接", "CSV", "列表", "工具"]
-  },
-  {
-    "id": "text-security",
-    "name": "文本加密与脱敏",
-    "category": "text",
-    "icon": "Lock",
-    "summary": "敏感脱敏/简单加密/防复制",
-    "description": "提供敏感信息（手机/身份证）脱敏、凯撒/XOR/摩尔斯加密以及零宽字符文本混淆功能。",
-    "usage": "1. 选择脱敏/加密/混淆模式\n2. 点击预设按钮或输入参数\n3. 获取安全文本",
-    "route": "/tools/text-encryption",
-    "isLocal": true,
-    "tags": ["加密", "脱敏", "混淆", "摩尔斯", "安全"]
+    "tags": [
+      "ASCII",
+      "对照表",
+      "编码",
+      "十六进制",
+      "开发"
+    ],
+    "svgIcon": "AsciiTableIcon"
   },
   {
     "id": "batch-replacer",
@@ -81,175 +28,14 @@
     "usage": "1. 普通替换：查找/替换\n2. 批量：输入 old,new 每行一条\n3. 行处理：添加前后缀或过滤",
     "route": "/tools/batch-replacer",
     "isLocal": true,
-    "tags": ["替换", "正则", "批量", "清洗", "修饰"]
-  },
-  {
-    "id": "text-diff",
-    "name": "文本对比",
-    "category": "text",
-    "icon": "Switch",
-    "summary": "对比两段文本的差异，高亮显示变化",
-    "description": "逐行对比两段文本，以高亮形式展示新增、删除和修改的内容。",
-    "usage": "1. 在左右两侧分别输入文本\n2. 点击对比按钮\n3. 查看差异高亮结果",
-    "route": "/tools/text-diff",
-    "isLocal": true,
-    "tags": ["文本", "对比", "差异"]
-  },
-  {
-    "id": "diff-comparer",
-    "name": "文本差异比较",
-    "category": "text",
-    "icon": "Switch",
-    "summary": "高效的文本差异对比工具",
-    "description": "支持按行/词/字符三种模式比较，提供合并/并排双视图，实时统计差异，支持文件导入导出及差异点自动跳转。",
-    "usage": "1. 输入或上传原始/修改文本\n2. 选择比较模式并点击比较\n3. 查看差异结果（支持自动跳转）",
-    "route": "/tools/diff-comparer",
-    "isLocal": true,
-    "tags": ["文本", "比较", "差异", "Diff"]
-  },
-  {
-    "id": "text-counter",
-    "name": "文本计数器",
-    "category": "text",
-    "icon": "DocumentCopy",
-    "summary": "多功能文本字数统计与分析工具",
-    "description": "支持中英文字数分别统计、行数/段落计算、字符频率分析、常用词统计及阅读时间估算。",
-    "usage": "1. 输入或粘贴文本\n2. 实时查看各项统计指标\n3. 支持导出统计报告",
-    "route": "/tools/text-counter",
-    "isLocal": true,
-    "tags": ["统计", "字数", "分析", "字符"]
-  },
-  {
-    "id": "markdown-preview",
-    "name": "Markdown 预览",
-    "category": "text",
-    "icon": "Reading",
-    "summary": "实时预览 Markdown 文档渲染效果",
-    "description": "支持 GFM 语法的 Markdown 编辑器，实时预览渲染效果。",
-    "usage": "1. 在左侧编写 Markdown\n2. 右侧实时预览效果\n3. 可导出为 HTML",
-    "route": "/tools/markdown",
-    "isLocal": true,
-    "tags": ["Markdown", "预览", "编辑"]
-  },
-  {
-    "id": "floating-note",
-    "name": "悬浮记事本",
-    "category": "text",
-    "icon": "EditPen",
-    "summary": "悬浮窗置顶速记，自动保存",
-    "description": "便捷的快速记事工具。支持打开悬浮窗置顶显示，内容自动保存到本地，随时记录灵感和临时信息。",
-    "usage": "1. 在主界面直接输入内容\n2. 或点击\"打开悬浮窗\"获得置顶小窗口",
-    "route": "/tools/sticky-note",
-    "isLocal": true,
-    "tags": ["记事本", "便签", "悬浮窗", "速记", "笔记"]
-  },
-  {
-    "id": "text-line-break",
-    "name": "文案分行整理",
-    "category": "text",
-    "icon": "Memo",
-    "summary": "长文本自动分行排版",
-    "description": "适配朋友圈、小红书、短视频文案排版。支持智能语义分行、自定义字数截断，一键生成居中诗意排版。",
-    "usage": "1. 粘贴长文本\n2. 调节每行字数与分行模式\n3. 预览并复制结果",
-    "route": "/tools/text-linebreak",
-    "isLocal": true,
-    "tags": ["排版", "文案", "换行", "歌词", "编辑"]
-  },
-  {
-    "id": "tone-converter",
-    "name": "语气句式转换",
-    "category": "text",
-    "icon": "ChatDotRound",
-    "summary": "疑问/委婉/正式语气转换",
-    "description": "将句子转换为疑问句、委婉语气、正式书面语或客服体，辅助文案修改。",
-    "usage": "输入句子，选择目标语气。",
-    "route": "/tools/tone-converter",
-    "isLocal": true,
-    "tags": ["语气", "文案", "沟通", "转换"]
-  },
-  {
-    "id": "keyword-extractor",
-    "name": "标题关键词提取",
-    "category": "text",
-    "icon": "Crop",
-    "summary": "高频核心词提取",
-    "description": "分析长文本，自动提取出现频率最高的核心关键词 (Top 20)，辅助标题拟定或标签生成。",
-    "usage": "粘贴文章，点击提取。",
-    "route": "/tools/keyword-extractor",
-    "isLocal": true,
-    "tags": ["关键词", "提取", "SEO", "摘要"]
-  },
-  {
-    "id": "rhyme-finder",
-    "name": "押韵词查询器",
-    "category": "text",
-    "icon": "Microphone",
-    "summary": "汉字同韵脚词语查询",
-    "description": "输入汉字，查询同韵脚字词，写段子、口号、短句、小诗辅助。支持识别音调与韵母。",
-    "usage": "输入汉字，点击查询即可看到按声调分类的同韵字。",
-    "route": "/tools/rhyme",
-    "isLocal": true,
-    "tags": ["押韵", "文案", "创作", "诗词"]
-  },
-  {
-    "id": "sentence-stats",
-    "name": "句子长度统计器",
-    "category": "text",
-    "icon": "DataAnalysis",
-    "summary": "段落句长分布统计",
-    "description": "统计每句字数、平均句长，优化文案可读性，作文、自媒体文案调整。",
-    "usage": "粘贴段落，系统自动识别标点并生成句长统计报告。",
-    "route": "/tools/sentence-stats",
-    "isLocal": true,
-    "tags": ["文案", "排版", "写作", "统计", "分析"]
-  },
-  {
-    "id": "list-to-table",
-    "name": "列表转表格",
-    "category": "text",
-    "icon": "Grid",
-    "summary": "文本转 HTML/Markdown 表格",
-    "description": "将分行粘贴的文本一键转换为 Markdown 表格或 HTML 表格代码，支持自动识别分隔符。",
-    "usage": "粘贴文本，选择分隔符，转换预览或复制。",
-    "route": "/tools/list-to-table",
-    "isLocal": true,
-    "tags": ["表格", "Markdown", "HTML", "转换", "文档"]
-  },
-  {
-    "id": "lorem-ipsum",
-    "name": "乱数假文生成器",
-    "category": "text",
-    "icon": "Edit",
-    "summary": "生成排版测试专用的填充文本",
-    "description": "提供多种风格（经典拉丁语、中文流行、极客）的占位文本生成。支持按段落、句子或单词数量自定义生成内容。",
-    "usage": "1. 选择文本风格\n2. 设置生成长度\n3. 点击生成并拷贝结果",
-    "route": "/tools/lorem-ipsum",
-    "isLocal": true,
-    "tags": ["Lorem", "占位文本", "排版", "测试", "设计"]
-  },
-  {
-    "id": "slug-generator",
-    "name": "URL Slug 生成器",
-    "category": "text",
-    "icon": "Link",
-    "summary": "将标题快速转换为 URL 友好格式",
-    "description": "将中英文标题转换为标准 URL Slug。支持智能拼音转换、特殊字符过滤及自定义连接符配置。",
-    "usage": "1. 输入原始标题\n2. 实时生成 Slug 路径\n3. 获取格式化后的 URL 片段",
-    "route": "/tools/slug-generator",
-    "isLocal": true,
-    "tags": ["URL", "Slug", "SEO", "转换", "链接"]
-  },
-  {
-    "id": "camel-snake-kebab",
-    "name": "变量命名转换",
-    "category": "text",
-    "icon": "CaretRight",
-    "summary": "代码变量命名格式一键互转",
-    "description": "支持驼峰命名 (camelCase)、蛇形命名 (snake_case)、短横线命名 (kebab-case) 及帕斯卡命名 (PascalCase) 之间的批量互转。",
-    "usage": "1. 输入变量名\n2. 选择目标格式或查看全格式预览\n3. 快速应用到代码中",
-    "route": "/tools/variable-converter",
-    "isLocal": true,
-    "tags": ["代码", "变量名", "驼峰", "格式转换", "开发"]
+    "tags": [
+      "替换",
+      "正则",
+      "批量",
+      "清洗",
+      "修饰"
+    ],
+    "svgIcon": "BatchReplacerIcon"
   },
   {
     "id": "braille-translator",
@@ -261,43 +47,33 @@
     "usage": "1. 输入文字或点击盲文符号\n2. 实时查看双向转换结果\n3. 适合特殊辅助与无障碍设计参考",
     "route": "/tools/braille-translator",
     "isLocal": true,
-    "tags": ["盲文", "Braille", "翻译", "无障碍", "教育"]
+    "tags": [
+      "盲文",
+      "Braille",
+      "翻译",
+      "无障碍",
+      "教育"
+    ],
+    "svgIcon": "BrailleTranslatorIcon"
   },
   {
-    "id": "ascii-table",
-    "name": "ASCII 码对照表",
+    "id": "camel-snake-kebab",
+    "name": "变量命名转换",
     "category": "text",
-    "icon": "Collection",
-    "summary": "完整的 ASCII/扩展 ASCII 对照参考",
-    "description": "提供完整的 0-255 ASCII 字符对照表。支持二进制、八进制、十六进制、十进制与 HTML 实体编码的快速检索查询。",
-    "usage": "1. 在表格中查找目标字符\n2. 通过搜索框快速滤定位\n3. 点击编码一键复制",
-    "route": "/tools/ascii-table",
+    "icon": "CaretRight",
+    "summary": "代码变量命名格式一键互转",
+    "description": "支持驼峰命名 (camelCase)、蛇形命名 (snake_case)、短横线命名 (kebab-case) 及帕斯卡命名 (PascalCase) 之间的批量互转。",
+    "usage": "1. 输入变量名\n2. 选择目标格式或查看全格式预览\n3. 快速应用到代码中",
+    "route": "/tools/variable-converter",
     "isLocal": true,
-    "tags": ["ASCII", "对照表", "编码", "十六进制", "开发"]
-  },
-  {
-    "id": "sensitive-word-check",
-    "name": "敏感词在线检测",
-    "category": "text",
-    "icon": "WarnTriangleFilled",
-    "summary": "违禁词/敏感词预检",
-    "description": "针对各大平台规则的违禁词及敏感词预检，支持自定义敏感词库。",
-    "usage": "1. 输入待检测文本\n2. 系统自动高亮敏感词\n3. 查看检测报告",
-    "route": "/tools/sensitive-word-check",
-    "isLocal": true,
-    "tags": ["敏感词", "违禁词", "检测", "审核"]
-  },
-  {
-    "id": "text-polisher",
-    "name": "文案美化润色助手",
-    "category": "text",
-    "icon": "MagicStick",
-    "summary": "多种风格文本重写建议",
-    "description": "提供商务、幽默、文艺等多种风格的文本重写建议，辅助文案创作。",
-    "usage": "1. 输入原始文案\n2. 选择目标风格\n3. 获取润色后的文案建议",
-    "route": "/tools/text-polisher",
-    "isLocal": true,
-    "tags": ["文案", "润色", "重写", "创作"]
+    "tags": [
+      "代码",
+      "变量名",
+      "驼峰",
+      "格式转换",
+      "开发"
+    ],
+    "svgIcon": "CamelSnakeKebabIcon"
   },
   {
     "id": "copywriting-guide",
@@ -309,7 +85,123 @@
     "usage": "1. 粘贴混乱排版的文本\n2. 一键执行美化\n3. 复制规范文本",
     "route": "/tools/copywriting-guide",
     "isLocal": true,
-    "tags": ["排版", "中英文", "空格", "标点"]
+    "tags": [
+      "排版",
+      "中英文",
+      "空格",
+      "标点"
+    ],
+    "svgIcon": "CopywritingGuideIcon"
+  },
+  {
+    "id": "diff-comparer",
+    "name": "文本差异比较",
+    "category": "text",
+    "icon": "Switch",
+    "summary": "高效的文本差异对比工具",
+    "description": "支持按行/词/字符三种模式比较，提供合并/并排双视图，实时统计差异，支持文件导入导出及差异点自动跳转。",
+    "usage": "1. 输入或上传原始/修改文本\n2. 选择比较模式并点击比较\n3. 查看差异结果（支持自动跳转）",
+    "route": "/tools/diff-comparer",
+    "isLocal": true,
+    "tags": [
+      "文本",
+      "比较",
+      "差异",
+      "Diff"
+    ],
+    "svgIcon": "DiffComparerIcon"
+  },
+  {
+    "id": "floating-note",
+    "name": "悬浮记事本",
+    "category": "text",
+    "icon": "EditPen",
+    "summary": "悬浮窗置顶速记，自动保存",
+    "description": "便捷的快速记事工具。支持打开悬浮窗置顶显示，内容自动保存到本地，随时记录灵感和临时信息。",
+    "usage": "1. 在主界面直接输入内容\n2. 或点击\"打开悬浮窗\"获得置顶小窗口",
+    "route": "/tools/sticky-note",
+    "isLocal": true,
+    "tags": [
+      "记事本",
+      "便签",
+      "悬浮窗",
+      "速记",
+      "笔记"
+    ],
+    "svgIcon": "FloatingNoteIcon"
+  },
+  {
+    "id": "keyword-extractor",
+    "name": "标题关键词提取",
+    "category": "text",
+    "icon": "Crop",
+    "summary": "高频核心词提取",
+    "description": "分析长文本，自动提取出现频率最高的核心关键词 (Top 20)，辅助标题拟定或标签生成。",
+    "usage": "粘贴文章，点击提取。",
+    "route": "/tools/keyword-extractor",
+    "isLocal": true,
+    "tags": [
+      "关键词",
+      "提取",
+      "SEO",
+      "摘要"
+    ],
+    "svgIcon": "KeywordExtractorIcon"
+  },
+  {
+    "id": "list-to-table",
+    "name": "列表转表格",
+    "category": "text",
+    "icon": "Grid",
+    "summary": "文本转 HTML/Markdown 表格",
+    "description": "将分行粘贴的文本一键转换为 Markdown 表格或 HTML 表格代码，支持自动识别分隔符。",
+    "usage": "粘贴文本，选择分隔符，转换预览或复制。",
+    "route": "/tools/list-to-table",
+    "isLocal": true,
+    "tags": [
+      "表格",
+      "Markdown",
+      "HTML",
+      "转换",
+      "文档"
+    ],
+    "svgIcon": "ListToTableIcon"
+  },
+  {
+    "id": "lorem-ipsum",
+    "name": "乱数假文生成器",
+    "category": "text",
+    "icon": "Edit",
+    "summary": "生成排版测试专用的填充文本",
+    "description": "提供多种风格（经典拉丁语、中文流行、极客）的占位文本生成。支持按段落、句子或单词数量自定义生成内容。",
+    "usage": "1. 选择文本风格\n2. 设置生成长度\n3. 点击生成并拷贝结果",
+    "route": "/tools/lorem-ipsum",
+    "isLocal": true,
+    "tags": [
+      "Lorem",
+      "占位文本",
+      "排版",
+      "测试",
+      "设计"
+    ],
+    "svgIcon": "LoremIpsumIcon"
+  },
+  {
+    "id": "markdown-preview",
+    "name": "Markdown 预览",
+    "category": "text",
+    "icon": "Reading",
+    "summary": "实时预览 Markdown 文档渲染效果",
+    "description": "支持 GFM 语法的 Markdown 编辑器，实时预览渲染效果。",
+    "usage": "1. 在左侧编写 Markdown\n2. 右侧实时预览效果\n3. 可导出为 HTML",
+    "route": "/tools/markdown",
+    "isLocal": true,
+    "tags": [
+      "Markdown",
+      "预览",
+      "编辑"
+    ],
+    "svgIcon": "MarkdownPreviewIcon"
   },
   {
     "id": "md-table-converter",
@@ -321,6 +213,290 @@
     "usage": "1. 输入 Markdown 表格\n2. 实时预览 HTML 效果\n3. 复制 HTML 代码",
     "route": "/tools/md-table-converter",
     "isLocal": true,
-    "tags": ["Markdown", "表格", "HTML", "转换"]
+    "tags": [
+      "Markdown",
+      "表格",
+      "HTML",
+      "转换"
+    ],
+    "svgIcon": "MdTableConverterIcon"
+  },
+  {
+    "id": "rhyme-finder",
+    "name": "押韵词查询器",
+    "category": "text",
+    "icon": "Microphone",
+    "summary": "汉字同韵脚词语查询",
+    "description": "输入汉字，查询同韵脚字词，写段子、口号、短句、小诗辅助。支持识别音调与韵母。",
+    "usage": "输入汉字，点击查询即可看到按声调分类的同韵字。",
+    "route": "/tools/rhyme",
+    "isLocal": true,
+    "tags": [
+      "押韵",
+      "文案",
+      "创作",
+      "诗词"
+    ],
+    "svgIcon": "RhymeFinderIcon"
+  },
+  {
+    "id": "sensitive-word-check",
+    "name": "敏感词在线检测",
+    "category": "text",
+    "icon": "WarnTriangleFilled",
+    "summary": "违禁词/敏感词预检",
+    "description": "针对各大平台规则的违禁词及敏感词预检，支持自定义敏感词库。",
+    "usage": "1. 输入待检测文本\n2. 系统自动高亮敏感词\n3. 查看检测报告",
+    "route": "/tools/sensitive-word-check",
+    "isLocal": true,
+    "tags": [
+      "敏感词",
+      "违禁词",
+      "检测",
+      "审核"
+    ],
+    "svgIcon": "SensitiveWordCheckIcon"
+  },
+  {
+    "id": "sentence-stats",
+    "name": "句子长度统计器",
+    "category": "text",
+    "icon": "DataAnalysis",
+    "summary": "段落句长分布统计",
+    "description": "统计每句字数、平均句长，优化文案可读性，作文、自媒体文案调整。",
+    "usage": "粘贴段落，系统自动识别标点并生成句长统计报告。",
+    "route": "/tools/sentence-stats",
+    "isLocal": true,
+    "tags": [
+      "文案",
+      "排版",
+      "写作",
+      "统计",
+      "分析"
+    ],
+    "svgIcon": "SentenceStatsIcon"
+  },
+  {
+    "id": "slug-generator",
+    "name": "URL Slug 生成器",
+    "category": "text",
+    "icon": "Link",
+    "summary": "将标题快速转换为 URL 友好格式",
+    "description": "将中英文标题转换为标准 URL Slug。支持智能拼音转换、特殊字符过滤及自定义连接符配置。",
+    "usage": "1. 输入原始标题\n2. 实时生成 Slug 路径\n3. 获取格式化后的 URL 片段",
+    "route": "/tools/slug-generator",
+    "isLocal": true,
+    "tags": [
+      "URL",
+      "Slug",
+      "SEO",
+      "转换",
+      "链接"
+    ],
+    "svgIcon": "SlugGeneratorIcon"
+  },
+  {
+    "id": "text-cleaner",
+    "name": "文本清洗",
+    "category": "text",
+    "icon": "MagicStick",
+    "summary": "一站式文本格式化与清洗工具",
+    "description": "提供去重、去空行、去空格、排序、大小写转换、全半角转换、标点规整等多种文本处理功能，支持批量操作。",
+    "usage": "1. 输入或粘贴文本\n2. 点击中间的功能按钮进行处理\n3. 实时预览结果并一键复制",
+    "route": "/tools/text-cleaner",
+    "isLocal": true,
+    "tags": [
+      "文本",
+      "清洗",
+      "格式化",
+      "去重",
+      "排序"
+    ],
+    "svgIcon": "TextCleanerIcon"
+  },
+  {
+    "id": "text-converter",
+    "name": "文本转换器",
+    "category": "text",
+    "icon": "Switch",
+    "summary": "简繁/拼音/金额/进制/编码全能转换",
+    "description": "集简繁转换、拼音标注、数字金额大写、进制转换、URL/Unicode 编码转换于一体的多功能文本处理工具。",
+    "usage": "1. 输入文本\n2. 点击中间的转换按钮\n3. 结果显示在右侧",
+    "route": "/tools/text-converter",
+    "isLocal": true,
+    "tags": [
+      "转换",
+      "繁简",
+      "拼音",
+      "编码",
+      "工具"
+    ],
+    "svgIcon": "TextConverterIcon"
+  },
+  {
+    "id": "text-counter",
+    "name": "文本计数器",
+    "category": "text",
+    "icon": "DocumentCopy",
+    "summary": "多功能文本字数统计与分析工具",
+    "description": "支持中英文字数分别统计、行数/段落计算、字符频率分析、常用词统计及阅读时间估算。",
+    "usage": "1. 输入或粘贴文本\n2. 实时查看各项统计指标\n3. 支持导出统计报告",
+    "route": "/tools/text-counter",
+    "isLocal": true,
+    "tags": [
+      "统计",
+      "字数",
+      "分析",
+      "字符"
+    ],
+    "svgIcon": "TextCounterIcon"
+  },
+  {
+    "id": "text-diff",
+    "name": "文本对比",
+    "category": "text",
+    "icon": "Switch",
+    "summary": "对比两段文本的差异，高亮显示变化",
+    "description": "逐行对比两段文本，以高亮形式展示新增、删除和修改的内容。",
+    "usage": "1. 在左右两侧分别输入文本\n2. 点击对比按钮\n3. 查看差异高亮结果",
+    "route": "/tools/text-diff",
+    "isLocal": true,
+    "tags": [
+      "文本",
+      "对比",
+      "差异"
+    ],
+    "svgIcon": "TextDiffIcon"
+  },
+  {
+    "id": "text-extractor",
+    "name": "文本提取器",
+    "category": "text",
+    "icon": "Filter",
+    "summary": "快速提取邮箱、网址、手机号等信息",
+    "description": "专业的文本信息提取工具，支持一键提取邮箱、URL、手机号、身份证、IP地址等常用信息，同时支持自定义正则表达式提取和关键词行过滤。",
+    "usage": "1. 输入或粘贴源文本\n2. 点击中间的提取按钮或输入正则\n3. 查看并复制提取结果",
+    "route": "/tools/text-extractor",
+    "isLocal": true,
+    "tags": [
+      "文本",
+      "提取",
+      "正则",
+      "筛选",
+      "邮箱"
+    ],
+    "svgIcon": "TextExtractorIcon"
+  },
+  {
+    "id": "text-line-break",
+    "name": "文案分行整理",
+    "category": "text",
+    "icon": "Memo",
+    "summary": "长文本自动分行排版",
+    "description": "适配朋友圈、小红书、短视频文案排版。支持智能语义分行、自定义字数截断，一键生成居中诗意排版。",
+    "usage": "1. 粘贴长文本\n2. 调节每行字数与分行模式\n3. 预览并复制结果",
+    "route": "/tools/text-linebreak",
+    "isLocal": true,
+    "tags": [
+      "排版",
+      "文案",
+      "换行",
+      "歌词",
+      "编辑"
+    ],
+    "svgIcon": "TextLineBreakIcon"
+  },
+  {
+    "id": "text-polisher",
+    "name": "文案美化润色助手",
+    "category": "text",
+    "icon": "MagicStick",
+    "summary": "多种风格文本重写建议",
+    "description": "提供商务、幽默、文艺等多种风格的文本重写建议，辅助文案创作。",
+    "usage": "1. 输入原始文案\n2. 选择目标风格\n3. 获取润色后的文案建议",
+    "route": "/tools/text-polisher",
+    "isLocal": true,
+    "tags": [
+      "文案",
+      "润色",
+      "重写",
+      "创作"
+    ],
+    "svgIcon": "TextPolisherIcon"
+  },
+  {
+    "id": "text-security",
+    "name": "文本加密与脱敏",
+    "category": "text",
+    "icon": "Lock",
+    "summary": "敏感脱敏/简单加密/防复制",
+    "description": "提供敏感信息（手机/身份证）脱敏、凯撒/XOR/摩尔斯加密以及零宽字符文本混淆功能。",
+    "usage": "1. 选择脱敏/加密/混淆模式\n2. 点击预设按钮或输入参数\n3. 获取安全文本",
+    "route": "/tools/text-encryption",
+    "isLocal": true,
+    "tags": [
+      "加密",
+      "脱敏",
+      "混淆",
+      "摩尔斯",
+      "安全"
+    ],
+    "svgIcon": "TextSecurityIcon"
+  },
+  {
+    "id": "text-splitter",
+    "name": "文本拆分与拼接",
+    "category": "text",
+    "icon": "Scissor",
+    "summary": "文本分割/合并/列表格式化",
+    "description": "强大的文本结构化工具，支持按分隔符或长度拆分文本、自定义拼接、CSV 列提取及列表格式转换。",
+    "usage": "1. 选择拆分/拼接/表格模式\n2. 设置分隔符或参数\n3. 点击执行按钮",
+    "route": "/tools/text-splitter",
+    "isLocal": true,
+    "tags": [
+      "拆分",
+      "拼接",
+      "CSV",
+      "列表",
+      "工具"
+    ],
+    "svgIcon": "TextSplitterIcon"
+  },
+  {
+    "id": "text-template",
+    "name": "文本模板引擎",
+    "category": "text",
+    "icon": "DocumentCopy",
+    "summary": "简易邮件合并/批量生成工具",
+    "description": "通过 Mustache 风格占位符 ({{var}}) 和 JSON/CSV 数据源，批量生成结构化文本。支持实时变量提取与自定义分隔符拼接。",
+    "usage": "1. 编写模板 ({{var}})\n2. 粘贴 JSON/CSV 数据\n3. 生成并复制结果",
+    "route": "/tools/text-template",
+    "isLocal": true,
+    "tags": [
+      "模板",
+      "批量",
+      "生成",
+      "MailMerge",
+      "CSV"
+    ],
+    "svgIcon": "TextTemplateIcon"
+  },
+  {
+    "id": "tone-converter",
+    "name": "语气句式转换",
+    "category": "text",
+    "icon": "ChatDotRound",
+    "summary": "疑问/委婉/正式语气转换",
+    "description": "将句子转换为疑问句、委婉语气、正式书面语或客服体，辅助文案修改。",
+    "usage": "输入句子，选择目标语气。",
+    "route": "/tools/tone-converter",
+    "isLocal": true,
+    "tags": [
+      "语气",
+      "文案",
+      "沟通",
+      "转换"
+    ],
+    "svgIcon": "ToneConverterIcon"
   }
 ]

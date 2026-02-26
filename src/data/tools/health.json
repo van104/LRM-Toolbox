@@ -1,149 +1,5 @@
 [
   {
-    "id": "workout-timer",
-    "name": "训练助手",
-    "category": "health",
-    "icon": "Timer",
-    "summary": "训练倒计时与计划管理工具",
-    "description": "提供专业训练倒计时（支持组间休息）、训练计划管理（自定义动作/组数）以及自由通用计时器功能。",
-    "usage": "1. 创建或选择训练计划\n2. 开始训练并跟随倒计时\n3. 也可使用自由计时模式进行通用计时",
-    "route": "/tools/workout-timer",
-    "isLocal": true,
-    "tags": ["健身", "倒计时", "计划", "运动"]
-  },
-  {
-    "id": "bmi-calculator",
-    "name": "BMI 体脂计算",
-    "category": "health",
-    "icon": "User",
-    "summary": "身体质量指数(BMI)计算与健康评估",
-    "description": "输入身高体重，快速计算 BMI 指数，对照中国成人标准判断偏瘦、正常、超重或肥胖，并提供健康体重范围建议。",
-    "usage": "1. 输入身高(cm)和体重(kg)\n2. 自动计算 BMI 值并显示健康等级\n3. 查看对应的健康体重范围建议",
-    "route": "/tools/bmi-calculator",
-    "isLocal": true,
-    "tags": ["BMI", "健康", "体重", "体脂", "计算"]
-  },
-  {
-    "id": "calorie-calculator",
-    "name": "卡路里计算器",
-    "category": "health",
-    "icon": "Bowl",
-    "summary": "热量查询与每日消耗测算",
-    "description": "健身减肥必备。提供常见食物热量查询，支持计算每日热量消耗（TDEE），并给出减脂、维持或增肌的热量摄入建议。",
-    "usage": "1. 计算 TDEE：输入身体数据与活动量，获取每日消耗\n2. 查询热量：输入食物名称，添加至今日清单，统计总摄入",
-    "route": "/tools/calorie-calculator",
-    "isLocal": true,
-    "tags": ["卡路里", "热量", "减肥", "健身", "TDEE", "食物"]
-  },
-  {
-    "id": "water-intake",
-    "name": "饮水记录系统",
-    "category": "health",
-    "icon": "Coffee",
-    "summary": "每日补水计划与实时进度管理",
-    "description": "根据您的体重与活动水平计算建议饮水量，支持实时点击记录喝水进度，提供每日水量阶梯视图，并支持桌面提醒，助您养成健康饮水习惯。",
-    "usage": "1. 点击设置输入基础身体数据\n2. 点击\"饮水\"按钮快速记录\n3. 查看今日进度百分比及喝水历史",
-    "route": "/tools/water-intake",
-    "isLocal": true,
-    "tags": ["饮水", "习惯", "健康", "提醒"]
-  },
-  {
-    "id": "vision-test",
-    "name": "视力自我监测",
-    "category": "health",
-    "icon": "View",
-    "summary": "色盲测试与护眼专注工具",
-    "description": "提供标准的色敏度测试图、散光自测图以及基于 20-20-20 法则的护眼专注计时器（工作20分钟，远眺20秒，看20英尺外），科学保护您的视力。",
-    "usage": "1. 选择测试类型（色盲/散光等）\n2. 按照屏幕提示保持距离进行测试\n3. 开启护眼计时器开始专注工作",
-    "route": "/tools/vision-test",
-    "isLocal": true,
-    "tags": ["视力", "色盲", "护眼", "测试", "健康"]
-  },
-  {
-    "id": "pregnancy-due",
-    "name": "预产期计算器",
-    "category": "health",
-    "icon": "User",
-    "summary": "预产期推算与孕期发育参考",
-    "description": "根据末次月经日期计算预产期；按周提供胎儿发育百科知识、妈妈身体变化参考及重要产检时间提醒。",
-    "usage": "1. 输入末次月经日期\n2. 点击计算获取预产期及当前孕周\n3. 浏览每周发育详情和产检计划",
-    "route": "/tools/pregnancy-due",
-    "isLocal": true,
-    "tags": ["孕期", "预产期", "母婴", "健康", "计算器"]
-  },
-  {
-    "id": "healthy-diet",
-    "name": "健康饮食建议",
-    "category": "health",
-    "icon": "Bowl",
-    "summary": "目标导向的营养配餐建议",
-    "description": "根据您的减脂、增肌或维持体重目标，自动生成每日碳水、蛋白质、脂肪的建议摄入比例及三餐热量分配模型。",
-    "usage": "1. 输入基本身体信息和活动强度\n2. 选择您的目标（减脂/增肌等）\n3. 获取结构化的营养建议和食谱模型",
-    "route": "/tools/healthy-diet",
-    "isLocal": true,
-    "tags": ["饮食", "营养", "减肥", "健身", "食谱", "计算器"]
-  },
-  {
-    "id": "bmr-advanced",
-    "name": "BMR 高阶版计算",
-    "category": "health",
-    "icon": "Histogram",
-    "summary": "多公式多维度的能量代谢评估",
-    "description": "对比 Mifflin-St Jeor 与 Katch-McArdle 等国际权威公式，更精确地评估您的基础代谢率（BMR）与总消耗（TDEE），并分析体脂率对代谢的影响。",
-    "usage": "1. 输入身高、体重、年龄、体脂率（可选）\n2. 查看不同算法得出的多组 BMR 结果\n3. 获取详细的能量缺口建议",
-    "route": "/tools/bmr-calculator",
-    "isLocal": true,
-    "tags": ["BMR", "代谢", "TDEE", "健身", "热量", "计算器"]
-  },
-  {
-    "id": "pomodoro",
-    "name": "番茄钟",
-    "category": "health",
-    "icon": "Timer",
-    "summary": "极简番茄工作法计时器",
-    "description": "助你保持专注的番茄钟工具。默认支持 25 分钟专注 + 5 分钟休息的工作流，提供清新的 UI 和自动统计功能。",
-    "usage": "1. 选择专注模式\n2. 点击开始\n3. 完成后休息",
-    "route": "/tools/pomodoro",
-    "isLocal": true,
-    "tags": ["番茄钟", "专注", "计时", "效率", "工作法"]
-  },
-  {
-    "id": "metronome",
-    "name": "节拍器",
-    "category": "health",
-    "icon": "Headset",
-    "summary": "精准稳定的在线节拍器",
-    "description": "音乐练习必备的节拍器工具。提供精准的 BPM 设置、多种拍号选择和可视化节拍显示，支持重音提示。",
-    "usage": "1. 设定 BPM 和拍号\n2. 点击播放\n3. 跟随节拍练习",
-    "route": "/tools/metronome",
-    "isLocal": true,
-    "tags": ["节拍器", "音乐", "BPM", "节奏", "乐器"]
-  },
-  {
-    "id": "food-gi",
-    "name": "食物升糖指数速查",
-    "category": "health",
-    "icon": "Apple",
-    "summary": "常见食物 GI 值查询与其他饮食参考",
-    "description": "提供常见主食、水果、蔬菜的升糖指数（GI）查询，帮助糖尿病人和控糖人群科学选择食物。",
-    "usage": "1. 输入食物名称进行搜索\n2. 点击筛选查看低/中/高 GI 食物\n3. 查看详细的升糖等级颜色标识",
-    "route": "/tools/food-gi",
-    "isLocal": true,
-    "tags": ["GI", "升糖", "饮食", "健康", "控糖"]
-  },
-  {
-    "id": "food-compatibility",
-    "name": "食材相克简易参考",
-    "category": "health",
-    "icon": "Search",
-    "summary": "食材搭配宜忌快速查询",
-    "description": "输入两种食材，快速查询民间流传的相克说法。科学辟谣，理性参考，助您吃得安心。",
-    "usage": "1. 输入食材 A 和食材 B\n2. 点击查询按钮\n3. 跳转搜索引擎查看相关说法",
-    "route": "/tools/food-compatibility",
-    "isLocal": true,
-    "tags": ["相克", "食材", "饮食", "百科"]
-  },
-  {
     "id": "alcohol-metabolism",
     "name": "酒精代谢时间估算",
     "category": "health",
@@ -153,43 +9,14 @@
     "usage": "1. 输入您的体重和性别\n2. 添加饮酒记录（酒精度与饮用量）\n3. 查看预计代谢时长和 BAC 估算值",
     "route": "/tools/alcohol-metabolism",
     "isLocal": true,
-    "tags": ["酒精", "代驾", "安全", "代谢", "计算"]
-  },
-  {
-    "id": "sleep-cycle",
-    "name": "睡眠周期计算器",
-    "category": "health",
-    "icon": "Moon",
-    "summary": "科学睡眠时间规划",
-    "description": "基于 90 分钟睡眠周期理论，为您推荐最佳入睡或起床时间。避开深度睡眠期被唤醒的痛苦，醒来神清气爽。",
-    "usage": "1. 选择“我要按时起床”或“我现在要睡觉”模式\n2. 设定目标时间\n3. 获取多个推荐的时间点，选择最适合您的作息",
-    "route": "/tools/sleep-cycle",
-    "isLocal": true,
-    "tags": ["睡眠", "周期", "健康", "作息", "起床"]
-  },
-  {
-    "id": "heart-rate",
-    "name": "心率区间计算器",
-    "category": "health",
-    "icon": "Aim",
-    "summary": "运动强度与燃脂心率查询",
-    "description": "通过年龄估算最大心率，划分燃脂、有氧、无氧等 5 个心率区间。帮助您在运动中保持正确强度，科学训练。",
-    "usage": "1. 输入年龄\n2. 查看自动计算的各个心率区间范围\n3. 了解不同区间的训练效果",
-    "route": "/tools/heart-rate",
-    "isLocal": true,
-    "tags": ["心率", "运动", "燃脂", "健身", "健康"]
-  },
-  {
-    "id": "spine-exercises",
-    "name": "脊椎健康指南",
-    "category": "health",
-    "icon": "UserFilled",
-    "summary": "办公族脊椎拉伸指南",
-    "description": "针对久坐办公族设计的脊椎健康运动指南，包含颈椎、胸椎和腰椎的简单拉伸动作，配合动图与文字详解，助你远离职业病。",
-    "usage": "1. 选择需要拉伸的部位（颈/胸/腰）\n2. 跟随动图描述进行动作练习\n3. 定时开启拉伸提醒",
-    "route": "/tools/spine-exercises",
-    "isLocal": true,
-    "tags": ["脊椎", "拉伸", "健康", "办公族", "运动"]
+    "tags": [
+      "酒精",
+      "代驾",
+      "安全",
+      "代谢",
+      "计算"
+    ],
+    "svgIcon": "AlcoholMetabolismIcon"
   },
   {
     "id": "allergen-table",
@@ -201,19 +28,73 @@
     "usage": "1. 输入药物名称或成分进行搜索\n2. 查看相关的过敏风险提示信息\n3. 记录个人敏感药物清单",
     "route": "/tools/allergen-table",
     "isLocal": true,
-    "tags": ["药物", "过敏", "健康", "安全", "速查"]
+    "tags": [
+      "药物",
+      "过敏",
+      "健康",
+      "安全",
+      "速查"
+    ],
+    "svgIcon": "AllergenTableIcon"
   },
   {
-    "id": "stress-test",
-    "name": "情绪压力测试",
+    "id": "bmi-calculator",
+    "name": "BMI 体脂计算",
     "category": "health",
-    "icon": "Watch",
-    "summary": "快速压力评估与情绪缓释",
-    "description": "内置专业的压力知觉量表（PSS-10），通过简单的自评问卷快速评估您的心理压力水平，并提供针对性的自我调节建议。",
-    "usage": "1. 依次回答问卷中的题目\n2. 提交后获取压力评估分数\n3. 查看对应的健康建议和缓释方法",
-    "route": "/tools/stress-test",
+    "icon": "User",
+    "summary": "身体质量指数(BMI)计算与健康评估",
+    "description": "输入身高体重，快速计算 BMI 指数，对照中国成人标准判断偏瘦、正常、超重或肥胖，并提供健康体重范围建议。",
+    "usage": "1. 输入身高(cm)和体重(kg)\n2. 自动计算 BMI 值并显示健康等级\n3. 查看对应的健康体重范围建议",
+    "route": "/tools/bmi-calculator",
     "isLocal": true,
-    "tags": ["心理", "压力", "情绪", "测评", "健康"]
+    "tags": [
+      "BMI",
+      "健康",
+      "体重",
+      "体脂",
+      "计算"
+    ],
+    "svgIcon": "BmiCalculatorIcon"
+  },
+  {
+    "id": "bmr-advanced",
+    "name": "BMR 高阶版计算",
+    "category": "health",
+    "icon": "Histogram",
+    "summary": "多公式多维度的能量代谢评估",
+    "description": "对比 Mifflin-St Jeor 与 Katch-McArdle 等国际权威公式，更精确地评估您的基础代谢率（BMR）与总消耗（TDEE），并分析体脂率对代谢的影响。",
+    "usage": "1. 输入身高、体重、年龄、体脂率（可选）\n2. 查看不同算法得出的多组 BMR 结果\n3. 获取详细的能量缺口建议",
+    "route": "/tools/bmr-calculator",
+    "isLocal": true,
+    "tags": [
+      "BMR",
+      "代谢",
+      "TDEE",
+      "健身",
+      "热量",
+      "计算器"
+    ],
+    "svgIcon": "BmrAdvancedIcon"
+  },
+  {
+    "id": "calorie-calculator",
+    "name": "卡路里计算器",
+    "category": "health",
+    "icon": "Bowl",
+    "summary": "热量查询与每日消耗测算",
+    "description": "健身减肥必备。提供常见食物热量查询，支持计算每日热量消耗（TDEE），并给出减脂、维持或增肌的热量摄入建议。",
+    "usage": "1. 计算 TDEE：输入身体数据与活动量，获取每日消耗\n2. 查询热量：输入食物名称，添加至今日清单，统计总摄入",
+    "route": "/tools/calorie-calculator",
+    "isLocal": true,
+    "tags": [
+      "卡路里",
+      "热量",
+      "减肥",
+      "健身",
+      "TDEE",
+      "食物"
+    ],
+    "svgIcon": "CalorieCalculatorIcon"
   },
   {
     "id": "eye-care-guide",
@@ -225,6 +106,258 @@
     "usage": "1. 允许工具获取当前时间（或手动输入）\n2. 查看系统给出的亮度与色温建议值\n3. 学习科学用眼小知识",
     "route": "/tools/eye-care-guide",
     "isLocal": true,
-    "tags": ["护眼", "色温", "视力", "健康", "小贴士"]
+    "tags": [
+      "护眼",
+      "色温",
+      "视力",
+      "健康",
+      "小贴士"
+    ],
+    "svgIcon": "EyeCareGuideIcon"
+  },
+  {
+    "id": "food-compatibility",
+    "name": "食材相克简易参考",
+    "category": "health",
+    "icon": "Search",
+    "summary": "食材搭配宜忌快速查询",
+    "description": "输入两种食材，快速查询民间流传的相克说法。科学辟谣，理性参考，助您吃得安心。",
+    "usage": "1. 输入食材 A 和食材 B\n2. 点击查询按钮\n3. 跳转搜索引擎查看相关说法",
+    "route": "/tools/food-compatibility",
+    "isLocal": true,
+    "tags": [
+      "相克",
+      "食材",
+      "饮食",
+      "百科"
+    ],
+    "svgIcon": "FoodCompatibilityIcon"
+  },
+  {
+    "id": "food-gi",
+    "name": "食物升糖指数速查",
+    "category": "health",
+    "icon": "Apple",
+    "summary": "常见食物 GI 值查询与其他饮食参考",
+    "description": "提供常见主食、水果、蔬菜的升糖指数（GI）查询，帮助糖尿病人和控糖人群科学选择食物。",
+    "usage": "1. 输入食物名称进行搜索\n2. 点击筛选查看低/中/高 GI 食物\n3. 查看详细的升糖等级颜色标识",
+    "route": "/tools/food-gi",
+    "isLocal": true,
+    "tags": [
+      "GI",
+      "升糖",
+      "饮食",
+      "健康",
+      "控糖"
+    ],
+    "svgIcon": "FoodGiIcon"
+  },
+  {
+    "id": "healthy-diet",
+    "name": "健康饮食建议",
+    "category": "health",
+    "icon": "Bowl",
+    "summary": "目标导向的营养配餐建议",
+    "description": "根据您的减脂、增肌或维持体重目标，自动生成每日碳水、蛋白质、脂肪的建议摄入比例及三餐热量分配模型。",
+    "usage": "1. 输入基本身体信息和活动强度\n2. 选择您的目标（减脂/增肌等）\n3. 获取结构化的营养建议和食谱模型",
+    "route": "/tools/healthy-diet",
+    "isLocal": true,
+    "tags": [
+      "饮食",
+      "营养",
+      "减肥",
+      "健身",
+      "食谱",
+      "计算器"
+    ],
+    "svgIcon": "HealthyDietIcon"
+  },
+  {
+    "id": "heart-rate",
+    "name": "心率区间计算器",
+    "category": "health",
+    "icon": "Aim",
+    "summary": "运动强度与燃脂心率查询",
+    "description": "通过年龄估算最大心率，划分燃脂、有氧、无氧等 5 个心率区间。帮助您在运动中保持正确强度，科学训练。",
+    "usage": "1. 输入年龄\n2. 查看自动计算的各个心率区间范围\n3. 了解不同区间的训练效果",
+    "route": "/tools/heart-rate",
+    "isLocal": true,
+    "tags": [
+      "心率",
+      "运动",
+      "燃脂",
+      "健身",
+      "健康"
+    ],
+    "svgIcon": "HeartRateIcon"
+  },
+  {
+    "id": "metronome",
+    "name": "节拍器",
+    "category": "health",
+    "icon": "Headset",
+    "summary": "精准稳定的在线节拍器",
+    "description": "音乐练习必备的节拍器工具。提供精准的 BPM 设置、多种拍号选择和可视化节拍显示，支持重音提示。",
+    "usage": "1. 设定 BPM 和拍号\n2. 点击播放\n3. 跟随节拍练习",
+    "route": "/tools/metronome",
+    "isLocal": true,
+    "tags": [
+      "节拍器",
+      "音乐",
+      "BPM",
+      "节奏",
+      "乐器"
+    ],
+    "svgIcon": "MetronomeIcon"
+  },
+  {
+    "id": "pomodoro",
+    "name": "番茄钟",
+    "category": "health",
+    "icon": "Timer",
+    "summary": "极简番茄工作法计时器",
+    "description": "助你保持专注的番茄钟工具。默认支持 25 分钟专注 + 5 分钟休息的工作流，提供清新的 UI 和自动统计功能。",
+    "usage": "1. 选择专注模式\n2. 点击开始\n3. 完成后休息",
+    "route": "/tools/pomodoro",
+    "isLocal": true,
+    "tags": [
+      "番茄钟",
+      "专注",
+      "计时",
+      "效率",
+      "工作法"
+    ],
+    "svgIcon": "PomodoroIcon"
+  },
+  {
+    "id": "pregnancy-due",
+    "name": "预产期计算器",
+    "category": "health",
+    "icon": "User",
+    "summary": "预产期推算与孕期发育参考",
+    "description": "根据末次月经日期计算预产期；按周提供胎儿发育百科知识、妈妈身体变化参考及重要产检时间提醒。",
+    "usage": "1. 输入末次月经日期\n2. 点击计算获取预产期及当前孕周\n3. 浏览每周发育详情和产检计划",
+    "route": "/tools/pregnancy-due",
+    "isLocal": true,
+    "tags": [
+      "孕期",
+      "预产期",
+      "母婴",
+      "健康",
+      "计算器"
+    ],
+    "svgIcon": "PregnancyDueIcon"
+  },
+  {
+    "id": "sleep-cycle",
+    "name": "睡眠周期计算器",
+    "category": "health",
+    "icon": "Moon",
+    "summary": "科学睡眠时间规划",
+    "description": "基于 90 分钟睡眠周期理论，为您推荐最佳入睡或起床时间。避开深度睡眠期被唤醒的痛苦，醒来神清气爽。",
+    "usage": "1. 选择“我要按时起床”或“我现在要睡觉”模式\n2. 设定目标时间\n3. 获取多个推荐的时间点，选择最适合您的作息",
+    "route": "/tools/sleep-cycle",
+    "isLocal": true,
+    "tags": [
+      "睡眠",
+      "周期",
+      "健康",
+      "作息",
+      "起床"
+    ],
+    "svgIcon": "SleepCycleIcon"
+  },
+  {
+    "id": "spine-exercises",
+    "name": "脊椎健康指南",
+    "category": "health",
+    "icon": "UserFilled",
+    "summary": "办公族脊椎拉伸指南",
+    "description": "针对久坐办公族设计的脊椎健康运动指南，包含颈椎、胸椎和腰椎的简单拉伸动作，配合动图与文字详解，助你远离职业病。",
+    "usage": "1. 选择需要拉伸的部位（颈/胸/腰）\n2. 跟随动图描述进行动作练习\n3. 定时开启拉伸提醒",
+    "route": "/tools/spine-exercises",
+    "isLocal": true,
+    "tags": [
+      "脊椎",
+      "拉伸",
+      "健康",
+      "办公族",
+      "运动"
+    ],
+    "svgIcon": "SpineExercisesIcon"
+  },
+  {
+    "id": "stress-test",
+    "name": "情绪压力测试",
+    "category": "health",
+    "icon": "Watch",
+    "summary": "快速压力评估与情绪缓释",
+    "description": "内置专业的压力知觉量表（PSS-10），通过简单的自评问卷快速评估您的心理压力水平，并提供针对性的自我调节建议。",
+    "usage": "1. 依次回答问卷中的题目\n2. 提交后获取压力评估分数\n3. 查看对应的健康建议和缓释方法",
+    "route": "/tools/stress-test",
+    "isLocal": true,
+    "tags": [
+      "心理",
+      "压力",
+      "情绪",
+      "测评",
+      "健康"
+    ],
+    "svgIcon": "StressTestIcon"
+  },
+  {
+    "id": "vision-test",
+    "name": "视力自我监测",
+    "category": "health",
+    "icon": "View",
+    "summary": "色盲测试与护眼专注工具",
+    "description": "提供标准的色敏度测试图、散光自测图以及基于 20-20-20 法则的护眼专注计时器（工作20分钟，远眺20秒，看20英尺外），科学保护您的视力。",
+    "usage": "1. 选择测试类型（色盲/散光等）\n2. 按照屏幕提示保持距离进行测试\n3. 开启护眼计时器开始专注工作",
+    "route": "/tools/vision-test",
+    "isLocal": true,
+    "tags": [
+      "视力",
+      "色盲",
+      "护眼",
+      "测试",
+      "健康"
+    ],
+    "svgIcon": "VisionTestIcon"
+  },
+  {
+    "id": "water-intake",
+    "name": "饮水记录系统",
+    "category": "health",
+    "icon": "Coffee",
+    "summary": "每日补水计划与实时进度管理",
+    "description": "根据您的体重与活动水平计算建议饮水量，支持实时点击记录喝水进度，提供每日水量阶梯视图，并支持桌面提醒，助您养成健康饮水习惯。",
+    "usage": "1. 点击设置输入基础身体数据\n2. 点击\"饮水\"按钮快速记录\n3. 查看今日进度百分比及喝水历史",
+    "route": "/tools/water-intake",
+    "isLocal": true,
+    "tags": [
+      "饮水",
+      "习惯",
+      "健康",
+      "提醒"
+    ],
+    "svgIcon": "WaterIntakeIcon"
+  },
+  {
+    "id": "workout-timer",
+    "name": "训练助手",
+    "category": "health",
+    "icon": "Timer",
+    "summary": "训练倒计时与计划管理工具",
+    "description": "提供专业训练倒计时（支持组间休息）、训练计划管理（自定义动作/组数）以及自由通用计时器功能。",
+    "usage": "1. 创建或选择训练计划\n2. 开始训练并跟随倒计时\n3. 也可使用自由计时模式进行通用计时",
+    "route": "/tools/workout-timer",
+    "isLocal": true,
+    "tags": [
+      "健身",
+      "倒计时",
+      "计划",
+      "运动"
+    ],
+    "svgIcon": "WorkoutTimerIcon"
   }
 ]
