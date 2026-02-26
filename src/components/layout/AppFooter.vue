@@ -86,9 +86,18 @@
 
       <div class="footer-legal">
         <div class="copyright-info">
-          <span>{{ t('footer.copyright', { year: currentYear }) }}</span>
+          <span class="copyright-owner" data-license="AGPL-3.0"
+            >© {{ currentYear }} LRM Toolbox by van104</span
+          >
           <span class="dot-separator">•</span>
-          <span>{{ t('footer.craftedBy') }}</span>
+          <a
+            href="https://github.com/van104/LRM-Toolbox/blob/main/LICENSE"
+            target="_blank"
+            class="license-badge"
+          >
+            AGPL-3.0
+          </a>
+          <span class="commercial-warning">禁止未经授权商用</span>
         </div>
         <div class="beian-info">
           <a href="https://beian.miit.gov.cn/" target="_blank">桂ICP备2025070985号-1</a>
@@ -677,16 +686,40 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    flex-wrap: wrap;
   }
 
-  .copyright-link {
-    font-weight: 600;
-    color: var(--text-secondary);
-    transition: color 0.2s;
+  .license-badge {
+    font-size: 0.7rem;
+    font-weight: 800;
+    background: #ffd900;
+    color: #111;
+    padding: 2px 6px;
+    border: 2px solid #111;
+    box-shadow: 2px 2px 0px #111;
+    text-decoration: none;
+    transition: all 0.1s;
   }
 
-  .copyright-link:hover {
-    color: var(--accent-purple);
+  .license-badge:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px #111;
+  }
+
+  .commercial-warning {
+    color: #ff4b4b;
+    font-weight: 800;
+    font-size: 0.75rem;
+    background: rgba(255, 75, 75, 0.1);
+    padding: 1px 6px;
+    border: 1px dashed #ff4b4b;
+  }
+
+  [data-theme='dark'] .license-badge {
+    background: #b28f00;
+    color: #fff;
+    border-color: #eee;
+    box-shadow: 2px 2px 0px #eee;
   }
 
   .dot-separator {

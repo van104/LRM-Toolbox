@@ -4,9 +4,9 @@ export function printWelcomeLog(): void {
   const titleText = ' LRM 工具箱 ToolBox';
   const bodyText = `
   🚀 欢迎使用 LRM 开发者工具箱！                        
-  👉 本项目旨在提供高效的开发体验，完全免费开源。         
+  👉 本项目遵循 AGPL-3.0 开源协议，支持自由修改。         
   📝 Github: https://github.com/van104/LRM-Toolbox    
-  ⚠️ 请勿将本工具用于任何非法用途。                      `;
+  ⚠️ 严禁未经授权的套壳商用，二改需保留原作者版权。        `;
 
   const titleStyle = `
     display: inline-block;
