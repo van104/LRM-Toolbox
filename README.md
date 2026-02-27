@@ -1,217 +1,157 @@
-# 🛠️ LRM工具箱 (Online Utilities)
+<p align="center">
+  <img src="public/readme-banner.png" width="100%" alt="LRM Toolbox Banner">
+</p>
 
-**LRM工具箱** 是一个功能强大的在线开源工具箱，基于 **Vue 3** + **Vite** + **TailwindCSS v4** + **Element Plus** + **TypeScript** 构建。提供了包括开发运维、图像处理、文本清洗、生活常用、金融理财、教育学习、健康运动、趣味游戏和 PDF 处理等在内的 100+ 种实用工具。
+# 🛠️ LRM工具箱 (LRM Toolbox)
 
-**🌐 演示地址：[https://www.lrm123.site/](https://www.lrm123.site/)**
+<p align="center">
+  <a href="https://github.com/van104/LRM-Toolbox/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/License-AGPL--3.0-yellow.svg?style=flat-square" alt="License">
+  </a>
+  <img src="https://img.shields.io/badge/Vue-3.5-brightgreen.svg?style=flat-square" alt="Vue">
+  <img src="https://img.shields.io/badge/Vite-7.2-blue.svg?style=flat-square" alt="Vite">
+  <img src="https://img.shields.io/badge/Tools-255+-blueviolet.svg?style=flat-square" alt="Tools">
+  <a href="https://www.lrm123.site/">
+    <img src="https://img.shields.io/badge/Demo-Online-orange?style=flat-square" alt="Demo">
+  </a>
+</p>
 
-## ✨ 特性
+**LRM工具箱** 是一个功能强大、设计超前的在线开源工具箱。它采用了 **新粗野主义 (Neobrutalism)** 设计风格，旨在为开发者、设计师及日常办公人员提供极致的效率体验。
 
-本项目包含丰富的在线工具集，主要分为以下几大类：
+> **🌐 访问在线体验：[https://www.lrm123.site/](https://www.lrm123.site/)**
 
-### 👨‍💻 开发者工具 (Developer Tools)
+---
 
-- JSON 格式化、Base64 编解码、时间戳转换、MD5 加密
-- 正则表达式测试、URL 编解码、CSS 格式化、SQL 构建器
-- API 测试、JWT 解码、Crontab 表达式生成、Git 命令速查表
-- 端口扫描、编码转换、随机数据生成、子网掩码计算等
+## ✨ 核心特性
 
-### 🖼️ 图像处理 (Image Processing)
+- 🎨 **视觉冲击**：基于核心色彩体系的新粗野主义 UI，拒绝平庸。
+- 📦 **海量集成**：内置 255+ 款实用工具，涵盖 10 大分类，持续更新。
+- ⚡ **极致性能**：基于 Vite 7 + Vue 3 极速构建，资源按需加载。
+- 🛡️ **隐私至上**：90% 以上的工具纯前端运行，数据永不离机。
+- 📱 **多端适配**：响应式布局，完美适配手机、平板及电脑。
+- 🌙 **深色模式**：全局原生深色模式支持，守护您的视力。
 
-- 图片压缩、格式转换、尺寸调整、图片水印
-- 二维码生成/识别、条形码生成、图片拼接、背景移除
-- 照片书制作、批量重命名等
+---
 
-### 📝 文本工具 (Text Tools)
+## 🛠️ 工具全景图 (Tools Panorama)
 
-- 文本差异对比、Markdown 编辑器、字数统计、文本清洗
-- 文本提取、简繁转换、文本分割、文本加密
-- 关键词提取、押韵查询、句子统计、HTML 实体转换等
+| 分类              | 包含工具 (部分展示)                                       |
+| :---------------- | :-------------------------------------------------------- |
+| **👨‍💻 开发者工具** | JSON 格式化、Base64 编解码、正则表达式、JWT 解码、Crontab |
+| **🖼️ 图像处理**   | 图片压缩、格式转换、尺寸调整、水印、背景移除              |
+| **📝 文本工具**   | 差异对比、Markdown 编辑器、字数统计、清洗、加密           |
+| **📄 PDF 处理**   | 转图片、图片换转、PDF 拆分/合并、水印、加密               |
+| **🏠 生活助手**   | 单位换算、日期计算、房贷/个税计算、垃圾分类               |
+| **💰 金融理财**   | 汇率转换、养老/复利/盈亏计算                              |
+| **🎓 教育学习**   | 拼音查询、公式编辑、成语词典、字帖生成                    |
+| **🎮 趣味游戏**   | 2048、五子棋、井字棋、扫雷、像素画绘制、ASCII 艺术        |
+| **🏥 健康工具**   | BMI 计算、卡路里计算、番茄钟、计时器                      |
 
-### 📄 PDF 工具 (PDF Tools)
+---
 
-- PDF 转图片、图片转 PDF、PDF 拆分/合并
-- PDF 水印、压缩、旋转、加密/解密
-- PDF 页码添加、页面排序、灰度化、元数据编辑
-- PDF 签名、裁剪、叠加、Markdown 转 PDF 等
-
-### 🏠 生活助手 (Life Helper)
-
-- 单位换算、衣服尺码指南、日期计算器、生日提醒
-- 工作日计算、公农历转换、房贷计算器、个税计算
-- 垃圾分类查询、节假日查询、公共服务电话等
-
-### 💰 金融计算 (Financial Utilities)
-
-- 汇率转换、房贷计算、个税计算、折扣计算
-- 甚至包括养老金估算、复利计算、盈亏计算等
-
-### 🎓 教育学习 (Education & Learning)
-
-- 拼音查询、公式编辑器、元素周期表、成语词典
-- 汉字笔画、田字格生成、古诗词鉴赏、单词拆解等
-
-### 🎮 趣味游戏 (Fun & Games)
-
-- 2048、五子棋、井字棋、扫雷、数独
-- 反应力测试、记忆卡片、汉诺塔、Flappy Bird
-- 像素画绘制、ASCII 艺术生成、幸运抽奖、表白网页生成等
-
-### 🎨 设计工具 (Design Resources)
-
-- 数据可视化编辑器、配色方案生成、图标库搜索
-- 字体展示、原型设计工具、屏幕尺子、思维导图等
-
-### 🏥 健康工具 (Health & Fitness)
-
-- BMI 计算、卡路里计算、饮水提醒、视力测试
-- 预产期计算、健康饮食推荐、基础代谢率计算等
-
-## 🚀 快速开始
+## 🚀 快速开始 (Quick Start)
 
 ### 环境要求
 
-- Node.js >= 16.0.0
-- npm >= 7.0.0
+- **Node.js**: >= 18.0.0
+- **npm**: >= 8.0.0
 
-### 安装依赖
+### 安装与运行
 
 ```bash
-# 克隆项目
+# 1. 克隆项目
 git clone https://github.com/van104/LRM-Toolbox.git
-# 进入项目目录
-cd toolbox
 
-# 安装依赖
+# 2. 进入目录
+cd LRM-Toolbox
+
+# 3. 安装依赖
 npm install
-```
 
-### 开发模式
-
-```bash
-# 启动本地开发服务器
+# 4. 启动开发服务器
 npm run dev
 ```
 
-访问 `http://localhost:5173` (也就是 Vite 默认端口) 查看效果。
+---
 
-# 构建生产版本
+## 🌐 部署指南
+
+### 前端部署 (Nginx 配置)
+
+构建生成静态文件：
 
 ```bash
-# 构建用于生产环境的文件
 npm run build
-
-# 预览构建产物
-npm run preview
 ```
 
-## 🌐 部署指南 (以宝塔面板为例)
-
-### 1. 前端部署 (HTML/Vue)
-
-1. 在本地执行 `npm run build` 生成 `dist` 文件夹。
-2. 在宝塔面板新建一个“静态网站”，将 `dist` 文件夹内的所有文件上传到网站根目录。
-3. **设置伪静态** (单页面应用路由适配)：
-   ```nginx
-   location / {
-     try_files $uri $uri/ /index.html;
-   }
-   ```
-
-### 2. 后端部署 (反馈系统 API)
-
-1. 将项目中的 `server` 文件夹上传到服务器（例如：`/www/wwwroot/api.example.com/` 或直接在前端项目下）。
-2. 在该目录下新建 `.env` 文件，配置管理员密码和跨域白名单：
-
-   ```ini
-   # 管理员密码 (用于访问 /admin 页面)
-   ADMIN_PASSWORD=自定义你的管理员密码
-
-   # 允许跨域访问的域名 (CORS 白名单)
-   # 如果前端和后端域名不同，必须配置此项。多个域名用逗号分隔。
-   # 务必包含 http 和 https 协议头，且不要有尾部斜杠。
-   ALLOWED_ORIGINS=http://localhost:5173,https://www.lrm123.site,http://www.lrm123.site
-   ```
-
-3. **安装依赖与启动**：
-   - 进入 `server` 目录，执行 `npm install` 安装依赖 (包含 sqlite3)。
-   - 启动服务后，系统会自动在目录下生成 `database.sqlite` 数据库文件。
-   - **注意**：请勿将本地为空的 `database.sqlite` 覆盖到生产环境，以免丢失数据。建议在 `.gitignore` 中忽略此文件。
-
-### 3. Nginx 反向代理 (解决跨域与 HTTPS 混合内容问题)
-
-为了让前端能安全地访问后端，请在“前端网站”的配置文件中添加以下配置（或在宝塔反向代理界面手动配置）：
+Nginx 伪静态配置 (SPA 路由适配)：
 
 ```nginx
-# LRM工具箱反馈接口反代 (本项目)
-# 请将 YOUR_API_PATH 替换为您在 .env.production 中设置的路径
-location ^~ /YOUR_API_PATH/ {
-    proxy_pass http://127.0.0.1:3000; # 请确保端口与后端 server.js 一致
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
+location / {
+  try_files $uri $uri/ /index.html;
 }
 ```
 
-> **注意**：如果您在 `server.js` 中使用了不同的端口，请将 `3000` 修改为实际端口。
+### 反馈系统后端
 
-### 4. 管理后台
+反馈后端位于 `/server` 目录，由 Node.js + SQLite 驱动：
 
-部署完成后，可以通过以下隐藏链接管理用户反馈：
+1. 将 `server` 目录上传至服务器。
+2. 配置 `.env` (含 `ADMIN_PASSWORD` 和 `ALLOWED_ORIGINS`)。
+3. 执行 `npm install` 后使用 `pm2` 或 `node` 启动。
 
-- 地址：`https://你的域名/admin/feedback`
-- 登录：使用你在 `.env` 中设置的 `ADMIN_PASSWORD`。
+---
 
-## 📂 项目结构
+## 📂 项目结构 (Structure)
 
-```
-toolbox/
-├── public/                 # 公共静态资源
-├── server/                 # 反馈系统后端 (Node.js)
-│   ├── data/               # 反馈数据存储 (JSON)
-│   ├── .env                # 配置文件 (环境变量/密码)
-│   ├── server.js           # 后端服务入口
-│   └── package.json        # 后端依赖配置
+```text
+LRM-Toolbox/
+├── public/              # 静态资源 (Logo, Banner, PWA 图标)
+├── server/              # 反馈系统后端 (Node.js + SQLite)
+│   ├── data/            # 数据库存储
+│   ├── server.js        # 后端入口
+│   └── .env             # 后端环境配置
 ├── src/
-│   ├── api/                # API 接口封装 (反馈、汇率等)
-│   ├── components/         # 组件库
-│   │   ├── common/         # 通用组件
-│   │   ├── icons/          # 图标组件
-│   │   ├── layout/         # 布局组件
-│   │   └── tools/          # 工具组件 (100+ 实用工具)
-│   ├── data/               # 本地静态数据
-│   ├── router/             # 路由配置 (含管理后台路由)
-│   ├── stores/             # Pinia 状态管理
-│   ├── styles/             # 全局样式与变量
-│   ├── utils/              # 通用工具函数
-│   ├── views/              # 页面视图
-│   │   ├── pages/          # 独立页面 (About, FeedbackAdmin)
-│   │   └── Home.vue        # 首页
-│   ├── App.vue             # 根组件
-│   └── main.ts             # 入口文件
-├── index.html              # 入口 HTML
-├── package.json            # 前端项目配置
-└── vite.config.ts          # Vite 配置
+│   ├── api/             # 接口请求封装
+│   ├── components/      # UI 组件
+│   │   ├── common/      # 通用原子组件
+│   │   ├── layout/      # 全局布局 (Header, Footer, Menu)
+│   │   ├── icons/       # 系统图标 (SVG)
+│   │   └── tools/       # 核心工具业务逻辑 (按分类存放)
+│   ├── data/            # 工具清单及本地策略
+│   ├── router/          # 路由映射
+│   ├── stores/          # 全局状态 (User, App Config)
+│   ├── styles/          # 粗野主义设计系统 (CSS)
+│   ├── utils/           # 辅助函数 (转换、加密、校验等)
+│   └── views/           # 页面级视图
+├── index.html           # 页面入口
+├── package.json         # 项目依赖与脚本
+└── vite.config.ts       # Vite 构建配置
 ```
 
-## 🤝 贡献指南 (Contributing)
+---
 
-欢迎提交 Pull Request 或 Issue 来改进这个项目！
+## 🤝 贡献与反馈
 
-1. Fork 本仓库
-2. 创建你的特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交你的修改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启一个 Pull Request
+- **提交 PR**：如果您有想添加的工具，欢迎 fork 并提交 PR。
+- **报告 Bug**：请通过 [GitHub Issues](https://github.com/van104/LRM-Toolbox/issues) 进行反馈。
 
-## 📄 许可证 (License)
+---
 
-本项目基于 **GNU Affero General Public License v3.0 (AGPL-3.0)** 许可证开源。
+## 📄 开源许可证与版权声明
 
-### ⚠️ 严正声明 (Legal Warning)
+本项目采用 **AGPL-3.0 (GNU Affero General Public License v3.0)** 开源。
 
-1.  **禁止套壳商用**：严禁任何个人或机构在未经原作者书面授权的情况下，将本项目代码进行简单的“换皮/套壳”后作为商业产品出售或提供付费服务。
-2.  **强制开源**：如果您对本项目代码进行了二次开发并提供了网络服务，根据 AGPL-3.0 协议要求，您**必须**向您的用户公开您修改后的完整源代码。
-3.  **保留版权**：任何基于本项目的衍生版本，必须在显著位置保留原作者的版权声明和本项目链接。
+### ⚠️ 严正声明
 
-> **版权所有 (c) 2026 LRM (van104)**。保留所有法律追究权利。
+1. **拒绝套壳**：禁止简单“换皮”后用于任何盈利目的。
+2. **强制开源**：基于本项目二次开发并提供网络服务的，**必须**公开修改后的源码。
+3. **保留版权**：任何衍生版本必须显著保留原作者版权声明及本项目链接。
+
+> **Copyright © 2026 LRM (van104)**. 保留所有法律追究权利。
+
+---
+
+<p align="center">
+  以代码驱动效率，以设计定义美感。🚀
+</p>

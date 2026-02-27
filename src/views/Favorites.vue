@@ -68,7 +68,7 @@
   import { ElMessageBox, ElMessage } from 'element-plus';
   import { Star, StarFilled, ArrowLeft, Rank, Delete } from '@element-plus/icons-vue';
   import ToolCard from '@/components/tools/ToolCard.vue';
-  import ToolModal from '@/components/tools/ToolModal.vue';
+  import ToolModal from '@/components/layout/modal/ToolModal.vue';
   import { tools } from '@/data/tools';
   import { useUserStore } from '@/stores/user';
   import draggable from 'vuedraggable';
