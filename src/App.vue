@@ -1,7 +1,7 @@
 <script setup>
   import { RouterView } from 'vue-router';
   import ErrorBoundary from '@/components/common/ErrorBoundary.vue';
-  import MobileTabBar from '@/components/layout/MobileTabBar.vue';
+  import MobileTabBar from '@/components/layout/mobile/MobileTabBar.vue';
   import CommandPalette from '@/components/common/CommandPalette.vue';
   import ReloadPrompt from '@/components/common/ReloadPrompt.vue';
 </script>

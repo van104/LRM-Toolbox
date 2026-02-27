@@ -115,9 +115,13 @@ export interface GameState {
   log: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
   job: Career | null;
   savings: number;
-  houses: string[];
-  cars: string[];
+  houses: House[];
+  cars: Vehicle[];
   degree: string;
+  hasWorked?: boolean;
+  hasStudied?: boolean;
+  lifespan?: number;
+  stress?: number;
 
   inventory: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
 }

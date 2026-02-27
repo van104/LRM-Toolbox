@@ -87,7 +87,7 @@
       <div class="footer-legal">
         <div class="copyright-info">
           <span class="copyright-owner" data-license="AGPL-3.0"
-            >© {{ currentYear }} LRM Toolbox by van104</span
+            >© {{ currentYear }} LRM (van104)</span
           >
           <span class="dot-separator">•</span>
           <a

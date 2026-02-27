@@ -122,11 +122,12 @@
   defineOptions({ name: 'Home' });
 
   import { Search, ArrowDown, ArrowUp } from '@element-plus/icons-vue';
-  import AppHeader from '@/components/layout/AppHeader.vue';
-  import AppFooter from '@/components/layout/AppFooter.vue';
+  import AppHeader from '@/components/layout/header/AppHeader.vue';
+  import AppFooter from '@/components/layout/footer/AppFooter.vue';
   import CategoryManager from '@/components/tools/CategoryManager.vue';
-  import ToolModal from '@/components/tools/ToolModal.vue';
+  import ToolModal from '@/components/layout/modal/ToolModal.vue';
   import { useUserStore } from '@/stores/user';
+  import { loadAllTools } from '@/data/tools';
 
   const router = useRouter();
   const route = useRoute();
@@ -139,8 +140,12 @@
   const modalVisible = ref(false);
   const selectedTool = ref({});
   const categoryManagerRef = ref(null);
-
-  const totalToolsCount = computed(() => categoryManagerRef.value?.allToolsCount || 168);
+  const allToolsCount = ref(255);
+  const totalToolsCount = computed(() => {
+    // Attempt to get the latest count from the manager if available
+    const mCount = categoryManagerRef.value?.allToolsCount;
+    return (typeof mCount === 'number' ? mCount : mCount?.value) || allToolsCount.value;
+  });
 
   watch(
     () => route.query.category,
@@ -197,8 +202,10 @@
     showFloatNav.value = window.scrollY > 200;
   };
 
-  onMounted(() => {
+  onMounted(async () => {
     window.addEventListener('scroll', handleScroll);
+    const allTools = await loadAllTools();
+    allToolsCount.value = allTools.length;
   });
 
   onUnmounted(() => {
