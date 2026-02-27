@@ -70,7 +70,7 @@
             <el-icon class="search-icon"><Search /></el-icon>
             <input
               v-model="searchKeyword"
-              :placeholder="t('home.searchPlaceholder', { count: allTools.length })"
+              :placeholder="t('home.searchPlaceholder', { count: totalToolsCount })"
               class="brutal-search-input"
               @input="handleSearch($event.target.value)"
             />
@@ -87,84 +87,15 @@
         </div>
       </section>
 
-      <!-- Recommended Tools Section -->
-      <div
-        v-if="activeCategory === 'all' && !searchKeyword && recommendedTools.length > 0"
-        class="brutal-content-wrapper"
-        style="padding-bottom: 0"
-      >
-        <div class="brutal-section-header">
-          <h2 class="brutal-section-title bg-title-pink">
-            <el-icon><RecommendIcon /></el-icon>
-            随机推荐
-          </h2>
-          <div class="bg-title-shadow"></div>
-        </div>
-
-        <section class="tools-grid-wrapper">
-          <div class="tools-grid">
-            <ToolCard
-              v-for="tool in recommendedTools"
-              :key="'rec-' + tool.id"
-              :tool="tool"
-              :is-favorite="userStore.isFavorite(tool.id)"
-              @click="handleToolClick"
-              @view-detail="openToolModal"
-              @toggle-favorite="handleToggleFavorite"
-            />
-          </div>
-        </section>
-      </div>
-
-      <div class="brutal-content-wrapper">
-        <div v-if="!searchKeyword" class="brutal-section-header">
-          <h2 class="brutal-section-title bg-title">
-            <el-icon>
-              <component
-                :is="
-                  currentCategoryInfo?.svgIcon
-                    ? iconMap[currentCategoryInfo.svgIcon]
-                    : iconMap[currentCategoryInfo?.icon] || Grid
-                "
-              />
-            </el-icon>
-            {{ t('category.' + (currentCategoryInfo?.id || 'all')) }}
-          </h2>
-          <div class="bg-title-shadow"></div>
-        </div>
-
-        <section v-if="loading" class="tools-grid">
-          <SkeletonCard v-for="i in 6" :key="i" />
-        </section>
-
-        <section v-else class="tools-grid-wrapper">
-          <div class="tools-grid">
-            <ToolCard
-              v-for="tool in visibleTools"
-              :key="tool.id"
-              :tool="tool"
-              :is-favorite="userStore.isFavorite(tool.id)"
-              @click="handleToolClick"
-              @view-detail="openToolModal"
-              @toggle-favorite="handleToggleFavorite"
-            />
-          </div>
-
-          <div v-if="hasMoreTools && !isShowAll" class="show-more-wrapper">
-            <button class="brutal-btn-secondary" @click="handleShowAll">
-              {{ t('home.viewAll', { count: filteredTools.length }) }}
-              <el-icon class="icon-right"><ArrowDown /></el-icon>
-            </button>
-          </div>
-        </section>
-
-        <div v-if="!loading && filteredTools.length === 0" class="brutal-empty-state">
-          <div class="empty-icon-box">
-            <el-icon :size="48"><Search /></el-icon>
-          </div>
-          <p class="empty-text">{{ t('home.noResults') }}</p>
-        </div>
-      </div>
+      <CategoryManager
+        ref="categoryManagerRef"
+        :active-category="activeCategory"
+        :search-keyword="searchKeyword"
+        :is-favorite="userStore.isFavorite"
+        @tool-click="handleToolClick"
+        @view-detail="openToolModal"
+        @toggle-favorite="handleToggleFavorite"
+      />
     </main>
 
     <AppFooter />
@@ -190,31 +121,12 @@
 
   defineOptions({ name: 'Home' });
 
-  import {
-    Search,
-    Grid,
-    ArrowDown,
-    ArrowUp,
-    Monitor,
-    Document,
-    Picture,
-    Brush,
-    Wallet,
-    Service,
-    Coffee,
-    Notebook,
-    IceTea
-  } from '@element-plus/icons-vue';
-  import * as CategoryIcons from '@/components/icons/categories';
-  import { RecommendIcon } from '@/components/icons/system';
+  import { Search, ArrowDown, ArrowUp } from '@element-plus/icons-vue';
   import AppHeader from '@/components/layout/AppHeader.vue';
   import AppFooter from '@/components/layout/AppFooter.vue';
-  import ToolCard from '@/components/tools/ToolCard.vue';
+  import CategoryManager from '@/components/tools/CategoryManager.vue';
   import ToolModal from '@/components/tools/ToolModal.vue';
-  import SkeletonCard from '@/components/common/SkeletonCard.vue';
-  import { loadToolsByCategory, searchToolsAsync, loadAllTools } from '@/data/tools';
   import { useUserStore } from '@/stores/user';
-  import { categories } from '@/data/tools';
 
   const router = useRouter();
   const route = useRoute();
@@ -226,102 +138,21 @@
   const searchKeyword = ref('');
   const modalVisible = ref(false);
   const selectedTool = ref({});
-  const loading = ref(true);
+  const categoryManagerRef = ref(null);
 
-  const allTools = ref([]);
-  const displayedTools = ref([]);
-  const recommendedTools = ref([]);
-
-  const getExpandedCategories = () => {
-    try {
-      return JSON.parse(sessionStorage.getItem('lrm-expanded-categories') || '[]');
-    } catch {
-      return [];
-    }
-  };
-  const expandedCategories = ref(getExpandedCategories());
-
-  const isShowAll = computed({
-    get: () => expandedCategories.value.includes(activeCategory.value) || !!searchKeyword.value,
-    set: val => {
-      if (val && !expandedCategories.value.includes(activeCategory.value)) {
-        expandedCategories.value.push(activeCategory.value);
-        sessionStorage.setItem('lrm-expanded-categories', JSON.stringify(expandedCategories.value));
-      }
-    }
-  });
-
-  const DISPLAY_LIMIT = 12;
-
-  const iconMap = {
-    Grid,
-    Monitor,
-    Document,
-    Picture,
-    Brush,
-    Wallet,
-    Service,
-    Coffee,
-    Notebook,
-    IceTea,
-    ...CategoryIcons
-  };
-
-  const currentCategoryInfo = computed(() => {
-    return categories.find(c => c.id === activeCategory.value);
-  });
-
-  onMounted(async () => {
-    await fetchTools(activeCategory.value);
-    loading.value = false;
-    loadAllTools().then(res => {
-      allTools.value = res;
-
-      // Select recommended tools
-      const perCategory = 2; // get at least 2 random hot tools per category
-      let recommendedList = [];
-      categories.forEach(cat => {
-        const catTools = res.filter(t => t.category === cat.id);
-        const shuffled = [...catTools].sort(() => 0.5 - Math.random());
-        recommendedList.push(...shuffled.slice(0, perCategory));
-      });
-      // Final shuffle to randomize across categories, take exactly top 6
-      recommendedTools.value = recommendedList.sort(() => 0.5 - Math.random()).slice(0, 6);
-    });
-  });
-
-  const filteredTools = computed(() => displayedTools.value);
-  const visibleTools = computed(() => {
-    if (isShowAll.value) return filteredTools.value;
-    return filteredTools.value.slice(0, DISPLAY_LIMIT);
-  });
-  const hasMoreTools = computed(() => filteredTools.value.length > DISPLAY_LIMIT);
-
-  async function fetchTools(category, keyword = '') {
-    loading.value = true;
-    if (keyword) {
-      displayedTools.value = await searchToolsAsync(keyword);
-    } else {
-      displayedTools.value = await loadToolsByCategory(category);
-    }
-    loading.value = false;
-  }
+  const totalToolsCount = computed(() => categoryManagerRef.value?.allToolsCount || 168);
 
   watch(
     () => route.query.category,
-    async newCategory => {
-      const cat = newCategory || 'all';
-      activeCategory.value = cat;
-      if (!searchKeyword.value) {
-        await fetchTools(cat);
-      }
+    newCategory => {
+      activeCategory.value = newCategory || 'all';
+      searchKeyword.value = '';
     }
   );
 
-  async function handleCategoryChange(categoryId) {
+  function handleCategoryChange(categoryId) {
     activeCategory.value = categoryId;
     searchKeyword.value = '';
-    await fetchTools(categoryId);
     router.replace({
       query: {
         ...route.query,
@@ -330,13 +161,10 @@
     });
   }
 
-  async function handleSearch(keyword) {
+  function handleSearch(keyword) {
     searchKeyword.value = keyword;
     if (keyword) {
       activeCategory.value = 'all';
-      await fetchTools('all', keyword);
-    } else {
-      await fetchTools(activeCategory.value);
     }
   }
 
@@ -362,15 +190,10 @@
     }
   }
 
-  function handleShowAll() {
-    isShowAll.value = true;
-  }
-
   // Float Nav Logic
   const showFloatNav = ref(false);
 
   const handleScroll = () => {
-    // Show buttons if scrolled down a bit (e.g. 200px)
     showFloatNav.value = window.scrollY > 200;
   };
 
@@ -1029,9 +852,6 @@
     .brutal-hero-subtitle {
       font-size: 1rem;
     }
-    .tools-grid {
-      grid-template-columns: 1fr;
-    }
     .brutal-search-container {
       height: 60px;
     }
@@ -1180,59 +1000,6 @@
     background: #eee;
     color: #111;
     box-shadow: 3px 3px 0px #cc0000;
-  }
-
-  [data-theme='dark'] .brutal-btn-primary {
-    background: #00994c;
-    color: #fff;
-    border-color: #eee;
-    box-shadow: 6px 6px 0px #eee;
-  }
-  [data-theme='dark'] .brutal-btn-primary:hover {
-    box-shadow: 9px 9px 0px #eee;
-  }
-  [data-theme='dark'] .brutal-btn-primary:active {
-    box-shadow: 0px 0px 0px #eee;
-  }
-
-  [data-theme='dark'] .brutal-btn-secondary {
-    background: #222;
-    color: #eee;
-    border-color: #eee;
-    box-shadow: 6px 6px 0px #eee;
-  }
-  [data-theme='dark'] .brutal-btn-secondary:hover {
-    background: #b28f00;
-    box-shadow: 9px 9px 0px #eee;
-  }
-  [data-theme='dark'] .brutal-btn-secondary:active {
-    box-shadow: 0px 0px 0px #eee;
-  }
-
-  [data-theme='dark'] .bg-title {
-    background: #2a4eb2;
-    color: #eee;
-    border-color: #eee;
-  }
-  [data-theme='dark'] .bg-title-pink {
-    background: #b25465;
-    color: #eee;
-  }
-  [data-theme='dark'] .bg-title-shadow {
-    background: #eee;
-  }
-
-  [data-theme='dark'] .brutal-empty-state {
-    background: #1a1a1a;
-    border-color: #eee;
-    box-shadow: 8px 8px 0px #eee;
-  }
-  [data-theme='dark'] .brutal-empty-state .empty-text {
-    color: #eee;
-  }
-  [data-theme='dark'] .brutal-empty-state .empty-icon-box {
-    border-color: #eee;
-    box-shadow: 4px 4px 0px #eee;
   }
 
   /* Dark Mode Floating Actions */

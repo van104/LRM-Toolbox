@@ -273,3 +273,223 @@ h3 {
     clip-path: circle(0px at var(--x, 50%) var(--y, 50%));
   }
 }
+
+/* ============ Brutalist UI Components ============ */
+.brutal-dialog {
+  border: 4px solid #111 !important;
+  border-radius: 0 !important;
+  box-shadow: 12px 12px 0px #111 !important;
+  background: #fff !important;
+  font-family: 'Syne', 'Noto Sans SC', sans-serif !important;
+}
+
+.brutal-dialog-yellow .el-dialog__header {
+  background: #ffd900;
+}
+.brutal-dialog-blue .el-dialog__header {
+  background: #4b7bff;
+}
+.brutal-dialog-pink .el-dialog__header {
+  background: #ff4b4b;
+}
+
+.brutal-dialog .el-dialog__header {
+  margin-right: 0 !important;
+  padding: 1.5rem !important;
+  border-bottom: 4px solid #111 !important;
+}
+
+.brutal-dialog .el-dialog__title {
+  color: #111 !important;
+  font-weight: 900 !important;
+  font-size: 1.5rem !important;
+  text-transform: uppercase;
+}
+
+.brutal-dialog .el-dialog__headerbtn {
+  top: 1.25rem !important;
+  right: 1.25rem !important;
+  width: 32px !important;
+  height: 32px !important;
+  background: #fff !important;
+  border: 3px solid #111 !important;
+  border-radius: 0 !important;
+  box-shadow: 3px 3px 0px #111 !important;
+  transition: all 0.1s;
+}
+.brutal-dialog .el-dialog__headerbtn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px #111 !important;
+  background: #ff4b4b !important;
+}
+.brutal-dialog .el-dialog__headerbtn:hover .el-dialog__close {
+  color: #fff !important;
+}
+
+.brutal-dialog .el-dialog__body {
+  padding: 2rem 1.5rem !important;
+  color: #111 !important;
+}
+
+.brutal-dialog .el-dialog__footer {
+  border-top: 4px solid #111 !important;
+  padding: 1.5rem !important;
+}
+
+.brutal-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.brutal-dialog-actions .brutal-btn-primary,
+.brutal-dialog-actions .brutal-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  border: 3px solid #111;
+  box-shadow: 4px 4px 0px #111;
+  text-transform: uppercase;
+  transition: all 0.1s;
+}
+
+.brutal-dialog-actions .brutal-btn-primary {
+  background: #00e572;
+  color: #111;
+}
+.brutal-dialog-actions .brutal-btn-primary:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #111;
+  background: #00c964;
+}
+.brutal-dialog-actions .brutal-btn-primary:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px 0px #111;
+}
+
+.brutal-dialog-actions .brutal-btn-secondary {
+  background: #fff;
+  color: #111;
+}
+.brutal-dialog-actions .brutal-btn-secondary:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #111;
+  background: #e5e5e5;
+}
+.brutal-dialog-actions .brutal-btn-secondary:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px 0px #111;
+}
+
+.brutal-form .el-form-item__label {
+  font-weight: 800 !important;
+  color: #111 !important;
+  font-size: 1.1rem !important;
+  padding-bottom: 0.5rem !important;
+}
+
+.brutal-form .el-input__wrapper,
+.brutal-form .el-textarea__inner {
+  border: 3px solid #111 !important;
+  border-radius: 0 !important;
+  box-shadow: 4px 4px 0px #111 !important;
+  background: #fff !important;
+  color: #111 !important;
+  transition: all 0.2s;
+  font-weight: bold;
+  font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+}
+
+.brutal-form .el-input__wrapper:focus-within,
+.brutal-form .el-textarea__inner:focus {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #4b7bff !important;
+}
+
+/* --- Dark Mode Overrides (Global) --- */
+[data-theme='dark'] .brutal-dialog {
+  background: #1a1a1a !important;
+  border-color: #eee !important;
+  box-shadow: 12px 12px 0px #eee !important;
+}
+
+[data-theme='dark'] .brutal-dialog .el-dialog__header {
+  border-bottom-color: #eee !important;
+  background: #111 !important;
+}
+[data-theme='dark'] .brutal-dialog-yellow .el-dialog__header {
+  background: #000 !important;
+  border-bottom: 4px solid #b28f00 !important;
+}
+[data-theme='dark'] .brutal-dialog-blue .el-dialog__header {
+  background: #000 !important;
+  border-bottom: 4px solid #2a4eb2 !important;
+}
+[data-theme='dark'] .brutal-dialog-pink .el-dialog__header {
+  background: #000 !important;
+  border-bottom: 4px solid #cc0000 !important;
+}
+
+[data-theme='dark'] .brutal-dialog .el-dialog__title {
+  color: #eee !important;
+}
+[data-theme='dark'] .brutal-dialog .el-dialog__body {
+  color: #eee !important;
+}
+[data-theme='dark'] .brutal-dialog .el-dialog__footer {
+  border-top-color: #eee !important;
+}
+
+[data-theme='dark'] .brutal-dialog .el-dialog__headerbtn {
+  background: #222 !important;
+  border-color: #eee !important;
+  box-shadow: 3px 3px 0px #eee !important;
+}
+[data-theme='dark'] .brutal-dialog .el-dialog__headerbtn .el-dialog__close {
+  color: #eee !important;
+}
+[data-theme='dark'] .brutal-dialog .el-dialog__headerbtn:hover {
+  background: #cc0000 !important;
+  box-shadow: 5px 5px 0px #eee !important;
+}
+
+[data-theme='dark'] .brutal-dialog-actions .brutal-btn-primary,
+[data-theme='dark'] .brutal-dialog-actions .brutal-btn-secondary {
+  border-color: #eee;
+  box-shadow: 4px 4px 0px #eee;
+}
+[data-theme='dark'] .brutal-dialog-actions .brutal-btn-primary {
+  background: #00994c;
+  color: #fff;
+}
+[data-theme='dark'] .brutal-dialog-actions .brutal-btn-secondary {
+  background: #222;
+  color: #eee;
+}
+[data-theme='dark'] .brutal-dialog-actions .brutal-btn-primary:active,
+[data-theme='dark'] .brutal-dialog-actions .brutal-btn-secondary:active {
+  box-shadow: 0 0 0 #eee;
+}
+[data-theme='dark'] .brutal-form .el-form-item__label {
+  color: #eee !important;
+}
+
+[data-theme='dark'] .brutal-form .el-input__wrapper,
+[data-theme='dark'] .brutal-form .el-textarea__inner {
+  background: #111 !important;
+  border-color: #eee !important;
+  box-shadow: 4px 4px 0px #eee !important;
+  color: #eee !important;
+}
+
+[data-theme='dark'] .brutal-raw-text {
+  background: #222;
+  border-color: #eee;
+  color: #eee;
+}
