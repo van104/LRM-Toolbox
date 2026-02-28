@@ -28,6 +28,7 @@
       <IntroView
         v-if="gameStage === 'intro'"
         :has-save="hasSave"
+        :loading="loading"
         @start="onStartNewLife"
         @load="loadGame"
       />
@@ -125,17 +126,17 @@
       </div>
 
       <!-- Death Stage -->
-      <div v-else-if="gameStage === 'over'" class="start-screen fade-in">
-        <div class="card glass-panel">
-          <h2>精彩的一生结束了</h2>
-          <div class="intro-text">
-            <p>享年 {{ gameState.age }} 岁。</p>
-            <p>你曾拥有 {{ gameState.wealth + gameState.savings }} 元财富。</p>
-            <p>最终职位: {{ gameState.job?.name || '无' }}</p>
-          </div>
-          <el-button type="primary" size="large" @click="restart">重新轮回</el-button>
-        </div>
-      </div>
+      <GameOverView
+        v-else-if="gameStage === 'over'"
+        :age="gameState.age"
+        :wealth="gameState.wealth"
+        :savings="gameState.savings"
+        :job-name="gameState.job?.name || '无业'"
+        :houses="gameState.houses"
+        :cars="gameState.cars"
+        :game-state="gameState"
+        @restart="restart"
+      />
     </main>
 
     <BuildingModal
@@ -169,7 +170,7 @@
 </template>
 
 <script setup lang="ts">
-  import { reactive, onMounted } from 'vue';
+  import { ref, reactive, onMounted } from 'vue';
   import {
     Back,
     Money,
@@ -194,6 +195,7 @@
   import AssetPanel from './LifeSimulator/components/AssetPanel.vue';
   import EventLog from './LifeSimulator/components/EventLog.vue';
   import BuildingModal from './LifeSimulator/components/BuildingModal.vue';
+  import GameOverView from './LifeSimulator/components/GameOverView.vue';
 
   // Composables
   import { useLifeGame } from './LifeSimulator/composables/useLifeGame';
@@ -203,6 +205,7 @@
   // Types
   import type { LifeData } from '@/data/life_simulator/types';
 
+  const loading = ref(true);
   const lifeData = reactive<LifeData>({
     careers: [],
     talents: [],
@@ -244,7 +247,7 @@
     selectTalent,
     handlePointChange,
     confirmTalent
-  } = useTalentSelection(gameState, lifeData.talents);
+  } = useTalentSelection(gameState, lifeData);
 
   const {
     buildingDialogVisible,
@@ -265,15 +268,23 @@
   } = useBuildings(gameState, lifeData, addLog);
 
   onMounted(async () => {
-    const data = await loadLifeData();
-    Object.assign(lifeData, data);
-    if (localStorage.getItem('lifeSimSave')) {
-      hasSave.value = true;
+    try {
+      const data = await loadLifeData();
+      Object.assign(lifeData, data);
+      if (localStorage.getItem('lifeSimSave')) {
+        hasSave.value = true;
+      }
+    } finally {
+      loading.value = false;
     }
   });
 
   // Main Logic Overrides/Glue
   const onStartNewLife = () => {
+    if (!lifeData.talents || lifeData.talents.length === 0) {
+      ElMessage.error('天赋命格数据加载失败，请刷新后再试');
+      return;
+    }
     startSelection();
     gameStage.value = 'talent';
   };

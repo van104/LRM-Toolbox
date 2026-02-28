@@ -30,9 +30,10 @@
 
 <script setup lang="ts">
   import { ref, computed, watch, nextTick } from 'vue';
+  import type { LogItem } from '@/data/life_simulator/types';
 
   const props = defineProps<{
-    logs: any[];
+    logs: LogItem[];
     degreeName?: string;
     pendingChoice: boolean;
   }>();

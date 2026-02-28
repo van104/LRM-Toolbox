@@ -18,7 +18,7 @@
             :max="100"
             show-input
             class="alloc-slider"
-            @input="val => $emit('change', stat.key, val)"
+            @input="(val: number) => emit('change', stat.key, val)"
           />
         </div>
       </div>
@@ -39,28 +39,39 @@
 
 <script setup lang="ts">
   import { reactive, watch } from 'vue';
+  import type { Component } from 'vue';
   import { FirstAidKit, Reading, Camera, Sunny } from '@element-plus/icons-vue';
-  import type { Talent } from '@/data/life_simulator/types';
+  import type { Talent, GameState, Stats } from '@/data/life_simulator/types';
 
   const props = defineProps<{
     availablePoints: number;
-    tempStats: any;
+    tempStats: Partial<GameState> | null;
     selectedTalent: Talent | null;
   }>();
 
   const emit = defineEmits(['change', 'back', 'start']);
 
-  const internalStats = reactive({ ...props.tempStats });
+  const internalStats = reactive<Stats>({
+    health: props.tempStats?.health || 0,
+    smarts: props.tempStats?.smarts || 0,
+    looks: props.tempStats?.looks || 0,
+    happiness: props.tempStats?.happiness || 0
+  });
 
   watch(
     () => props.tempStats,
     newStats => {
-      Object.assign(internalStats, newStats);
+      if (newStats) {
+        internalStats.health = newStats.health || 0;
+        internalStats.smarts = newStats.smarts || 0;
+        internalStats.looks = newStats.looks || 0;
+        internalStats.happiness = newStats.happiness || 0;
+      }
     },
     { deep: true }
   );
 
-  const stats = [
+  const stats: { key: keyof Stats; label: string; icon: Component }[] = [
     { key: 'health', label: '健康', icon: FirstAidKit },
     { key: 'smarts', label: '智力', icon: Reading },
     { key: 'looks', label: '颜值', icon: Camera },

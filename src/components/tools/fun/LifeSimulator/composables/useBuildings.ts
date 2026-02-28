@@ -47,12 +47,12 @@ export function useBuildings(
   };
 
   // Housing
-  const hasHouse = (id: string) => (gameState.houses as any as House[]).some(h => h.id === id);
+  const hasHouse = (id: string) => gameState.houses.some(h => h.id === id);
 
   const buyHouse = (house: House) => {
     if (gameState.wealth >= house.price) {
       gameState.wealth -= house.price;
-      (gameState.houses as any).push(house);
+      gameState.houses.push(house);
       addLog(`恭喜！你买下了 ${house.name}！`);
       ElMessage.success('购买成功');
     }
@@ -60,18 +60,18 @@ export function useBuildings(
 
   const rentHouse = (house: House) => {
     if (hasHouse(house.id)) return ElMessage.warning('你已经租了这个房子');
-    (gameState.houses as any).push(house);
+    gameState.houses.push(house);
     addLog(`你租下了 ${house.name}，虽然是租的，但也是个家。`);
     buildingDialogVisible.value = false;
   };
 
   // Vehicles
-  const hasCar = (id: string) => (gameState.cars as any as Vehicle[]).some(c => c.id === id);
+  const hasCar = (id: string) => gameState.cars.some(c => c.id === id);
 
   const buyCar = (car: Vehicle) => {
     if (gameState.wealth >= car.price) {
       gameState.wealth -= car.price;
-      (gameState.cars as any).push(car);
+      gameState.cars.push(car);
       addLog(`酷！你买了一辆 ${car.name}！`);
       ElMessage.success('购买成功');
     }
@@ -100,7 +100,7 @@ export function useBuildings(
   };
 
   const enroll = (edu: EducationLevel) => {
-    if ((gameState as any).hasStudied) return ElMessage.warning('你今年已经入学/毕业过了。');
+    if (gameState.hasStudied) return ElMessage.warning('你今年已经入学/毕业过了。');
     if (edu.cost && gameState.wealth < edu.cost) return ElMessage.error('学费不足');
     if (!checkEduReq(edu)) return ElMessage.error(`未满足前置学历要求`);
 
@@ -108,7 +108,7 @@ export function useBuildings(
     addLog(`你入学了 ${edu.name}。好好学习！`);
     buildingDialogVisible.value = false;
     gameState.degree = edu.id;
-    (gameState as any).hasStudied = true;
+    gameState.hasStudied = true;
   };
 
   // Job

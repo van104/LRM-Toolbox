@@ -13,14 +13,25 @@
       </div>
 
       <div class="actions">
-        <el-button type="primary" size="large" @click="$emit('start')">新的人生 (抽卡)</el-button>
+        <el-button
+          type="primary"
+          size="large"
+          :loading="loading"
+          :disabled="loading"
+          @click="$emit('start')"
+        >
+          {{ loading ? '载入数据中...' : '新的人生 (抽卡)' }}
+        </el-button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  defineProps<{ hasSave: boolean }>();
+  defineProps<{
+    hasSave: boolean;
+    loading: boolean;
+  }>();
   defineEmits(['load', 'start']);
 </script>
 

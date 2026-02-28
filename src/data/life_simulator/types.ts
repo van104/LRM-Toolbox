@@ -1,3 +1,10 @@
+export interface Stats {
+  health: number;
+  smarts: number;
+  looks: number;
+  happiness: number;
+}
+
 export interface Career {
   id: string;
   name: string;
@@ -67,6 +74,13 @@ export interface Bank {
   loanRate: number;
 }
 
+export interface Choice {
+  text: string;
+  effect?: AgeEvent['effect'];
+  action?: string;
+  [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+}
+
 export interface AgeEvent {
   text: string;
   effect?: {
@@ -84,8 +98,14 @@ export interface AgeEvent {
   minAge?: number;
   maxAge?: number;
 
-  choices?: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
+  choices?: Choice[];
   log?: string;
+}
+
+export interface LogItem {
+  age: number;
+  text: string;
+  choices?: Choice[];
 }
 
 export interface LifeData {
@@ -112,7 +132,7 @@ export interface GameState {
   fame: number;
   isAlive: boolean;
 
-  log: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
+  log: LogItem[];
   job: Career | null;
   savings: number;
   houses: House[];

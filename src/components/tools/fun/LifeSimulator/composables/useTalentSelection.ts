@@ -1,7 +1,7 @@
 import { ref, nextTick } from 'vue';
-import type { Talent, GameState } from '@/data/life_simulator/types';
+import type { Talent, GameState, LifeData } from '@/data/life_simulator/types';
 
-export function useTalentSelection(gameState: GameState, talents: Talent[]) {
+export function useTalentSelection(gameState: GameState, lifeData: LifeData) {
   const talentOptions = ref<Talent[]>([]);
   const selectedTalent = ref<Talent | null>(null);
   const availablePoints = ref(10);
@@ -26,7 +26,7 @@ export function useTalentSelection(gameState: GameState, talents: Talent[]) {
     baseStats.value = { ...tempStats.value };
     availablePoints.value = 10;
 
-    const pool = talents || [];
+    const pool = lifeData.talents || [];
     talentOptions.value = [...pool].sort(() => 0.5 - Math.random()).slice(0, 3);
     selectedTalent.value = null;
   };

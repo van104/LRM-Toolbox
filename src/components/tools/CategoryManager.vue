@@ -4,7 +4,6 @@
     <div
       v-if="activeCategory === 'all' && !searchKeyword && recommendedTools.length > 0"
       class="brutal-content-wrapper"
-      style="padding-bottom: 0"
     >
       <div class="brutal-section-header">
         <h2 class="brutal-section-title bg-title-pink">
@@ -30,7 +29,7 @@
     </div>
 
     <!-- Main Listing Section -->
-    <div class="brutal-content-wrapper">
+    <div class="brutal-content-wrapper" style="padding-top: 3rem">
       <div v-if="!searchKeyword" class="brutal-section-header">
         <h2 class="brutal-section-title bg-title">
           <el-icon>
