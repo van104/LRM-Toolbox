@@ -1,7 +1,7 @@
 import { ElMessage } from 'element-plus';
 
 // 配置默认后端 API 地址
-const DEFAULT_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const DEFAULT_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/lrm-api';
 
 export interface RequestOptions extends Omit<RequestInit, 'body'> {
   params?: Record<string, string | number | boolean>;

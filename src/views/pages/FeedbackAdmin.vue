@@ -90,15 +90,67 @@
           </el-row>
         </el-card>
 
+        <div class="table-toolbar">
+          <div class="left">
+            <el-input
+              v-model="searchQuery"
+              placeholder="搜索反馈内容..."
+              :prefix-icon="Search"
+              clearable
+              style="width: 250px"
+              @clear="fetchFeedback"
+            />
+            <el-select v-model="filterType" placeholder="反馈类型" clearable style="width: 150px">
+              <el-option label="功能建议" value="feature" />
+              <el-option label="Bug 反馈" value="bug" />
+              <el-option label="其他问题" value="other" />
+            </el-select>
+            <el-select v-model="filterStatus" placeholder="处理状态" clearable style="width: 120px">
+              <el-option label="待处理" value="pending" />
+              <el-option label="已处理" value="resolved" />
+            </el-select>
+          </div>
+          <div class="right">
+            <el-dropdown v-if="selectedIds.length > 0" @command="handleBatchAction">
+              <el-button type="primary">
+                批量操作 ({{ selectedIds.length }})
+                <el-icon class="el-icon--right"><arrow-down /></el-icon>
+              </el-button>
+              <template #header></template>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item command="resolve">标记为已办</el-dropdown-item>
+                  <el-dropdown-item command="pending">设为待办</el-dropdown-item>
+                  <el-dropdown-item command="delete" divided class="text-danger"
+                    >删除选中</el-dropdown-item
+                  >
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+
+            <el-button type="info" plain :icon="Download" @click="exportFeedback"
+              >导出 CSV</el-button
+            >
+
+            <el-popconfirm title="确定要清空所有反馈记录吗？" @confirm="handleClearAll">
+              <template #reference>
+                <el-button type="danger" plain :icon="Delete">清空所有</el-button>
+              </template>
+            </el-popconfirm>
+          </div>
+        </div>
+
         <el-table
           v-loading="loading"
-          :data="feedbackList"
+          :data="filteredFeedback"
           style="width: 100%"
           border
           stripe
           class="feedback-table"
+          @selection-change="handleSelectionChange"
         >
-          <el-table-column type="index" width="50" />
+          <el-table-column type="selection" width="55" />
+          <el-table-column type="index" width="50" label="#" />
           <el-table-column prop="status" label="状态" width="100">
             <template #default="{ row }">
               <el-tag :type="row.status === 'resolved' ? 'success' : 'warning'">
@@ -139,6 +191,7 @@
                 @click="handleResolve(row)"
                 >标记已办</el-button
               >
+              <el-button v-else type="warning" link @click="handleRevert(row)">设为待办</el-button>
               <el-popconfirm title="确定删除这条反馈吗？" @confirm="handleDelete(row)">
                 <template #reference>
                   <el-button type="danger" link>删除</el-button>
@@ -187,8 +240,15 @@
 
 <script setup>
   import { ref, onMounted, computed } from 'vue';
-  import { Refresh, Lock } from '@element-plus/icons-vue';
-  import { getFeedbackFromBackend, updateFeedbackStatus, deleteFeedback } from '@/api/feedback';
+  import { Refresh, Lock, Search, Delete, ArrowDown, Download } from '@element-plus/icons-vue';
+  import {
+    getFeedbackFromBackend,
+    updateFeedbackStatus,
+    deleteFeedback,
+    deleteFeedbackBatch,
+    deleteAllFeedback,
+    updateFeedbackStatusBatch
+  } from '@/api/feedback';
   import { ElMessage } from 'element-plus';
 
   const isLoggedIn = ref(false);
@@ -197,6 +257,21 @@
   const loading = ref(false);
   const detailVisible = ref(false);
   const currentDetail = ref(null);
+
+  // 筛选与搜索
+  const searchQuery = ref('');
+  const filterType = ref('');
+  const filterStatus = ref('');
+  const selectedIds = ref([]);
+
+  const filteredFeedback = computed(() => {
+    return feedbackList.value.filter(item => {
+      const matchSearch = item.content.toLowerCase().includes(searchQuery.value.toLowerCase());
+      const matchType = !filterType.value || item.type === filterType.value;
+      const matchStatus = !filterStatus.value || item.status === filterStatus.value;
+      return matchSearch && matchType && matchStatus;
+    });
+  });
 
   const stats = computed(() => {
     return feedbackList.value.reduce(
@@ -274,6 +349,17 @@
     }
   };
 
+  const handleRevert = async row => {
+    const token = sessionStorage.getItem('lrm_admin_token');
+    try {
+      await updateFeedbackStatus(row.id, 'pending', token);
+      ElMessage.success('已恢复为待办状态');
+      fetchFeedback();
+    } catch (error) {
+      ElMessage.error(error.message || '操作失败');
+    }
+  };
+
   const handleDelete = async row => {
     const token = sessionStorage.getItem('lrm_admin_token');
     try {
@@ -283,6 +369,89 @@
     } catch (error) {
       ElMessage.error(error.message || '删除失败');
     }
+  };
+
+  const handleSelectionChange = val => {
+    selectedIds.value = val.map(item => item.id);
+  };
+
+  const handleBatchAction = async command => {
+    const token = sessionStorage.getItem('lrm_admin_token');
+    if (selectedIds.value.length === 0) return;
+
+    try {
+      if (command === 'resolve') {
+        await updateFeedbackStatusBatch(selectedIds.value, 'resolved', token);
+        ElMessage.success(`成功处理 ${selectedIds.value.length} 条反馈`);
+      } else if (command === 'pending') {
+        await updateFeedbackStatusBatch(selectedIds.value, 'pending', token);
+        ElMessage.success(`已恢复 ${selectedIds.value.length} 条反馈为待办`);
+      } else if (command === 'delete') {
+        await new Promise((resolve, reject) => {
+          import('element-plus').then(({ ElMessageBox }) => {
+            ElMessageBox.confirm(
+              `确定要删除选中的 ${selectedIds.value.length} 条记录吗？`,
+              '警告',
+              {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }
+            )
+              .then(resolve)
+              .catch(reject);
+          });
+        });
+        await deleteFeedbackBatch(selectedIds.value, token);
+        ElMessage.success('批量删除成功');
+      }
+      fetchFeedback();
+    } catch (error) {
+      if (error !== 'cancel') {
+        ElMessage.error(error.message || '操作失败');
+      }
+    }
+  };
+
+  const handleClearAll = async () => {
+    const token = sessionStorage.getItem('lrm_admin_token');
+    try {
+      await deleteAllFeedback(token);
+      ElMessage.success('已清空所有反馈记录');
+      fetchFeedback();
+    } catch (error) {
+      ElMessage.error(error.message || '操作失败');
+    }
+  };
+
+  const exportFeedback = () => {
+    if (filteredFeedback.value.length === 0) {
+      ElMessage.warning('没有可导出的数据');
+      return;
+    }
+
+    const headers = ['ID', '状态', '类型', '内容', '联系方式', '提交时间', '设备信息'];
+    const rows = filteredFeedback.value.map(item => [
+      item.id,
+      item.status === 'resolved' ? '已处理' : '待处理',
+      getTypeText(item.type),
+      `"${item.content.replace(/"/g, '""')}"`,
+      item.contact || '未提供',
+      formatDate(item.timestamp),
+      `"${item.userAgent.replace(/"/g, '""')}"`
+    ]);
+
+    const csvContent = '\ufeff' + [headers, ...rows].map(e => e.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `feedback_export_${new Date().getTime()}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    ElMessage.success('导出成功');
   };
 
   const getTypeText = type => {
@@ -429,6 +598,30 @@
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--text-primary);
+  }
+
+  .table-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    background: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .table-toolbar .left {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .table-toolbar .right {
+    display: flex;
+    gap: 0.75rem;
   }
 
   .feedback-table {

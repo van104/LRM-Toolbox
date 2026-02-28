@@ -121,5 +121,40 @@ export const dbAPI = {
         else resolve(this.changes);
       });
     });
+  },
+
+  deleteBatch: ids => {
+    return new Promise((resolve, reject) => {
+      if (!Array.isArray(ids) || ids.length === 0) return resolve(0);
+      const placeholders = ids.map(() => '?').join(',');
+      db.run(`DELETE FROM feedbacks WHERE id IN (${placeholders})`, ids, function (err) {
+        if (err) reject(err);
+        else resolve(this.changes);
+      });
+    });
+  },
+
+  deleteAll: () => {
+    return new Promise((resolve, reject) => {
+      db.run('DELETE FROM feedbacks', [], function (err) {
+        if (err) reject(err);
+        else resolve(this.changes);
+      });
+    });
+  },
+
+  updateStatusBatch: (ids, status) => {
+    return new Promise((resolve, reject) => {
+      if (!Array.isArray(ids) || ids.length === 0) return resolve(0);
+      const placeholders = ids.map(() => '?').join(',');
+      db.run(
+        `UPDATE feedbacks SET status = ? WHERE id IN (${placeholders})`,
+        [status, ...ids],
+        function (err) {
+          if (err) reject(err);
+          else resolve(this.changes);
+        }
+      );
+    });
   }
 };

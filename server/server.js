@@ -248,6 +248,65 @@ app.post('/lrm-api/feedback/delete', async (req, res) => {
   }
 });
 
+// 批量删除反馈 API
+app.post('/lrm-api/feedback/delete-batch', async (req, res) => {
+  const authHeader = (req.headers['x-admin-token'] || '').trim();
+  const { ids } = req.body;
+
+  if (authHeader !== ADMIN_PASSWORD || !ADMIN_PASSWORD)
+    return res.status(401).json({ error: '未授权' });
+
+  if (!Array.isArray(ids)) {
+    return res.status(400).json({ error: '参数无效' });
+  }
+
+  try {
+    const changes = await dbAPI.deleteBatch(ids);
+    res.json({ success: true, count: changes });
+  } catch (error) {
+    console.error('Delete batch feedback error:', error);
+    res.status(500).json({ error: '操作失败' });
+  }
+});
+
+// 清空所有反馈 API
+app.post('/lrm-api/feedback/delete-all', async (req, res) => {
+  const authHeader = (req.headers['x-admin-token'] || '').trim();
+
+  if (authHeader !== ADMIN_PASSWORD || !ADMIN_PASSWORD)
+    return res.status(401).json({ error: '未授权' });
+
+  try {
+    const changes = await dbAPI.deleteAll();
+    res.json({ success: true, count: changes });
+  } catch (error) {
+    console.error('Delete all feedback error:', error);
+    res.status(500).json({ error: '操作失败' });
+  }
+});
+
+// 批量更新状态 API
+app.post('/lrm-api/feedback/update-batch', async (req, res) => {
+  const authHeader = (req.headers['x-admin-token'] || '').trim();
+  const { ids, status } = req.body;
+
+  if (authHeader !== ADMIN_PASSWORD || !ADMIN_PASSWORD)
+    return res.status(401).json({ error: '未授权' });
+
+  const allowedStatuses = ['pending', 'processing', 'resolved', 'rejected'];
+  if (!Array.isArray(ids) || !allowedStatuses.includes(status)) {
+    return res.status(400).json({ error: '参数无效' });
+  }
+
+  try {
+    const changes = await dbAPI.updateStatusBatch(ids, status);
+    res.json({ success: true, count: changes });
+  } catch (error) {
+    console.error('Update batch feedback error:', error);
+    res.status(500).json({ error: '操作失败' });
+  }
+});
+
 // AI 绘图代理 API — 修复 SSRF，硬编码 API 地址
 const AI_API_URL = 'https://api.siliconflow.cn/v1/chat/completions';
 

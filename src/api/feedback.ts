@@ -67,3 +67,54 @@ export async function deleteFeedback(id: string, password: string): Promise<Feed
     data: { id }
   });
 }
+
+/**
+ * 批量删除反馈
+ * @param {string[]} ids - 反馈ID列表
+ * @param {string} password - 管理员密码
+ */
+export async function deleteFeedbackBatch(
+  ids: string[],
+  password: string
+): Promise<FeedbackResponse> {
+  return request<FeedbackResponse>('/feedback/delete-batch', {
+    method: 'POST',
+    headers: {
+      'x-admin-token': password
+    },
+    data: { ids }
+  });
+}
+
+/**
+ * 清空所有反馈
+ * @param {string} password - 管理员密码
+ */
+export async function deleteAllFeedback(password: string): Promise<FeedbackResponse> {
+  return request<FeedbackResponse>('/feedback/delete-all', {
+    method: 'POST',
+    headers: {
+      'x-admin-token': password
+    }
+  });
+}
+
+/**
+ * 批量更新反馈状态
+ * @param {string[]} ids - 反馈ID列表
+ * @param {string} status - 新状态
+ * @param {string} password - 管理员密码
+ */
+export async function updateFeedbackStatusBatch(
+  ids: string[],
+  status: string,
+  password: string
+): Promise<FeedbackResponse> {
+  return request<FeedbackResponse>('/feedback/update-batch', {
+    method: 'POST',
+    headers: {
+      'x-admin-token': password
+    },
+    data: { ids, status }
+  });
+}
