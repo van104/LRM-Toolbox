@@ -1,6 +1,5 @@
 @import 'tailwindcss';
-@custom-variant dark (&:where(.dark, .dark *));
-/* @variant dark (&:where(.dark, .dark *)); */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
 /* 实用工具箱 - 全局样式 */
 

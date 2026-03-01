@@ -1,23 +1,44 @@
 <template>
-  <Teleport to="body">
-    <Transition name="modal">
-      <div v-if="visible" class="modal-overlay" @click.self="$emit('close')">
-        <div class="modal-container">
-          <!-- 关闭按钮 -->
-          <button class="modal-close" @click="$emit('close')">✕</button>
+  <DialogRoot
+    :open="visible"
+    @update:open="
+      val => {
+        if (!val) $emit('close');
+      }
+    "
+  >
+    <DialogPortal>
+      <!-- Overlay -->
+      <DialogOverlay
+        class="fixed inset-0 bg-black/55 z-[1000] flex items-center justify-center p-4 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
+      />
+      <!-- Content -->
+      <DialogContent
+        class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[580px] max-h-[85vh] sm:max-h-[90vh] bg-white dark:bg-[#1a1a1a] border-4 border-[#111] dark:border-[#eee] p-0 z-[1001] shadow-[12px_12px_0_0_#111] dark:shadow-[12px_12px_0_0_#eee] flex flex-col focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] duration-250 overflow-hidden"
+      >
+        <!-- 关闭按钮 -->
+        <DialogClose
+          class="absolute top-3 right-3 w-9 h-9 border-[3px] border-[#111] dark:border-[#eee] bg-white dark:bg-[#222] text-[#111] dark:text-[#eee] font-black text-[1.1rem] flex items-center justify-center cursor-pointer shadow-[3px_3px_0_0_#111] dark:shadow-[3px_3px_0_0_#eee] hover:bg-[#ff4b4b] dark:hover:bg-[#cc0000] hover:text-white dark:hover:text-white hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[5px_5px_0_0_#111] dark:hover:shadow-[5px_5px_0_0_#eee] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[0_0_0_0_#111] dark:active:shadow-[0_0_0_0_#eee] transition-all z-10 outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#111]"
+          aria-label="关闭"
+        >
+          ✕
+        </DialogClose>
 
-          <ToolModalHeader :tool="tool" />
+        <ToolModalHeader :tool="tool" />
+        <div class="flex-1 overflow-y-auto">
           <ToolModalBody :tool="tool" />
-          <ToolModalFooter @close="$emit('close')" @use="handleUseTool" />
         </div>
-      </div>
-    </Transition>
-  </Teleport>
+        <ToolModalFooter @close="$emit('close')" @use="handleUseTool" />
+      </DialogContent>
+    </DialogPortal>
+  </DialogRoot>
 </template>
 
 <script setup>
   import { useRouter } from 'vue-router';
   import { useUserStore } from '@/stores/user';
+  import { DialogRoot, DialogPortal, DialogOverlay, DialogContent, DialogClose } from 'radix-vue';
+
   import ToolModalHeader from './ToolModalHeader.vue';
   import ToolModalBody from './ToolModalBody.vue';
   import ToolModalFooter from './ToolModalFooter.vue';
@@ -48,128 +69,3 @@
     }
   }
 </script>
-
-<style scoped>
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.55);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    z-index: 1000;
-  }
-
-  .modal-container {
-    position: relative;
-    width: 100%;
-    max-width: 580px;
-    max-height: 85vh;
-    background: #fff;
-    border: 4px solid #111;
-    box-shadow: 12px 12px 0px #111;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    animation: brutal-pop-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  @keyframes brutal-pop-in {
-    0% {
-      opacity: 0;
-      transform: scale(0.9) translateY(20px);
-    }
-    100% {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-    }
-  }
-
-  /* 关闭按钮 */
-  .modal-close {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 36px;
-    height: 36px;
-    border: 3px solid #111;
-    background: #fff;
-    font-size: 1.1rem;
-    font-weight: 900;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 3px 3px 0px #111;
-    transition: all 0.1s;
-    z-index: 2;
-    color: #111;
-  }
-
-  .modal-close:hover {
-    background: #ff4b4b;
-    color: #fff;
-    transform: translate(-2px, -2px);
-    box-shadow: 5px 5px 0px #111;
-  }
-
-  .modal-close:active {
-    transform: translate(2px, 2px);
-    box-shadow: 0px 0px 0px #111;
-  }
-
-  /* 过渡动画 */
-  .modal-enter-active,
-  .modal-leave-active {
-    transition: opacity 0.2s ease;
-  }
-
-  .modal-enter-active .modal-container {
-    animation: brutal-pop-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  .modal-leave-active .modal-container {
-    transition: all 0.15s ease;
-  }
-
-  .modal-enter-from,
-  .modal-leave-to {
-    opacity: 0;
-  }
-
-  .modal-leave-to .modal-container {
-    transform: scale(0.95) translateY(10px);
-    opacity: 0;
-  }
-
-  /* 暗色模式 */
-  [data-theme='dark'] .modal-container {
-    background: #1a1a1a;
-    border-color: #eee;
-    box-shadow: 12px 12px 0px #eee;
-  }
-
-  [data-theme='dark'] .modal-close {
-    background: #222;
-    color: #eee;
-    border-color: #eee;
-    box-shadow: 3px 3px 0px #eee;
-  }
-
-  [data-theme='dark'] .modal-close:hover {
-    background: #cc0000;
-    color: #fff;
-    box-shadow: 5px 5px 0px #eee;
-  }
-
-  /* 响应式 */
-  @media (max-width: 640px) {
-    .modal-container {
-      max-height: 90vh;
-    }
-  }
-</style>
