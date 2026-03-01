@@ -15,7 +15,7 @@
             <span class="stat-name">工具模块</span>
           </div>
           <div class="stat-item">
-            <span class="stat-val">v2.5.0</span>
+            <span class="stat-val">v2.5.1</span>
             <span class="stat-name">最新版本</span>
           </div>
           <div class="stat-item">
@@ -26,19 +26,32 @@
       </div>
 
       <div class="brutal-timeline">
-        <div v-for="(release, index) in releases" :key="release.version" class="timeline-node">
+        <div
+          v-for="(release, index) in releases"
+          :key="release.version"
+          class="timeline-node"
+          :class="{ 'is-minor-node': release.type === 'minor' }"
+        >
           <!-- Timeline Marker Line -->
           <div class="timeline-axle">
-            <div class="axle-pip" :class="{ 'latest-pip': index === 0 }"></div>
+            <div
+              class="axle-pip"
+              :class="{ 'latest-pip': index === 0, 'minor-pip': release.type === 'minor' }"
+            ></div>
             <div class="axle-line"></div>
           </div>
 
           <!-- Timeline Content Card -->
-          <div class="brutal-card-node" :class="getBrutalColorClass(index)">
+          <!-- 大版本卡片 -->
+          <div
+            v-if="release.type !== 'minor'"
+            class="brutal-card-node"
+            :class="getBrutalColorClass(index)"
+          >
             <div class="node-head">
               <span class="node-version">{{ release.version }}</span>
               <span class="node-date">{{ release.date }}</span>
-              <span v-if="index === 0" class="tag-latest">CURRENT_SYNC</span>
+              <span v-if="index === 0" class="tag-latest">STABLE_MAJOR</span>
             </div>
 
             <h3 class="node-title">{{ release.title }}</h3>
@@ -56,6 +69,22 @@
             </div>
 
             <div v-if="release.note" class="node-note">>> [LOG_NOTE]: {{ release.note }}</div>
+          </div>
+
+          <!-- 小版本/补丁卡片 -->
+          <div v-else class="minor-card-node">
+            <div class="minor-head">
+              <span class="minor-version">{{ release.version }}</span>
+              <span class="minor-date">{{ release.date }}</span>
+              <span class="minor-title">{{ release.title }}</span>
+            </div>
+            <ul class="minor-items">
+              <template v-for="group in release.groups" :key="group.label">
+                <li v-for="item in group.items" :key="item" class="minor-li">
+                  <span class="mini-icon">{{ group.icon }}</span> {{ item }}
+                </li>
+              </template>
+            </ul>
           </div>
         </div>
       </div>
@@ -77,8 +106,33 @@
 
   const releases = ref([
     {
+      version: 'v2.5.1',
+      date: '2026-03-01',
+      type: 'minor', // 小版本
+      title: '全新工具：JS 混淆器上线与全局优化',
+      groups: [
+        {
+          label: '新工具发布',
+          icon: '🚀',
+          items: [
+            '【全新上线】专业级 JavaScript 代码混淆工具，支持文件夹批量混淆与 ZIP 导出',
+            '引入 Shannon Entropy (香农熵) 分析及双窗对比预览功能'
+          ]
+        },
+        {
+          label: '框架优化',
+          icon: '✨',
+          items: [
+            '部署 scrollbar-gutter 策略，解决全站页面因滚动条产生的布局抖动问题',
+            '优化混淆器配置面板样式，支持布尔值状态高亮显示'
+          ]
+        }
+      ]
+    },
+    {
       version: 'v2.5.0',
       date: '2026-02-26',
+      type: 'major',
       title: '视觉重塑：图标系统全面升级',
       groups: [
         {
@@ -96,6 +150,7 @@
     {
       version: 'v2.0.0',
       date: '2026-02-23',
+      type: 'major',
       title: '赛博狂潮：Neobrutalism 降临',
       groups: [
         {
@@ -475,6 +530,82 @@
     color: #111;
     font-weight: bold;
     border: 3px dashed #111;
+  }
+
+  /* 小版本卡片样式 */
+  .minor-card-node {
+    flex: 1;
+    background: #fff;
+    border: 3px solid #111;
+    padding: 1rem 1.5rem;
+    box-shadow: 4px 4px 0px #111;
+    transition: all 0.2s;
+  }
+
+  .minor-card-node:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 6px 6px 0px #111;
+  }
+
+  .minor-head {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .minor-version {
+    font-size: 0.9rem;
+    font-weight: 900;
+    background: #eee;
+    color: #111;
+    padding: 2px 8px;
+    border: 1px solid #111;
+  }
+
+  .minor-date {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #666;
+  }
+
+  .minor-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #111;
+  }
+
+  .minor-items {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .minor-li {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .mini-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .axle-pip.minor-pip {
+    width: 16px;
+    height: 16px;
+    margin-top: 4px;
+    border-width: 3px;
+    box-shadow: none;
   }
 
   @media (max-width: 768px) {
