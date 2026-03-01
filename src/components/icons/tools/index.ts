@@ -103,6 +103,7 @@ export { default as InterestFreeIcon } from './finance/InterestFreeIcon.vue';
 export { default as InterestRatesIcon } from './finance/InterestRatesIcon.vue';
 export { default as IpLocationIcon } from './dev/IpLocationIcon.vue';
 export { default as JigsawPuzzleIcon } from './fun/JigsawPuzzleIcon.vue';
+export { default as JSObfuscatorIcon } from './dev/JSObfuscatorIcon.vue';
 export { default as JsonFormatterIcon } from './dev/JsonFormatterIcon.vue';
 export { default as JwtDecoderIcon } from './dev/JwtDecoderIcon.vue';
 export { default as KeywordExtractorIcon } from './text/KeywordExtractorIcon.vue';

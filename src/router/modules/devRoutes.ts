@@ -206,6 +206,11 @@ const devRoutes: RouteRecordRaw[] = [
     path: '/tools/env-editor',
     name: 'EnvEditorTool',
     component: () => import('@/components/tools/dev/EnvEditorTool.vue')
+  },
+  {
+    path: '/tools/js-obfuscator',
+    name: 'JSObfuscatorTool',
+    component: () => import('@/components/tools/dev/JSObfuscatorTool.vue')
   }
 ];
 

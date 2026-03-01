@@ -71,6 +71,7 @@
 
 html {
   -webkit-font-smoothing: antialiased;
+  scrollbar-gutter: stable;
 }
 
 body {
