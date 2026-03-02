@@ -4,6 +4,7 @@
   import MobileTabBar from '@/components/layout/mobile/MobileTabBar.vue';
   import CommandPalette from '@/components/common/CommandPalette.vue';
   import ReloadPrompt from '@/components/common/ReloadPrompt.vue';
+  import '@fontsource/syne/800.css';
 </script>
 
 <template>

@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
+    "@fontsource/syne": "^5.2.7",
     "@fortawesome/fontawesome-free": "^7.1.0",
     "@pdfsmaller/pdf-encrypt-lite": "^1.0.1",
     "@peculiar/webcrypto": "^1.5.0",

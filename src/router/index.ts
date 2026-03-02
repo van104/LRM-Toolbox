@@ -63,6 +63,11 @@ const pageRoutes: RouteRecordRaw[] = [
     path: '/test-bench',
     name: 'TestBench',
     component: () => import('@/views/ToolTestBench.vue')
+  },
+  {
+    path: '/ui-test',
+    name: 'UITest',
+    component: () => import('@/views/UITest.vue')
   }
 ];
 
@@ -123,7 +128,8 @@ router.afterEach(to => {
         '/favorites': '我的收藏',
         '/history': '最近使用',
         '/changelog': '版本演进',
-        '/feedback': '反馈建议'
+        '/feedback': '反馈建议',
+        '/ui-test': '新粗野主义组件库测试台'
       };
       if (pageMap[to.path]) {
         title = `${pageMap[to.path]} - LRM 工具箱`;
