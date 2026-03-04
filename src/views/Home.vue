@@ -75,15 +75,26 @@
     return (typeof mCount === 'number' ? mCount : mCount?.value) || allToolsCount.value;
   });
 
+  // 用于记忆真实的用户选择分类，避免在前进/后退时错误重置搜索状态
+  let currentCategory = route.query.category || 'all';
+
   watch(
     () => route.query.category,
     newCategory => {
-      activeCategory.value = newCategory || 'all';
+      if (route.name !== 'Home') return;
+      const target = newCategory || 'all';
+
+      // 如果实际上没有切换分类（比如只是从工具页返回），则不重置搜索
+      if (currentCategory === target) return;
+
+      currentCategory = target;
+      activeCategory.value = target;
       searchKeyword.value = '';
     }
   );
 
   function handleCategoryChange(categoryId) {
+    currentCategory = categoryId;
     activeCategory.value = categoryId;
     searchKeyword.value = '';
     router.replace({
@@ -98,6 +109,8 @@
     searchKeyword.value = keyword;
     if (keyword) {
       activeCategory.value = 'all';
+    } else {
+      activeCategory.value = currentCategory;
     }
   }
 

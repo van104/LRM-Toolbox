@@ -307,6 +307,68 @@ app.post('/lrm-api/feedback/update-batch', async (req, res) => {
   }
 });
 
+// ========== 维护模式 API ==========
+
+// 获取维护列表（公开，无需鉴权 — 所有用户都需要知道哪些工具在维护中）
+app.get('/lrm-api/maintenance', async (req, res) => {
+  try {
+    const list = await dbAPI.maintenanceGetAll();
+    res.json(list);
+  } catch (error) {
+    console.error('Fetch maintenance list error:', error);
+    res.status(500).json({ error: '获取维护列表失败' });
+  }
+});
+
+// 更新/添加维护配置（管理员）
+app.post('/lrm-api/maintenance/upsert', async (req, res) => {
+  const authHeader = (req.headers['x-admin-token'] || '').trim();
+
+  if (authHeader !== ADMIN_PASSWORD || !ADMIN_PASSWORD)
+    return res.status(401).json({ error: '未授权' });
+
+  const { toolId, toolName, enabled, notice } = req.body;
+
+  if (!toolId || typeof toolId !== 'string') {
+    return res.status(400).json({ error: '工具 ID 无效' });
+  }
+
+  try {
+    await dbAPI.maintenanceUpsert(
+      toolId.trim(),
+      escapeHtml((toolName || '').trim()),
+      !!enabled,
+      escapeHtml((notice || '').trim())
+    );
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Upsert maintenance error:', error);
+    res.status(500).json({ error: '设置维护状态失败' });
+  }
+});
+
+// 删除维护配置（管理员）
+app.post('/lrm-api/maintenance/delete', async (req, res) => {
+  const authHeader = (req.headers['x-admin-token'] || '').trim();
+
+  if (authHeader !== ADMIN_PASSWORD || !ADMIN_PASSWORD)
+    return res.status(401).json({ error: '未授权' });
+
+  const { toolId } = req.body;
+
+  if (!toolId || typeof toolId !== 'string') {
+    return res.status(400).json({ error: '工具 ID 无效' });
+  }
+
+  try {
+    await dbAPI.maintenanceDelete(toolId.trim());
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Delete maintenance error:', error);
+    res.status(500).json({ error: '删除维护配置失败' });
+  }
+});
+
 // AI 绘图代理 API — 修复 SSRF，硬编码 API 地址
 const AI_API_URL = 'https://api.siliconflow.cn/v1/chat/completions';
 

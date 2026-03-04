@@ -30,6 +30,16 @@ const pageRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/pages/FeedbackAdmin.vue')
   },
   {
+    path: '/admin/maintenance',
+    name: 'MaintenanceAdmin',
+    component: () => import('@/views/pages/MaintenanceAdmin.vue')
+  },
+  {
+    path: '/maintenance',
+    name: 'ToolMaintenance',
+    component: () => import('@/views/ToolMaintenance.vue')
+  },
+  {
     path: '/privacy',
     name: 'Privacy',
     component: () => import('@/views/pages/Privacy.vue')
@@ -106,7 +116,31 @@ const router = createRouter({
   }
 });
 
+// ========== 维护模式路由守卫 ==========
 import { tools } from '@/data/tools';
+import { useMaintenanceStore } from '@/stores/maintenance';
+
+router.beforeEach(async (to, _from, next) => {
+  // 跳过非工具页面和维护页本身
+  if (!to.path.startsWith('/tools/') || to.name === 'ToolMaintenance') {
+    return next();
+  }
+
+  const store = useMaintenanceStore();
+
+  // 确保维护列表已从后端加载
+  await store.ensureLoaded();
+
+  // 查找当前路由对应的工具是否在维护名单中
+  const matchedTool = tools.find(t => t.route === to.path);
+  if (matchedTool) {
+    if (store.isUnderMaintenance(matchedTool.id)) {
+      return next({ path: '/maintenance', query: { from: to.path } });
+    }
+  }
+
+  next();
+});
 
 router.afterEach(to => {
   let title = 'LRM 工具箱 - 高效实用的开发者工具箱';

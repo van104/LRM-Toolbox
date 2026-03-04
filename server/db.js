@@ -21,24 +21,41 @@ const db = new sqlite3.Database(DB_PATH, err => {
 });
 
 function initDb() {
-  db.run(
-    `CREATE TABLE IF NOT EXISTS feedbacks (
-    id TEXT PRIMARY KEY,
-    type TEXT,
-    content TEXT,
-    contact TEXT,
-    status TEXT,
-    timestamp TEXT,
-    userAgent TEXT
-  )`,
-    err => {
-      if (!err) {
-        migrateFromJson();
-      } else {
-        console.error('Error creating table:', err);
+  db.serialize(() => {
+    db.run(
+      `CREATE TABLE IF NOT EXISTS feedbacks (
+      id TEXT PRIMARY KEY,
+      type TEXT,
+      content TEXT,
+      contact TEXT,
+      status TEXT,
+      timestamp TEXT,
+      userAgent TEXT
+    )`,
+      err => {
+        if (!err) {
+          migrateFromJson();
+        } else {
+          console.error('Error creating feedbacks table:', err);
+        }
       }
-    }
-  );
+    );
+
+    db.run(
+      `CREATE TABLE IF NOT EXISTS maintenance (
+      toolId TEXT PRIMARY KEY,
+      toolName TEXT,
+      enabled INTEGER DEFAULT 0,
+      notice TEXT DEFAULT '',
+      updatedAt TEXT
+    )`,
+      err => {
+        if (err) {
+          console.error('Error creating maintenance table:', err);
+        }
+      }
+    );
+  });
 }
 
 function migrateFromJson() {
@@ -155,6 +172,44 @@ export const dbAPI = {
           else resolve(this.changes);
         }
       );
+    });
+  },
+
+  // ========== 维护模式 ==========
+  maintenanceGetAll: () => {
+    return new Promise((resolve, reject) => {
+      db.all('SELECT * FROM maintenance ORDER BY updatedAt DESC', [], (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows.map(r => ({ ...r, enabled: !!r.enabled })));
+      });
+    });
+  },
+
+  maintenanceUpsert: (toolId, toolName, enabled, notice) => {
+    return new Promise((resolve, reject) => {
+      db.run(
+        `INSERT INTO maintenance (toolId, toolName, enabled, notice, updatedAt)
+         VALUES (?, ?, ?, ?, ?)
+         ON CONFLICT(toolId) DO UPDATE SET
+           toolName = excluded.toolName,
+           enabled = excluded.enabled,
+           notice = excluded.notice,
+           updatedAt = excluded.updatedAt`,
+        [toolId, toolName, enabled ? 1 : 0, notice, new Date().toISOString()],
+        function (err) {
+          if (err) reject(err);
+          else resolve(this.changes);
+        }
+      );
+    });
+  },
+
+  maintenanceDelete: toolId => {
+    return new Promise((resolve, reject) => {
+      db.run('DELETE FROM maintenance WHERE toolId = ?', [toolId], function (err) {
+        if (err) reject(err);
+        else resolve(this.changes);
+      });
     });
   }
 };

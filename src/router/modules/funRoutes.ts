@@ -201,6 +201,11 @@ const funRoutes: RouteRecordRaw[] = [
     path: '/tools/persona-generator',
     name: 'PersonaGeneratorTool',
     component: () => import('@/components/tools/fun/PersonaGeneratorTool.vue')
+  },
+  {
+    path: '/tools/niuniu-match',
+    name: 'NiuNiuMatchTool',
+    component: () => import('@/components/tools/fun/NiuNiuMatchTool.vue')
   }
 ];
 
