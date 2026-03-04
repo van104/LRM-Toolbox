@@ -130,6 +130,7 @@ export { default as MortgageCalculatorIcon } from './finance/MortgageCalculatorI
 export { default as MyNetworkIcon } from './dev/MyNetworkIcon.vue';
 export { default as NameStrokeIcon } from './edu/NameStrokeIcon.vue';
 export { default as NeumorphismGeneratorIcon } from './design/NeumorphismGeneratorIcon.vue';
+export { default as NiuNiuMatchIcon } from './fun/NiuNiuMatchIcon.vue';
 export { default as PasswordGeneratorIcon } from './dev/PasswordGeneratorIcon.vue';
 
 export { default as PdfCompressionIcon } from './pdf/PdfCompressionIcon.vue';

@@ -1,7 +1,25 @@
 <template>
   <div
-    class="bg-gray-50 min-h-screen flex flex-col items-center justify-start font-sans select-none overflow-hidden touch-none sm:touch-auto"
+    class="bg-gray-50 min-h-screen flex flex-col items-center justify-start font-sans select-none overflow-hidden touch-none sm:touch-auto relative"
   >
+    <button
+      class="absolute left-4 top-4 z-[99] p-2 bg-white/80 rounded-full shadow-md text-gray-700 hover:bg-white flex items-center gap-2"
+      @click="$router.back()"
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M19 12H5M12 19l-7-7 7-7" />
+      </svg>
+      <span class="font-bold text-sm pr-1">退出</span>
+    </button>
     <div v-if="!grid.length"></div>
     <template v-else>
       <div v-if="isInMenu" class="w-full max-w-md px-4 py-8 flex flex-col items-center gap-6 z-10">
@@ -1093,47 +1111,5 @@
   }
   .animate-error {
     animation: shake 0.3s ease-in-out infinite;
-  }
-  #root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
-  }
-
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.react:hover {
-    filter: drop-shadow(0 0 2em #61dafbaa);
-  }
-
-  @keyframes logo-spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    a:nth-of-type(2) .logo {
-      animation: logo-spin infinite 20s linear;
-    }
-  }
-
-  .card {
-    padding: 2em;
-  }
-
-  .read-the-docs {
-    color: #888;
   }
 </style>

@@ -10,13 +10,7 @@
     "usage": "1. 在“设置”中配置您的 API Key\n2. 在左侧画布进行绘画\n3. 点击“让 AI 猜一猜”\n4. 查看 AI 的奇妙猜测结果",
     "route": "/tools/ai-draw-guess",
     "isLocal": true,
-    "tags": [
-      "AI",
-      "绘图",
-      "视觉识别",
-      "趣味",
-      "多模态"
-    ],
+    "tags": ["AI", "绘图", "视觉识别", "趣味", "多模态"],
     "svgIcon": "AiDrawGuessIcon"
   },
   {
@@ -29,13 +23,7 @@
     "usage": "1. 文字模式：输入文本 -> 选择字体\n2. 图片模式：上传图片 -> 调整宽度与字符集",
     "route": "/tools/ascii-art",
     "isLocal": true,
-    "tags": [
-      "ASCII",
-      "字符画",
-      "Figlet",
-      "Banner",
-      "图片转字符"
-    ],
+    "tags": ["ASCII", "字符画", "Figlet", "Banner", "图片转字符"],
     "svgIcon": "AsciiArtIcon"
   },
   {
@@ -48,13 +36,7 @@
     "usage": "1. 选择父亲的血型\n2. 选择母亲的血型\n3. 查看推算结果",
     "route": "/tools/blood-type",
     "isLocal": true,
-    "tags": [
-      "血型",
-      "遗传",
-      "生物",
-      "科普",
-      "父母"
-    ],
+    "tags": ["血型", "遗传", "生物", "科普", "父母"],
     "svgIcon": "BloodTypeIcon"
   },
   {
@@ -67,13 +49,7 @@
     "usage": "1. 闭上眼，在心中默念你的问题\n2. 点击“翻开答案”或者点击封面\n3. 得到你的命运指引",
     "route": "/tools/book-of-answers",
     "isLocal": true,
-    "tags": [
-      "决策",
-      "趣味",
-      "占卜",
-      "仪式感",
-      "心理建议"
-    ],
+    "tags": ["决策", "趣味", "占卜", "仪式感", "心理建议"],
     "svgIcon": "BookOfAnswersIcon"
   },
   {
@@ -86,13 +62,7 @@
     "usage": "1. 点击木鱼即可敲击\n2. 可设置自动敲击频率\n3. 自定义浮现文字（如：功德+1, 烦恼-1）",
     "route": "/tools/cyber-muyu",
     "isLocal": true,
-    "tags": [
-      "解压",
-      "佛系",
-      "专注",
-      "沉浸",
-      "趣味"
-    ],
+    "tags": ["解压", "佛系", "专注", "沉浸", "趣味"],
     "svgIcon": "CyberMuyuIcon"
   },
   {
@@ -105,12 +75,7 @@
     "usage": "选择分类，点击表情。",
     "route": "/tools/emoji-picker",
     "isLocal": true,
-    "tags": [
-      "Emoji",
-      "表情",
-      "复制",
-      "社交"
-    ],
+    "tags": ["Emoji", "表情", "复制", "社交"],
     "svgIcon": "EmojiPickerIcon"
   },
   {
@@ -123,12 +88,7 @@
     "usage": "1. 点击屏幕或按下空格键控制小鸟向上飞\n2. 不操作时小鸟会受重力下坠\n3. 穿过管道缝隙得分，撞到管道或地面则游戏结束",
     "route": "/tools/flappy-bird",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "动作",
-      "反应",
-      "经典"
-    ],
+    "tags": ["游戏", "动作", "反应", "经典"],
     "svgIcon": "FlappyBirdIcon"
   },
   {
@@ -141,13 +101,7 @@
     "usage": "1. 使用方向键或滑动屏幕移动方块\n2. 相同数字碰撞会合并\n3. 努力合成更大的数字",
     "route": "/tools/game-2048",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "2048",
-      "益智",
-      "数学",
-      "合并"
-    ],
+    "tags": ["游戏", "2048", "益智", "数学", "合并"],
     "svgIcon": "Game2048Icon"
   },
   {
@@ -160,13 +114,7 @@
     "usage": "1. 选择游戏模式（人机/双人）\n2. 设置棋盘大小与先后手\n3. 点击棋盘落子",
     "route": "/tools/gomoku",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "五子棋",
-      "棋类",
-      "AI",
-      "对弈"
-    ],
+    "tags": ["游戏", "五子棋", "棋类", "AI", "对弈"],
     "svgIcon": "GomokuIcon"
   },
   {
@@ -179,13 +127,7 @@
     "usage": "1. 点击柱子选择最上方的圆盘\n2. 点击另一个柱子将其放入\n3. 将所有圆盘移至最右侧柱子即可胜利",
     "route": "/tools/tower-hanoi",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "汉诺塔",
-      "益智",
-      "逻辑",
-      "数学"
-    ],
+    "tags": ["游戏", "汉诺塔", "益智", "逻辑", "数学"],
     "svgIcon": "HanoiIcon"
   },
   {
@@ -198,13 +140,7 @@
     "usage": "1. 选择预设图片或上传自己的图片\n2. 设置难度（切片数量）\n3. 拖动拼图块完成复原",
     "route": "/tools/jigsaw-puzzle",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "拼图",
-      "益智",
-      "图片",
-      "Jigsaw"
-    ],
+    "tags": ["游戏", "拼图", "益智", "图片", "Jigsaw"],
     "svgIcon": "JigsawPuzzleIcon"
   },
   {
@@ -217,12 +153,7 @@
     "usage": "1. 随机生成初始天赋\n2. 每年点击\"下一年\"推进时间\n3. 处理发生的随机事件\n4. 努力工作赚钱，保持健康快乐",
     "route": "/tools/life-simulator",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "模拟",
-      "文字",
-      "养成"
-    ],
+    "tags": ["游戏", "模拟", "文字", "养成"],
     "svgIcon": "LifeSimulatorIcon"
   },
   {
@@ -235,13 +166,7 @@
     "usage": "1. 点击\"添加奖项\"设置选项内容\n2. 调整各奖项的权重（概率）\n3. 点击转盘中央\"开始\"按钮即可抽奖",
     "route": "/tools/decision-wheel",
     "isLocal": true,
-    "tags": [
-      "抽奖",
-      "大转盘",
-      "概率",
-      "游戏",
-      "活动"
-    ],
+    "tags": ["抽奖", "大转盘", "概率", "游戏", "活动"],
     "svgIcon": "LuckyDrawIcon"
   },
   {
@@ -254,13 +179,21 @@
     "usage": "1. 点击选中一个图标\n2. 点击相邻的图标进行交换\n3. 若交换后形成3个及以上连线，则消除并得分",
     "route": "/tools/match-3",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "消除",
-      "益智",
-      "连击"
-    ],
+    "tags": ["游戏", "消除", "益智", "连击"],
     "svgIcon": "Match3Icon"
+  },
+  {
+    "id": "niuniu-match",
+    "name": "小牛谜局",
+    "category": "fun",
+    "icon": "Grid",
+    "summary": "牛牛消消乐衍生智力谜局",
+    "description": "规则：每行每列只能有一头牛，每种颜色区域内只能有一头牛，牛与牛之间不能相邻。双击即可放置小牛。",
+    "usage": "1. 观察网格和颜色区域\n2. 双击确认放置小牛\n3. 使用金币购买小牛显示器或无敌提示",
+    "route": "/tools/niuniu-match",
+    "isLocal": true,
+    "tags": ["游戏", "解谜", "益智", "牛牛"],
+    "svgIcon": "NiuNiuMatchIcon"
   },
   {
     "id": "maze-3d",
@@ -272,12 +205,7 @@
     "usage": "1. WASD 或方向键控制移动\n2. 寻找绿色光柱出口\n3. 随着关卡提升迷宫会变大",
     "route": "/tools/maze-3d",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "3D",
-      "Three.js",
-      "迷宫"
-    ],
+    "tags": ["游戏", "3D", "Three.js", "迷宫"],
     "svgIcon": "Maze3DIcon"
   },
   {
@@ -290,12 +218,7 @@
     "usage": "1. 点击卡片将其翻转\n2. 连续翻出两张相同的卡片即可消除\n3. 消除所有卡片即可通关",
     "route": "/tools/memory-card",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "记忆",
-      "翻牌",
-      "益智"
-    ],
+    "tags": ["游戏", "记忆", "翻牌", "益智"],
     "svgIcon": "MemoryCardIcon"
   },
   {
@@ -308,13 +231,7 @@
     "usage": "1. 选择难度\n2. 左键揭开格子，右键插旗\n3. 根据数字推理找出所有地雷",
     "route": "/tools/minesweeper",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "扫雷",
-      "逻辑",
-      "益智",
-      "经典"
-    ],
+    "tags": ["游戏", "扫雷", "逻辑", "益智", "经典"],
     "svgIcon": "MinesweeperIcon"
   },
   {
@@ -327,13 +244,7 @@
     "usage": "1. 输入文字或摩斯电码\n2. 点击转换按钮查看结果\n3. 点击播放按钮听取电码声音",
     "route": "/tools/morse-code",
     "isLocal": true,
-    "tags": [
-      "摩斯密码",
-      "翻译",
-      "加密",
-      "电报",
-      "电码"
-    ],
+    "tags": ["摩斯密码", "翻译", "加密", "电报", "电码"],
     "svgIcon": "MorseCodeIcon"
   },
   {
@@ -346,14 +257,7 @@
     "usage": "1. 选择人物背景风格（现代、奇幻、赛博朋克等）\n2. 点击“生成设定”\n3. 锁定满意部分项，重新随机其余项",
     "route": "/tools/persona-generator",
     "isLocal": true,
-    "tags": [
-      "创作",
-      "人设",
-      "灵感",
-      "编剧",
-      "文字",
-      "RPG"
-    ],
+    "tags": ["创作", "人设", "灵感", "编剧", "文字", "RPG"],
     "svgIcon": "PersonaGeneratorIcon"
   },
   {
@@ -366,12 +270,7 @@
     "usage": "1. 鼠标左右移动控制下方挡板\n2. 消除所有砖块即可通关\n3. 保护小球不要掉落到底部",
     "route": "/tools/pinball",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "物理",
-      "休闲",
-      "经典"
-    ],
+    "tags": ["游戏", "物理", "休闲", "经典"],
     "svgIcon": "PinballIcon"
   },
   {
@@ -384,13 +283,7 @@
     "usage": "1. 选择画布大小（8x8 到 64x64）\n2. 在调色盘选择颜色并绘画\n3. 开启/关闭网格辅助线\n4. 导出高清 PNG 图片",
     "route": "/tools/pixel-art",
     "isLocal": true,
-    "tags": [
-      "像素画",
-      "设计",
-      "绘图",
-      "8-bit",
-      "图标"
-    ],
+    "tags": ["像素画", "设计", "绘图", "8-bit", "图标"],
     "svgIcon": "PixelArtIcon"
   },
   {
@@ -403,13 +296,7 @@
     "usage": "1. 选择语录分类切换内容\n2. 点击\"换一句\"随机刷新\n3. 调整字号与背景色\n4. 一键复制或保存语录文字",
     "route": "/tools/quote-generator",
     "isLocal": true,
-    "tags": [
-      "语录",
-      "文案",
-      "句子",
-      "励志",
-      "名人名言"
-    ],
+    "tags": ["语录", "文案", "句子", "励志", "名人名言"],
     "svgIcon": "QuoteGeneratorIcon"
   },
   {
@@ -422,13 +309,7 @@
     "usage": "1. 设置数值范围（如 1-100）\n2. 输入生成数量\n3. 勾选\"不重复\"或\"排序\"（可选）\n4. 点击生成并复制结果",
     "route": "/tools/random-number",
     "isLocal": true,
-    "tags": [
-      "随机数",
-      "抽奖",
-      "生成",
-      "工具",
-      "数学"
-    ],
+    "tags": ["随机数", "抽奖", "生成", "工具", "数学"],
     "svgIcon": "RandomNumberGeneratorIcon"
   },
   {
@@ -441,12 +322,7 @@
     "usage": "1. 点击蓝色区域开始测试\n2. 等待背景由红变绿\n3. 变绿瞬间立即点击\n4. 查看成绩和排名",
     "route": "/tools/reaction-test",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "测试",
-      "反应力",
-      "速度"
-    ],
+    "tags": ["游戏", "测试", "反应力", "速度"],
     "svgIcon": "ReactionTestIcon"
   },
   {
@@ -459,13 +335,7 @@
     "usage": "1. 输入参与玩家姓名列表\n2. 录入或选择预设剧本角色池\n3. 点击“一键分配”，将手机/平板递给每位玩家确定身份",
     "route": "/tools/script-killer-helper",
     "isLocal": true,
-    "tags": [
-      "社交",
-      "剧本杀",
-      "桌游",
-      "分配器",
-      "娱乐"
-    ],
+    "tags": ["社交", "剧本杀", "桌游", "分配器", "娱乐"],
     "svgIcon": "ScriptKillerHelperIcon"
   },
   {
@@ -478,12 +348,7 @@
     "usage": "1. WASD 控制移动\n2. 鼠标控制瞄准方向\n3. 点击左键射击",
     "route": "/tools/simple-shooter",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "射击",
-      "动作",
-      "生存"
-    ],
+    "tags": ["游戏", "射击", "动作", "生存"],
     "svgIcon": "SimpleShooterIcon"
   },
   {
@@ -496,12 +361,7 @@
     "usage": "1. 方向键控制移动\n2. 空格键加速\n3. P键暂停",
     "route": "/tools/snake",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "贪吃蛇",
-      "经典",
-      "反应"
-    ],
+    "tags": ["游戏", "贪吃蛇", "经典", "反应"],
     "svgIcon": "SnakeIcon"
   },
   {
@@ -514,14 +374,7 @@
     "usage": "1. 上传头像并填写用户名\n2. 输入文字内容并选择配图\n3. 调整点赞列表及时间位置\n4. 生成截图并导出分享",
     "route": "/tools/social-media-mockup",
     "isLocal": true,
-    "tags": [
-      "模拟",
-      "截图",
-      "朋友圈",
-      "微信",
-      "设计",
-      "模版"
-    ],
+    "tags": ["模拟", "截图", "朋友圈", "微信", "设计", "模版"],
     "svgIcon": "SocialMockupIcon"
   },
   {
@@ -534,12 +387,7 @@
     "usage": "输入文本，选择样式，点击复制。",
     "route": "/tools/special-text",
     "isLocal": true,
-    "tags": [
-      "花体字",
-      "特殊字体",
-      "昵称",
-      "生成器"
-    ],
+    "tags": ["花体字", "特殊字体", "昵称", "生成器"],
     "svgIcon": "SpecialTextIcon"
   },
   {
@@ -552,13 +400,7 @@
     "usage": "1. 选择一个预设模版（如餐饮、活动等）\n2. 如有需要可自定义修改选项列表\n3. 点击或滑动转盘获取决策结果",
     "route": "/tools/spinner-wheel",
     "isLocal": true,
-    "tags": [
-      "决策",
-      "选择",
-      "大转盘",
-      "抽取",
-      "生活工具"
-    ],
+    "tags": ["决策", "选择", "大转盘", "抽取", "生活工具"],
     "svgIcon": "SpinnerWheelIcon"
   },
   {
@@ -571,12 +413,7 @@
     "usage": "1. 选择难度开始新游戏\n2. 点击格子选中，再点击数字填入\n3. 使用笔记功能记录可能的数字\n4. 利用提示和检查功能辅助解题",
     "route": "/tools/sudoku",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "数独",
-      "益智",
-      "逻辑"
-    ],
+    "tags": ["游戏", "数独", "益智", "逻辑"],
     "svgIcon": "SudokuIcon"
   },
   {
@@ -589,13 +426,7 @@
     "usage": "1. 方向键左右移动，上键旋转\n2. 下键加速下落，空格键直接掉落\n3. C键暂存或交换当前方块",
     "route": "/tools/tetris",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "俄罗斯方块",
-      "Tetris",
-      "经典",
-      "益智"
-    ],
+    "tags": ["游戏", "俄罗斯方块", "Tetris", "经典", "益智"],
     "svgIcon": "TetrisIcon"
   },
   {
@@ -608,12 +439,7 @@
     "usage": "1. 选择一个剧本开始游戏\n2. 阅读剧情并做出选择\n3. 管理你的生命值和金币\n4. 达成不同结局",
     "route": "/tools/text-adventure",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "小说",
-      "剧情",
-      "RPG"
-    ],
+    "tags": ["游戏", "小说", "剧情", "RPG"],
     "svgIcon": "TextAdventureIcon"
   },
   {
@@ -626,13 +452,7 @@
     "usage": "1. 选择游戏模式（人机/双人）\n2. 设置先后手和 AI 难度\n3. 点击格子落子",
     "route": "/tools/tic-tac-toe",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "井字棋",
-      "棋类",
-      "AI",
-      "对弈"
-    ],
+    "tags": ["游戏", "井字棋", "棋类", "AI", "对弈"],
     "svgIcon": "TictactoeIcon"
   },
   {
@@ -645,12 +465,7 @@
     "usage": "1. 点击右侧面板选择防御塔\n2. 点击地图空白区域建造\n3. 点击“下一波敌人”开始战斗",
     "route": "/tools/tower-defense",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "策略",
-      "塔防",
-      "益智"
-    ],
+    "tags": ["游戏", "策略", "塔防", "益智"],
     "svgIcon": "TowerDefenseIcon"
   },
   {
@@ -663,13 +478,7 @@
     "usage": "1. 选择题目分类和场景\n2. 点击\"真心话\"或\"大冒险\"按钮随机抽取题目\n3. 按照抽中题目进行惩罚或回答",
     "route": "/tools/truth-dare",
     "isLocal": true,
-    "tags": [
-      "社交",
-      "聚会",
-      "真心话",
-      "大冒险",
-      "娱乐"
-    ],
+    "tags": ["社交", "聚会", "真心话", "大冒险", "娱乐"],
     "svgIcon": "TruthDareIcon"
   },
   {
@@ -682,12 +491,7 @@
     "usage": "1. 点击蛋孵化\n2. 定时喂食和玩耍保持状态\n3. 及时清理便便以免生病\n4. 长期照顾可以进化",
     "route": "/tools/virtual-pet",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "养成",
-      "宠物",
-      "像素"
-    ],
+    "tags": ["游戏", "养成", "宠物", "像素"],
     "svgIcon": "VirtualPetIcon"
   },
   {
@@ -700,14 +504,7 @@
     "usage": "1. 选择一个或多个音效滑块控制音量\n2. 调节音效混合比例\n3. 设置定时关闭时间（可选）",
     "route": "/tools/white-noise",
     "isLocal": true,
-    "tags": [
-      "音频",
-      "噪音",
-      "白噪音",
-      "专注",
-      "助眠",
-      "放松"
-    ],
+    "tags": ["音频", "噪音", "白噪音", "专注", "助眠", "放松"],
     "svgIcon": "WhiteNoiseIcon"
   },
   {
@@ -720,13 +517,7 @@
     "usage": "1. 选择语言模式（英文/中文）\n2. 输入猜测词汇并回车\n3. 根据绿色（位置正确）、黄色（字符存在）提示完成解谜",
     "route": "/tools/word-guess",
     "isLocal": true,
-    "tags": [
-      "游戏",
-      "Wordle",
-      "成语",
-      "单词",
-      "益智"
-    ],
+    "tags": ["游戏", "Wordle", "成语", "单词", "益智"],
     "svgIcon": "WordGuessIcon"
   },
   {
@@ -739,12 +530,7 @@
     "usage": "1. 快速查看不同城市的当前本地时间\n2. 通过状态图标查看当地处于什么活动阶段\n3. 支持 12/24 小时制同步更新",
     "route": "/tools/world-timeline",
     "isLocal": true,
-    "tags": [
-      "时间",
-      "时区",
-      "世界钟",
-      "工具"
-    ],
+    "tags": ["时间", "时区", "世界钟", "工具"],
     "svgIcon": "WorldTimelineIcon"
   }
 ]
