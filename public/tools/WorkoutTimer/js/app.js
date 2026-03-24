@@ -223,11 +223,7 @@ const App = {
         if (isCsvFile) {
           parsedPlans = DataManager.parseCsvPlans(e.target.result);
           if (parsedPlans === null) {
-            this.confirm(
-              '错误',
-              '导入失败：CSV 列结构不正确，请使用系统导出的 CSV 文件。',
-              null
-            );
+            this.confirm('错误', '导入失败：CSV 列结构不正确，请使用系统导出的 CSV 文件。', null);
             return;
           }
           version = 'csv-v1';
@@ -235,11 +231,7 @@ const App = {
         } else {
           const parsed = DataManager.parseImportPayload(JSON.parse(e.target.result));
           if (!parsed) {
-            this.confirm(
-              '错误',
-              '导入失败：文件内容格式不正确，请使用导出的训练计划文件。',
-              null
-            );
+            this.confirm('错误', '导入失败：文件内容格式不正确，请使用导出的训练计划文件。', null);
             return;
           }
           parsedPlans = parsed.plans;
@@ -362,11 +354,15 @@ const App = {
         navigator.userAgent
       );
 
-      if (isMobile) {
-        window.location.href = 'orpheus://';
-      } else {
-        window.location.href = 'neteasemusic://';
-      }
+      const url = isMobile ? 'orpheus://' : 'neteasemusic://';
+      
+      // 使用 a 标签 + target="_top" 绕过 iframe 的 CSP frame-src 限制
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_top';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
 
       setTimeout(() => {
         console.log('尝试打开网易云音乐');
@@ -374,9 +370,7 @@ const App = {
     });
 
     // 导入导出
-    document
-      .getElementById('export-plans-btn')
-      .addEventListener('click', () => this.exportData());
+    document.getElementById('export-plans-btn').addEventListener('click', () => this.exportData());
     this.dom.exportFormatJsonBtn.addEventListener('click', () => this.setExportFormat('json'));
     this.dom.exportFormatCsvBtn.addEventListener('click', () => this.setExportFormat('csv'));
     this.dom.exportFormatCancelBtn.addEventListener('click', () => this.closeExportFormatModal());

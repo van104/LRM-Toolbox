@@ -354,11 +354,15 @@ const App = {
         navigator.userAgent
       );
 
-      if (isMobile) {
-        window.location.href = 'orpheus://';
-      } else {
-        window.location.href = 'neteasemusic://';
-      }
+      const url = isMobile ? 'orpheus://' : 'neteasemusic://';
+
+      // 使用 a 标签 + target="_top" 绕过 iframe 的 CSP frame-src 限制
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_top';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
 
       setTimeout(() => {
         console.log('尝试打开网易云音乐');

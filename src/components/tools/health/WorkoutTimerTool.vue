@@ -5,7 +5,6 @@
       class="full-frame"
       title="Workout Timer"
       frameborder="0"
-      sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-top-navigation allow-downloads allow-modals"
     ></iframe>
   </div>
 </template>
