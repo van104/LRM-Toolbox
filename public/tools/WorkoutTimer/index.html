@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>智能健身助手</title>
+    <meta name="theme-color" content="#2563EB" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles/main.css" />
+  </head>
+
+  <body
+    class="bg-transparent text-slate-800 min-h-screen relative overflow-x-hidden selection:bg-blue-200"
+  >
+    <!-- 背景装饰 -->
+    <div class="bg-decor fixed top-0 left-0 w-full h-screen overflow-hidden -z-10 pointer-events-none">
+      <div
+        class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-400/20 rounded-full blur-[100px] mix-blend-multiply filter"
+      ></div>
+      <div
+        class="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-teal-400/20 rounded-full blur-[100px] mix-blend-multiply filter"
+      ></div>
+    </div>
+
+    <!-- 顶部导航 -->
+    <nav class="fixed top-0 inset-x-0 z-50 glass shadow-sm transition-all duration-300" id="navbar">
+      <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <a
+            href="/"
+            target="_top"
+            class="mr-1 w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 transition-colors"
+            title="返回首页"
+          >
+            <i class="fa-solid fa-chevron-left"></i>
+          </a>
+          <div class="bg-blue-600 text-white p-1.5 rounded-lg">
+            <i class="fa-solid fa-dumbbell text-lg"></i>
+          </div>
+          <h1 class="font-bold text-lg tracking-tight text-slate-800">训练助手</h1>
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            id="theme-toggle"
+            class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            title="切换深色模式"
+          >
+            <i class="fa-solid fa-moon text-sm"></i>
+          </button>
+          <button
+            id="focus-toggle"
+            class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            title="切换专注模式"
+          >
+            <i class="fa-solid fa-crosshairs text-sm"></i>
+          </button>
+          <button
+            id="sound-toggle"
+            class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+          >
+            <i class="fa-solid fa-volume-high text-sm"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 模式切换 Tabs -->
+      <div
+        id="nav-tabs-track"
+        class="relative flex justify-center gap-6 py-2 border-t border-slate-100 max-w-md mx-auto"
+      >
+        <button
+          class="nav-tab tab-active font-medium text-sm py-2 px-2 transition-colors"
+          data-target="workout-mode"
+        >
+          锻炼模式
+        </button>
+        <button
+          class="nav-tab font-medium text-sm py-2 px-2 text-slate-500 hover:text-slate-700 transition-colors"
+          data-target="plan-mode"
+        >
+          训练计划
+        </button>
+        <button
+          class="nav-tab font-medium text-sm py-2 px-2 text-slate-500 hover:text-slate-700 transition-colors"
+          data-target="timer-mode"
+        >
+          自由计时
+        </button>
+        <button
+          class="nav-tab font-medium text-sm py-2 px-2 text-slate-500 hover:text-slate-700 transition-colors"
+          data-target="stats-mode"
+        >
+          训练统计
+        </button>
+        <div id="nav-tab-indicator" class="nav-tab-indicator"></div>
+      </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <main class="max-w-md mx-auto pt-36 px-4">
+      <!-- 1. 锻炼模式 -->
+      <div id="workout-mode" class="mode-container active">
+        <!-- 状态卡片 -->
+        <div
+          class="glass rounded-3xl p-6 card-shadow mb-6 text-center relative overflow-hidden transition-all duration-500"
+          id="main-card"
+        >
+          <!-- 进度指示器 -->
+          <div
+            class="absolute top-0 left-0 h-2 bg-gradient-to-r from-blue-400 to-blue-600 shadow-[0_0_10px_rgba(37,99,235,0.5)] transition-all duration-1000"
+            id="overall-progress"
+            style="width: 0%"
+          ></div>
+
+          <div class="flex flex-col items-center mb-6 mt-2">
+            <div
+              class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold mb-3 uppercase tracking-wider"
+            >
+              <i class="fa-solid fa-calendar-day"></i>
+              <span id="current-day-badge">Today</span>
+            </div>
+            <h2
+              id="workout-status-title"
+              class="text-2xl font-black text-slate-800 leading-tight mb-1"
+            >
+              准备开始
+            </h2>
+            <p id="workout-status-subtitle" class="text-slate-500 text-sm font-medium">
+              请选择今日计划开始训练
+            </p>
+          </div>
+
+          <!-- 圆环计时器 -->
+          <div class="relative w-64 h-64 mx-auto mb-8 flex items-center justify-center">
+            <svg class="progress-ring w-full h-full" width="256" height="256">
+              <circle
+                class="text-slate-100"
+                stroke="currentColor"
+                stroke-width="12"
+                fill="transparent"
+                r="110"
+                cx="128"
+                cy="128"
+              />
+              <circle
+                id="progress-ring-circle"
+                class="progress-ring__circle text-blue-600"
+                stroke="currentColor"
+                stroke-width="12"
+                stroke-linecap="round"
+                fill="transparent"
+                r="110"
+                cx="128"
+                cy="128"
+                style="stroke-dasharray: 691; stroke-dashoffset: 691"
+              />
+            </svg>
+
+            <div class="absolute inset-0 flex flex-col items-center justify-center z-10">
+              <div
+                id="timer-display"
+                class="text-6xl font-black text-slate-800 tabular-nums tracking-tighter"
+              >
+                --:--
+              </div>
+              <div
+                id="timer-label"
+                class="text-sm font-semibold text-slate-400 mt-1 uppercase tracking-widest"
+              >
+                待机中
+              </div>
+
+              <!-- 休息时间微调按钮 (默认隐藏，仅在休息时显示) -->
+              <div
+                id="timer-adjust-controls"
+                class="hidden flex gap-3 mt-3 animate-[fadeIn_0.3s_ease-out]"
+              >
+                <button
+                  class="w-10 h-10 rounded-full bg-slate-100 hover:bg-white border border-slate-200 text-slate-500 hover:text-blue-600 flex items-center justify-center transition-all shadow-sm active:scale-95"
+                  data-adjust="-10"
+                  title="减少10秒"
+                >
+                  <span class="text-xs font-bold">-10</span>
+                </button>
+                <button
+                  class="w-10 h-10 rounded-full bg-slate-100 hover:bg-white border border-slate-200 text-slate-500 hover:text-blue-600 flex items-center justify-center transition-all shadow-sm active:scale-95"
+                  data-adjust="+10"
+                  title="增加10秒"
+                >
+                  <span class="text-xs font-bold">+10</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 循环计数器 -->
+          <div
+            class="flex justify-center gap-4 mb-8 opacity-50 transition-opacity duration-300"
+            id="stats-row"
+          >
+            <div class="text-center">
+              <div class="text-xs text-slate-400 uppercase font-bold">组数</div>
+              <div class="text-xl font-bold text-slate-700" id="set-counter">-/-</div>
+            </div>
+            <div class="w-px h-8 bg-slate-200"></div>
+            <div class="text-center">
+              <div class="text-xs text-slate-400 uppercase font-bold">动作</div>
+              <div class="text-xl font-bold text-slate-700" id="exercise-counter">-/-</div>
+            </div>
+          </div>
+
+          <!-- 控制按钮 -->
+          <div class="grid grid-cols-5 gap-3">
+            <button
+              id="reset-btn"
+              class="col-span-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl h-14 flex items-center justify-center btn-click transition-colors"
+              title="重置"
+            >
+              <i class="fa-solid fa-rotate-left"></i>
+            </button>
+            <button
+              id="main-action-btn"
+              class="col-span-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg shadow-lg shadow-blue-500/30 btn-click transition-all"
+            >
+              <i class="fa-solid fa-play"></i>
+              <span>开始训练</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- 快捷入口 -->
+        <button
+          id="launch-music-btn"
+          class="w-full bg-white rounded-xl p-4 flex items-center justify-between shadow-sm border border-slate-100 hover:border-blue-200 transition-colors group"
+        >
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-colors"
+            >
+              <svg
+                fill="currentColor"
+                class="w-6 h-6"
+                role="img"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>NetEase Cloud Music</title>
+                <path
+                  d="M13.046 9.388a3.919 3.919 0 0 0-.66.19c-.809.312-1.447.991-1.666 1.775a2.269 2.269 0 0 0-.074.81c.048.546.333 1.05.764 1.35a1.483 1.483 0 0 0 2.01-.286c.406-.531.355-1.183.24-1.636-.098-.387-.22-.816-.345-1.249a64.76 64.76 0 0 1-.269-.954zm-.82 10.07c-3.984 0-7.224-3.24-7.224-7.223 0-.98.226-3.02 1.884-4.822A7.188 7.188 0 0 1 9.502 5.6a.792.792 0 1 1 .587 1.472 5.619 5.619 0 0 0-2.795 2.462 5.538 5.538 0 0 0-.707 2.7 5.645 5.645 0 0 0 5.638 5.638c1.844 0 3.627-.953 4.542-2.428 1.042-1.68.772-3.931-.627-5.238a3.299 3.299 0 0 0-1.437-.777c.172.589.334 1.18.494 1.772.284 1.12.1 2.181-.519 2.989-.39.51-.956.888-1.592 1.064a3.038 3.038 0 0 1-2.58-.44 3.45 3.45 0 0 1-1.44-2.514c-.04-.467.002-.93.128-1.376.35-1.256 1.356-2.339 2.622-2.826a5.5 5.5 0 0 1 .823-.246l-.134-.505c-.37-1.371.25-2.579 1.547-3.007.329-.109.68-.145 1.025-.105.792.09 1.476.592 1.709 1.023.258.507-.096 1.153-.706 1.153a.788.788 0 0 1-.54-.213c-.088-.08-.163-.174-.259-.247a.825.825 0 0 0-.632-.166.807.807 0 0 0-.634.551c-.056.191-.031.406.02.595.07.256.159.597.217.82 1.11.098 2.162.54 2.97 1.296 1.974 1.844 2.35 4.886.892 7.233-1.197 1.93-3.509 3.177-5.889 3.177zM0 12c0 6.627 5.373 12 12 12s12-5.373 12-12S18.627 0 12 0 0 5.373 0 12Z"
+                />
+              </svg>
+            </div>
+            <div class="text-left">
+              <div class="font-semibold text-slate-700">背景音乐</div>
+              <div class="text-xs text-slate-400">启动网易云音乐 App</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-slate-300"></i>
+        </button>
+
+      </div>
+
+      <!-- 2. 计划模式 -->
+      <div id="plan-mode" class="mode-container pb-20">
+        <div class="flex justify-between items-end mb-6 px-1">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-800">训练计划</h2>
+            <p class="text-slate-500 text-sm">定制你的专属日程</p>
+          </div>
+          <button
+            id="add-plan-btn"
+            class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-blue-500/30 btn-click hover:bg-blue-700 transition-colors"
+          >
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+
+        <!-- 数据管理工具栏 -->
+        <input type="file" id="import-file-input" accept=".json,.csv" class="hidden" />
+        <div class="flex items-center gap-1 mb-4 bg-slate-50 rounded-xl p-1 border border-slate-100">
+          <button
+            id="apply-template-btn"
+            class="flex-1 h-9 flex items-center justify-center gap-1.5 text-xs text-indigo-500 hover:text-indigo-700 hover:bg-white font-semibold rounded-lg transition-all"
+            title="模板库"
+          >
+            <i class="fa-solid fa-layer-group text-[10px]"></i>
+            <span>模板</span>
+          </button>
+          <div class="w-px h-5 bg-slate-200/80"></div>
+          <button
+            id="export-plans-btn"
+            class="flex-1 h-9 flex items-center justify-center gap-1.5 text-xs text-blue-500 hover:text-blue-700 hover:bg-white font-semibold rounded-lg transition-all"
+            title="导出计划"
+          >
+            <i class="fa-solid fa-arrow-up-from-bracket text-[10px]"></i>
+            <span>导出</span>
+          </button>
+          <div class="w-px h-5 bg-slate-200/80"></div>
+          <button
+            id="import-plans-btn"
+            class="flex-1 h-9 flex items-center justify-center gap-1.5 text-xs text-blue-500 hover:text-blue-700 hover:bg-white font-semibold rounded-lg transition-all"
+            title="导入计划"
+          >
+            <i class="fa-solid fa-file-import text-[10px]"></i>
+            <span>导入</span>
+          </button>
+          <div class="w-px h-5 bg-slate-200/80"></div>
+          <button
+            id="clear-all-plans"
+            class="h-9 px-3 flex items-center justify-center gap-1.5 text-xs text-slate-400 hover:text-red-500 hover:bg-white font-semibold rounded-lg transition-all"
+            title="清空所有计划"
+          >
+            <i class="fa-regular fa-trash-can text-[10px]"></i>
+            <span>清空</span>
+          </button>
+        </div>
+
+        <div id="plans-list" class="space-y-4">
+          <!-- 计划列表将通过 JS 动态生成 -->
+          <div class="text-center py-10 text-slate-400">
+            <i class="fa-regular fa-clipboard text-4xl mb-3 opacity-50"></i>
+            <p>暂无训练计划，点击右上角添加</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 自由计时模式 -->
+      <div id="timer-mode" class="mode-container">
+        <div id="ft-mode-card" class="glass rounded-3xl p-8 card-shadow text-center">
+          <div class="flex justify-center mb-6">
+            <div id="ft-mode-switch" class="ft-mode-switch bg-slate-100 rounded-full p-1 inline-flex gap-1">
+              <div id="ft-mode-switch-indicator" class="ft-mode-switch-indicator"></div>
+              <button
+                id="ft-mode-countdown"
+                class="relative z-10 px-4 py-1.5 rounded-full text-sm font-bold text-blue-600 transition-colors"
+              >
+                倒计时
+              </button>
+              <button
+                id="ft-mode-stopwatch"
+                class="relative z-10 px-4 py-1.5 rounded-full text-sm font-bold text-slate-500 transition-colors"
+              >
+                正计时
+              </button>
+            </div>
+          </div>
+          <div class="mb-8">
+            <h2 class="text-2xl font-bold text-slate-800 mb-2" id="ft-mode-title">倒计时</h2>
+            <p class="text-slate-500" id="ft-mode-subtitle">自定义倒计时长</p>
+          </div>
+
+          <!-- 自由计时输入与显示 -->
+          <div class="relative h-48 flex items-center justify-center mb-8">
+            <!-- 显示状态 -->
+            <div
+              id="free-timer-display"
+              class="text-7xl font-black text-slate-800 tabular-nums tracking-tighter cursor-pointer hover:text-blue-600 transition-colors"
+            >
+              00:00
+            </div>
+
+            <!-- 设置状态 (默认隐藏) -->
+            <div
+              id="free-timer-setup"
+              class="hidden absolute inset-0 bg-white/95 flex flex-col items-center justify-center z-10"
+            >
+              <div class="flex items-end gap-2 mb-4">
+                <div class="flex flex-col">
+                  <input
+                    type="number"
+                    id="ft-min"
+                    class="w-20 text-center text-4xl font-bold border-b-2 border-slate-200 focus:border-blue-500 outline-none bg-transparent p-2"
+                    placeholder="00"
+                    min="0"
+                    max="99"
+                  />
+                  <span class="text-xs text-slate-400 mt-1">分</span>
+                </div>
+                <span class="text-3xl font-bold text-slate-300 pb-4">:</span>
+                <div class="flex flex-col">
+                  <input
+                    type="number"
+                    id="ft-sec"
+                    class="w-20 text-center text-4xl font-bold border-b-2 border-slate-200 focus:border-blue-500 outline-none bg-transparent p-2"
+                    placeholder="00"
+                    min="0"
+                    max="59"
+                  />
+                  <span class="text-xs text-slate-400 mt-1">秒</span>
+                </div>
+              </div>
+              <button
+                id="ft-confirm-btn"
+                class="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-md"
+              >
+                确定
+              </button>
+            </div>
+          </div>
+
+          <!-- 快捷时间预设 -->
+          <div id="ft-presets" class="flex flex-wrap justify-center gap-2 mb-8">
+            <button
+              class="ft-preset-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 font-medium text-xs hover:bg-blue-100 hover:text-blue-600 transition-colors"
+              data-time="30"
+            >
+              00:30
+            </button>
+            <button
+              class="ft-preset-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 font-medium text-xs hover:bg-blue-100 hover:text-blue-600 transition-colors"
+              data-time="60"
+            >
+              01:00
+            </button>
+            <button
+              class="ft-preset-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 font-medium text-xs hover:bg-blue-100 hover:text-blue-600 transition-colors"
+              data-time="90"
+            >
+              01:30
+            </button>
+            <button
+              class="ft-preset-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 font-medium text-xs hover:bg-blue-100 hover:text-blue-600 transition-colors"
+              data-time="300"
+            >
+              05:00
+            </button>
+            <button
+              class="ft-preset-btn px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 font-medium text-xs hover:bg-blue-100 hover:text-blue-600 transition-colors"
+              data-time="900"
+            >
+              15:00
+            </button>
+          </div>
+
+          <div id="ft-laps-panel" class="hidden mb-8">
+            <div class="flex items-center justify-between mb-2 px-1">
+              <span class="text-sm font-semibold text-slate-600">计次记录</span>
+              <span class="text-xs text-slate-400">共 <span id="ft-lap-count">0</span> 次</span>
+            </div>
+            <div class="max-h-36 overflow-y-auto rounded-xl bg-slate-50 border border-slate-100">
+              <div id="ft-lap-empty" class="py-6 text-sm text-slate-400">开始后点击“计次”记录分段时间</div>
+              <div id="ft-lap-list" class="hidden divide-y divide-slate-100 text-sm"></div>
+            </div>
+          </div>
+
+          <div class="flex gap-3 justify-center">
+            <button
+              id="ft-reset-btn"
+              class="w-14 h-14 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition-colors btn-click"
+            >
+              <i class="fa-solid fa-rotate-left"></i>
+            </button>
+            <button
+              id="ft-lap-btn"
+              class="hidden h-14 px-5 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center gap-2 hover:bg-slate-200 transition-colors btn-click font-bold text-sm"
+            >
+              <i class="fa-solid fa-flag-checkered"></i>
+              <span>计次</span>
+            </button>
+            <button
+              id="ft-start-btn"
+              class="h-14 px-10 rounded-full bg-slate-800 text-white flex items-center justify-center gap-2 hover:bg-slate-900 transition-colors shadow-lg btn-click font-bold text-lg"
+            >
+              <i class="fa-solid fa-play"></i>
+              <span>开始</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="stats-mode" class="mode-container pb-20">
+        <div class="glass rounded-3xl p-6 card-shadow">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold text-slate-800">训练数据统计</h2>
+            <span class="text-xs text-slate-400">最近表现</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2 mb-4">
+            <div class="bg-slate-50 rounded-xl py-2 text-center">
+              <div class="text-[11px] text-slate-400">总时长</div>
+              <div id="session-total-time-page" class="text-sm font-bold text-slate-800 tabular-nums">00:00</div>
+            </div>
+            <div class="bg-slate-50 rounded-xl py-2 text-center">
+              <div class="text-[11px] text-slate-400">总组数</div>
+              <div id="session-total-sets-page" class="text-sm font-bold text-slate-800 tabular-nums">0</div>
+            </div>
+            <div class="bg-slate-50 rounded-xl py-2 text-center">
+              <div class="text-[11px] text-slate-400">平均休息</div>
+              <div id="session-avg-rest-page" class="text-sm font-bold text-slate-800 tabular-nums">00:00</div>
+            </div>
+          </div>
+          <div id="history-chart-empty-page" class="py-10 text-center text-xs text-slate-400">
+            完成一次训练后将显示历史趋势图
+          </div>
+          <div id="history-chart-page" class="hidden">
+            <div id="history-bars-page" class="h-44 flex items-end gap-2"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div id="template-modal" class="fixed inset-0 z-[101] hidden">
+      <div id="template-backdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 transition-opacity"></div>
+      <div
+        id="template-panel"
+        class="absolute inset-x-0 bottom-0 md:top-24 md:bottom-auto md:left-1/2 md:-translate-x-1/2 md:w-[580px] bg-white rounded-t-3xl md:rounded-2xl h-[70vh] md:h-auto md:max-h-[78vh] flex flex-col shadow-2xl translate-y-full transition-transform duration-300"
+      >
+        <div class="p-4 border-b border-slate-100 flex justify-between items-center">
+          <h3 class="font-bold text-lg text-slate-800">计划模板库</h3>
+          <button id="template-close-btn" class="p-2 text-slate-400 hover:text-slate-600">
+            <i class="fa-solid fa-times text-xl"></i>
+          </button>
+        </div>
+        <div id="template-list" class="p-4 overflow-y-auto space-y-3"></div>
+      </div>
+    </div>
+
+    <!-- 编辑计划模态框 -->
+    <div id="plan-modal" class="fixed inset-0 z-[100] hidden">
+      <div
+        class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity opacity-0"
+        id="modal-backdrop"
+      ></div>
+      <div
+        class="absolute inset-x-0 bottom-0 md:top-20 md:bottom-auto md:left-1/2 md:-translate-x-1/2 md:w-[600px] md:rounded-2xl bg-white rounded-t-3xl h-[85vh] md:h-auto md:max-h-[80vh] flex flex-col shadow-2xl transform translate-y-full transition-transform duration-300"
+        id="modal-panel"
+      >
+        <div class="p-4 border-b border-slate-100 flex justify-between items-center">
+          <button class="modal-close p-2 text-slate-400 hover:text-slate-600">
+            <i class="fa-solid fa-times text-xl"></i>
+          </button>
+          <h3 class="font-bold text-lg text-slate-800" id="modal-title">新建计划</h3>
+          <button id="modal-save-btn" class="text-blue-600 font-bold px-2 hover:text-blue-700">
+            保存
+          </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-5 custom-scrollbar">
+          <form id="plan-form" class="space-y-6">
+            <input type="hidden" name="planId" />
+
+            <!-- 标题 -->
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2"
+                >计划名称</label
+              >
+              <input
+                type="text"
+                name="title"
+                required
+                placeholder="例如：周一胸肌训练"
+                class="w-full bg-slate-50 border-none rounded-xl px-4 py-3 font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 placeholder-slate-300"
+              />
+            </div>
+
+            <!-- 星期选择 -->
+            <div>
+              <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2"
+                >重复日期</label
+              >
+              <div class="flex justify-between gap-1" id="day-selector">
+                <!-- JS 生成星期按钮 -->
+              </div>
+              <input type="hidden" name="days" id="selected-days-input" />
+            </div>
+
+            <!-- 动作列表 -->
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider"
+                  >动作流程</label
+                >
+                <button
+                  type="button"
+                  id="add-exercise-btn"
+                  class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md hover:bg-blue-100"
+                >
+                  <i class="fa-solid fa-plus mr-1"></i>添加动作
+                </button>
+              </div>
+              <div id="exercises-list" class="space-y-3">
+                <!-- JS 生成动作项 -->
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- 自定义确认弹窗 -->
+    <div id="confirm-modal" class="fixed inset-0 z-[120] hidden items-center justify-center p-4">
+      <div
+        class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 opacity-0"
+        id="confirm-backdrop"
+      ></div>
+      <div
+        class="bg-white rounded-3xl p-6 shadow-2xl relative w-full max-w-xs transform scale-90 opacity-0 transition-all duration-300"
+        id="confirm-panel"
+      >
+        <h3 class="text-xl font-bold text-slate-800 mb-2 text-center" id="confirm-title">提示</h3>
+        <p class="text-slate-500 mb-6 text-center leading-relaxed" id="confirm-message">
+          确认执行此操作吗？
+        </p>
+        <div class="flex gap-3">
+          <button
+            id="confirm-cancel-btn"
+            class="flex-1 py-3 rounded-2xl bg-slate-100 text-slate-500 font-bold text-sm tracking-wide"
+          >
+            取消
+          </button>
+          <button
+            id="confirm-ok-btn"
+            class="flex-1 py-3 rounded-2xl bg-blue-600 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/20"
+          >
+            确定
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 自定义输入弹窗 -->
+    <div id="prompt-modal" class="fixed inset-0 z-[120] hidden items-center justify-center p-4">
+      <div
+        class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 opacity-0"
+        id="prompt-backdrop"
+      ></div>
+      <div
+        class="bg-white rounded-3xl p-6 shadow-2xl relative w-full max-w-xs transform scale-90 opacity-0 transition-all duration-300"
+        id="prompt-panel"
+      >
+        <h3 class="text-xl font-bold text-slate-800 mb-2 text-center" id="prompt-title">标题</h3>
+        <div class="mb-6">
+          <input
+            type="text"
+            id="prompt-input"
+            class="w-full bg-slate-50 border-none rounded-xl px-4 py-3 font-medium text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-300 text-center"
+            placeholder="请输入..."
+          />
+        </div>
+        <div class="flex gap-3">
+          <button
+            id="prompt-cancel-btn"
+            class="flex-1 py-3 rounded-2xl bg-slate-100 text-slate-500 font-bold text-sm tracking-wide"
+          >
+            取消
+          </button>
+          <button
+            id="prompt-ok-btn"
+            class="flex-1 py-3 rounded-2xl bg-blue-600 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/20"
+          >
+            确定
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="export-format-modal" class="fixed inset-0 z-[120] hidden items-center justify-center p-4">
+      <div
+        id="export-format-backdrop"
+        class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 opacity-0"
+      ></div>
+      <div
+        id="export-format-panel"
+        class="bg-white rounded-3xl p-6 shadow-2xl relative w-full max-w-xs transform scale-90 opacity-0 transition-all duration-300"
+      >
+        <h3 class="text-xl font-bold text-slate-800 mb-4 text-center">导出格式</h3>
+        <div class="grid grid-cols-2 gap-2 mb-6">
+          <button
+            id="export-format-json"
+            class="h-10 rounded-xl border border-blue-500 bg-blue-50 text-blue-600 font-bold text-sm"
+            data-format="json"
+          >
+            JSON
+          </button>
+          <button
+            id="export-format-csv"
+            class="h-10 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 font-bold text-sm"
+            data-format="csv"
+          >
+            CSV
+          </button>
+        </div>
+        <div class="flex gap-3">
+          <button
+            id="export-format-cancel-btn"
+            class="flex-1 py-3 rounded-2xl bg-slate-100 text-slate-500 font-bold text-sm tracking-wide"
+          >
+            取消
+          </button>
+          <button
+            id="export-format-ok-btn"
+            class="flex-1 py-3 rounded-2xl bg-blue-600 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/20"
+          >
+            确定
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 引入拆分的 JavaScript 模块 -->
+    <script src="./js/audio.js"></script>
+    <script src="./js/wakelock.js"></script>
+    <script src="./js/templates.js"></script>
+    <script src="./js/data.js"></script>
+    <script src="./js/timer.js"></script>
+    <script src="./js/workout.js"></script>
+    <script src="./js/plans.js"></script>
+    <script src="./js/ui.js"></script>
+    <script src="./js/app.js"></script>
+  </body>
+</html>

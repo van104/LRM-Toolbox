@@ -1,7 +1,7 @@
 <template>
   <div class="iframe-wrapper">
     <iframe
-      :srcdoc="htmlContent"
+      src="/tools/WorkoutTimer/index.html"
       class="full-frame"
       title="Workout Timer"
       frameborder="0"
@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-  import htmlContent from './workout-timer-source.html?raw';
+  // iframe 直接加载 public/tools/WorkoutTimer/index.html，无需 import
 </script>
 
 <style scoped>
