@@ -12,7 +12,7 @@
         <div class="changelog-item featured">
           <div class="version-tag">LATEST</div>
           <div class="item-header">
-            <span class="version-num">v2.5.0</span>
+            <span class="version-num">v2.2.0</span>
             <span class="version-date">2026-02-26</span>
           </div>
           <ul class="change-list">

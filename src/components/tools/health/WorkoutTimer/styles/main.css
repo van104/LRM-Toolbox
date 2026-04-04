@@ -253,4 +253,89 @@ body {
 
 .history-bar {
   box-shadow: 0 6px 14px -8px rgba(37, 99, 235, 0.9);
+  transition: width 0.15s ease, opacity 0.15s ease;
+}
+
+/* 拖拽排序样式 */
+[draggable='true'] {
+  touch-action: auto;
+}
+
+.plan-drag-handle,
+.exercise-edit-handle {
+  cursor: grab;
+}
+
+.plan-drag-handle:active,
+.exercise-edit-handle:active {
+  cursor: grabbing;
+}
+
+.exercise-item {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.exercise-item:hover {
+  background-color: #eff6ff !important;
+}
+
+.exercise-edit-row {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* 图表 Tooltip */
+#chart-tooltip {
+  transition:
+    left 0.08s ease,
+    top 0.08s ease;
+}
+
+/* 统计视图指示器 */
+#stats-view-indicator {
+  transition:
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 图表柱动画 */
+#stats-chart-bars .history-bar {
+  animation: barGrow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  transform-origin: bottom;
+}
+
+@keyframes barGrow {
+  from {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+#stats-chart-bars > div:nth-child(1) .history-bar { animation-delay: 0ms; }
+#stats-chart-bars > div:nth-child(2) .history-bar { animation-delay: 30ms; }
+#stats-chart-bars > div:nth-child(3) .history-bar { animation-delay: 60ms; }
+#stats-chart-bars > div:nth-child(4) .history-bar { animation-delay: 90ms; }
+#stats-chart-bars > div:nth-child(5) .history-bar { animation-delay: 120ms; }
+#stats-chart-bars > div:nth-child(6) .history-bar { animation-delay: 150ms; }
+#stats-chart-bars > div:nth-child(7) .history-bar { animation-delay: 180ms; }
+
+/* 热力图 */
+.heatmap-cell {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+#heatmap-grid {
+  scrollbar-width: none;
+}
+
+#heatmap-grid::-webkit-scrollbar {
+  display: none;
 }

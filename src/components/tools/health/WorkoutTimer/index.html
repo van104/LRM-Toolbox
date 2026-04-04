@@ -22,7 +22,9 @@
     class="bg-transparent text-slate-800 min-h-screen relative overflow-x-hidden selection:bg-blue-200"
   >
     <!-- 背景装饰 -->
-    <div class="bg-decor fixed top-0 left-0 w-full h-screen overflow-hidden -z-10 pointer-events-none">
+    <div
+      class="bg-decor fixed top-0 left-0 w-full h-screen overflow-hidden -z-10 pointer-events-none"
+    >
       <div
         class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-400/20 rounded-full blur-[100px] mix-blend-multiply filter"
       ></div>
@@ -49,6 +51,18 @@
           <h1 class="font-bold text-lg tracking-tight text-slate-800">训练助手</h1>
         </div>
         <div class="flex items-center gap-2">
+          <button
+            id="changelog-toggle"
+            class="relative h-8 px-2.5 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition-colors text-xs font-bold gap-1"
+            title="更新日志"
+          >
+            <i class="fa-solid fa-clock-rotate-left text-[11px]"></i>
+            <span class="text-[10px] tabular-nums">v2.2</span>
+            <span
+              id="changelog-badge"
+              class="hidden absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full animate-pulse"
+            ></span>
+          </button>
           <button
             id="theme-toggle"
             class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors"
@@ -235,39 +249,77 @@
               <span>开始训练</span>
             </button>
           </div>
-
         </div>
 
         <!-- 快捷入口 -->
-        <button
-          id="launch-music-btn"
-          class="w-full bg-white rounded-xl p-4 flex items-center justify-between shadow-sm border border-slate-100 hover:border-blue-200 transition-colors group"
-        >
-          <div class="flex items-center gap-3">
-            <div
-              class="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-colors"
-            >
-              <svg
-                fill="currentColor"
-                class="w-6 h-6"
-                role="img"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <title>NetEase Cloud Music</title>
-                <path
-                  d="M13.046 9.388a3.919 3.919 0 0 0-.66.19c-.809.312-1.447.991-1.666 1.775a2.269 2.269 0 0 0-.074.81c.048.546.333 1.05.764 1.35a1.483 1.483 0 0 0 2.01-.286c.406-.531.355-1.183.24-1.636-.098-.387-.22-.816-.345-1.249a64.76 64.76 0 0 1-.269-.954zm-.82 10.07c-3.984 0-7.224-3.24-7.224-7.223 0-.98.226-3.02 1.884-4.822A7.188 7.188 0 0 1 9.502 5.6a.792.792 0 1 1 .587 1.472 5.619 5.619 0 0 0-2.795 2.462 5.538 5.538 0 0 0-.707 2.7 5.645 5.645 0 0 0 5.638 5.638c1.844 0 3.627-.953 4.542-2.428 1.042-1.68.772-3.931-.627-5.238a3.299 3.299 0 0 0-1.437-.777c.172.589.334 1.18.494 1.772.284 1.12.1 2.181-.519 2.989-.39.51-.956.888-1.592 1.064a3.038 3.038 0 0 1-2.58-.44 3.45 3.45 0 0 1-1.44-2.514c-.04-.467.002-.93.128-1.376.35-1.256 1.356-2.339 2.622-2.826a5.5 5.5 0 0 1 .823-.246l-.134-.505c-.37-1.371.25-2.579 1.547-3.007.329-.109.68-.145 1.025-.105.792.09 1.476.592 1.709 1.023.258.507-.096 1.153-.706 1.153a.788.788 0 0 1-.54-.213c-.088-.08-.163-.174-.259-.247a.825.825 0 0 0-.632-.166.807.807 0 0 0-.634.551c-.056.191-.031.406.02.595.07.256.159.597.217.82 1.11.098 2.162.54 2.97 1.296 1.974 1.844 2.35 4.886.892 7.233-1.197 1.93-3.509 3.177-5.889 3.177zM0 12c0 6.627 5.373 12 12 12s12-5.373 12-12S18.627 0 12 0 0 5.373 0 12Z"
-                />
-              </svg>
-            </div>
-            <div class="text-left">
-              <div class="font-semibold text-slate-700">背景音乐</div>
-              <div class="text-xs text-slate-400">启动网易云音乐 App</div>
-            </div>
+        <!-- 快捷入口 - 音乐服务 -->
+        <div class="bg-white rounded-xl py-3 px-4 shadow-sm border border-slate-100 mt-2 mb-6">
+          <div class="flex items-center justify-between mb-3 px-1">
+            <span class="font-bold text-xs text-slate-400 tracking-wider">启动音乐伴侣</span>
           </div>
-          <i class="fa-solid fa-chevron-right text-slate-300"></i>
-        </button>
-
+          <div class="grid grid-cols-4 gap-2">
+            <!-- 网易云 -->
+            <button
+              class="music-launch-btn flex flex-col items-center gap-1.5 p-2 rounded-xl border border-transparent hover:border-red-100 hover:bg-red-50 transition-all group"
+              data-app="netease"
+            >
+              <div
+                class="w-10 h-10 rounded-full bg-slate-50 text-red-500 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-colors shadow-sm"
+              >
+                <i class="fa-solid fa-music"></i>
+              </div>
+              <span
+                class="text-[10px] font-semibold text-slate-500 group-hover:text-red-500 transition-colors"
+                >网易云</span
+              >
+            </button>
+            <!-- QQ 音乐 -->
+            <button
+              class="music-launch-btn flex flex-col items-center gap-1.5 p-2 rounded-xl border border-transparent hover:border-green-100 hover:bg-green-50 transition-all group"
+              data-app="qqmusic"
+            >
+              <div
+                class="w-10 h-10 rounded-full bg-slate-50 text-green-500 flex items-center justify-center group-hover:bg-green-500 group-hover:text-white transition-colors shadow-sm"
+              >
+                <i class="fa-brands fa-qq text-lg"></i>
+              </div>
+              <span
+                class="text-[10px] font-semibold text-slate-500 group-hover:text-green-500 transition-colors"
+                >QQ音乐</span
+              >
+            </button>
+            <!-- Spotify -->
+            <button
+              class="music-launch-btn flex flex-col items-center gap-1.5 p-2 rounded-xl border border-transparent hover:border-emerald-100 hover:bg-emerald-50 transition-all group"
+              data-app="spotify"
+            >
+              <div
+                class="w-10 h-10 rounded-full bg-slate-50 text-emerald-500 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-colors shadow-sm"
+              >
+                <i class="fa-brands fa-spotify text-lg"></i>
+              </div>
+              <span
+                class="text-[10px] font-semibold text-slate-500 group-hover:text-emerald-500 transition-colors"
+                >Spotify</span
+              >
+            </button>
+            <!-- Apple Music -->
+            <button
+              class="music-launch-btn flex flex-col items-center gap-1.5 p-2 rounded-xl border border-transparent hover:border-pink-100 hover:bg-pink-50 transition-all group"
+              data-app="apple"
+            >
+              <div
+                class="w-10 h-10 rounded-full bg-slate-50 text-pink-500 flex items-center justify-center group-hover:bg-pink-500 group-hover:text-white transition-colors shadow-sm"
+              >
+                <i class="fa-brands fa-apple text-xl mb-0.5"></i>
+              </div>
+              <span
+                class="text-[10px] font-semibold text-slate-500 group-hover:text-pink-500 transition-colors"
+                >Apple</span
+              >
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- 2. 计划模式 -->
@@ -287,7 +339,9 @@
 
         <!-- 数据管理工具栏 -->
         <input type="file" id="import-file-input" accept=".json,.csv" class="hidden" />
-        <div class="flex items-center gap-1 mb-4 bg-slate-50 rounded-xl p-1 border border-slate-100">
+        <div
+          class="flex items-center gap-1 mb-4 bg-slate-50 rounded-xl p-1 border border-slate-100"
+        >
           <button
             id="apply-template-btn"
             class="flex-1 h-9 flex items-center justify-center gap-1.5 text-xs text-indigo-500 hover:text-indigo-700 hover:bg-white font-semibold rounded-lg transition-all"
@@ -338,7 +392,10 @@
       <div id="timer-mode" class="mode-container">
         <div id="ft-mode-card" class="glass rounded-3xl p-8 card-shadow text-center">
           <div class="flex justify-center mb-6">
-            <div id="ft-mode-switch" class="ft-mode-switch bg-slate-100 rounded-full p-1 inline-flex gap-1">
+            <div
+              id="ft-mode-switch"
+              class="ft-mode-switch bg-slate-100 rounded-full p-1 inline-flex gap-1"
+            >
               <div id="ft-mode-switch-indicator" class="ft-mode-switch-indicator"></div>
               <button
                 id="ft-mode-countdown"
@@ -448,7 +505,9 @@
               <span class="text-xs text-slate-400">共 <span id="ft-lap-count">0</span> 次</span>
             </div>
             <div class="max-h-36 overflow-y-auto rounded-xl bg-slate-50 border border-slate-100">
-              <div id="ft-lap-empty" class="py-6 text-sm text-slate-400">开始后点击“计次”记录分段时间</div>
+              <div id="ft-lap-empty" class="py-6 text-sm text-slate-400">
+                开始后点击“计次”记录分段时间
+              </div>
               <div id="ft-lap-list" class="hidden divide-y divide-slate-100 text-sm"></div>
             </div>
           </div>
@@ -479,37 +538,284 @@
       </div>
 
       <div id="stats-mode" class="mode-container pb-20">
-        <div class="glass rounded-3xl p-6 card-shadow">
+        <!-- 身体数据块 -->
+        <div class="glass rounded-3xl p-6 card-shadow mb-4">
           <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold text-slate-800">身体数据</h2>
+            <button
+              id="body-add-btn"
+              class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white flex items-center justify-center transition-colors shadow-sm"
+            >
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+
+          <!-- 折线图区域 -->
+          <div class="relative w-full h-[200px] mb-4">
+            <canvas id="body-chart-canvas" class="absolute inset-0 cursor-crosshair"></canvas>
+            <div id="body-chart-empty" class="absolute inset-0 hidden flex items-center justify-center text-sm text-slate-400">暂无数据</div>
+          </div>
+
+          <!-- 时段切换 & 摘要 -->
+          <div class="flex items-center justify-between border-t border-slate-100 pt-4">
+            <div class="flex gap-1 bg-slate-50 p-1 rounded-lg">
+              <button class="body-range-tab px-3 py-1 rounded text-xs font-bold bg-blue-600 text-white transition-colors" data-range="30">30天</button>
+              <button class="body-range-tab px-3 py-1 rounded text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors" data-range="90">90天</button>
+              <button class="body-range-tab px-3 py-1 rounded text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors" data-range="365">1年</button>
+            </div>
+            <div class="flex items-center gap-4 text-right">
+              <div>
+                <div class="text-[10px] text-slate-400 mb-0.5">当前体重</div>
+                <div class="flex items-baseline gap-1 justify-end">
+                  <span id="body-current-weight" class="text-sm font-black text-slate-700">--</span>
+                  <span id="body-weight-change" class="text-xs font-bold text-slate-400">--</span>
+                </div>
+              </div>
+              <div>
+                <div class="text-[10px] text-slate-400 mb-0.5">最新体脂</div>
+                <div id="body-current-fat" class="text-sm font-black text-slate-700">--</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 最近记录 -->
+          <div class="mt-5 border-t border-slate-100 pt-4">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-xs font-bold text-slate-500 uppercase">最近记录</h3>
+              <button id="body-clear-btn" class="text-[10px] text-slate-400 hover:text-red-500 transition-colors">
+                清空
+              </button>
+            </div>
+            <div id="body-records-list" class="space-y-0.5 max-h-40 overflow-y-auto custom-scrollbar -mx-3"></div>
+          </div>
+        </div>
+
+        <!-- 视图切换 -->
+        <div class="glass rounded-3xl p-6 card-shadow mb-4">
+          <div class="flex items-center justify-between mb-5">
             <h2 class="text-2xl font-bold text-slate-800">训练数据统计</h2>
-            <span class="text-xs text-slate-400">最近表现</span>
           </div>
-          <div class="grid grid-cols-3 gap-2 mb-4">
-            <div class="bg-slate-50 rounded-xl py-2 text-center">
-              <div class="text-[11px] text-slate-400">总时长</div>
-              <div id="session-total-time-page" class="text-sm font-bold text-slate-800 tabular-nums">00:00</div>
+
+          <!-- 周/月/年 Tab -->
+          <div class="relative flex bg-slate-100 rounded-xl p-1 mb-5">
+            <div
+              id="stats-view-indicator"
+              class="absolute top-1 left-1 h-[calc(100%-8px)] rounded-lg bg-white shadow-sm transition-all duration-250 ease-out"
+              style="width: 33.33%"
+            ></div>
+            <button
+              class="stats-view-tab flex-1 relative z-10 py-2 text-sm font-bold text-blue-600 transition-colors"
+              data-view="week"
+            >
+              周
+            </button>
+            <button
+              class="stats-view-tab flex-1 relative z-10 py-2 text-sm font-bold text-slate-400 transition-colors"
+              data-view="month"
+            >
+              月
+            </button>
+            <button
+              class="stats-view-tab flex-1 relative z-10 py-2 text-sm font-bold text-slate-400 transition-colors"
+              data-view="year"
+            >
+              年
+            </button>
+          </div>
+
+          <!-- 时间导航 -->
+          <div class="flex items-center justify-between mb-5">
+            <button
+              id="stats-nav-prev"
+              class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors"
+            >
+              <i class="fa-solid fa-chevron-left text-xs"></i>
+            </button>
+            <div class="text-center">
+              <div id="stats-period-label" class="text-sm font-bold text-slate-700">本周</div>
+              <div id="stats-period-range" class="text-[11px] text-slate-400 mt-0.5">
+                03/31 - 04/06
+              </div>
             </div>
-            <div class="bg-slate-50 rounded-xl py-2 text-center">
-              <div class="text-[11px] text-slate-400">总组数</div>
-              <div id="session-total-sets-page" class="text-sm font-bold text-slate-800 tabular-nums">0</div>
+            <button
+              id="stats-nav-next"
+              class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors"
+            >
+              <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+          </div>
+
+          <!-- 统计卡片 -->
+          <div class="grid grid-cols-4 gap-2 mb-5">
+            <div
+              class="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl py-3 text-center border border-blue-100/50"
+            >
+              <div class="text-[11px] text-blue-400 font-medium">训练次数</div>
+              <div id="stats-workout-count" class="text-lg font-black text-blue-600 tabular-nums">
+                0
+              </div>
+              <div class="text-[10px] text-blue-300">次</div>
             </div>
-            <div class="bg-slate-50 rounded-xl py-2 text-center">
-              <div class="text-[11px] text-slate-400">平均休息</div>
-              <div id="session-avg-rest-page" class="text-sm font-bold text-slate-800 tabular-nums">00:00</div>
+            <div
+              class="bg-gradient-to-br from-teal-50 to-teal-100/50 rounded-xl py-3 text-center border border-teal-100/50"
+            >
+              <div class="text-[11px] text-teal-400 font-medium">总时长</div>
+              <div id="stats-total-time" class="text-lg font-black text-teal-600 tabular-nums">
+                00:00
+              </div>
+              <div class="text-[10px] text-teal-300">时长</div>
+            </div>
+            <div
+              class="bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-xl py-3 text-center border border-amber-100/50"
+            >
+              <div class="text-[11px] text-amber-400 font-medium">总组数</div>
+              <div id="stats-total-sets" class="text-lg font-black text-amber-600 tabular-nums">
+                0
+              </div>
+              <div class="text-[10px] text-amber-300">组</div>
+            </div>
+            <div
+              class="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-xl py-3 text-center border border-purple-100/50"
+            >
+              <div class="text-[11px] text-purple-400 font-medium">均时长</div>
+              <div id="stats-avg-time" class="text-lg font-black text-purple-600 tabular-nums">
+                00:00
+              </div>
+              <div class="text-[10px] text-purple-300">每次</div>
             </div>
           </div>
-          <div id="history-chart-empty-page" class="py-10 text-center text-xs text-slate-400">
-            完成一次训练后将显示历史趋势图
+
+          <!-- 图表区域 -->
+          <div class="mb-3">
+            <div class="flex items-center justify-between mb-2 px-1">
+              <span class="text-xs font-semibold text-slate-500">训练时长趋势</span>
+              <span id="stats-chart-summary" class="text-[10px] text-slate-400"></span>
+            </div>
+            <div id="stats-chart-empty" class="py-8 text-center text-xs text-slate-400">
+              <i class="fa-solid fa-chart-column text-3xl mb-2 opacity-30"></i>
+              <p>该时段暂无训练记录</p>
+            </div>
+            <div id="stats-chart-container" class="hidden">
+              <div id="stats-chart-bars" class="h-44 flex items-end gap-1"></div>
+            </div>
           </div>
-          <div id="history-chart-page" class="hidden">
-            <div id="history-bars-page" class="h-44 flex items-end gap-2"></div>
+
+          <!-- 连续训练 & 额外统计 -->
+          <div class="grid grid-cols-2 gap-2 mt-4">
+            <div class="bg-slate-50 rounded-xl p-3 flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-orange-100 flex items-center justify-center">
+                <i class="fa-solid fa-fire text-orange-500 text-sm"></i>
+              </div>
+              <div>
+                <div class="text-[11px] text-slate-400">连续训练</div>
+                <div class="flex items-baseline gap-0.5">
+                  <span id="stats-streak" class="text-lg font-black text-slate-800 tabular-nums"
+                    >0</span
+                  >
+                  <span class="text-[10px] text-slate-400">天</span>
+                </div>
+              </div>
+            </div>
+            <div class="bg-slate-50 rounded-xl p-3 flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center">
+                <i class="fa-solid fa-calendar-check text-green-500 text-sm"></i>
+              </div>
+              <div>
+                <div class="text-[11px] text-slate-400">平均休息</div>
+                <div class="flex items-baseline gap-0.5">
+                  <span id="stats-avg-rest" class="text-lg font-black text-slate-800 tabular-nums"
+                    >00:00</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 训练日历热力图 -->
+        <div class="glass rounded-3xl p-6 card-shadow mb-4">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-slate-700">训练日历</h3>
+              <span
+                id="heatmap-total-days"
+                class="text-[10px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full font-medium"
+              ></span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button
+                id="heatmap-nav-prev"
+                class="w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors"
+              >
+                <i class="fa-solid fa-chevron-left text-[9px]"></i>
+              </button>
+              <span
+                id="heatmap-year-label"
+                class="text-xs font-bold text-slate-500 tabular-nums min-w-[36px] text-center"
+                >2026</span
+              >
+              <button
+                id="heatmap-nav-next"
+                class="w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors"
+              >
+                <i class="fa-solid fa-chevron-right text-[9px]"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- 热力图网格 -->
+          <div class="overflow-x-auto custom-scrollbar -mx-2 px-2">
+            <div class="inline-flex flex-col gap-0.5 min-w-full">
+              <!-- 月份标签行 -->
+              <div id="heatmap-month-labels" class="flex gap-0.5 ml-7 mb-1"></div>
+              <!-- 热力图主体 (7行 x N列) -->
+              <div class="flex gap-0.5">
+                <!-- 星期标签列 -->
+                <div id="heatmap-day-labels" class="flex flex-col gap-0.5 mr-1 flex-shrink-0"></div>
+                <!-- 格子区域 -->
+                <div id="heatmap-grid" class="flex gap-0.5"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 图例 -->
+          <div class="flex items-center justify-between mt-3">
+            <div id="heatmap-summary" class="text-[10px] text-slate-400"></div>
+            <div class="flex items-center gap-1">
+              <span class="text-[10px] text-slate-400 mr-1">少</span>
+              <div class="w-2.5 h-2.5 rounded-sm bg-slate-100"></div>
+              <div class="w-2.5 h-2.5 rounded-sm bg-green-200"></div>
+              <div class="w-2.5 h-2.5 rounded-sm bg-green-400"></div>
+              <div class="w-2.5 h-2.5 rounded-sm bg-green-600"></div>
+              <div class="w-2.5 h-2.5 rounded-sm bg-green-800"></div>
+              <span class="text-[10px] text-slate-400 ml-1">多</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 训练记录列表 -->
+        <div class="glass rounded-3xl p-6 card-shadow">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-slate-700">最近训练记录</h3>
+            <button
+              id="stats-clear-history"
+              class="text-[11px] text-slate-400 hover:text-red-500 transition-colors"
+            >
+              <i class="fa-regular fa-trash-can mr-1"></i>清空
+            </button>
+          </div>
+          <div id="stats-history-list" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar">
+            <div class="py-6 text-center text-xs text-slate-400">暂无训练记录</div>
           </div>
         </div>
       </div>
     </main>
 
     <div id="template-modal" class="fixed inset-0 z-[101] hidden">
-      <div id="template-backdrop" class="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 transition-opacity"></div>
+      <div
+        id="template-backdrop"
+        class="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 transition-opacity"
+      ></div>
       <div
         id="template-panel"
         class="absolute inset-x-0 bottom-0 md:top-24 md:bottom-auto md:left-1/2 md:-translate-x-1/2 md:w-[580px] bg-white rounded-t-3xl md:rounded-2xl h-[70vh] md:h-auto md:max-h-[78vh] flex flex-col shadow-2xl translate-y-full transition-transform duration-300"
@@ -597,7 +903,7 @@
     </div>
 
     <!-- 自定义确认弹窗 -->
-    <div id="confirm-modal" class="fixed inset-0 z-[120] hidden items-center justify-center p-4">
+    <div id="confirm-modal" class="fixed inset-0 z-[200] hidden items-center justify-center p-4">
       <div
         class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 opacity-0"
         id="confirm-backdrop"
@@ -628,7 +934,7 @@
     </div>
 
     <!-- 自定义输入弹窗 -->
-    <div id="prompt-modal" class="fixed inset-0 z-[120] hidden items-center justify-center p-4">
+    <div id="prompt-modal" class="fixed inset-0 z-[200] hidden items-center justify-center p-4">
       <div
         class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 opacity-0"
         id="prompt-backdrop"
@@ -663,7 +969,10 @@
       </div>
     </div>
 
-    <div id="export-format-modal" class="fixed inset-0 z-[120] hidden items-center justify-center p-4">
+    <div
+      id="export-format-modal"
+      class="fixed inset-0 z-[120] hidden items-center justify-center p-4"
+    >
       <div
         id="export-format-backdrop"
         class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 opacity-0"
@@ -672,22 +981,40 @@
         id="export-format-panel"
         class="bg-white rounded-3xl p-6 shadow-2xl relative w-full max-w-xs transform scale-90 opacity-0 transition-all duration-300"
       >
-        <h3 class="text-xl font-bold text-slate-800 mb-4 text-center">导出格式</h3>
-        <div class="grid grid-cols-2 gap-2 mb-6">
-          <button
-            id="export-format-json"
-            class="h-10 rounded-xl border border-blue-500 bg-blue-50 text-blue-600 font-bold text-sm"
-            data-format="json"
+        <h3 class="text-xl font-bold text-slate-800 mb-4 text-center">导出计划</h3>
+        <!-- 文件名输入 -->
+        <div class="mb-4">
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2"
+            >文件名</label
           >
-            JSON
-          </button>
-          <button
-            id="export-format-csv"
-            class="h-10 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 font-bold text-sm"
-            data-format="csv"
+          <input
+            type="text"
+            id="export-filename-input"
+            class="w-full bg-slate-50 border-none rounded-xl px-4 py-3 font-medium text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none placeholder:text-slate-300 text-sm"
+            placeholder="输入文件名..."
+          />
+        </div>
+        <!-- 格式选择 -->
+        <div class="mb-6">
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2"
+            >导出格式</label
           >
-            CSV
-          </button>
+          <div class="grid grid-cols-2 gap-2">
+            <button
+              id="export-format-json"
+              class="h-10 rounded-xl border border-blue-500 bg-blue-50 text-blue-600 font-bold text-sm"
+              data-format="json"
+            >
+              JSON
+            </button>
+            <button
+              id="export-format-csv"
+              class="h-10 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 font-bold text-sm"
+              data-format="csv"
+            >
+              CSV
+            </button>
+          </div>
         </div>
         <div class="flex gap-3">
           <button
@@ -700,8 +1027,82 @@
             id="export-format-ok-btn"
             class="flex-1 py-3 rounded-2xl bg-blue-600 text-white font-bold text-sm tracking-wide shadow-lg shadow-blue-500/20"
           >
-            确定
+            导出
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 图表 Tooltip -->
+    <div id="chart-tooltip" class="fixed z-[200] pointer-events-none hidden">
+      <div
+        class="bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap"
+      >
+        <span id="chart-tooltip-text"></span>
+      </div>
+      <div class="w-2 h-2 bg-slate-800 transform rotate-45 mx-auto -mt-1"></div>
+    </div>
+
+    <!-- 更新日志模态框 -->
+    <div id="changelog-modal" class="fixed inset-0 z-[130] hidden">
+      <div
+        id="changelog-backdrop"
+        class="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 transition-opacity"
+      ></div>
+      <div
+        id="changelog-panel"
+        class="absolute inset-x-0 bottom-0 md:top-20 md:bottom-auto md:left-1/2 md:-translate-x-1/2 md:w-[520px] bg-white rounded-t-3xl md:rounded-2xl h-[75vh] md:h-auto md:max-h-[80vh] flex flex-col shadow-2xl translate-y-full transition-transform duration-300"
+      >
+        <div class="p-4 border-b border-slate-100 flex justify-between items-center flex-shrink-0">
+          <div class="flex items-center gap-2">
+            <div
+              class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center"
+            >
+              <i class="fa-solid fa-code-branch text-white text-sm"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-lg text-slate-800 leading-tight">更新日志</h3>
+              <p class="text-[10px] text-slate-400">Changelog</p>
+            </div>
+          </div>
+          <button
+            id="changelog-close-btn"
+            class="p-2 text-slate-400 hover:text-slate-600 transition-colors"
+          >
+            <i class="fa-solid fa-times text-xl"></i>
+          </button>
+        </div>
+        <div id="changelog-content" class="flex-1 overflow-y-auto p-5 custom-scrollbar"></div>
+      </div>
+    </div>
+
+    <!-- 记录身体数据模态框 -->
+    <div id="body-input-panel" class="fixed inset-0 z-[140] hidden">
+      <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl animate-[fadeIn_0.2s_ease-out] z-10 w-[calc(100%-2rem)]">
+        <h3 class="text-xl font-bold text-slate-800 mb-5 text-center">记录身体数据</h3>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wide">日期</label>
+            <input type="date" id="body-date-input" class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold tabular-nums">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wide">体重 (kg) <span class="text-red-500">*</span></label>
+            <input type="number" step="0.1" placeholder="例如: 70.5" id="body-weight-input" class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold tabular-nums">
+          </div>
+          <div>
+            <label class="flex justify-between text-xs font-bold text-slate-400 mb-1.5 uppercase tracking-wide">
+              <span>体脂率 (%)</span>
+              <span class="font-normal text-[10px] text-slate-300">选填</span>
+            </label>
+            <input type="number" step="0.1" placeholder="例如: 15.0" id="body-fat-input" class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 font-bold tabular-nums">
+          </div>
+        </div>
+
+        <div class="flex gap-3 mt-8">
+          <button id="body-cancel-btn" class="flex-1 py-3 rounded-2xl text-slate-500 font-bold bg-slate-100 hover:bg-slate-200 transition-colors text-sm">取消</button>
+          <button id="body-save-btn" class="flex-1 py-3 rounded-2xl text-white font-bold bg-blue-600 hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/20 text-sm">保存</button>
         </div>
       </div>
     </div>
@@ -710,6 +1111,9 @@
     <script src="./js/audio.js"></script>
     <script src="./js/wakelock.js"></script>
     <script src="./js/templates.js"></script>
+    <script src="./js/changelog.js"></script>
+    <script src="./js/exercises.js"></script>
+    <script src="./js/bodytrack.js"></script>
     <script src="./js/data.js"></script>
     <script src="./js/timer.js"></script>
     <script src="./js/workout.js"></script>

@@ -349,24 +349,54 @@ const App = {
     });
 
     // 第三方 App 跳转
-    document.getElementById('launch-music-btn').addEventListener('click', () => {
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      );
+    document.querySelectorAll('.music-launch-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const app = btn.dataset.app;
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        );
+        
+        let url = '';
+        let webUrl = '';
+        switch(app) {
+          case 'netease': 
+            url = isMobile ? 'orpheus://' : 'neteasemusic://'; 
+            webUrl = 'https://music.163.com';
+            break;
+          case 'qqmusic': 
+            url = 'qqmusic://'; 
+            webUrl = 'https://y.qq.com';
+            break;
+          case 'spotify': 
+            url = 'spotify://'; 
+            webUrl = 'https://open.spotify.com';
+            break;
+          case 'apple':   
+            url = 'music://'; 
+            webUrl = 'https://music.apple.com';
+            break;
+          default: return;
+        }
 
-      const url = isMobile ? 'orpheus://' : 'neteasemusic://';
-      
-      // 使用 a 标签 + target="_top" 绕过 iframe 的 CSP frame-src 限制
-      const a = document.createElement('a');
-      a.href = url;
-      a.target = '_top';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+        // 尝试唤起客户端
+        const a = document.createElement('a');
+        a.href = url;
+        a.target = '_top';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
 
-      setTimeout(() => {
-        console.log('尝试打开网易云音乐');
-      }, 1000);
+        // 如果用户没安装该 App，浏览器会报错无法命中 handler。
+        // 如果页面没有进入隐藏状态(即没有成功切到其他应用/弹窗挂起)，则fallback到网页版
+        const checkStart = Date.now();
+        setTimeout(() => {
+          // 如果过了 1.5 秒还在当前页面且页面可见，大概率是没装 App 唤醒失败
+          if (Date.now() - checkStart < 2000 && !document.hidden) {
+            console.log(`未检测到原生应用, 回退到网页版: ${webUrl}`);
+            window.open(webUrl, '_blank');
+          }
+        }, 1500);
+      });
     });
 
     // 导入导出

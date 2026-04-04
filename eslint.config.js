@@ -48,7 +48,8 @@ export default [
       'public/',
       '*.d.ts',
       'skills/**',
-      '.agents/**'
+      '.agents/**',
+      'src/components/tools/health/WorkoutTimer/js/**'
     ]
   }
 ];
