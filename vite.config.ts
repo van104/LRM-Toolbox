@@ -19,8 +19,9 @@ export default defineConfig(({ mode }) => {
       viteStaticCopy({
         targets: [
           {
-            src: 'src/components/tools/health/WorkoutTimer',
-            dest: 'tools'
+            src: 'src/components/tools/health/WorkoutTimer/**/*',
+            dest: 'tools/WorkoutTimer',
+            rename: { stripBase: 5 }
           }
         ]
       }),
