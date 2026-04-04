@@ -30,4 +30,3 @@ document.addEventListener('visibilitychange', async () => {
 });
 
 window.WakeLockMgr = WakeLockMgr;
-

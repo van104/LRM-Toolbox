@@ -55,8 +55,11 @@ const App = {
     this.checkTodayPlan();
     AudioMgr.init();
     this.loadUiPrefs();
+    this.initBodyTrack(); // 记录身体数据功能初始化
 
     this.setFreeTimerType('countdown');
+    this.initStatsView();
+    this.initChangelog();
     requestAnimationFrame(() => this.updateTabIndicator());
   },
 
@@ -85,15 +88,6 @@ const App = {
       sessionTotalTime: document.getElementById('session-total-time'),
       sessionTotalSets: document.getElementById('session-total-sets'),
       sessionAvgRest: document.getElementById('session-avg-rest'),
-      sessionTotalTimePage: document.getElementById('session-total-time-page'),
-      sessionTotalSetsPage: document.getElementById('session-total-sets-page'),
-      sessionAvgRestPage: document.getElementById('session-avg-rest-page'),
-      historyChart: document.getElementById('history-chart'),
-      historyChartEmpty: document.getElementById('history-chart-empty'),
-      historyBars: document.getElementById('history-bars'),
-      historyChartPage: document.getElementById('history-chart-page'),
-      historyChartEmptyPage: document.getElementById('history-chart-empty-page'),
-      historyBarsPage: document.getElementById('history-bars-page'),
 
       // 自由计时器
       ftDisplay: document.getElementById('free-timer-display'),
@@ -150,7 +144,8 @@ const App = {
       exportFormatJsonBtn: document.getElementById('export-format-json'),
       exportFormatCsvBtn: document.getElementById('export-format-csv'),
       exportFormatOkBtn: document.getElementById('export-format-ok-btn'),
-      exportFormatCancelBtn: document.getElementById('export-format-cancel-btn')
+      exportFormatCancelBtn: document.getElementById('export-format-cancel-btn'),
+      exportFilenameInput: document.getElementById('export-filename-input')
     };
   },
 
@@ -355,30 +350,27 @@ const App = {
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
           navigator.userAgent
         );
-        
+
+        // 匹配不同平台的 scheme
         let url = '';
-        let webUrl = '';
-        switch(app) {
-          case 'netease': 
-            url = isMobile ? 'orpheus://' : 'neteasemusic://'; 
-            webUrl = 'https://music.163.com';
+        switch (app) {
+          case 'netease':
+            url = isMobile ? 'orpheus://' : 'neteasemusic://';
             break;
-          case 'qqmusic': 
-            url = 'qqmusic://'; 
-            webUrl = 'https://y.qq.com';
+          case 'qqmusic':
+            url = 'qqmusic://';
             break;
-          case 'spotify': 
-            url = 'spotify://'; 
-            webUrl = 'https://open.spotify.com';
+          case 'spotify':
+            url = 'spotify://';
             break;
-          case 'apple':   
-            url = 'music://'; 
-            webUrl = 'https://music.apple.com';
+          case 'apple':
+            url = 'music://';
             break;
-          default: return;
+          default:
+            return;
         }
 
-        // 尝试唤起客户端
+        // 使用 a 标签 + target="_top" 绕过 iframe 的 CSP frame-src 限制
         const a = document.createElement('a');
         a.href = url;
         a.target = '_top';
@@ -386,16 +378,9 @@ const App = {
         a.click();
         document.body.removeChild(a);
 
-        // 如果用户没安装该 App，浏览器会报错无法命中 handler。
-        // 如果页面没有进入隐藏状态(即没有成功切到其他应用/弹窗挂起)，则fallback到网页版
-        const checkStart = Date.now();
         setTimeout(() => {
-          // 如果过了 1.5 秒还在当前页面且页面可见，大概率是没装 App 唤醒失败
-          if (Date.now() - checkStart < 2000 && !document.hidden) {
-            console.log(`未检测到原生应用, 回退到网页版: ${webUrl}`);
-            window.open(webUrl, '_blank');
-          }
-        }, 1500);
+          console.log(`尝试打开音乐应用: ${app}`);
+        }, 1000);
       });
     });
 
@@ -406,7 +391,8 @@ const App = {
     this.dom.exportFormatCancelBtn.addEventListener('click', () => this.closeExportFormatModal());
     this.dom.exportFormatBackdrop.addEventListener('click', () => this.closeExportFormatModal());
     this.dom.exportFormatOkBtn.addEventListener('click', () => {
-      const baseName = `workout_plans_${new Date().toISOString().split('T')[0]}`;
+      const inputName = (this.dom.exportFilenameInput?.value || '').trim();
+      const baseName = inputName || `workout_plans_${new Date().toISOString().split('T')[0]}`;
       this.exportDataByFormat(this.state.exportFormat, baseName);
       this.closeExportFormatModal();
     });
@@ -457,7 +443,15 @@ const App = {
 };
 
 // 混入所有模块
-Object.assign(App, UIModule, WorkoutModule, TimerModule, PlansModule);
+Object.assign(
+  App,
+  UIModule,
+  WorkoutModule,
+  TimerModule,
+  PlansModule,
+  ChangelogModule,
+  BodyTrackModule
+);
 
 // 启动应用
 document.addEventListener('DOMContentLoaded', () => {

@@ -301,4 +301,3 @@ const TimerModule = {
 };
 
 window.TimerModule = TimerModule;
-

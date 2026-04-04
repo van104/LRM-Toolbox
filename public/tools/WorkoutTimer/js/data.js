@@ -217,7 +217,9 @@ const DataManager = {
     const currentMap = new Map(
       currentPlans.map(plan => [String(plan.id), normalizeForCompare(plan)])
     );
-    const incomingMap = new Map(incomingPlans.map(plan => [String(plan.id), normalizeForCompare(plan)]));
+    const incomingMap = new Map(
+      incomingPlans.map(plan => [String(plan.id), normalizeForCompare(plan)])
+    );
     let added = 0;
     let updated = 0;
     let removed = 0;
@@ -233,4 +235,3 @@ const DataManager = {
 };
 
 window.DataManager = DataManager;
-

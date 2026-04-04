@@ -270,8 +270,7 @@ const WorkoutModule = {
     this.dom.timerDisplay.textContent = 'DONE';
     this.dom.timerLabel.textContent = '今日计划已结束';
 
-    this.dom.actionBtn.innerHTML =
-      '<i class="fa-solid fa-rotate-right"></i><span>再来一次</span>';
+    this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-rotate-right"></i><span>再来一次</span>';
     this.dom.actionBtn.className =
       'col-span-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg shadow-lg shadow-blue-500/30 btn-click transition-all';
 
@@ -311,4 +310,3 @@ const WorkoutModule = {
 };
 
 window.WorkoutModule = WorkoutModule;
-

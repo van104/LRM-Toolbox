@@ -137,4 +137,3 @@ const PlanTemplates = {
 };
 
 window.PlanTemplates = PlanTemplates;
-
