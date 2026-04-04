@@ -1,7 +1,11 @@
 <template>
   <div class="iframe-wrapper">
     <iframe
-      src="/tools/WorkoutTimer/index.html"
+      :src="
+        isDev
+          ? '/src/components/tools/health/WorkoutTimer/index.html'
+          : '/tools/WorkoutTimer/index.html'
+      "
       class="full-frame"
       title="Workout Timer"
       frameborder="0"
@@ -10,7 +14,7 @@
 </template>
 
 <script setup>
-  // iframe 直接加载 public/tools/WorkoutTimer/index.html，无需 import
+  const isDev = import.meta.env.DEV;
 </script>
 
 <style scoped>

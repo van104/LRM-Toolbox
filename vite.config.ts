@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import viteImagemin from 'vite-plugin-imagemin';
 import viteCompression from 'vite-plugin-compression';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 import { fileURLToPath, URL } from 'node:url';
 import { VitePWA } from 'vite-plugin-pwa';
 
@@ -15,6 +16,14 @@ export default defineConfig(({ mode }) => {
     plugins: [
       vue(),
       tailwindcss(),
+      viteStaticCopy({
+        targets: [
+          {
+            src: 'src/components/tools/health/WorkoutTimer',
+            dest: 'tools'
+          }
+        ]
+      }),
       // Gzip 压缩：仅生产环境启用
       viteCompression({
         verbose: true,
