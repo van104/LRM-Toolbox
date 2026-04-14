@@ -3,10 +3,35 @@
  * 管理版本更新历史的展示和新版本提示
  */
 const ChangelogModule = {
-  CURRENT_VERSION: 'v2.6.0',
+  CURRENT_VERSION: 'v2.7.1',
   STORAGE_KEY: 'fitness_changelog_last_seen',
 
   CHANGELOG: [
+    {
+      version: 'v2.7.1',
+      date: '2026-04-14',
+      tag: '问题修复',
+      tagColor: 'amber',
+      items: [
+        {
+          type: 'fix',
+          text: '修复训练进行中切换自由计时器模式（倒计时/正计时）导致训练流程意外中断的 bug'
+        }
+      ]
+    },
+    {
+      version: 'v2.7.0',
+      date: '2026-04-07',
+      tag: '体验升级',
+      tagColor: 'teal',
+      items: [
+        { type: 'feat', text: '训练记录与身体数据支持独立导入 / 导出，统计页可直接备份恢复' },
+        { type: 'feat', text: '新增首次使用温馨提示，提醒本地数据需及时导出保存' },
+        { type: 'feat', text: '新增中断恢复：训练流程、自由倒计时、正计时支持刷新后继续' },
+        { type: 'feat', text: '新增训练目标系统，支持自定义添加、编辑、删除多个训练目标' },
+        { type: 'fix', text: '修复训练目标连续编辑时弹窗意外退出的问题' }
+      ]
+    },
     {
       version: 'v2.6.0',
       date: '2026-04-04',
@@ -128,6 +153,7 @@ const ChangelogModule = {
     const tagColors = {
       blue: 'from-blue-500 to-blue-600 text-white',
       teal: 'from-teal-500 to-teal-600 text-white',
+      indigo: 'from-indigo-500 to-indigo-600 text-white',
       amber: 'from-amber-400 to-amber-500 text-white',
       purple: 'from-purple-500 to-purple-600 text-white',
       rose: 'from-rose-500 to-rose-600 text-white'

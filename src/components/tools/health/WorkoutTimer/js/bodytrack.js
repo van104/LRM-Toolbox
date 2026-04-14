@@ -12,6 +12,16 @@ const BodyTrackModule = {
     // 绑定事件
     document.getElementById('body-add-btn')?.addEventListener('click', () => this.openBodyInput());
     document
+      .getElementById('body-export-btn')
+      ?.addEventListener('click', () => this.exportBodyData());
+    document.getElementById('body-import-btn')?.addEventListener('click', () => {
+      document.getElementById('body-import-file-input')?.click();
+    });
+    document.getElementById('body-import-file-input')?.addEventListener('change', e => {
+      this.importBodyData(e.target.files?.[0]);
+      e.target.value = '';
+    });
+    document
       .getElementById('body-save-btn')
       ?.addEventListener('click', () => this.saveBodyRecord());
     document
@@ -48,13 +58,14 @@ const BodyTrackModule = {
   loadBodyRecords() {
     try {
       const raw = localStorage.getItem(this.STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
+      return raw ? DataManager.normalizeBodyRecords(JSON.parse(raw)) : [];
     } catch {
       return [];
     }
   },
 
   saveBodyRecords() {
+    this.data.bodyRecords = DataManager.normalizeBodyRecords(this.data.bodyRecords);
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.data.bodyRecords));
   },
 

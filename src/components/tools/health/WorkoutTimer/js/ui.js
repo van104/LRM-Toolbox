@@ -2,6 +2,13 @@
 // UI 辅助功能：模态框、确认框、主题、Tab导航、统计图表
 // 作为 App 的 mixin，通过 Object.assign 混入
 const UIModule = {
+  GOALS_STORAGE_KEY: 'fitness_training_goals_v1',
+  DEFAULT_TRAINING_GOALS: [
+    { id: 'goal_weekly_default', type: 'weekly_workouts', target: 4, name: '每周训练次数' },
+    { id: 'goal_monthly_default', type: 'monthly_minutes', target: 600, name: '每月训练总时长' },
+    { id: 'goal_streak_default', type: 'streak_days', target: 7, name: '连续打卡目标' }
+  ],
+
   // --- 路由与导航 ---
   switchTab(targetId) {
     if (this.state.focusMode && targetId === 'plan-mode') {
@@ -108,6 +115,7 @@ const UIModule = {
   initStatsView() {
     this.state.statsView = 'week'; // week | month | year
     this.state.statsOffset = 0; // 0 = 当前, -1 = 上一个, etc
+    this.loadTrainingGoals();
 
     // Tab 切换
     document.querySelectorAll('.stats-view-tab').forEach(tab => {
@@ -121,6 +129,20 @@ const UIModule = {
     document
       .getElementById('stats-nav-next')
       ?.addEventListener('click', () => this.navigateStats(1));
+
+    document
+      .getElementById('stats-export-history')
+      ?.addEventListener('click', () => this.exportWorkoutHistory());
+    document.getElementById('stats-import-history')?.addEventListener('click', () => {
+      document.getElementById('history-import-file-input')?.click();
+    });
+    document.getElementById('history-import-file-input')?.addEventListener('change', e => {
+      this.importWorkoutHistory(e.target.files?.[0]);
+      e.target.value = '';
+    });
+    document
+      .getElementById('stats-goals-add')
+      ?.addEventListener('click', () => this.openTrainingGoalEditor());
 
     // 清空历史
     document.getElementById('stats-clear-history')?.addEventListener('click', () => {
@@ -143,6 +165,244 @@ const UIModule = {
 
     this.renderStatsView();
     this.renderHeatmap();
+  },
+
+  getTrainingGoalTypeConfig(type) {
+    const configs = {
+      weekly_workouts: {
+        type: 'weekly_workouts',
+        label: '每周训练次数',
+        description: '当前自然周训练次数',
+        min: 1,
+        max: 14,
+        accentClass: 'text-blue-600',
+        progressClass: 'from-blue-500 to-blue-400'
+      },
+      monthly_minutes: {
+        type: 'monthly_minutes',
+        label: '每月训练总时长',
+        description: '当前自然月累计训练时长',
+        min: 30,
+        max: 43200,
+        accentClass: 'text-teal-600',
+        progressClass: 'from-teal-500 to-emerald-400'
+      },
+      streak_days: {
+        type: 'streak_days',
+        label: '连续打卡目标',
+        description: '按当前连续训练天数计算',
+        min: 1,
+        max: 365,
+        accentClass: 'text-amber-600',
+        progressClass: 'from-amber-500 to-orange-400'
+      }
+    };
+    return configs[type] || configs.weekly_workouts;
+  },
+
+  normalizeTrainingGoal(goal, index = 0) {
+    if (!goal || typeof goal !== 'object') return null;
+    const config = this.getTrainingGoalTypeConfig(goal.type);
+    const target = Math.min(config.max, Math.max(config.min, parseInt(goal.target) || config.min));
+    const name = String(goal.name || config.label).trim() || config.label;
+    return {
+      id: goal.id ? String(goal.id) : `goal_${config.type}_${Date.now()}_${index}`,
+      type: config.type,
+      target,
+      name
+    };
+  },
+
+  normalizeTrainingGoals(goals) {
+    if (Array.isArray(goals)) {
+      return goals.map((goal, index) => this.normalizeTrainingGoal(goal, index)).filter(Boolean);
+    }
+
+    const safe = goals && typeof goals === 'object' ? goals : null;
+    if (!safe) {
+      return this.DEFAULT_TRAINING_GOALS.map((goal, index) =>
+        this.normalizeTrainingGoal(goal, index)
+      );
+    }
+
+    if ('weeklyWorkouts' in safe || 'monthlyMinutes' in safe || 'streakDays' in safe) {
+      return [
+        this.normalizeTrainingGoal(
+          {
+            id: 'goal_weekly_default',
+            type: 'weekly_workouts',
+            target: safe.weeklyWorkouts,
+            name: '每周训练次数'
+          },
+          0
+        ),
+        this.normalizeTrainingGoal(
+          {
+            id: 'goal_monthly_default',
+            type: 'monthly_minutes',
+            target: safe.monthlyMinutes,
+            name: '每月训练总时长'
+          },
+          1
+        ),
+        this.normalizeTrainingGoal(
+          {
+            id: 'goal_streak_default',
+            type: 'streak_days',
+            target: safe.streakDays,
+            name: '连续打卡目标'
+          },
+          2
+        )
+      ].filter(Boolean);
+    }
+
+    return this.DEFAULT_TRAINING_GOALS.map((goal, index) =>
+      this.normalizeTrainingGoal(goal, index)
+    );
+  },
+
+  loadTrainingGoals() {
+    const raw = localStorage.getItem(this.GOALS_STORAGE_KEY);
+    if (!raw) {
+      this.state.trainingGoals = this.normalizeTrainingGoals(this.DEFAULT_TRAINING_GOALS);
+      return;
+    }
+    try {
+      this.state.trainingGoals = this.normalizeTrainingGoals(JSON.parse(raw));
+    } catch {
+      this.state.trainingGoals = this.normalizeTrainingGoals(this.DEFAULT_TRAINING_GOALS);
+    }
+  },
+
+  saveTrainingGoals() {
+    this.state.trainingGoals = this.normalizeTrainingGoals(this.state.trainingGoals);
+    localStorage.setItem(this.GOALS_STORAGE_KEY, JSON.stringify(this.state.trainingGoals));
+    this.renderTrainingGoals();
+  },
+
+  getTrainingGoalTypePromptDefault(type) {
+    const configs = ['weekly_workouts', 'monthly_minutes', 'streak_days'];
+    const index = Math.max(0, configs.indexOf(type));
+    return String(index + 1);
+  },
+
+  parseTrainingGoalType(value) {
+    const input = String(value || '')
+      .trim()
+      .toLowerCase();
+    if (input === '1' || input === 'weekly' || input === 'week' || input === 'weekly_workouts') {
+      return 'weekly_workouts';
+    }
+    if (input === '2' || input === 'monthly' || input === 'month' || input === 'monthly_minutes') {
+      return 'monthly_minutes';
+    }
+    if (input === '3' || input === 'streak' || input === 'streak_days') {
+      return 'streak_days';
+    }
+    return '';
+  },
+
+  openTrainingGoalEditor(goalId = '') {
+    const currentGoals = this.normalizeTrainingGoals(this.state.trainingGoals);
+    const editingGoal = goalId ? currentGoals.find(goal => goal.id === goalId) : null;
+    const afterPrompt = callback => setTimeout(callback, 320);
+
+    const askType = defaultValue => {
+      this.prompt(
+        editingGoal ? '编辑目标类型' : '目标类型',
+        '输入 1 每周训练次数 / 2 每月训练总时长(分钟) / 3 连续打卡天数',
+        defaultValue,
+        typeValue => {
+          const type = this.parseTrainingGoalType(typeValue);
+          if (!type) {
+            this.confirm('提示', '请输入有效的目标类型：1、2 或 3。', () => {
+              afterPrompt(() => askType(typeValue || defaultValue));
+            });
+            return;
+          }
+          const config = this.getTrainingGoalTypeConfig(type);
+          afterPrompt(() => askTarget(type, editingGoal?.target || config.min));
+        }
+      );
+    };
+
+    const askTarget = (type, defaultValue) => {
+      const config = this.getTrainingGoalTypeConfig(type);
+      const placeholder =
+        type === 'monthly_minutes'
+          ? `请输入目标值（分钟，${config.min}-${config.max}）`
+          : `请输入目标值（${config.min}-${config.max}）`;
+      this.prompt(
+        editingGoal ? '编辑目标数值' : '目标数值',
+        placeholder,
+        String(defaultValue),
+        value => {
+          const target = parseInt(value);
+          if (!Number.isFinite(target) || target < config.min || target > config.max) {
+            const limitText =
+              type === 'monthly_minutes'
+                ? `请输入有效的目标时长（${config.min}-${config.max} 分钟）。`
+                : `请输入有效的目标数值（${config.min}-${config.max}）。`;
+            this.confirm('提示', limitText, () => {
+              afterPrompt(() => askTarget(type, value || defaultValue));
+            });
+            return;
+          }
+          afterPrompt(() => askName(type, target, editingGoal?.name || config.label));
+        }
+      );
+    };
+
+    const askName = (type, target, defaultValue) => {
+      const config = this.getTrainingGoalTypeConfig(type);
+      this.prompt(
+        editingGoal ? '编辑目标名称' : '目标名称',
+        '请输入自定义名称，可留空使用默认名称',
+        String(defaultValue),
+        nameValue => {
+          const finalGoal = this.normalizeTrainingGoal(
+            {
+              id: editingGoal?.id || '',
+              type,
+              target,
+              name: String(nameValue || '').trim() || config.label
+            },
+            currentGoals.length
+          );
+          if (!finalGoal) return;
+
+          if (editingGoal) {
+            this.state.trainingGoals = currentGoals.map(goal =>
+              goal.id === editingGoal.id ? finalGoal : goal
+            );
+          } else {
+            this.state.trainingGoals = [...currentGoals, finalGoal];
+          }
+          this.saveTrainingGoals();
+          afterPrompt(() => {
+            this.confirm(
+              editingGoal ? '目标已更新' : '目标已添加',
+              editingGoal
+                ? '训练目标已更新，统计页会实时显示最新进度。'
+                : '新的训练目标已添加，统计页会实时显示最新进度。'
+            );
+          });
+        }
+      );
+    };
+
+    askType(this.getTrainingGoalTypePromptDefault(editingGoal?.type || 'weekly_workouts'));
+  },
+
+  deleteTrainingGoal(goalId) {
+    const goals = this.normalizeTrainingGoals(this.state.trainingGoals);
+    const targetGoal = goals.find(goal => goal.id === goalId);
+    if (!targetGoal) return;
+    this.confirm('删除目标', `确定删除目标“${targetGoal.name}”吗？`, () => {
+      this.state.trainingGoals = goals.filter(goal => goal.id !== goalId);
+      this.saveTrainingGoals();
+    });
   },
 
   switchStatsView(view) {
@@ -314,6 +574,128 @@ const UIModule = {
     return streak;
   },
 
+  getCurrentWeekWorkoutCount() {
+    const now = new Date();
+    const dayOfWeek = now.getDay() || 7;
+    const start = new Date(now);
+    start.setDate(now.getDate() - dayOfWeek + 1);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    end.setHours(23, 59, 59, 999);
+
+    return this.data.workoutHistory.filter(item => {
+      const endedAt = new Date(item.endedAt);
+      return endedAt >= start && endedAt <= end;
+    }).length;
+  },
+
+  getCurrentMonthDurationSec() {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+    return this.data.workoutHistory.reduce((total, item) => {
+      const endedAt = new Date(item.endedAt);
+      if (endedAt >= start && endedAt <= end) {
+        return total + (item.totalDurationSec || 0);
+      }
+      return total;
+    }, 0);
+  },
+
+  renderTrainingGoals(streak = this.calculateStreak()) {
+    const container = document.getElementById('training-goals-list');
+    if (!container) return;
+
+    const goals = this.normalizeTrainingGoals(this.state.trainingGoals);
+    this.state.trainingGoals = goals;
+    const weeklyCount = this.getCurrentWeekWorkoutCount();
+    const monthlyDurationSec = this.getCurrentMonthDurationSec();
+    if (!goals.length) {
+      container.innerHTML = `
+        <div class="rounded-xl bg-white px-4 py-6 border border-dashed border-slate-200 text-center">
+          <div class="text-xs font-semibold text-slate-500">暂无训练目标</div>
+          <div class="text-[11px] text-slate-400 mt-1">点击右上角添加你的第一个训练目标</div>
+        </div>
+      `;
+      return;
+    }
+
+    const currentMetrics = {
+      weekly_workouts: weeklyCount,
+      monthly_minutes: monthlyDurationSec,
+      streak_days: streak
+    };
+
+    container.innerHTML = goals
+      .map(goal => {
+        const config = this.getTrainingGoalTypeConfig(goal.type);
+        const currentValue = currentMetrics[goal.type] || 0;
+        const targetValue = goal.type === 'monthly_minutes' ? goal.target * 60 : goal.target;
+        const percent = Math.min(100, Math.round((currentValue / Math.max(1, targetValue)) * 100));
+        let statusText = '未开始';
+        let statusClass = 'text-[11px] font-bold text-slate-400';
+        if (percent >= 100) {
+          statusText = '已完成';
+          statusClass = 'text-[11px] font-bold text-green-600';
+        } else if (currentValue > 0) {
+          statusText = `进行中 ${percent}%`;
+          statusClass = `text-[11px] font-bold ${config.accentClass}`;
+        }
+
+        const metaText =
+          goal.type === 'monthly_minutes'
+            ? `本月 ${this.formatDurationText(currentValue)} / ${this.formatDurationText(targetValue)}`
+            : goal.type === 'weekly_workouts'
+              ? `本周 ${currentValue} / ${goal.target} 次`
+              : `当前 ${currentValue} / ${goal.target} 天`;
+
+        return `
+          <div class="rounded-xl bg-white px-4 py-3 border border-slate-100">
+            <div class="flex items-start justify-between gap-3 mb-2">
+              <div class="min-w-0">
+                <div class="text-xs font-bold text-slate-700 truncate">${goal.name}</div>
+                <div class="text-[11px] text-slate-400 mt-0.5">${config.description}</div>
+                <div class="text-[11px] text-slate-400 mt-1">${metaText}</div>
+              </div>
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                <div class="${statusClass}">${statusText}</div>
+                <button
+                  class="training-goal-edit w-7 h-7 rounded-full bg-slate-50 text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                  data-goal-id="${goal.id}"
+                  title="编辑目标"
+                >
+                  <i class="fa-solid fa-pen text-[10px]"></i>
+                </button>
+                <button
+                  class="training-goal-delete w-7 h-7 rounded-full bg-slate-50 text-slate-300 hover:bg-red-50 hover:text-red-500 transition-colors"
+                  data-goal-id="${goal.id}"
+                  title="删除目标"
+                >
+                  <i class="fa-solid fa-trash text-[10px]"></i>
+                </button>
+              </div>
+            </div>
+            <div class="h-2 rounded-full bg-slate-100 overflow-hidden">
+              <div
+                class="h-full rounded-full bg-gradient-to-r ${config.progressClass} transition-all duration-500"
+                style="width: ${percent}%"
+              ></div>
+            </div>
+          </div>
+        `;
+      })
+      .join('');
+
+    container.querySelectorAll('.training-goal-edit').forEach(btn => {
+      btn.addEventListener('click', () => this.openTrainingGoalEditor(btn.dataset.goalId));
+    });
+    container.querySelectorAll('.training-goal-delete').forEach(btn => {
+      btn.addEventListener('click', () => this.deleteTrainingGoal(btn.dataset.goalId));
+    });
+  },
+
   // 主渲染函数
   renderStatsView() {
     const period = this.getStatsPeriod();
@@ -348,6 +730,7 @@ const UIModule = {
     el('stats-streak', streak);
     el('stats-avg-rest', this.formatDurationText(avgRest));
     el('stats-chart-summary', totalCount > 0 ? `共 ${totalCount} 次训练` : '');
+    this.renderTrainingGoals(streak);
 
     // 禁用未来导航
     const nextBtn = document.getElementById('stats-nav-next');
@@ -677,12 +1060,15 @@ const UIModule = {
   },
 
   // --- 自定义确认框 ---
-  confirm(title, message, onOk) {
+  confirm(title, message, onOk, onCancel, options = {}) {
     this.dom.confirmTitle.textContent = title;
     this.dom.confirmMsg.textContent = message;
     const isAlert = typeof onOk !== 'function';
+    const okText = options.okText || (isAlert ? '我知道了' : '确定');
+    const cancelText = options.cancelText || '取消';
     this.dom.confirmCancel.classList.toggle('hidden', isAlert);
-    this.dom.confirmOk.textContent = isAlert ? '我知道了' : '确定';
+    this.dom.confirmOk.textContent = okText;
+    this.dom.confirmCancel.textContent = cancelText;
     this.dom.confirmOk.classList.toggle('flex-1', !isAlert);
     this.dom.confirmOk.classList.toggle('w-full', isAlert);
     this.dom.confirmModal.classList.remove('hidden');
@@ -704,8 +1090,16 @@ const UIModule = {
       if (!isAlert) onOk();
     };
 
-    this.dom.confirmCancel.onclick = cleanup;
-    this.dom.confirmBackdrop.onclick = cleanup;
+    this.dom.confirmCancel.onclick = () => {
+      cleanup();
+      if (!isAlert && typeof onCancel === 'function') onCancel();
+    };
+    this.dom.confirmBackdrop.onclick = () => {
+      cleanup();
+      if (!isAlert && typeof onCancel === 'function' && options.backdropAsCancel !== false) {
+        onCancel();
+      }
+    };
   },
 
   prompt(title, message, defaultValue, onOk) {

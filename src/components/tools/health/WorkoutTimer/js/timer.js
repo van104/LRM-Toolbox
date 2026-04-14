@@ -63,6 +63,8 @@ const TimerModule = {
       this.clearInterval();
       WakeLockMgr.release();
       this.state.mode = 'idle';
+      this.state.freeTimerEndsAt = 0;
+      this.state.stopwatchStartedAt = 0;
       if (this.state.freeTimerType === 'countdown') {
         this.state.freeTimerRemainingMs = this.state.freeTimerSetting * 1000;
         this.updateFreeTimerDisplay(this.state.freeTimerRemainingMs);
@@ -73,17 +75,28 @@ const TimerModule = {
       }
       this.updateFreeTimerActionBtn('开始', false);
       this.updateLapBtnState();
+      this.clearInterruptedSession();
     });
 
     this.dom.ftLapBtn.addEventListener('click', () => this.addStopwatchLap());
   },
 
-  setFreeTimerType(type) {
+  setFreeTimerType(type, clearRecovery = true) {
     if (type !== 'countdown' && type !== 'stopwatch') return;
+    if (
+      this.state.mode === 'workout_work' ||
+      this.state.mode === 'workout_rest' ||
+      this.state.mode === 'workout_rest_end'
+    ) {
+      this.confirm('提示', '当前正在进行训练流程，请先结束或重置训练后再使用自由计时器。');
+      return;
+    }
     AudioMgr.stopEnd();
     this.clearInterval();
     WakeLockMgr.release();
     this.state.mode = 'idle';
+    this.state.freeTimerEndsAt = 0;
+    this.state.stopwatchStartedAt = 0;
     this.dom.ftSetup.classList.add('hidden');
     this.dom.ftDisplay.classList.remove('hidden');
     this.state.freeTimerType = type;
@@ -113,6 +126,7 @@ const TimerModule = {
       this.resetStopwatchLaps();
       this.updateLapBtnState();
     }
+    if (clearRecovery) this.clearInterruptedSession();
   },
 
   updateFreeTimerModeButtons() {
@@ -152,6 +166,7 @@ const TimerModule = {
   resetStopwatchLaps() {
     this.state.stopwatchLaps = [];
     this.renderStopwatchLaps();
+    this.persistInterruptedSession();
   },
 
   renderStopwatchLaps() {
@@ -186,11 +201,13 @@ const TimerModule = {
       if (this.state.mode === 'timer_running' || this.state.mode === 'timer_paused') {
         this.clearInterval();
         this.state.mode = 'idle';
+        this.state.freeTimerEndsAt = 0;
       }
       this.updateFreeTimerDisplay(this.state.freeTimerRemainingMs);
       this.dom.ftDisplay.classList.remove('hidden');
       this.dom.ftSetup.classList.add('hidden');
       this.updateFreeTimerActionBtn('开始', false);
+      this.clearInterruptedSession();
     } else this.confirm('提示', '请设置有效的时间');
   },
 
@@ -205,11 +222,12 @@ const TimerModule = {
       0,
       this.state.freeTimerRemainingMs || this.state.freeTimerSetting * 1000
     );
-    this.state.freeTimerTargetAt = performance.now() + startRemainingMs;
     this.state.freeTimerRemainingMs = startRemainingMs;
+    this.state.freeTimerEndsAt = Date.now() + startRemainingMs;
+    this.persistInterruptedSession();
 
     this.state.timerId = setInterval(() => {
-      const remainingMs = Math.max(0, this.state.freeTimerTargetAt - performance.now());
+      const remainingMs = Math.max(0, this.state.freeTimerEndsAt - Date.now());
       this.state.freeTimerRemainingMs = remainingMs;
       this.state.timeLeft = Math.ceil(remainingMs / 1000);
       this.updateFreeTimerDisplay(remainingMs);
@@ -220,20 +238,24 @@ const TimerModule = {
         WakeLockMgr.release();
         AudioMgr.playEnd();
         this.state.freeTimerRemainingMs = 0;
+        this.state.freeTimerEndsAt = 0;
         this.updateFreeTimerDisplay(0);
         this.updateFreeTimerActionBtn('开始', false);
+        this.clearInterruptedSession();
       }
-    }, 16);
+    }, 100);
   },
 
   pauseFreeTimer() {
     if (this.state.freeTimerType !== 'countdown') return;
-    this.state.freeTimerRemainingMs = Math.max(0, this.state.freeTimerTargetAt - performance.now());
+    this.state.freeTimerRemainingMs = Math.max(0, this.state.freeTimerEndsAt - Date.now());
     this.clearInterval();
     this.state.mode = 'timer_paused';
+    this.state.freeTimerEndsAt = 0;
     WakeLockMgr.release();
     this.updateFreeTimerDisplay(this.state.freeTimerRemainingMs);
     this.updateFreeTimerActionBtn('继续', false);
+    this.persistInterruptedSession();
   },
 
   updateFreeTimerDisplay(milliseconds) {
@@ -250,19 +272,33 @@ const TimerModule = {
     WakeLockMgr.request();
     this.updateFreeTimerActionBtn('暂停', true);
     this.updateLapBtnState();
+    if (!this.state.stopwatchStartedAt) {
+      this.state.stopwatchStartedAt = Date.now() - this.state.stopwatchElapsed * 1000;
+    }
+    this.persistInterruptedSession();
     this.state.timerId = setInterval(() => {
-      this.state.stopwatchElapsed++;
+      this.state.stopwatchElapsed = Math.max(
+        0,
+        Math.floor((Date.now() - this.state.stopwatchStartedAt) / 1000)
+      );
       this.updateStopwatchDisplay(this.state.stopwatchElapsed);
-    }, 1000);
+    }, 250);
   },
 
   pauseStopwatch() {
     if (this.state.freeTimerType !== 'stopwatch') return;
+    this.state.stopwatchElapsed = Math.max(
+      0,
+      Math.floor((Date.now() - (this.state.stopwatchStartedAt || Date.now())) / 1000)
+    );
     this.clearInterval();
     this.state.mode = 'timer_paused';
+    this.state.stopwatchStartedAt = 0;
     WakeLockMgr.release();
+    this.updateStopwatchDisplay(this.state.stopwatchElapsed);
     this.updateFreeTimerActionBtn('继续', false);
     this.updateLapBtnState();
+    this.persistInterruptedSession();
   },
 
   addStopwatchLap() {
@@ -276,6 +312,7 @@ const TimerModule = {
       deltaSeconds
     });
     this.renderStopwatchLaps();
+    this.persistInterruptedSession();
   },
 
   updateStopwatchDisplay(seconds) {

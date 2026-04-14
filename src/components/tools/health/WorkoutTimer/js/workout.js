@@ -2,6 +2,31 @@
 // 锻炼模式核心逻辑
 // 作为 App 的 mixin，通过 Object.assign 混入
 const WorkoutModule = {
+  getCurrentWorkoutExercise() {
+    return this.state.currentPlan?.exercises?.[this.state.currentExerciseIdx] || null;
+  },
+
+  getWorkoutRestConfig(exercise) {
+    const setsTotal = parseInt(exercise.sets) || 1;
+    const isLastSet = this.state.currentSet >= setsTotal;
+    const hasNextExercise =
+      this.state.currentExerciseIdx < this.state.currentPlan.exercises.length - 1;
+
+    const betweenRaw =
+      exercise.restBetweenSets !== undefined ? exercise.restBetweenSets : exercise.rest;
+    const afterRaw =
+      exercise.restAfterExercise !== undefined ? exercise.restAfterExercise : exercise.rest;
+    const betweenRest = parseInt(betweenRaw) || 60;
+    const afterRest = parseInt(afterRaw) || 90;
+
+    return {
+      setsTotal,
+      isLastSet,
+      hasNextExercise,
+      restSeconds: isLastSet ? afterRest : betweenRest
+    };
+  },
+
   checkTodayPlan() {
     // 安全检查
     if (!this.dom.dayBadge) return;
@@ -15,7 +40,7 @@ const WorkoutModule = {
 
     if (todayPlan) {
       this.state.currentPlan = todayPlan;
-      this.resetWorkoutState();
+      this.resetWorkoutState(!localStorage.getItem(this.INTERRUPTION_RECOVERY_KEY));
       this.dom.statusTitle.textContent = todayPlan.title;
       this.dom.statusSubtitle.textContent = `共 ${todayPlan.exercises.length} 个动作，准备开始`;
       this.dom.actionBtn.disabled = false;
@@ -34,12 +59,15 @@ const WorkoutModule = {
     }
   },
 
-  resetWorkoutState() {
+  resetWorkoutState(clearRecovery = true) {
     this.clearInterval();
     this.finishRestTracking();
     this.state.mode = 'idle';
     this.state.currentExerciseIdx = 0;
     this.state.currentSet = 1;
+    this.state.timeLeft = 0;
+    this.state.totalDuration = 0;
+    this.state.workoutRestEndsAt = 0;
     this.resetSessionStats();
     this.updateCounters();
     this.setProgress(0);
@@ -66,6 +94,7 @@ const WorkoutModule = {
 
     AudioMgr.stopEnd();
     WakeLockMgr.release();
+    if (clearRecovery) this.clearInterruptedSession();
   },
 
   resetWorkoutUI() {
@@ -102,9 +131,14 @@ const WorkoutModule = {
     this.clearInterval();
     this.startSessionIfNeeded();
     this.state.mode = 'workout_work';
+    this.state.workoutRestEndsAt = 0;
     WakeLockMgr.request();
 
-    // 更新UI
+    this.renderWorkoutWorkState(exercise);
+    this.persistInterruptedSession();
+  },
+
+  renderWorkoutWorkState(exercise) {
     this.dom.statusTitle.textContent = exercise.name;
     this.dom.statusSubtitle.textContent = `目标: ${exercise.reps}`;
     this.dom.timerDisplay.textContent = '锻炼中';
@@ -136,24 +170,19 @@ const WorkoutModule = {
     this.startRestTracking();
     AudioMgr.stopEnd();
 
-    const setsTotal = parseInt(exercise.sets) || 1;
-    const isLastSet = this.state.currentSet >= setsTotal;
-    const hasNextExercise =
-      this.state.currentExerciseIdx < this.state.currentPlan.exercises.length - 1;
-
-    const betweenRaw =
-      exercise.restBetweenSets !== undefined ? exercise.restBetweenSets : exercise.rest;
-    const afterRaw =
-      exercise.restAfterExercise !== undefined ? exercise.restAfterExercise : exercise.rest;
-    const betweenRest = parseInt(betweenRaw) || 60;
-    const afterRest = parseInt(afterRaw) || 90;
-
-    const restSeconds = isLastSet ? afterRest : betweenRest;
+    const { restSeconds } = this.getWorkoutRestConfig(exercise);
 
     this.state.timeLeft = restSeconds;
     this.state.totalDuration = restSeconds;
+    this.state.workoutRestEndsAt = Date.now() + restSeconds * 1000;
 
-    // 更新UI
+    this.renderWorkoutRestState(exercise);
+    this.startWorkoutRestCountdown();
+    this.persistInterruptedSession();
+  },
+
+  renderWorkoutRestState(exercise) {
+    const { isLastSet, hasNextExercise } = this.getWorkoutRestConfig(exercise);
     this.dom.statusTitle.textContent = '休息一下';
     if (!isLastSet) {
       this.dom.statusSubtitle.textContent = `下一组: ${exercise.name}`;
@@ -179,32 +208,51 @@ const WorkoutModule = {
     this.dom.ringCircle.classList.remove('text-blue-600', 'text-green-500');
 
     this.dom.timerControls.classList.remove('hidden');
-
-    // 启动倒计时
+    this.updateCounters();
+    this.updateSessionStatsUI();
     this.updateTimerDisplay(this.state.timeLeft);
-    this.state.timerId = setInterval(() => {
-      this.state.timeLeft--;
-      this.updateTimerDisplay(this.state.timeLeft);
+    const percent = this.state.totalDuration
+      ? (this.state.timeLeft / this.state.totalDuration) * 100
+      : 0;
+    this.setProgress(percent);
+  },
 
-      const percent = (this.state.timeLeft / this.state.totalDuration) * 100;
-      this.setProgress(percent);
-
-      if (this.state.timeLeft <= 3 && this.state.timeLeft > 0) {
-        AudioMgr.playTick();
+  startWorkoutRestCountdown() {
+    this.clearInterval();
+    const syncRest = () => {
+      const remainingMs = Math.max(0, (this.state.workoutRestEndsAt || 0) - Date.now());
+      const nextTimeLeft = Math.ceil(remainingMs / 1000);
+      if (nextTimeLeft !== this.state.timeLeft) {
+        this.state.timeLeft = nextTimeLeft;
+        this.updateTimerDisplay(this.state.timeLeft);
+        const percent = this.state.totalDuration
+          ? (this.state.timeLeft / this.state.totalDuration) * 100
+          : 0;
+        this.setProgress(percent);
+        if (this.state.timeLeft <= 3 && this.state.timeLeft > 0) {
+          AudioMgr.playTick();
+        }
       }
-
-      if (this.state.timeLeft <= 0) {
+      if (remainingMs <= 0) {
         this.onRestEnd();
       }
-    }, 1000);
+    };
+    syncRest();
+    this.state.timerId = setInterval(syncRest, 250);
   },
 
   onRestEnd() {
     this.finishRestTracking();
     this.clearInterval();
     this.state.mode = 'workout_rest_end';
+    this.state.workoutRestEndsAt = 0;
     AudioMgr.playEnd();
 
+    this.renderWorkoutRestEndState();
+    this.persistInterruptedSession();
+  },
+
+  renderWorkoutRestEndState() {
     this.dom.statusTitle.textContent = '休息结束！';
     this.dom.statusSubtitle.textContent = '准备好进行下一组了吗？';
     this.dom.timerDisplay.textContent = '00:00';
@@ -221,21 +269,46 @@ const WorkoutModule = {
     this.setProgress(100);
 
     this.dom.timerControls.classList.add('hidden');
+    this.updateCounters();
+    this.updateSessionStatsUI();
+  },
+
+  completeRecoveredRest(restEndedAt) {
+    if (!this.state.sessionRestStartedAt) return;
+    const finalRestAt = Math.max(
+      this.state.sessionRestStartedAt,
+      parseInt(restEndedAt) || this.state.sessionRestStartedAt
+    );
+    const elapsed = finalRestAt - this.state.sessionRestStartedAt;
+    this.state.sessionRestStartedAt = null;
+    if (elapsed > 0) {
+      this.state.sessionTotalRestMs += elapsed;
+      this.state.sessionRestCount += 1;
+    }
+    this.state.mode = 'workout_rest_end';
+    this.state.workoutRestEndsAt = 0;
+    this.updateSessionStatsUI();
   },
 
   adjustRestTime(seconds) {
     if (this.state.mode !== 'workout_rest') return;
-
-    this.state.timeLeft += seconds;
-    if (this.state.timeLeft < 0) this.state.timeLeft = 0;
-
+    const remainingMs = Math.max(0, (this.state.workoutRestEndsAt || 0) - Date.now());
+    const adjustedMs = Math.max(0, remainingMs + seconds * 1000);
+    this.state.workoutRestEndsAt = Date.now() + adjustedMs;
+    this.state.timeLeft = Math.ceil(adjustedMs / 1000);
     if (this.state.timeLeft > this.state.totalDuration) {
       this.state.totalDuration = this.state.timeLeft;
     }
-
     this.updateTimerDisplay(this.state.timeLeft);
-    const percent = (this.state.timeLeft / this.state.totalDuration) * 100;
+    const percent = this.state.totalDuration
+      ? (this.state.timeLeft / this.state.totalDuration) * 100
+      : 0;
     this.setProgress(percent);
+    if (adjustedMs <= 0) {
+      this.onRestEnd();
+      return;
+    }
+    this.persistInterruptedSession();
   },
 
   finishRest() {
@@ -243,6 +316,7 @@ const WorkoutModule = {
     this.clearInterval();
     AudioMgr.stopEnd();
     this.dom.timerControls.classList.add('hidden');
+    this.state.workoutRestEndsAt = 0;
 
     const plan = this.state.currentPlan;
     const currentEx = plan.exercises[this.state.currentExerciseIdx];
@@ -296,7 +370,6 @@ const WorkoutModule = {
       avgRestSec,
       planTitle: this.state.currentPlan?.title || ''
     });
-    this.data.workoutHistory = this.data.workoutHistory.slice(-30);
     this.state.sessionLastDurationSec = totalDurationSec;
     this.state.sessionLastSets = this.state.sessionCompletedSets;
     this.state.sessionLastAvgRestSec = avgRestSec;
@@ -306,6 +379,8 @@ const WorkoutModule = {
 
     this.state.currentExerciseIdx = 0;
     this.state.currentSet = 1;
+    this.state.workoutRestEndsAt = 0;
+    this.clearInterruptedSession();
   }
 };
 

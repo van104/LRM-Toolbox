@@ -4,6 +4,10 @@ const DataManager = {
     return '1.0.0';
   },
 
+  getStatsBackupSchemaVersion() {
+    return '1.0.0';
+  },
+
   normalizePlan(plan, fallbackId = '') {
     const idSeed = plan?.id ? String(plan.id) : `${Date.now()}_${fallbackId}`;
     const days = Array.isArray(plan?.days) ? plan.days.filter(Boolean).map(String) : [];
@@ -24,6 +28,76 @@ const DataManager = {
       days,
       exercises
     };
+  },
+
+  normalizeBodyRecord(record, fallbackDate = '') {
+    if (!record) return null;
+    const weight = Math.round(Number(record.weight) * 10) / 10;
+    if (!Number.isFinite(weight) || weight <= 0) return null;
+
+    const sourceDate = record.date || record.recordedAt || record.ts || fallbackDate || Date.now();
+    const parsedDate = new Date(sourceDate);
+    const date = Number.isNaN(parsedDate.getTime())
+      ? new Date().toISOString().slice(0, 10)
+      : parsedDate.toISOString().slice(0, 10);
+
+    const rawBodyFat = Number(record.bodyFat ?? record.fat);
+    const bodyFat =
+      Number.isFinite(rawBodyFat) && rawBodyFat > 0 ? Math.round(rawBodyFat * 10) / 10 : null;
+    const rawTs = Number(record.ts);
+    const ts = Number.isFinite(rawTs) ? rawTs : parsedDate.getTime();
+
+    return {
+      date,
+      weight,
+      bodyFat,
+      ts: Number.isFinite(ts) ? ts : Date.now()
+    };
+  },
+
+  normalizeBodyRecords(records) {
+    if (!Array.isArray(records)) return [];
+    const byDate = new Map();
+    records.forEach((record, idx) => {
+      const normalized = this.normalizeBodyRecord(record, `body_${idx}`);
+      if (normalized) byDate.set(normalized.date, normalized);
+    });
+    return Array.from(byDate.values()).sort((a, b) => a.date.localeCompare(b.date));
+  },
+
+  normalizeWorkoutRecord(record, fallbackId = '') {
+    if (!record) return null;
+    const sourceEndedAt =
+      record.endedAt || record.completedAt || record.date || record.ts || new Date().toISOString();
+    const parsedEndedAt = new Date(sourceEndedAt);
+    const endedAt = Number.isNaN(parsedEndedAt.getTime())
+      ? new Date().toISOString()
+      : parsedEndedAt.toISOString();
+    const totalDurationSec = Math.max(0, parseInt(record.totalDurationSec) || 0);
+    const totalSets = Math.max(0, parseInt(record.totalSets) || 0);
+    const avgRestSec = Math.max(0, parseInt(record.avgRestSec) || 0);
+
+    return {
+      id: record.id ? String(record.id) : `ws_${Date.parse(endedAt)}_${fallbackId}`,
+      endedAt,
+      totalDurationSec,
+      totalSets,
+      avgRestSec,
+      planTitle: record.planTitle ? String(record.planTitle) : ''
+    };
+  },
+
+  normalizeWorkoutHistory(records) {
+    if (!Array.isArray(records)) return [];
+    const byKey = new Map();
+    records.forEach((record, idx) => {
+      const normalized = this.normalizeWorkoutRecord(record, `history_${idx}`);
+      if (!normalized) return;
+      byKey.set(normalized.id || normalized.endedAt, normalized);
+    });
+    return Array.from(byKey.values()).sort(
+      (a, b) => new Date(a.endedAt).getTime() - new Date(b.endedAt).getTime()
+    );
   },
 
   downloadBlob(fileName, blob) {
@@ -102,6 +176,36 @@ const DataManager = {
     this.downloadBlob(
       finalName,
       new Blob([`\uFEFF${rows.join('\n')}`], { type: 'text/csv;charset=utf-8;' })
+    );
+  },
+
+  exportBodyRecordsData(records, fileName) {
+    let finalName = fileName;
+    if (!finalName.toLowerCase().endsWith('.json')) finalName += '.json';
+    const payload = {
+      schemaVersion: this.getStatsBackupSchemaVersion(),
+      exportedAt: new Date().toISOString(),
+      dataType: 'body-records',
+      records: this.normalizeBodyRecords(records)
+    };
+    this.downloadBlob(
+      finalName,
+      new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+    );
+  },
+
+  exportWorkoutHistoryData(records, fileName) {
+    let finalName = fileName;
+    if (!finalName.toLowerCase().endsWith('.json')) finalName += '.json';
+    const payload = {
+      schemaVersion: this.getStatsBackupSchemaVersion(),
+      exportedAt: new Date().toISOString(),
+      dataType: 'workout-history',
+      records: this.normalizeWorkoutHistory(records)
+    };
+    this.downloadBlob(
+      finalName,
+      new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
     );
   },
 
@@ -198,11 +302,61 @@ const DataManager = {
     return null;
   },
 
+  parseBodyRecordsPayload(rawData) {
+    if (Array.isArray(rawData)) {
+      return { version: 'legacy-array', records: rawData, legacy: true };
+    }
+    if (!rawData || typeof rawData !== 'object') return null;
+    if (rawData.dataType && rawData.dataType !== 'body-records') return null;
+    if (Array.isArray(rawData.records)) {
+      return {
+        version: rawData.schemaVersion || rawData.version || '',
+        records: rawData.records,
+        legacy: false
+      };
+    }
+    if (Array.isArray(rawData.bodyRecords)) {
+      return {
+        version: rawData.schemaVersion || rawData.version || '',
+        records: rawData.bodyRecords,
+        legacy: false
+      };
+    }
+    return null;
+  },
+
+  parseWorkoutHistoryPayload(rawData) {
+    if (Array.isArray(rawData)) {
+      return { version: 'legacy-array', records: rawData, legacy: true };
+    }
+    if (!rawData || typeof rawData !== 'object') return null;
+    if (rawData.dataType && rawData.dataType !== 'workout-history') return null;
+    if (Array.isArray(rawData.records)) {
+      return {
+        version: rawData.schemaVersion || rawData.version || '',
+        records: rawData.records,
+        legacy: false
+      };
+    }
+    if (Array.isArray(rawData.workoutHistory)) {
+      return {
+        version: rawData.schemaVersion || rawData.version || '',
+        records: rawData.workoutHistory,
+        legacy: false
+      };
+    }
+    return null;
+  },
+
   validateImportVersion(version, legacy) {
     if (legacy) return true;
     if (!version || typeof version !== 'string') return false;
     const major = parseInt(version.split('.')[0], 10);
     return Number.isFinite(major) && major === 1;
+  },
+
+  validateStatsImportVersion(version, legacy) {
+    return this.validateImportVersion(version, legacy);
   },
 
   calculateImportDiff(incomingPlans, currentPlans) {

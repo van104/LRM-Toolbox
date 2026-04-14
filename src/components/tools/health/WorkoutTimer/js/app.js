@@ -2,19 +2,25 @@
 // App 主对象 + 初始化 + 事件绑定
 // 将所有 mixin 模块混入 App
 const App = {
+  FIRST_VISIT_NOTICE_KEY: 'fitness_first_visit_notice_v1',
+  INTERRUPTION_RECOVERY_KEY: 'fitness_interrupted_session_v1',
+
   state: {
     mode: 'idle', // idle, workout_work, workout_rest, timer_running, timer_paused
     currentPlan: null,
     currentExerciseIdx: 0,
     currentSet: 1,
     timeLeft: 0,
+    workoutRestEndsAt: 0,
     timerId: null,
     totalDuration: 0,
     freeTimerSetting: 0,
     freeTimerRemainingMs: 0,
     freeTimerTargetAt: 0,
+    freeTimerEndsAt: 0,
     freeTimerType: 'countdown',
     stopwatchElapsed: 0,
+    stopwatchStartedAt: 0,
     stopwatchLaps: [],
     theme: 'light',
     focusMode: false,
@@ -57,9 +63,11 @@ const App = {
     this.loadUiPrefs();
     this.initBodyTrack(); // 记录身体数据功能初始化
 
-    this.setFreeTimerType('countdown');
+    this.setFreeTimerType('countdown', false);
     this.initStatsView();
+    const hasRecoveryPrompt = this.maybePromptInterruptedSessionRecovery();
     this.initChangelog();
+    if (!hasRecoveryPrompt) this.maybeShowFirstVisitNotice();
     requestAnimationFrame(() => this.updateTabIndicator());
   },
 
@@ -153,29 +161,34 @@ const App = {
     const raw = localStorage.getItem('fitness_workout_history_v1');
     if (!raw) {
       this.data.workoutHistory = [];
-      this.updateSessionStatsUI();
+      this.syncLastWorkoutStatsFromHistory();
       this.renderWorkoutHistoryChart();
       return;
     }
     try {
       const parsed = JSON.parse(raw);
-      this.data.workoutHistory = Array.isArray(parsed) ? parsed : [];
+      this.data.workoutHistory = DataManager.normalizeWorkoutHistory(parsed);
     } catch {
       this.data.workoutHistory = [];
     }
-    const latest = this.data.workoutHistory[this.data.workoutHistory.length - 1];
-    if (latest) {
-      this.state.sessionLastDurationSec = latest.totalDurationSec || 0;
-      this.state.sessionLastSets = latest.totalSets || 0;
-      this.state.sessionLastAvgRestSec = latest.avgRestSec || 0;
-    }
-    this.updateSessionStatsUI();
+    this.syncLastWorkoutStatsFromHistory();
     this.renderWorkoutHistoryChart();
   },
 
   saveWorkoutHistory() {
+    this.data.workoutHistory = DataManager.normalizeWorkoutHistory(this.data.workoutHistory);
     localStorage.setItem('fitness_workout_history_v1', JSON.stringify(this.data.workoutHistory));
+    this.syncLastWorkoutStatsFromHistory();
     this.renderWorkoutHistoryChart();
+    this.renderHeatmap();
+  },
+
+  syncLastWorkoutStatsFromHistory() {
+    const latest = this.data.workoutHistory[this.data.workoutHistory.length - 1];
+    this.state.sessionLastDurationSec = latest?.totalDurationSec || 0;
+    this.state.sessionLastSets = latest?.totalSets || 0;
+    this.state.sessionLastAvgRestSec = latest?.avgRestSec || 0;
+    this.updateSessionStatsUI();
   },
 
   saveData() {
@@ -261,6 +274,335 @@ const App = {
     reader.readAsText(file);
   },
 
+  readJsonFile(file, onLoad) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const parsed = JSON.parse(e.target.result);
+        try {
+          onLoad(parsed);
+        } catch {
+          this.confirm('错误', '导入失败：文件内容格式不正确，请检查备份文件。', null);
+        }
+      } catch {
+        this.confirm('错误', '导入失败：文件无法解析，请确认文件格式正确。', null);
+      }
+    };
+    reader.readAsText(file);
+  },
+
+  exportBodyData() {
+    if (!this.data.bodyRecords?.length) {
+      this.confirm('错误', '当前没有可导出的身体数据', null);
+      return;
+    }
+    const defaultName = `body_records_${new Date().toISOString().split('T')[0]}`;
+    this.prompt('导出身体数据', '请输入文件名', defaultName, fileName => {
+      const finalName = (fileName || '').trim() || defaultName;
+      DataManager.exportBodyRecordsData(this.data.bodyRecords, finalName);
+    });
+  },
+
+  importBodyData(file) {
+    if (!file) return;
+    const lowerName = file.name?.toLowerCase() || '';
+    if (!lowerName.endsWith('.json')) {
+      this.confirm('错误', '导入失败：身体数据仅支持 .json 文件。', null);
+      return;
+    }
+    this.readJsonFile(file, raw => {
+      const parsed = DataManager.parseBodyRecordsPayload(raw);
+      if (!parsed || !DataManager.validateStatsImportVersion(parsed.version, parsed.legacy)) {
+        this.confirm('错误', '导入失败：文件内容格式不正确，请使用系统导出的身体数据文件。', null);
+        return;
+      }
+      const normalizedRecords = DataManager.normalizeBodyRecords(parsed.records);
+      if (!normalizedRecords.length) {
+        this.confirm('错误', '导入失败：未发现有效身体数据记录。', null);
+        return;
+      }
+      const message = `导入前预览：共 ${normalizedRecords.length} 条身体数据记录。确认导入后将覆盖当前 ${this.data.bodyRecords.length} 条记录。`;
+      this.confirm('导入身体数据', message, () => {
+        this.data.bodyRecords = normalizedRecords;
+        this.saveBodyRecords();
+        this.renderBodyChart();
+        this.renderBodyRecordsList();
+      });
+    });
+  },
+
+  exportWorkoutHistory() {
+    if (!this.data.workoutHistory.length) {
+      this.confirm('错误', '当前没有可导出的训练记录', null);
+      return;
+    }
+    const defaultName = `workout_history_${new Date().toISOString().split('T')[0]}`;
+    this.prompt('导出训练记录', '请输入文件名', defaultName, fileName => {
+      const finalName = (fileName || '').trim() || defaultName;
+      DataManager.exportWorkoutHistoryData(this.data.workoutHistory, finalName);
+    });
+  },
+
+  importWorkoutHistory(file) {
+    if (!file) return;
+    const lowerName = file.name?.toLowerCase() || '';
+    if (!lowerName.endsWith('.json')) {
+      this.confirm('错误', '导入失败：训练记录仅支持 .json 文件。', null);
+      return;
+    }
+    this.readJsonFile(file, raw => {
+      const parsed = DataManager.parseWorkoutHistoryPayload(raw);
+      if (!parsed || !DataManager.validateStatsImportVersion(parsed.version, parsed.legacy)) {
+        this.confirm('错误', '导入失败：文件内容格式不正确，请使用系统导出的训练记录文件。', null);
+        return;
+      }
+      const normalizedHistory = DataManager.normalizeWorkoutHistory(parsed.records);
+      if (!normalizedHistory.length) {
+        this.confirm('错误', '导入失败：未发现有效训练记录。', null);
+        return;
+      }
+      const message = `导入前预览：共 ${normalizedHistory.length} 条训练记录。确认导入后将覆盖当前 ${this.data.workoutHistory.length} 条记录。`;
+      this.confirm('导入训练记录', message, () => {
+        this.data.workoutHistory = normalizedHistory;
+        this.saveWorkoutHistory();
+      });
+    });
+  },
+
+  buildInterruptionSnapshot() {
+    const workoutModes = ['workout_work', 'workout_rest', 'workout_rest_end'];
+    if (workoutModes.includes(this.state.mode) && this.state.currentPlan) {
+      return {
+        kind: 'workout',
+        mode: this.state.mode,
+        savedAt: Date.now(),
+        currentPlanId: this.state.currentPlan.id || '',
+        currentPlan: this.state.currentPlan,
+        currentExerciseIdx: this.state.currentExerciseIdx,
+        currentSet: this.state.currentSet,
+        timeLeft: this.state.timeLeft,
+        totalDuration: this.state.totalDuration,
+        workoutRestEndsAt: this.state.workoutRestEndsAt || 0,
+        sessionStartedAt: this.state.sessionStartedAt,
+        sessionRestStartedAt: this.state.sessionRestStartedAt,
+        sessionTotalRestMs: this.state.sessionTotalRestMs,
+        sessionRestCount: this.state.sessionRestCount,
+        sessionCompletedSets: this.state.sessionCompletedSets
+      };
+    }
+
+    if (this.state.mode === 'timer_running' || this.state.mode === 'timer_paused') {
+      return {
+        kind: 'free-timer',
+        mode: this.state.mode,
+        savedAt: Date.now(),
+        freeTimerType: this.state.freeTimerType,
+        freeTimerSetting: this.state.freeTimerSetting,
+        freeTimerRemainingMs: this.state.freeTimerRemainingMs,
+        freeTimerEndsAt: this.state.freeTimerEndsAt || 0,
+        stopwatchElapsed: this.state.stopwatchElapsed,
+        stopwatchStartedAt: this.state.stopwatchStartedAt || 0,
+        stopwatchLaps: Array.isArray(this.state.stopwatchLaps) ? this.state.stopwatchLaps : []
+      };
+    }
+
+    return null;
+  },
+
+  persistInterruptedSession() {
+    const snapshot = this.buildInterruptionSnapshot();
+    if (!snapshot) {
+      this.clearInterruptedSession();
+      return;
+    }
+    localStorage.setItem(this.INTERRUPTION_RECOVERY_KEY, JSON.stringify(snapshot));
+  },
+
+  clearInterruptedSession() {
+    localStorage.removeItem(this.INTERRUPTION_RECOVERY_KEY);
+  },
+
+  maybePromptInterruptedSessionRecovery() {
+    const raw = localStorage.getItem(this.INTERRUPTION_RECOVERY_KEY);
+    if (!raw) return false;
+    try {
+      const snapshot = JSON.parse(raw);
+      if (!snapshot || typeof snapshot !== 'object') {
+        this.clearInterruptedSession();
+        return false;
+      }
+      this.confirm(
+        '恢复中断进度',
+        '检测到上次有未完成的训练或计时进度，是否继续恢复？',
+        () => {
+          const restored = this.restoreInterruptedSession(snapshot);
+          if (!restored) {
+            this.clearInterruptedSession();
+            this.confirm('恢复失败', '未能恢复上次进度，已清除失效的恢复记录。');
+          }
+          this.deferFirstVisitNotice();
+        },
+        () => {
+          this.clearInterruptedSession();
+          this.deferFirstVisitNotice();
+        },
+        {
+          okText: '恢复',
+          cancelText: '放弃'
+        }
+      );
+      return true;
+    } catch {
+      this.clearInterruptedSession();
+      return false;
+    }
+  },
+
+  deferFirstVisitNotice() {
+    setTimeout(() => this.maybeShowFirstVisitNotice(), 260);
+  },
+
+  restoreInterruptedSession(snapshot) {
+    if (!snapshot || typeof snapshot !== 'object') return false;
+    if (snapshot.kind === 'workout') return this.restoreInterruptedWorkout(snapshot);
+    if (snapshot.kind === 'free-timer') return this.restoreInterruptedFreeTimer(snapshot);
+    return false;
+  },
+
+  restoreInterruptedWorkout(snapshot) {
+    const fallbackPlan = snapshot.currentPlan
+      ? DataManager.normalizePlan(snapshot.currentPlan, 'recovery')
+      : null;
+    const matchedPlan = this.data.plans.find(plan => plan.id === snapshot.currentPlanId);
+    const plan = matchedPlan || fallbackPlan;
+    if (!plan || !Array.isArray(plan.exercises) || !plan.exercises.length) return false;
+
+    const exerciseIdx = Math.min(
+      Math.max(0, parseInt(snapshot.currentExerciseIdx) || 0),
+      plan.exercises.length - 1
+    );
+    const exercise = plan.exercises[exerciseIdx];
+    const currentSet = Math.min(
+      Math.max(1, parseInt(snapshot.currentSet) || 1),
+      Math.max(1, parseInt(exercise.sets) || 1)
+    );
+
+    this.state.currentPlan = plan;
+    this.state.currentExerciseIdx = exerciseIdx;
+    this.state.currentSet = currentSet;
+    this.state.sessionStartedAt = snapshot.sessionStartedAt || Date.now();
+    this.state.sessionRestStartedAt = snapshot.sessionRestStartedAt || null;
+    this.state.sessionTotalRestMs = Math.max(0, parseInt(snapshot.sessionTotalRestMs) || 0);
+    this.state.sessionRestCount = Math.max(0, parseInt(snapshot.sessionRestCount) || 0);
+    this.state.sessionCompletedSets = Math.max(0, parseInt(snapshot.sessionCompletedSets) || 0);
+    this.state.totalDuration = Math.max(0, parseInt(snapshot.totalDuration) || 0);
+    this.state.timeLeft = Math.max(0, parseInt(snapshot.timeLeft) || 0);
+    this.state.workoutRestEndsAt = Math.max(0, parseInt(snapshot.workoutRestEndsAt) || 0);
+    this.state.mode = snapshot.mode;
+
+    this.switchTab('workout-mode');
+
+    if (snapshot.mode === 'workout_work') {
+      WakeLockMgr.request();
+      this.renderWorkoutWorkState(exercise);
+      this.persistInterruptedSession();
+      return true;
+    }
+
+    if (snapshot.mode === 'workout_rest') {
+      const now = Date.now();
+      const restEndsAt =
+        this.state.workoutRestEndsAt || now + Math.max(0, this.state.timeLeft) * 1000;
+      const remainingSec = Math.max(0, Math.ceil((restEndsAt - now) / 1000));
+      if (remainingSec <= 0) {
+        this.completeRecoveredRest(restEndsAt);
+        this.renderWorkoutRestEndState();
+      } else {
+        WakeLockMgr.request();
+        this.state.timeLeft = remainingSec;
+        this.state.workoutRestEndsAt = restEndsAt;
+        this.renderWorkoutRestState(exercise);
+        this.startWorkoutRestCountdown();
+      }
+      this.persistInterruptedSession();
+      return true;
+    }
+
+    if (snapshot.mode === 'workout_rest_end') {
+      this.renderWorkoutRestEndState();
+      this.persistInterruptedSession();
+      return true;
+    }
+
+    return false;
+  },
+
+  restoreInterruptedFreeTimer(snapshot) {
+    const type = snapshot.freeTimerType === 'stopwatch' ? 'stopwatch' : 'countdown';
+    this.switchTab('timer-mode');
+    this.setFreeTimerType(type, false);
+
+    if (type === 'countdown') {
+      this.state.freeTimerSetting = Math.max(0, parseInt(snapshot.freeTimerSetting) || 0);
+      if (snapshot.mode === 'timer_running') {
+        const remainingMs = Math.max(
+          0,
+          Math.round((parseInt(snapshot.freeTimerEndsAt) || 0) - Date.now())
+        );
+        if (remainingMs <= 0) {
+          this.state.freeTimerRemainingMs = 0;
+          this.state.freeTimerEndsAt = 0;
+          this.updateFreeTimerDisplay(0);
+          this.updateFreeTimerActionBtn('开始', false);
+          this.clearInterruptedSession();
+          return false;
+        }
+        this.state.freeTimerRemainingMs = remainingMs;
+        this.runFreeTimer();
+      } else if (snapshot.mode === 'timer_paused') {
+        this.clearInterval();
+        this.state.mode = 'timer_paused';
+        this.state.freeTimerEndsAt = 0;
+        this.state.freeTimerRemainingMs = Math.max(0, parseInt(snapshot.freeTimerRemainingMs) || 0);
+        this.updateFreeTimerDisplay(this.state.freeTimerRemainingMs);
+        this.updateFreeTimerActionBtn('继续', false);
+        this.updateLapBtnState();
+      } else return false;
+      this.persistInterruptedSession();
+      return true;
+    }
+
+    this.state.stopwatchLaps = Array.isArray(snapshot.stopwatchLaps) ? snapshot.stopwatchLaps : [];
+    this.renderStopwatchLaps();
+    if (snapshot.mode === 'timer_running') {
+      this.state.stopwatchElapsed = Math.max(0, parseInt(snapshot.stopwatchElapsed) || 0);
+      this.state.stopwatchStartedAt =
+        parseInt(snapshot.stopwatchStartedAt) || Date.now() - this.state.stopwatchElapsed * 1000;
+      this.runStopwatch();
+    } else if (snapshot.mode === 'timer_paused') {
+      this.clearInterval();
+      this.state.mode = 'timer_paused';
+      this.state.stopwatchStartedAt = 0;
+      this.state.stopwatchElapsed = Math.max(0, parseInt(snapshot.stopwatchElapsed) || 0);
+      this.updateStopwatchDisplay(this.state.stopwatchElapsed);
+      this.updateFreeTimerActionBtn('继续', false);
+      this.updateLapBtnState();
+    } else return false;
+    this.persistInterruptedSession();
+    return true;
+  },
+
+  maybeShowFirstVisitNotice() {
+    if (localStorage.getItem(this.FIRST_VISIT_NOTICE_KEY) === 'seen') return;
+    localStorage.setItem(this.FIRST_VISIT_NOTICE_KEY, 'seen');
+    setTimeout(() => {
+      this.confirm(
+        '温馨提示',
+        '该工具的数据保存在当前浏览器本地。清理浏览器缓存、更换设备或使用无痕模式都可能导致训练计划、训练记录和身体数据丢失，请及时导出保存数据。'
+      );
+    }, 180);
+  },
+
   // --- 事件绑定 ---
   bindEvents() {
     // Tab 切换
@@ -271,6 +613,8 @@ const App = {
       this.updateTabIndicator();
       this.updateFreeTimerModeButtons();
     });
+    window.addEventListener('pagehide', () => this.persistInterruptedSession());
+    window.addEventListener('beforeunload', () => this.persistInterruptedSession());
 
     this.dom.themeToggle.addEventListener('click', () => {
       this.applyTheme(this.state.theme === 'dark' ? 'light' : 'dark');
