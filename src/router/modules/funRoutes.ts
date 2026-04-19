@@ -206,6 +206,61 @@ const funRoutes: RouteRecordRaw[] = [
     path: '/tools/niuniu-match',
     name: 'NiuNiuMatchTool',
     component: () => import('@/components/tools/fun/NiuNiuMatchTool.vue')
+  },
+  {
+    path: '/tools/whack-a-mole',
+    name: 'WhackAMoleTool',
+    component: () => import('@/components/tools/fun/WhackAMoleTool.vue')
+  },
+  {
+    path: '/tools/number-memory',
+    name: 'NumberMemoryTool',
+    component: () => import('@/components/tools/fun/NumberMemoryTool.vue')
+  },
+  {
+    path: '/tools/color-reaction',
+    name: 'ColorReactionTool',
+    component: () => import('@/components/tools/fun/ColorReactionTool.vue')
+  },
+  {
+    path: '/tools/link-game',
+    name: 'LinkGameTool',
+    component: () => import('@/components/tools/fun/LinkGameTool.vue')
+  },
+  {
+    path: '/tools/keyboard-piano',
+    name: 'KeyboardPianoTool',
+    component: () => import('@/components/tools/fun/KeyboardPianoTool.vue')
+  },
+  {
+    path: '/tools/typing-race',
+    name: 'TypingRaceTool',
+    component: () => import('@/components/tools/fun/TypingRaceTool.vue')
+  },
+  {
+    path: '/tools/lucky-draw-stick',
+    name: 'LuckyDrawStickTool',
+    component: () => import('@/components/tools/fun/LuckyDrawStickTool.vue')
+  },
+  {
+    path: '/tools/number-puzzle',
+    name: 'NumberPuzzleTool',
+    component: () => import('@/components/tools/fun/NumberPuzzleTool.vue')
+  },
+  {
+    path: '/tools/sound-guess',
+    name: 'SoundGuessTool',
+    component: () => import('@/components/tools/fun/SoundGuessTool.vue')
+  },
+  {
+    path: '/tools/draw-guess',
+    name: 'DrawGuessTool',
+    component: () => import('@/components/tools/fun/DrawGuessTool.vue')
+  },
+  {
+    path: '/tools/birthday-fortune',
+    name: 'BirthdayFortuneTool',
+    component: () => import('@/components/tools/fun/BirthdayFortuneTool.vue')
   }
 ];
 

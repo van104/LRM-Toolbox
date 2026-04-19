@@ -128,6 +128,26 @@ const eduRoutes: RouteRecordRaw[] = [
     path: '/tools/ebbinghaus-planner',
     name: 'EbbinghausPlannerTool',
     component: () => import('@/components/tools/edu/EbbinghausPlannerTool.vue')
+  },
+  {
+    path: '/tools/flashcard',
+    name: 'FlashcardTool',
+    component: () => import('@/components/tools/edu/FlashcardTool.vue')
+  },
+  {
+    path: '/tools/mental-math',
+    name: 'MentalMathTool',
+    component: () => import('@/components/tools/edu/MentalMathTool.vue')
+  },
+  {
+    path: '/tools/flag-quiz',
+    name: 'FlagQuizTool',
+    component: () => import('@/components/tools/edu/FlagQuizTool.vue')
+  },
+  {
+    path: '/tools/history-timeline',
+    name: 'HistoryTimelineTool',
+    component: () => import('@/components/tools/edu/HistoryTimelineTool.vue')
   }
 ];
 

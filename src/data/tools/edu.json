@@ -324,5 +324,57 @@
     "isLocal": true,
     "tags": ["物理", "电学", "功率", "电压", "电流", "P=UI"],
     "svgIcon": "VoltagePowerIcon"
+  },
+  {
+    "id": "flashcard",
+    "name": "单词记忆卡片",
+    "category": "edu",
+    "icon": "Collection",
+    "summary": "闪卡式单词记忆工具",
+    "description": "通过闪卡方式高效记忆单词。支持多个词库（基础词汇、托福核心、编程术语），点击翻转查看释义，支持发音和错词复习。",
+    "usage": "1. 选择词库\n2. 查看单词，点击翻转查看释义\n3. 标记认识或不认识\n4. 学习完成后可复习错词",
+    "route": "/tools/flashcard",
+    "isLocal": true,
+    "tags": ["单词", "记忆", "英语", "闪卡", "学习"],
+    "svgIcon": "FlashcardIcon"
+  },
+  {
+    "id": "mental-math",
+    "name": "数学口算练习",
+    "category": "edu",
+    "icon": "Aim",
+    "summary": "随机生成口算题目练习",
+    "description": "提升心算能力的练习工具。支持简单、中等、困难三档难度，可选择加减乘除运算类型，60秒限时挑战，记录最高分。",
+    "usage": "1. 选择难度和运算类型\n2. 开始练习\n3. 输入答案并提交\n4. 挑战更高分数",
+    "route": "/tools/mental-math",
+    "isLocal": true,
+    "tags": ["数学", "口算", "练习", "心算", "教育"],
+    "svgIcon": "MentalMathIcon"
+  },
+  {
+    "id": "flag-quiz",
+    "name": "世界国旗识别",
+    "category": "edu",
+    "icon": "Picture",
+    "summary": "看国旗猜国家游戏",
+    "description": "通过国旗学习世界各国知识。支持世界、亚洲、欧洲、美洲四种模式，四选一答题，连胜加分机制。",
+    "usage": "1. 选择地区模式\n2. 看国旗选择对应国家\n3. 连续正确获得额外分数\n4. 完成挑战查看成绩",
+    "route": "/tools/flag-quiz",
+    "isLocal": true,
+    "tags": ["地理", "国旗", "国家", "知识", "学习"],
+    "svgIcon": "FlagQuizIcon"
+  },
+  {
+    "id": "history-timeline",
+    "name": "历史年代速记",
+    "category": "edu",
+    "icon": "Clock",
+    "summary": "历史事件时间线学习",
+    "description": "学习历史重要事件及其年代。包含学习模式（按时代浏览）和测验模式（猜事件年代），涵盖古今中外重要历史事件。",
+    "usage": "1. 学习模式：选择时代浏览历史事件\n2. 测验模式：根据事件猜测年份\n3. 提升历史知识记忆",
+    "route": "/tools/history-timeline",
+    "isLocal": true,
+    "tags": ["历史", "年代", "时间线", "学习", "知识"],
+    "svgIcon": "HistoryTimelineIcon"
   }
 ]
