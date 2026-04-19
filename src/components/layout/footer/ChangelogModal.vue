@@ -13,7 +13,7 @@
           <div class="version-tag">LATEST</div>
           <div class="item-header">
             <span class="version-num">v2.2.0</span>
-            <span class="version-date">2026-02-26</span>
+            <span class="version-date">2026-04-04</span>
           </div>
           <ul class="change-list">
             <li><span class="tag tag-ui">视觉</span>全站工具分类图标全面更新</li>

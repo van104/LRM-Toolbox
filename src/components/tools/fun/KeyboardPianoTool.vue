@@ -288,7 +288,7 @@
   };
 
   onMounted(() => {
-    document.querySelector('.piano-tool')?.focus();
+    (document.querySelector('.piano-tool') as HTMLElement | null)?.focus();
   });
 
   onUnmounted(() => {
