@@ -613,7 +613,7 @@
     initGame();
   };
 
-  const { handleFileSelect } = useFileHandler({
+  const { triggerFileInput } = useFileHandler({
     accept: 'image/*',
     readMode: 'dataURL',
     onSuccess: result => {
@@ -624,7 +624,7 @@
   });
 
   const triggerUpload = () => {
-    handleFileSelect();
+    triggerFileInput();
   };
 
   const goBack = () => {
