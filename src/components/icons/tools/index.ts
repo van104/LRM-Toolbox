@@ -255,3 +255,4 @@ export { default as XmlFormatterIcon } from './dev/XmlFormatterIcon.vue';
 export { default as YamlConverterIcon } from './dev/YamlConverterIcon.vue';
 export { default as ZipCodeSearchIcon } from './life/ZipCodeSearchIcon.vue';
 export { default as HtmlPreviewIcon } from './dev/HtmlPreviewIcon.vue';
+export { default as LlmDirectoryIcon } from './dev/LlmDirectoryIcon.vue';

@@ -763,5 +763,29 @@
       "实时编辑",
       "代码"
     ]
+  },
+  {
+    "id": "llm-directory",
+    "name": "模型大全",
+    "category": "dev",
+    "icon": "Tools",
+    "svgIcon": "LlmDirectoryIcon",
+    "summary": "按服务商分类汇总国内外主流大模型，帮助快速了解各模型的能力特点与适用场景。",
+    "description": "[待完善]",
+    "usage": "1. 使用此工具\n2. 查看结果",
+    "route": "/tools/llm-directory",
+    "isLocal": true,
+    "tags": [
+      "AI",
+      "大模型",
+      "LLM",
+      "模型服务商",
+      "模型选型",
+      "API",
+      "Gemini",
+      "GLM",
+      "Claude",
+      "OpenAI"
+    ]
   }
 ]
