@@ -111,6 +111,7 @@
 <script setup>
   import { ref, onMounted, onUnmounted } from 'vue';
   import { ElMessage } from 'element-plus';
+  import { safeEvaluate } from '@/utils/safeMath';
 
   const currentVal = ref('');
   const historyStr = ref('');
@@ -156,24 +157,18 @@
   const calculate = () => {
     let expr = historyStr.value + currentVal.value;
 
+    if (!expr.trim()) return;
+
     expr = expr
       .replace(/×/g, '*')
       .replace(/÷/g, '/')
-      .replace(/sin/g, 'Math.sin')
-      .replace(/cos/g, 'Math.cos')
-      .replace(/tan/g, 'Math.tan')
-      .replace(/log/g, 'Math.log10')
-      .replace(/ln/g, 'Math.log')
-      .replace(/sqrt/g, 'Math.sqrt')
-      .replace(/\^/g, '**');
-
-    expr = expr.replace(/(\d+)%/g, '($1/100)');
+      .replace(/\^/g, '^')
+      .replace(/(\d+)%/g, '($1/100)');
 
     try {
-      const res = new Function('return ' + expr)();
+      const res = safeEvaluate(expr);
 
       let finalRes = parseFloat(res.toPrecision(12));
-
       finalRes = finalRes.toString();
 
       historyList.value.unshift({ expr: historyStr.value + currentVal.value, res: finalRes });

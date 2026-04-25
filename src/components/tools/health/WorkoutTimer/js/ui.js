@@ -1400,6 +1400,22 @@ const UIModule = {
           ? `${year}年共训练 ${totalWorkouts} 次，覆盖 ${totalDays} 天`
           : `${year}年暂无训练记录`;
     }
+  },
+
+  // --- 卡片折叠/展开 ---
+  initCollapsibleCards() {
+    document.querySelectorAll('[data-collapsible]').forEach(card => {
+      const toggle = card.querySelector('[data-card-toggle]');
+      const body = card.querySelector('.collapsible-body');
+      const chevron = card.querySelector('.collapse-chevron');
+      if (!toggle || !body) return;
+
+      toggle.addEventListener('click', e => {
+        if (e.target.closest('[data-no-collapse]')) return;
+        body.classList.toggle('collapsed');
+        if (chevron) chevron.classList.toggle('collapsed');
+      });
+    });
   }
 };
 

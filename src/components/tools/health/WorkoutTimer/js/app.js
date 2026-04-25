@@ -65,6 +65,7 @@ const App = {
 
     this.setFreeTimerType('countdown', false);
     this.initStatsView();
+    this.initCollapsibleCards();
     const hasRecoveryPrompt = this.maybePromptInterruptedSessionRecovery();
     this.initChangelog();
     if (!hasRecoveryPrompt) this.maybeShowFirstVisitNotice();

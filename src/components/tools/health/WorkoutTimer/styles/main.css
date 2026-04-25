@@ -339,3 +339,33 @@ body {
 #heatmap-grid::-webkit-scrollbar {
   display: none;
 }
+
+/* 卡片折叠动画 */
+.collapsible-body {
+  transition: max-height 0.3s ease, opacity 0.25s ease, padding 0.25s ease;
+  max-height: 3000px;
+  opacity: 1;
+  overflow: hidden;
+}
+
+.collapsible-body.collapsed {
+  max-height: 0 !important;
+  opacity: 0;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.collapse-chevron {
+  transition: transform 0.3s ease;
+}
+
+.collapse-chevron.collapsed {
+  transform: rotate(180deg);
+}
+
+.card-header-toggle {
+  cursor: pointer;
+  user-select: none;
+}

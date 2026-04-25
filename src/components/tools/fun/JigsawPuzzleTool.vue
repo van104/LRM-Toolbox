@@ -132,6 +132,13 @@
                     <Plus />
                   </el-icon>
                   <span>上传</span>
+                  <input
+                    ref="fileInput"
+                    type="file"
+                    accept="image/*"
+                    style="display: none"
+                    @change="handleFileSelect"
+                  />
                 </div>
               </div>
             </div>
@@ -287,7 +294,7 @@
     pieces.value = [];
 
     try {
-      const imageUrl = customImage.value || presetImages[selectedImageIndex.value].url;
+      const imageUrl = customImage.value || presetImages[selectedImageIndex.value]?.url;
       const img = await loadImage(imageUrl);
 
       const maxSize = 600;
@@ -613,11 +620,11 @@
     initGame();
   };
 
-  const { triggerFileInput } = useFileHandler({
+  const { handleFileSelect, fileInput, triggerFileInput } = useFileHandler({
     accept: 'image/*',
     readMode: 'dataURL',
     onSuccess: result => {
-      customImage.value = result.content;
+      customImage.value = result.data;
       selectedImageIndex.value = -1;
       initGame();
     }

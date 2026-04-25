@@ -141,6 +141,51 @@ const lifeRoutes: RouteRecordRaw[] = [
     path: '/tools/family-relation',
     name: 'FamilyRelationTool',
     component: () => import('@/components/tools/life/FamilyRelationTool.vue')
+  },
+  {
+    path: '/tools/accounting',
+    name: 'AccountingTool',
+    component: () => import('@/components/tools/life/AccountingTool.vue')
+  },
+  {
+    path: '/tools/subscription-manager',
+    name: 'SubscriptionManagerTool',
+    component: () => import('@/components/tools/life/SubscriptionManagerTool.vue')
+  },
+  {
+    path: '/tools/expiry-tracker',
+    name: 'ExpiryTrackerTool',
+    component: () => import('@/components/tools/life/ExpiryTrackerTool.vue')
+  },
+  {
+    path: '/tools/password-hint',
+    name: 'PasswordHintTool',
+    component: () => import('@/components/tools/life/PasswordHintTool.vue')
+  },
+  {
+    path: '/tools/reading-log',
+    name: 'ReadingLogTool',
+    component: () => import('@/components/tools/life/ReadingLogTool.vue')
+  },
+  {
+    path: '/tools/meter-reading',
+    name: 'MeterReadingTool',
+    component: () => import('@/components/tools/life/MeterReadingTool.vue')
+  },
+  {
+    path: '/tools/habit-tracker',
+    name: 'HabitTrackerTool',
+    component: () => import('@/components/tools/life/HabitTrackerTool.vue')
+  },
+  {
+    path: '/tools/medication-reminder',
+    name: 'MedicationReminderTool',
+    component: () => import('@/components/tools/life/MedicationReminderTool.vue')
+  },
+  {
+    path: '/tools/borrow-tracker',
+    name: 'BorrowTrackerTool',
+    component: () => import('@/components/tools/life/BorrowTrackerTool.vue')
   }
 ];
 

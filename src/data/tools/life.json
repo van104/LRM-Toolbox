@@ -553,5 +553,176 @@
       "行政区划"
     ],
     "svgIcon": "ZipCodeSearchIcon"
+  },
+  {
+    "id": "accounting",
+    "name": "记账本",
+    "category": "life",
+    "icon": "Wallet",
+    "summary": "记录日常收支，分类统计与消费分析",
+    "description": "简洁实用的个人记账工具。支持收入支出记录、分类统计、月度概览与消费趋势图表，数据本地存储保护隐私。",
+    "usage": "1. 选择收入或支出类型\n2. 输入金额并选择分类\n3. 可添加备注和日期\n4. 查看月度统计和消费分布图表",
+    "route": "/tools/accounting",
+    "isLocal": true,
+    "tags": [
+      "记账",
+      "收支",
+      "理财",
+      "统计",
+      "消费"
+    ],
+    "svgIcon": "AccountingIcon"
+  },
+  {
+    "id": "subscription-manager",
+    "name": "订阅管理",
+    "category": "life",
+    "icon": "Tickets",
+    "summary": "管理会员订阅，到期提醒不遗漏",
+    "description": "一站式管理所有订阅服务。记录会员订阅信息，自动计算下次续费日期，到期前提醒，帮你避免忘记取消不必要的订阅。",
+    "usage": "1. 添加订阅服务名称、价格和周期\n2. 设置开始日期\n3. 查看到期提醒和月度/年度支出统计\n4. 编辑或删除不再需要的订阅",
+    "route": "/tools/subscription-manager",
+    "isLocal": true,
+    "tags": [
+      "订阅",
+      "会员",
+      "续费",
+      "提醒",
+      "支出"
+    ],
+    "svgIcon": "SubscriptionManagerIcon"
+  },
+  {
+    "id": "expiry-tracker",
+    "name": "保质期追踪器",
+    "category": "life",
+    "icon": "Timer",
+    "summary": "物品保质期追踪，过期提醒减少浪费",
+    "description": "追踪食品、药品、化妆品等物品的保质期。记录过期日期，智能提醒即将过期和已过期物品，帮助你合理规划使用，减少浪费。",
+    "usage": "1. 输入物品名称和过期日期\n2. 选择分类和存放位置\n3. 查看过期预警列表\n4. 标记使用或删除物品",
+    "route": "/tools/expiry-tracker",
+    "isLocal": true,
+    "tags": [
+      "保质期",
+      "过期",
+      "食品",
+      "药品",
+      "提醒"
+    ],
+    "svgIcon": "ExpiryTrackerIcon"
+  },
+  {
+    "id": "password-hint",
+    "name": "密码提示本",
+    "category": "life",
+    "icon": "Key",
+    "summary": "安全存储密码提示，非明文记录",
+    "description": "安全管理各类账号的密码提示。不直接存储密码原文，而是记录只有你能理解的线索提示，如\"生日+宠物名\"等，保护隐私安全。",
+    "usage": "1. 输入平台名称和账号\n2. 添加密码提示（非明文）\n3. 可添加安全问题和备注\n4. 收藏重要账号方便查找",
+    "route": "/tools/password-hint",
+    "isLocal": true,
+    "tags": [
+      "密码",
+      "安全",
+      "提示",
+      "账号",
+      "隐私"
+    ],
+    "svgIcon": "PasswordHintIcon"
+  },
+  {
+    "id": "reading-log",
+    "name": "阅读记录本",
+    "category": "life",
+    "icon": "Notebook",
+    "summary": "记录阅读进度、笔记和评分",
+    "description": "管理你的阅读书单。记录书籍信息、阅读进度、读书笔记和评分，设定年度阅读目标，追踪阅读统计，让阅读更有仪式感。",
+    "usage": "1. 添加书名、作者和总页数\n2. 选择状态：想读/在读/已读\n3. 更新阅读进度\n4. 添加读书笔记和评分",
+    "route": "/tools/reading-log",
+    "isLocal": true,
+    "tags": [
+      "阅读",
+      "书籍",
+      "笔记",
+      "书单",
+      "进度"
+    ],
+    "svgIcon": "ReadingLogIcon"
+  },
+  {
+    "id": "meter-reading",
+    "name": "水电煤抄表助手",
+    "category": "life",
+    "icon": "DataAnalysis",
+    "summary": "记录水电燃气读数，自动计算费用",
+    "description": "追踪家庭水电燃气用量。记录表读数，自动计算月度用量和费用，提供用量趋势图表，帮助你了解家庭能耗情况。",
+    "usage": "1. 选择水表/电表/燃气表\n2. 输入当前读数和日期\n3. 可设置单价计算费用\n4. 查看用量趋势和月度汇总",
+    "route": "/tools/meter-reading",
+    "isLocal": true,
+    "tags": [
+      "水电",
+      "燃气",
+      "抄表",
+      "用量",
+      "费用"
+    ],
+    "svgIcon": "MeterReadingIcon"
+  },
+  {
+    "id": "habit-tracker",
+    "name": "习惯养成打卡",
+    "category": "life",
+    "icon": "Star",
+    "summary": "习惯打卡追踪，统计连续天数",
+    "description": "帮助你养成好习惯。添加想要坚持的习惯，每日打卡记录，统计连续天数和最长记录，日历视图直观展示，成就系统激励坚持。",
+    "usage": "1. 添加想要养成的习惯\n2. 每日点击打卡\n3. 查看连续天数统计\n4. 日历视图查看打卡记录",
+    "route": "/tools/habit-tracker",
+    "isLocal": true,
+    "tags": [
+      "习惯",
+      "打卡",
+      "坚持",
+      "目标",
+      "自律"
+    ],
+    "svgIcon": "HabitTrackerIcon"
+  },
+  {
+    "id": "medication-reminder",
+    "name": "用药提醒助手",
+    "category": "life",
+    "icon": "FirstAidKit",
+    "summary": "药品管理与服药时间提醒",
+    "description": "管理日常用药。记录药品名称、剂量和服用时间，今日提醒列表帮助按时服药，统计服药依从率，提供用药安全提示。",
+    "usage": "1. 添加药品名称和剂量\n2. 设置服药频率和时间\n3. 查看今日提醒列表\n4. 标记已服用状态",
+    "route": "/tools/medication-reminder",
+    "isLocal": true,
+    "tags": [
+      "药品",
+      "用药",
+      "提醒",
+      "健康",
+      "服药"
+    ],
+    "svgIcon": "MedicationReminderIcon"
+  },
+  {
+    "id": "borrow-tracker",
+    "name": "借物归还追踪",
+    "category": "life",
+    "icon": "RefreshRight",
+    "summary": "记录借出借入，到期提醒归还",
+    "description": "追踪物品借还记录。记录借出和借入的物品、对方信息、借出日期和预计归还日期，逾期提醒帮助你及时追回或归还物品。",
+    "usage": "1. 选择借出或借入类型\n2. 输入物品名称和对方姓名\n3. 设置借出日期和预计归还日期\n4. 标记已归还或查看逾期提醒",
+    "route": "/tools/borrow-tracker",
+    "isLocal": true,
+    "tags": [
+      "借物",
+      "归还",
+      "借出",
+      "借入",
+      "提醒"
+    ],
+    "svgIcon": "BorrowTrackerIcon"
   }
 ]

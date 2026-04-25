@@ -538,83 +538,14 @@
       </div>
 
       <div id="stats-mode" class="mode-container pb-20">
-        <!-- 身体数据块 -->
-        <div class="glass rounded-3xl p-6 card-shadow mb-4">
-          <div class="flex items-center justify-between mb-4 gap-3">
-            <h2 class="text-2xl font-bold text-slate-800">身体数据</h2>
-            <div class="flex items-center gap-1.5">
-              <input type="file" id="body-import-file-input" accept=".json" class="hidden" />
-              <button
-                id="body-export-btn"
-                class="h-8 px-2.5 rounded-full bg-slate-100 text-slate-500 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center gap-1.5 transition-colors text-[11px] font-bold"
-                title="导出身体数据"
-              >
-                <i class="fa-solid fa-arrow-up-from-bracket text-[10px]"></i>
-                <span>导出</span>
-              </button>
-              <button
-                id="body-import-btn"
-                class="h-8 px-2.5 rounded-full bg-slate-100 text-slate-500 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center gap-1.5 transition-colors text-[11px] font-bold"
-                title="导入身体数据"
-              >
-                <i class="fa-solid fa-file-import text-[10px]"></i>
-                <span>导入</span>
-              </button>
-              <button
-                id="body-add-btn"
-                class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white flex items-center justify-center transition-colors shadow-sm"
-                title="新增身体数据"
-              >
-                <i class="fa-solid fa-plus"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- 折线图区域 -->
-          <div class="relative w-full h-[200px] mb-4">
-            <canvas id="body-chart-canvas" class="absolute inset-0 cursor-crosshair"></canvas>
-            <div id="body-chart-empty" class="absolute inset-0 hidden flex items-center justify-center text-sm text-slate-400">暂无数据</div>
-          </div>
-
-          <!-- 时段切换 & 摘要 -->
-          <div class="flex items-center justify-between border-t border-slate-100 pt-4">
-            <div class="flex gap-1 bg-slate-50 p-1 rounded-lg">
-              <button class="body-range-tab px-3 py-1 rounded text-xs font-bold bg-blue-600 text-white transition-colors" data-range="30">30天</button>
-              <button class="body-range-tab px-3 py-1 rounded text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors" data-range="90">90天</button>
-              <button class="body-range-tab px-3 py-1 rounded text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors" data-range="365">1年</button>
-            </div>
-            <div class="flex items-center gap-4 text-right">
-              <div>
-                <div class="text-[10px] text-slate-400 mb-0.5">当前体重</div>
-                <div class="flex items-baseline gap-1 justify-end">
-                  <span id="body-current-weight" class="text-sm font-black text-slate-700">--</span>
-                  <span id="body-weight-change" class="text-xs font-bold text-slate-400">--</span>
-                </div>
-              </div>
-              <div>
-                <div class="text-[10px] text-slate-400 mb-0.5">最新体脂</div>
-                <div id="body-current-fat" class="text-sm font-black text-slate-700">--</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 最近记录 -->
-          <div class="mt-5 border-t border-slate-100 pt-4">
-            <div class="flex items-center justify-between mb-2">
-              <h3 class="text-xs font-bold text-slate-500 uppercase">最近记录</h3>
-              <button id="body-clear-btn" class="text-[10px] text-slate-400 hover:text-red-500 transition-colors">
-                清空
-              </button>
-            </div>
-            <div id="body-records-list" class="space-y-0.5 max-h-40 overflow-y-auto custom-scrollbar -mx-3"></div>
-          </div>
-        </div>
-
         <!-- 视图切换 -->
-        <div class="glass rounded-3xl p-6 card-shadow mb-4">
-          <div class="flex items-center justify-between mb-5 gap-3">
-            <h2 class="text-2xl font-bold text-slate-800">训练数据统计</h2>
-            <div class="flex items-center gap-1.5">
+        <div class="glass rounded-3xl p-6 card-shadow mb-4" data-collapsible>
+          <div class="flex items-center justify-between mb-5 gap-3 card-header-toggle" data-card-toggle>
+            <div class="flex items-center gap-2">
+              <h2 class="text-2xl font-bold text-slate-800">训练数据统计</h2>
+              <i class="collapse-chevron fa-solid fa-chevron-up text-slate-400 text-sm"></i>
+            </div>
+            <div class="flex items-center gap-1.5" data-no-collapse>
               <input type="file" id="history-import-file-input" accept=".json" class="hidden" />
               <button
                 id="stats-export-history"
@@ -632,7 +563,7 @@
               </button>
             </div>
           </div>
-
+          <div class="collapsible-body">
           <!-- 周/月/年 Tab -->
           <div class="relative flex bg-slate-100 rounded-xl p-1 mb-5">
             <div
@@ -793,20 +724,22 @@
               </div>
             </div>
           </div>
+          </div>
         </div>
 
         <!-- 训练日历热力图 -->
-        <div class="glass rounded-3xl p-6 card-shadow mb-4">
-          <div class="flex items-center justify-between mb-4">
+        <div class="glass rounded-3xl p-6 card-shadow mb-4" data-collapsible>
+          <div class="flex items-center justify-between mb-4 card-header-toggle" data-card-toggle>
             <div class="flex items-center gap-2">
               <h3 class="font-bold text-slate-700">训练日历</h3>
+              <i class="collapse-chevron fa-solid fa-chevron-up text-slate-400 text-[10px]"></i>
               <span
                 id="heatmap-total-days"
                 class="text-[10px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full font-medium"
               ></span>
             </div>
             <span class="text-[10px] text-slate-400 font-medium">与训练记录同步</span>
-            <div class="flex items-center gap-1.5">
+            <div class="flex items-center gap-1.5" data-no-collapse>
               <button
                 id="heatmap-nav-prev"
                 class="w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors"
@@ -826,6 +759,7 @@
               </button>
             </div>
           </div>
+          <div class="collapsible-body">
 
           <!-- 热力图网格 -->
           <div class="overflow-x-auto custom-scrollbar -mx-2 px-2">
@@ -855,12 +789,15 @@
               <span class="text-[10px] text-slate-400 ml-1">多</span>
             </div>
           </div>
+          </div>
         </div>
 
-        <!-- 训练记录列表 -->
-        <div class="glass rounded-3xl p-6 card-shadow">
-          <div class="flex items-center justify-between mb-3 gap-3">
-            <h3 class="font-bold text-slate-700">最近训练记录</h3>
+        <div class="glass rounded-3xl p-6 card-shadow mb-4" data-collapsible>
+          <div class="flex items-center justify-between mb-3 gap-3 card-header-toggle" data-card-toggle>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-slate-700">最近训练记录</h3>
+              <i class="collapse-chevron fa-solid fa-chevron-up text-slate-400 text-xs"></i>
+            </div>
             <button
               id="stats-clear-history"
               class="h-8 px-2.5 rounded-full bg-slate-100 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-colors text-[11px] font-bold"
@@ -869,8 +806,87 @@
               <span>清空</span>
             </button>
           </div>
+          <div class="collapsible-body">
           <div id="stats-history-list" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar">
             <div class="py-6 text-center text-xs text-slate-400">暂无训练记录</div>
+          </div>
+          </div>
+        </div>
+
+        <!-- 身体数据块 -->
+        <div class="glass rounded-3xl p-6 card-shadow mb-4" data-collapsible>
+          <div class="flex items-center justify-between mb-4 gap-3 card-header-toggle" data-card-toggle>
+            <div class="flex items-center gap-2">
+              <h2 class="text-2xl font-bold text-slate-800">身体数据</h2>
+              <i class="collapse-chevron fa-solid fa-chevron-up text-slate-400 text-sm"></i>
+            </div>
+            <div class="flex items-center gap-1.5" data-no-collapse>
+              <input type="file" id="body-import-file-input" accept=".json" class="hidden" />
+              <button
+                id="body-export-btn"
+                class="h-8 px-2.5 rounded-full bg-slate-100 text-slate-500 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center gap-1.5 transition-colors text-[11px] font-bold"
+                title="导出身体数据"
+              >
+                <i class="fa-solid fa-arrow-up-from-bracket text-[10px]"></i>
+                <span>导出</span>
+              </button>
+              <button
+                id="body-import-btn"
+                class="h-8 px-2.5 rounded-full bg-slate-100 text-slate-500 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center gap-1.5 transition-colors text-[11px] font-bold"
+                title="导入身体数据"
+              >
+                <i class="fa-solid fa-file-import text-[10px]"></i>
+                <span>导入</span>
+              </button>
+              <button
+                id="body-add-btn"
+                class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white flex items-center justify-center transition-colors shadow-sm"
+                title="新增身体数据"
+              >
+                <i class="fa-solid fa-plus"></i>
+              </button>
+            </div>
+          </div>
+          <div class="collapsible-body">
+
+          <!-- 折线图区域 -->
+          <div class="relative w-full h-[200px] mb-4">
+            <canvas id="body-chart-canvas" class="absolute inset-0 cursor-crosshair"></canvas>
+            <div id="body-chart-empty" class="absolute inset-0 hidden flex items-center justify-center text-sm text-slate-400">暂无数据</div>
+          </div>
+
+          <!-- 时段切换 & 摘要 -->
+          <div class="flex items-center justify-between border-t border-slate-100 pt-4">
+            <div class="flex gap-1 bg-slate-50 p-1 rounded-lg">
+              <button class="body-range-tab px-3 py-1 rounded text-xs font-bold bg-blue-600 text-white transition-colors" data-range="30">30天</button>
+              <button class="body-range-tab px-3 py-1 rounded text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors" data-range="90">90天</button>
+              <button class="body-range-tab px-3 py-1 rounded text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors" data-range="365">1年</button>
+            </div>
+            <div class="flex items-center gap-4 text-right">
+              <div>
+                <div class="text-[10px] text-slate-400 mb-0.5">当前体重</div>
+                <div class="flex items-baseline gap-1 justify-end">
+                  <span id="body-current-weight" class="text-sm font-black text-slate-700">--</span>
+                  <span id="body-weight-change" class="text-xs font-bold text-slate-400">--</span>
+                </div>
+              </div>
+              <div>
+                <div class="text-[10px] text-slate-400 mb-0.5">最新体脂</div>
+                <div id="body-current-fat" class="text-sm font-black text-slate-700">--</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 最近记录 -->
+          <div class="mt-5 border-t border-slate-100 pt-4">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-xs font-bold text-slate-500 uppercase">最近记录</h3>
+              <button id="body-clear-btn" class="text-[10px] text-slate-400 hover:text-red-500 transition-colors">
+                清空
+              </button>
+            </div>
+            <div id="body-records-list" class="space-y-0.5 max-h-40 overflow-y-auto custom-scrollbar -mx-3"></div>
+          </div>
           </div>
         </div>
       </div>
