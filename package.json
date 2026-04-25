@@ -30,6 +30,7 @@
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
     "prepare": "husky",
+    "scaffold": "node scripts/scaffold-tool.mjs",
     "test:unit": "vitest",
     "test:coverage": "vitest run --coverage"
   },

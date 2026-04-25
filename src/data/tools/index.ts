@@ -1,6 +1,36 @@
 import { type Tool, type Category, categoriesBase } from './types';
 
-// 缓存加载的工具
+// ========== 同步工具列表（静态导入，用于路由和视图） ==========
+import devData from './dev.json';
+import textData from './text.json';
+import imageData from './image.json';
+import pdfData from './pdf.json';
+import designData from './design.json';
+import financeData from './finance.json';
+import healthData from './health.json';
+import lifeData from './life.json';
+import eduData from './edu.json';
+import funData from './fun.json';
+
+export const tools: Tool[] = [
+  ...(devData as Tool[]),
+  ...(textData as Tool[]),
+  ...(imageData as Tool[]),
+  ...(pdfData as Tool[]),
+  ...(designData as Tool[]),
+  ...(financeData as Tool[]),
+  ...(healthData as Tool[]),
+  ...(lifeData as Tool[]),
+  ...(eduData as Tool[]),
+  ...(funData as Tool[])
+];
+
+/** 通过路由路径查找工具 */
+export function findToolByRoute(route: string): Tool | undefined {
+  return tools.find(t => t.route === route);
+}
+
+// 缓存加载的工具（动态导入缓存）
 const cache: Record<string, Tool[]> = {};
 
 /**
