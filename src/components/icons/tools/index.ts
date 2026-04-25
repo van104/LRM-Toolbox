@@ -254,3 +254,4 @@ export { default as WorldTimelineIcon } from './fun/WorldTimelineIcon.vue';
 export { default as XmlFormatterIcon } from './dev/XmlFormatterIcon.vue';
 export { default as YamlConverterIcon } from './dev/YamlConverterIcon.vue';
 export { default as ZipCodeSearchIcon } from './life/ZipCodeSearchIcon.vue';
+export { default as HtmlPreviewIcon } from './dev/HtmlPreviewIcon.vue';
