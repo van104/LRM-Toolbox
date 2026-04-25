@@ -4,7 +4,16 @@
       "Bash(powershell *)",
       "Bash(git checkout *)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(dir *)",
+      "Bash(npx vue-tsc *)",
+      "Bash(npx vite *)",
+      "Bash(node *)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'Total: {len\\(d\\)} routes'\\); [print\\(f'{m[\\\\\"route\\\\\"]} -> {m[\\\\\"component\\\\\"]}'\\) for m in d if 'cheatsheet' in m['route'] or 'my-network' in m['route'] or 'port-check' in m['route'] or 'ua-parser' in m['route'] or 'js-obfuscator' in m['route'] or 'variable-converter' in m['route'] or 'sticky-note' in m['route'] or 'linebreak' in m['route'] or 'encryption' in m['route'] or 'bg-remover' in m['route'] or 'qrcode' in m['route'] or 'glasmorphism' in m['route'] or 'neumorphism' in m['route'] or 'prototype' in m['route'] or 'interest-free' in m['route'] or 'interest-rates' in m['route'] or 'food-gi' in m['route'] or 'heart-rate' in m['route'] or 'pomodoro' in m['route'] or 'currency-converter' in m['route'] or 'holiday' in m['route'] or 'lunar-converter' in m['route'] or 'volume-weight' in m['route'] or 'chinese-dict' in m['route'] or 'poetry' in m['route'] or 'fraction' in m['route'] or 'proportion' in m['route'] or 'blood-type' in m['route'] or 'tower-hanoi' in m['route'] or 'decision-wheel' in m['route'] or 'niuniu' in m['route'] or 'maze-3d' in m['route'] or 'random-number' in m['route'] or 'pdf-metadata' in m['route']] or 'audio' in m['route'])",
+      "Bash(npm run *)",
+      "Bash(git status *)",
+      "Bash(curl -s http://localhost:3000/lrm-api/maintenance)"
     ]
   }
 }
