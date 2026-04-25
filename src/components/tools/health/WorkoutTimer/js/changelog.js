@@ -3,10 +3,17 @@
  * 管理版本更新历史的展示和新版本提示
  */
 const ChangelogModule = {
-  CURRENT_VERSION: 'v2.7.1',
+  CURRENT_VERSION: 'v2.7.2',
   STORAGE_KEY: 'fitness_changelog_last_seen',
 
   CHANGELOG: [
+    {
+      version: 'v2.7.2',
+      date: '2026-04-25',
+      tag: '体验优化',
+      tagColor: 'teal',
+      items: [{ type: 'feat', text: '训练统计页面卡片支持点击标题折叠/展开，查看更灵活' }]
+    },
     {
       version: 'v2.7.1',
       date: '2026-04-14',
