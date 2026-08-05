@@ -455,7 +455,6 @@ const SyncModule = {
   },
 
   // 处理状态更新（手机端接收）
-  // 处理状态更新（手机端接收）
   handleStatusUpdate(payload) {
     if (!payload) return;
 

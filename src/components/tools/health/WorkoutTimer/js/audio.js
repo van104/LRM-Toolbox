@@ -6,14 +6,15 @@
  */
 const AudioMgr = {
   enabled: true,
-  activeSoundId: 'classic_timer',
+  activeSoundId: 'original_default',
   timerEnd: new Audio(),
   tick: new Audio('https://assets.mixkit.co/active_storage/sfx/2578/2578-preview.m4a'),
   previewAudio: null,
   currentlyPlayingId: null,
 
-  // 12款内置提示音列表 (来源: Pixabay)
+  // 系统内置提示音列表 (包含原版默认音效 + 来自 Pixabay 的音效)
   builtinSounds: [
+    { id: 'original_default', name: '默认经典提示音 (原版)', url: 'https://www.lrm123.site/tools/audio/audio/527475a0f6de' },
     { id: 'classic_timer', name: '经典计时结束音', url: './bgm/alexis_gaming_cam-timer-terminer-342934.mp3' },
     { id: 'ui_success', name: '清脆成功和弦', url: './bgm/soundshelfstudio-ui-chime-success-sound-551841.mp3' },
     { id: 'correct_prompt', name: '欢快正确提示音', url: './bgm/koiroylers-correct-356013.mp3' },
@@ -41,7 +42,7 @@ const AudioMgr = {
       this.enabled = savedEnabled === 'true';
     }
 
-    const savedSoundId = localStorage.getItem('fitness_prompt_sound_id_v2') || 'classic_timer';
+    const savedSoundId = localStorage.getItem('fitness_prompt_sound_id_v2') || 'original_default';
     this.activeSoundId = savedSoundId;
 
     // 建立 IndexedDB 数据库连接并载入当前提示音
@@ -50,7 +51,7 @@ const AudioMgr = {
       await this.applySelectedSound(this.activeSoundId);
     } catch (e) {
       console.warn('[AudioMgr] 初始化自定义音频失败:', e);
-      this.applySelectedSound('classic_timer');
+      this.applySelectedSound('original_default');
     }
 
     this.bindEvents();
