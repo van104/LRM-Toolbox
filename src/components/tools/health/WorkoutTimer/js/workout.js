@@ -32,30 +32,155 @@ const WorkoutModule = {
     if (!this.dom.dayBadge) return;
 
     const daysMap = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-    const today = daysMap[new Date().getDay()];
-    this.dom.dayBadge.textContent = today;
+    const todayName = daysMap[new Date().getDay()];
+    this.dom.dayBadge.textContent = todayName;
 
-    // 查找今日计划
-    const todayPlan = this.data.plans.find(p => p.days.includes(today));
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const isTempRest = localStorage.getItem('fitness_today_rest_' + todayStr) === 'true';
 
-    if (todayPlan) {
-      this.state.currentPlan = todayPlan;
-      this.resetWorkoutState(!localStorage.getItem(this.INTERRUPTION_RECOVERY_KEY));
-      this.dom.statusTitle.textContent = todayPlan.title;
-      this.dom.statusSubtitle.textContent = `共 ${todayPlan.exercises.length} 个动作，准备开始`;
-      this.dom.actionBtn.disabled = false;
-      this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>开始训练</span>';
-      this.dom.actionBtn.classList.remove('bg-slate-400', 'cursor-not-allowed');
-      this.dom.actionBtn.classList.add('bg-blue-600', 'shadow-lg');
+    if (isTempRest) {
+      this.state.currentPlan = null;
+      this.dom.statusTitle.textContent = '今天已修改为休';
+      this.dom.statusSubtitle.textContent = '好好放松，点击下方按钮可随时恢复训练';
+      this.dom.actionBtn.disabled = true;
+      this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-bed"></i><span>休息中</span>';
+      this.dom.actionBtn.className = 'col-span-4 bg-slate-400 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg cursor-not-allowed';
+      this.renderTodayRestOverrideSwitcher(true);
+      this.resetWorkoutUI();
+      return;
+    }
+
+    // 获取今天匹配的所有训练计划
+    const todayPlans = (this.data.plans || []).filter(p => DataManager.isPlanActiveOnDate(p, new Date()));
+
+    if (todayPlans.length > 0) {
+      // 保持当前选中的计划（如果在今日计划列表中），否则默认选用第一个
+      const currentValid = todayPlans.find(p => p.id === this.state.currentPlan?.id);
+      const activePlan = currentValid || todayPlans[0];
+
+      this.selectTodayPlan(activePlan, false);
+      this.renderTodayPlansSwitcher(todayPlans, activePlan.id);
     } else {
       this.state.currentPlan = null;
       this.dom.statusTitle.textContent = '今天也是休息日';
       this.dom.statusSubtitle.textContent = '好好放松，或者添加一个临时计划';
       this.dom.actionBtn.disabled = true;
       this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-bed"></i><span>暂无计划</span>';
-      this.dom.actionBtn.classList.add('bg-slate-400', 'cursor-not-allowed');
-      this.dom.actionBtn.classList.remove('bg-blue-600', 'shadow-lg');
+      this.dom.actionBtn.className = 'col-span-4 bg-slate-400 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg cursor-not-allowed';
+      this.renderTodayPlansSwitcher([]);
       this.resetWorkoutUI();
+    }
+  },
+
+  selectTodayPlan(plan, resetRecovery = true) {
+    this.state.currentPlan = plan;
+    this.resetWorkoutState(resetRecovery ? true : !localStorage.getItem(this.INTERRUPTION_RECOVERY_KEY));
+    this.dom.statusTitle.textContent = plan.title;
+    this.dom.statusSubtitle.textContent = `共 ${plan.exercises.length} 个动作，准备开始`;
+    this.dom.actionBtn.disabled = false;
+    this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>开始训练</span>';
+    this.dom.actionBtn.classList.remove('bg-slate-400', 'cursor-not-allowed');
+    this.dom.actionBtn.classList.add('bg-blue-600', 'shadow-lg');
+  },
+
+  renderTodayRestOverrideSwitcher(isRest = true) {
+    const switcherContainer = document.getElementById('today-plans-switcher');
+    if (!switcherContainer) return;
+
+    if (isRest) {
+      switcherContainer.classList.remove('hidden');
+      switcherContainer.innerHTML = `
+        <button id="cancel-today-rest-btn" type="button" class="px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors shadow-sm active:scale-95">
+          <i class="fa-solid fa-rotate-left mr-1 text-[10px]"></i>取消休息 · 恢复今日训练
+        </button>
+      `;
+      document.getElementById('cancel-today-rest-btn').onclick = () => {
+        const todayStr = new Date().toISOString().slice(0, 10);
+        localStorage.removeItem('fitness_today_rest_' + todayStr);
+        this.checkTodayPlan();
+      };
+    }
+  },
+
+  renderTodayPlansSwitcher(todayPlans = null, activePlanId = null) {
+    const switcherContainer = document.getElementById('today-plans-switcher');
+    if (!switcherContainer) return;
+
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const isTempRest = localStorage.getItem('fitness_today_rest_' + todayStr) === 'true';
+
+    if (isTempRest) {
+      this.renderTodayRestOverrideSwitcher(true);
+      return;
+    }
+
+    const plans = todayPlans || (this.data.plans || []).filter(p => DataManager.isPlanActiveOnDate(p, new Date()));
+    const currentActiveId = activePlanId || this.state.currentPlan?.id;
+
+    // 训练已经开始（非待机状态）不显示选择器
+    if (this.state.mode !== 'idle') {
+      switcherContainer.classList.add('hidden');
+      switcherContainer.innerHTML = '';
+      return;
+    }
+
+    if (!plans || plans.length === 0) {
+      switcherContainer.classList.add('hidden');
+      switcherContainer.innerHTML = '';
+      return;
+    }
+
+    switcherContainer.classList.remove('hidden');
+    let html = '';
+
+    if (plans.length > 1) {
+      html += `
+        <span class="text-[11px] font-bold text-slate-400 mr-1 flex items-center gap-1">
+          <i class="fa-solid fa-layer-group text-[10px]"></i>今日 ${plans.length} 个计划:
+        </span>
+        ${plans
+          .map(
+            p => `
+          <button type="button" class="today-plan-tab px-3 py-1 rounded-full text-xs font-bold transition-all ${
+            p.id === currentActiveId
+              ? 'bg-blue-600 text-white shadow-sm'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          }" data-plan-id="${p.id}">
+            ${p.title}
+          </button>
+        `
+          )
+          .join('')}
+      `;
+    }
+
+    html += `
+      <button id="mark-today-rest-btn" type="button" class="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-500 hover:bg-red-50 hover:text-red-600 transition-colors border border-slate-200/60 active:scale-95" title="临时将今天设为休息日">
+        <i class="fa-solid fa-bed mr-1 text-[10px]"></i>改为休息日
+      </button>
+    `;
+
+    switcherContainer.innerHTML = html;
+
+    switcherContainer.querySelectorAll('.today-plan-tab').forEach(btn => {
+      btn.onclick = () => {
+        const planId = btn.dataset.planId;
+        const target = plans.find(p => p.id === planId);
+        if (target) {
+          this.selectTodayPlan(target, true);
+          this.renderTodayPlansSwitcher(plans, target.id);
+        }
+      };
+    });
+
+    const markRestBtn = document.getElementById('mark-today-rest-btn');
+    if (markRestBtn) {
+      markRestBtn.onclick = () => {
+        this.confirm('修改为休息日', '确定将今天修改为休息日吗？（随时可点击恢复）', () => {
+          localStorage.setItem('fitness_today_rest_' + todayStr, 'true');
+          this.checkTodayPlan();
+        });
+      };
     }
   },
 
@@ -134,6 +259,7 @@ const WorkoutModule = {
     this.state.workoutRestEndsAt = 0;
     WakeLockMgr.request();
 
+    this.renderTodayPlansSwitcher();
     this.renderWorkoutWorkState(exercise);
     this.persistInterruptedSession();
   },

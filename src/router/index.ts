@@ -1,4 +1,5 @@
-import { createRouter, createWebHistory, type Component, type RouteRecordRaw } from 'vue-router';
+import { type Component } from 'vue';
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 import { tools, findToolByRoute } from '@/data/tools/index';
 
 // ========== 页面级路由（首页、关于、管理、收藏等） ==========
@@ -72,7 +73,7 @@ const pageRoutes: RouteRecordRaw[] = [
 
 // ========== 工具路由自动注册 ==========
 // 使用 import.meta.glob 扫描所有工具组件，避免手动维护 router modules
-const toolComponentGlob = import.meta.glob('@/components/tools/**/*.vue');
+const toolComponentGlob = import.meta.glob<{ default: Component }>('@/components/tools/**/*.vue');
 
 // 构建组件查找表: "dev/Base64Tool" → loader
 const componentMap: Record<string, () => Promise<{ default: Component }>> = {};

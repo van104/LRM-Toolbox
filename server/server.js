@@ -1,11 +1,14 @@
 import fs from 'fs';
 import path from 'path';
+import http from 'http';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { fileURLToPath } from 'url';
 import { dbAPI } from './db.js';
+import { initWebSocketServer } from './ws-sync.js';
+import workoutRouter from './workout-api.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -40,7 +43,10 @@ function loadEnvManual() {
 loadEnvManual();
 
 const app = express();
-const PORT = 3000;
+const PORT = 3001;
+
+// 信任反向代理（nginx）
+app.set('trust proxy', 1);
 
 // ========== 安全中间件 ==========
 
@@ -369,6 +375,19 @@ app.post('/lrm-api/maintenance/delete', async (req, res) => {
   }
 });
 
+// ========== 训练助手 APP API ==========
+try {
+  app.use('/api/workout', workoutRouter);
+  console.log('✅ 训练助手 API 路由已注册');
+} catch (e) {
+  console.error('❌ 训练助手 API 路由注册失败:', e.message);
+}
+
+// 测试端点
+app.get('/api/workout/test', (req, res) => {
+  res.json({ message: '训练助手 API 正常运行' });
+});
+
 // AI 绘图代理 API — 修复 SSRF，硬编码 API 地址
 const AI_API_URL = 'https://api.siliconflow.cn/v1/chat/completions';
 
@@ -411,6 +430,13 @@ app.post('/lrm-api/ai-proxy', aiProxyLimiter, async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`反馈服务运行在 http://localhost:${PORT}`);
+// 创建 HTTP 服务器
+const server = http.createServer(app);
+
+// 初始化 WebSocket 服务器
+initWebSocketServer(server);
+
+server.listen(PORT, () => {
+  console.log(`服务运行在 http://localhost:${PORT}`);
+  console.log(`WebSocket 同步服务已就绪`);
 });

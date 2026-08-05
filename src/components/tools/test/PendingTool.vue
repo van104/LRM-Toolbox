@@ -1,1139 +1,1673 @@
 <template>
-  <div
-    class="bg-gray-50 min-h-screen flex flex-col items-center justify-start font-sans select-none overflow-hidden touch-none sm:touch-auto"
-  >
-    <div v-if="!grid.length"></div>
-    <template v-else>
-      <div v-if="isInMenu" class="w-full max-w-md px-4 py-8 flex flex-col items-center gap-6 z-10">
-        <div class="flex items-center justify-between w-full">
-          <div
-            class="flex items-center gap-2 bg-yellow-100 rounded-full px-3 py-1 text-sm font-bold text-yellow-600 shadow-sm"
-          >
-            <span class="text-yellow-500 mr-1">🪙</span> {{ coins }}
+  <div class="brutal-wrapper">
+    <div class="brutal-container">
+      <!-- ▸ 顶部标题栏 -->
+      <header class="brutal-header">
+        <button class="brutal-btn back-btn" @click="goBack">← 返回</button>
+        <h1 class="brutal-title">像素淘金<span>.coinCatch()</span></h1>
+        <div class="brutal-status-tag bg-yellow">🪙 最高得分: {{ highScore }}</div>
+      </header>
+
+      <!-- ▸ 主内容区：双栏布局 -->
+      <div class="brutal-grid">
+        <!-- 左侧栏：游戏画面视口 -->
+        <div class="brutal-pane game-pane">
+          <div class="pane-header bg-blue">
+            <span>🎮 复古街机显示屏 // SCORE: {{ score }}</span>
+            <div class="combo-badge" v-if="combo > 2">
+              🔥 {{ combo }} 连击 (x{{ scoreMultiplier.toFixed(1) }})
+            </div>
           </div>
-          <button
-            class="p-2 text-gray-500 hover:bg-gray-200 rounded-full transition-colors active:scale-95"
-            @click="openSettingsModal"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="12" r="3"></circle>
-              <path
-                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
-              ></path>
-            </svg>
-          </button>
-        </div>
-        <div class="text-3xl font-black text-gray-800 tracking-wider">小牛谜局</div>
-        <div class="w-full bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-          <div class="text-sm font-semibold text-gray-600 mb-3">关卡选择</div>
-          <div class="grid grid-cols-3 gap-3">
-            <button
-              v-for="(_, index) in LEVELS"
-              :key="`level-${index}`"
-              :class="[
-                'py-2 rounded-xl font-bold transition-all',
-                selectedLevelIndex === index
-                  ? 'bg-blue-500 text-white shadow-md shadow-blue-500/30'
-                  : 'bg-gray-100 text-gray-600'
-              ]"
-              @click="selectedLevelIndex = index"
-            >
-              {{ index + 1 }} 关
-            </button>
-          </div>
-        </div>
-        <button
-          class="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-bold text-lg active:scale-95 transition-all shadow-md shadow-blue-500/30"
-          @click="startGame"
-        >
-          开始游戏
-        </button>
-      </div>
-      <template v-else>
-        <div class="w-full max-w-md px-4 py-4 flex items-center justify-between z-10">
-          <div class="flex items-center gap-2">
-            <button
-              class="p-2 text-gray-500 hover:bg-gray-200 rounded-full transition-colors active:scale-95"
-              @click="openSettingsModal"
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="3"></circle>
-                <path
-                  d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
-                ></path>
-              </svg>
-            </button>
+          <div class="pane-body game-body">
+            <!-- 游戏视口区域 -->
             <div
-              class="flex items-center bg-yellow-100 rounded-full px-3 py-1 text-sm font-bold text-yellow-600 shadow-sm"
+              class="arcade-screen"
+              ref="screenRef"
+              @mousemove="handleMouseMove"
+              @touchmove="handleTouchMove"
+              @touchstart="handleTouchStart"
             >
-              <span class="text-yellow-500 mr-1">🪙</span> {{ coins }}
-            </div>
-          </div>
-          <h1 class="text-xl font-bold text-gray-700 tracking-wider">
-            第 <span>{{ currentLevelIndex + 1 }}</span> 关
-          </h1>
-          <div class="w-10"></div>
-        </div>
-        <div
-          class="bg-indigo-50 px-4 py-1.5 rounded-full flex gap-1 mb-4 shadow-sm border border-indigo-100"
-        >
-          <span
-            v-for="i in [1, 2, 3]"
-            :key="i"
-            :class="[
-              'text-lg transition-all duration-300',
-              i <= health ? 'text-red-500 scale-100' : 'text-gray-300 scale-75 opacity-50'
-            ]"
-          >
-            {{ i <= health ? '❤️' : '🤍' }}
-          </span>
-        </div>
-        <div class="w-full max-w-md px-4 mb-4 z-10">
-          <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-            <div
-              class="flex justify-between text-xs text-gray-600 font-medium text-center divide-x divide-gray-100 items-center"
-            >
-              <div class="flex-1 px-1">每行每列只允许<br />存在一头牛</div>
-              <div class="flex-1 px-1">
-                每种颜色 1 头牛<br /><span class="text-[10px] text-red-400">双击生成小牛</span>
+              <!-- 狂热模式背景特效 -->
+              <div class="fever-overlay" v-if="isFeverMode"></div>
+
+              <!-- 游戏状态覆盖屏 -->
+              <div class="screen-overlay" v-if="gameState === 'idle'">
+                <div class="overlay-card bg-yellow">
+                  <div class="overlay-icon">🪙</div>
+                  <h2 class="overlay-title">像素淘金小游戏</h2>
+                  <p class="overlay-desc">
+                    使用鼠标/手指左右滑动，或键盘 A/D 键移动篮子接金币。小心避开红色炸弹！
+                  </p>
+                  <button class="brutal-btn start-btn" @click="startGame">🕹️ 开始挑战</button>
+                </div>
               </div>
-              <div class="flex-1 px-1">小牛不能相邻<br /></div>
-            </div>
-            <div class="mt-3 flex justify-center">
+
+              <div class="screen-overlay" v-if="gameState === 'gameover'">
+                <div class="overlay-card bg-pink">
+                  <div class="overlay-icon">💀</div>
+                  <h2 class="overlay-title">挑战结束</h2>
+                  <p class="overlay-desc">
+                    得分：<span class="final-score">{{ score }}</span>
+                  </p>
+                  <p class="overlay-subdesc" v-if="score >= highScore && score > 0">
+                    🎉 创造了新的个人纪录！
+                  </p>
+                  <button class="brutal-btn start-btn" @click="startGame">🔄 再来一次</button>
+                </div>
+              </div>
+
+              <!-- 倒计时面板 -->
+              <div class="countdown-overlay" v-if="countdown > 0">
+                <span class="countdown-num animate-pop">{{ countdown }}</span>
+              </div>
+
+              <!-- 游戏中浮动渲染的物品 (金币、钻石、炸弹等) -->
               <div
-                class="bg-gray-50 px-4 py-1.5 rounded-full inline-flex items-center gap-2 shadow-inner border border-gray-100"
-              >
-                <span class="text-lg">🐮</span>
-                <span class="text-sm font-semibold text-gray-600">
-                  剩余小牛:
-                  <span :class="remainingCount < 0 ? 'text-red-500' : 'text-blue-500'">{{
-                    remainingCount
-                  }}</span>
-                  / <span>{{ size }}</span>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="w-full max-w-sm px-4 perspective-1000 z-10">
-          <div
-            class="bg-white p-2 rounded-2xl shadow-lg border border-gray-100 aspect-square w-full"
-          >
-            <div
-              class="grid gap-1 w-full h-full"
-              :style="{
-                gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))`,
-                gridTemplateRows: `repeat(${size}, minmax(0, 1fr))`,
-                touchAction: 'none'
-              }"
-              @pointerdown="onPointerDown"
-              @pointermove="onPointerMove"
-            >
-              <template v-for="(row, r) in grid" :key="`row-${r}`">
-                <template v-for="(cell, c) in row" :key="`${r}-${c}`">
-                  <div
-                    :data-r="r"
-                    :data-c="c"
-                    :class="[
-                      'relative rounded-xl shadow-sm cursor-pointer transition-all duration-200 ease-out flex items-center justify-center hover:brightness-95 active:scale-90',
-                      regionColor(r, c),
-                      isMistake(r, c) ? 'ring-4 ring-red-400 z-10 animate-error shadow-red-200' : ''
-                    ]"
-                  >
-                    <div
-                      v-if="cell === 1"
-                      :class="[fontSize, 'filter drop-shadow-md animate-pop pointer-events-none']"
-                    >
-                      🐮
-                    </div>
-                    <div
-                      v-else-if="cell === 2"
-                      class="text-white/80 animate-pop pointer-events-none"
-                    >
-                      <svg viewBox="0 0 24 24" :class="svgSize">
-                        <path
-                          stroke="currentColor"
-                          strokeWidth="4"
-                          strokeLinecap="round"
-                          d="M6 6l12 12m0-12L6 18"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                </template>
-              </template>
-            </div>
-          </div>
-        </div>
-        <div class="w-full max-w-md mt-auto mb-8 px-8 flex justify-between items-end z-10">
-          <button
-            class="flex flex-col items-center justify-center w-16 h-16 bg-gray-200 text-gray-500 rounded-2xl hover:bg-gray-300 active:scale-95 transition-all shadow-sm"
-            @click="loadLevel(currentLevelIndex)"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M3 6h18"></path>
-              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-              <line x1="10" y1="11" x2="10" y2="17"></line>
-              <line x1="14" y1="11" x2="14" y2="17"></line>
-            </svg>
-            <span class="text-xs mt-1 font-medium">重新开始</span>
-          </button>
-          <div class="flex gap-4">
-            <button
-              :class="[
-                'relative flex flex-col items-center justify-center w-20 h-24 rounded-3xl shadow-lg hover:-translate-y-1 active:scale-95 transition-all border group',
-                cowToolCount > 0 ? 'bg-white border-gray-100' : 'bg-gray-100 border-gray-200'
-              ]"
-              @click="handleCowTool"
-            >
-              <div class="text-4xl mb-2 group-hover:scale-110 transition-transform">🐮</div>
-              <div
-                :class="[
-                  'absolute bottom-0 w-full text-white text-xs font-bold py-1.5 rounded-b-3xl text-center',
-                  cowToolCount > 0 ? 'bg-blue-500' : 'bg-gray-400'
-                ]"
-              >
-                {{ cowToolCount > 0 ? cowToolCount : '+' }}
-              </div>
-            </button>
-            <button
-              class="relative flex flex-col items-center justify-center w-20 h-24 bg-white rounded-3xl shadow-lg hover:-translate-y-1 active:scale-95 transition-all border border-gray-100 group"
-              @click="handleHint"
-            >
-              <div class="text-yellow-400 mb-2 group-hover:scale-110 transition-transform">
-                <svg
-                  width="36"
-                  height="36"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path
-                    d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.9 1.2 1.5 1.5 2.5"
-                  ></path>
-                  <path d="M9 18h6"></path>
-                  <path d="M10 22h4"></path>
-                </svg>
-              </div>
-              <div
-                :class="[
-                  'absolute bottom-0 w-full text-white text-xs font-bold py-1.5 rounded-b-3xl text-center',
-                  hintCount > 0 ? 'bg-blue-500' : 'bg-gray-400'
-                ]"
-              >
-                {{ hintCount > 0 ? hintCount : '+' }}
-              </div>
-            </button>
-          </div>
-        </div>
-      </template>
-      <div
-        v-if="isWon"
-        class="absolute inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center animate-pop"
-      >
-        <div
-          class="bg-white p-8 rounded-3xl shadow-2xl flex flex-col items-center text-center max-w-xs w-full"
-        >
-          <div class="text-6xl mb-4 animate-bounce">🎉</div>
-          <h2 class="text-2xl font-black text-gray-800 mb-2">太棒了！</h2>
-          <p class="text-gray-500 mb-6 font-medium">
-            {{
-              currentLevelIndex === LEVELS.length - 1
-                ? '太强了！你已通关所有难度！'
-                : '你成功解开了这一关'
-            }}
-          </p>
-          <button
-            class="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-bold text-lg active:scale-95 transition-all shadow-md shadow-blue-500/30"
-            @click="handleNextLevel"
-          >
-            {{ currentLevelIndex === LEVELS.length - 1 ? '重新挑战' : '下一关' }}
-          </button>
-        </div>
-      </div>
-      <div
-        v-if="isGameOver"
-        class="absolute inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center animate-pop"
-      >
-        <div
-          class="bg-white p-8 rounded-3xl shadow-2xl flex flex-col items-center text-center max-w-xs w-full"
-        >
-          <div class="text-6xl mb-4">💔</div>
-          <h2 class="text-2xl font-black text-red-600 mb-2">挑战失败</h2>
-          <p class="text-gray-500 mb-6 font-medium">血量耗尽，请重新尝试</p>
-          <button
-            class="w-full py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold text-lg active:scale-95 transition-all shadow-md shadow-red-500/30"
-            @click="loadLevel(currentLevelIndex)"
-          >
-            重新开始
-          </button>
-        </div>
-      </div>
-      <div
-        v-if="activeModal"
-        class="absolute inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center animate-pop"
-      >
-        <div
-          class="bg-white p-8 rounded-3xl shadow-2xl flex flex-col items-center text-center max-w-xs w-full"
-        >
-          <template v-if="activeModal.type === 'hint'">
-            <div
-              class="w-14 h-14 rounded-2xl bg-yellow-100 flex items-center justify-center text-3xl mb-3"
-            >
-              💡
-            </div>
-            <div class="w-64 h-64 mb-6">
-              <div
-                class="grid gap-1 w-full h-full"
+                v-for="item in items"
+                :key="item.id"
+                class="falling-item"
+                :class="item.type"
                 :style="{
-                  gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))`,
-                  gridTemplateRows: `repeat(${size}, minmax(0, 1fr))`
+                  left: `${item.x}%`,
+                  top: `${item.y}%`,
+                  transform: `translate(-50%, -50%) rotate(${item.rotation}deg)`
                 }"
               >
-                <template v-for="(row, r) in grid" :key="`hint-row-${r}`">
-                  <template v-for="(cell, c) in row" :key="`hint-${r}-${c}`">
-                    <div
-                      :class="[
-                        'relative rounded-md flex items-center justify-center',
-                        regionColor(r, c),
-                        r === activeModal.r || c === activeModal.c
-                          ? r === activeModal.r && c === activeModal.c
-                            ? 'ring-2 ring-red-500'
-                            : 'ring-1 ring-red-300'
-                          : ''
-                      ]"
-                    >
-                      <div
-                        v-if="r === activeModal.r || c === activeModal.c"
-                        :class="[
-                          'absolute inset-0 rounded-md pointer-events-none',
-                          r === activeModal.r && c === activeModal.c
-                            ? 'bg-red-200/35'
-                            : 'bg-red-100/25'
-                        ]"
-                      ></div>
-                      <svg
-                        v-if="
-                          r !== activeModal.r && c !== activeModal.c && cell !== 1 && cell !== 2
-                        "
-                        viewBox="0 0 24 24"
-                        class="w-4 h-4 text-red-500/70"
-                      >
-                        <path
-                          stroke="currentColor"
-                          strokeWidth="4"
-                          strokeLinecap="round"
-                          d="M6 6l12 12m0-12L6 18"
-                        />
-                      </svg>
-                      <div
-                        v-if="r === activeModal.r && c === activeModal.c && cell !== 1"
-                        class="text-base text-red-500/90"
-                      >
-                        🐮
-                      </div>
-                      <div v-if="cell === 1" class="text-base">🐮</div>
-                      <svg v-if="cell === 2" viewBox="0 0 24 24" class="w-4 h-4 text-white/80">
-                        <path
-                          stroke="currentColor"
-                          strokeWidth="4"
-                          strokeLinecap="round"
-                          d="M6 6l12 12m0-12L6 18"
-                        />
-                      </svg>
+                <!-- 精致表情符号渲染 -->
+                <span class="item-emoji">{{ getItemEmoji(item.type) }}</span>
+                <span
+                  class="item-glow"
+                  v-if="item.type === 'fever' || item.type === 'diamond'"
+                ></span>
+              </div>
+
+              <!-- 玩家接金币的兜子 -->
+              <div
+                class="player-basket"
+                :style="{
+                  left: `${playerX}%`,
+                  width: `${activeSkin.width}px`
+                }"
+              >
+                <div class="basket-emoji">{{ activeSkin.emoji }}</div>
+                <!-- 磁力圈特效 -->
+                <div class="magnet-circle" v-if="hasMagnet"></div>
+              </div>
+
+              <!-- 尘灰特效 (获得金币时的微光闪烁) -->
+              <div
+                v-for="particle in particles"
+                :key="particle.id"
+                class="gold-particle"
+                :style="{
+                  left: `${particle.x}%`,
+                  top: `${particle.y}%`,
+                  background: particle.color
+                }"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧栏：控制中心 -->
+        <div class="control-column">
+          <!-- 面板 1：基本操作与皮肤选配 -->
+          <div class="brutal-pane bg-yellow-pane">
+            <div class="pane-header bg-yellow">
+              <span>🛠️ 街机配置面板</span>
+            </div>
+            <div class="pane-body">
+              <!-- 游戏状态与核心参数 -->
+              <div class="stats-bar-top">
+                <div class="stat-bubble bg-pink">
+                  <span>生命值:</span>
+                  <div class="heart-row">
+                    <span v-for="i in 3" :key="i" class="heart">
+                      {{ i <= lives ? '❤️' : '🖤' }}
+                    </span>
+                  </div>
+                </div>
+                <div class="stat-bubble bg-green">
+                  <span>等级:</span>
+                  <span class="text-bold">LV.{{ gameLevel }}</span>
+                </div>
+              </div>
+
+              <!-- 皮肤订制 -->
+              <div class="control-item">
+                <label class="control-label">🐱 街机玩家皮肤订制:</label>
+                <div class="skin-grid">
+                  <div
+                    v-for="(skin, index) in SKINS"
+                    :key="index"
+                    class="skin-card"
+                    :class="{ active: currentSkinIndex === index }"
+                    @click="selectSkin(index)"
+                  >
+                    <span class="skin-emoji-dot">{{ skin.emoji }}</span>
+                    <div class="skin-info">
+                      <div class="skin-name">{{ skin.name }}</div>
+                      <div class="skin-desc">{{ skin.desc }}</div>
                     </div>
-                  </template>
-                </template>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 声音控制器 -->
+              <div class="control-item audio-controls">
+                <div class="toggle-row">
+                  <span class="control-label">🔊 合成爆笑街机音效:</span>
+                  <button class="toggle-switch" :class="{ on: soundEnabled }" @click="toggleSound">
+                    <span class="switch-knob"></span>
+                  </button>
+                </div>
               </div>
             </div>
-            <button
-              class="w-12 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-full flex items-center justify-center active:scale-95 transition-all shadow-md shadow-blue-500/30"
-              @click="activeModal = null"
-            >
-              <svg viewBox="0 0 24 24" class="w-6 h-6">
-                <path
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M20 6L9 17l-5-5"
-                />
-              </svg>
-            </button>
-          </template>
-          <template v-else-if="activeModal.type === 'purchase'">
-            <div
-              class="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-3xl mb-3"
-            >
-              {{ activeModal.tool === 'cow' ? '🐮' : '💡' }}
+          </div>
+
+          <!-- 面板 2：狂热蓄力计 -->
+          <div class="brutal-pane">
+            <div class="pane-header bg-green">
+              <span>⚡ 狂热储能槽 (FEVER MULTIPLIER)</span>
             </div>
-            <h2 class="text-2xl font-black text-gray-800 mb-2">
-              {{ activeModal.tool === 'cow' ? '小牛显示器' : '提示器' }}
-            </h2>
-            <div class="text-sm text-gray-500 mb-2">100金币一次，或看广告使用</div>
-            <div class="text-xs text-gray-400 mb-6">当前金币：{{ coins }}</div>
-            <div class="flex gap-3 w-full">
-              <button
-                class="flex-1 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl font-bold active:scale-95 transition-all shadow-md shadow-yellow-500/30"
-                @click="purchaseWithCoins"
-              >
-                金币购买
-              </button>
-              <button
-                class="flex-1 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-bold active:scale-95 transition-all shadow-md shadow-blue-500/30"
-                @click="startAd(activeModal.tool)"
-              >
-                看广告
-              </button>
-            </div>
-          </template>
-          <template v-else-if="activeModal.type === 'insufficient'">
-            <div
-              class="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center text-3xl mb-3"
-            >
-              ⚠️
-            </div>
-            <h2 class="text-2xl font-black text-gray-800 mb-2">金币不足</h2>
-            <div class="text-sm text-gray-500 mb-6">需要100金币，当前仅有 {{ coins }}</div>
-            <div class="flex gap-3 w-full">
-              <button
-                class="flex-1 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-bold active:scale-95 transition-all shadow-md shadow-blue-500/30"
-                @click="startAd(activeModal.tool)"
-              >
-                看广告
-              </button>
-              <button
-                class="flex-1 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-xl font-bold active:scale-95 transition-all"
-                @click="activeModal = null"
-              >
-                知道了
-              </button>
-            </div>
-          </template>
-          <template v-else-if="activeModal.type === 'ad'">
-            <div
-              class="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-3xl mb-3 animate-pulse"
-            >
-              📺
-            </div>
-            <h2 class="text-2xl font-black text-gray-800 mb-2">广告播放中</h2>
-            <div class="text-sm text-gray-500 mb-6">模拟广告中，完成后直接获得一次</div>
-            <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-              <div class="h-full bg-blue-500 animate-pulse" :style="{ width: '70%' }"></div>
-            </div>
-          </template>
-          <template v-else-if="activeModal.type === 'settings'">
-            <div
-              class="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center text-3xl mb-3"
-            >
-              ⚙️
-            </div>
-            <h2 class="text-2xl font-black text-gray-800 mb-6">设置</h2>
-            <div class="w-full space-y-4 mb-6">
-              <div class="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3">
-                <span class="text-gray-600 font-semibold">游戏音效</span>
-                <button
-                  :class="[
-                    'w-12 h-7 rounded-full transition-all',
-                    sfxOn ? 'bg-blue-500' : 'bg-gray-300'
-                  ]"
-                  @click="sfxOn = !sfxOn"
-                >
+            <div class="pane-body">
+              <div class="fever-meter-container">
+                <div class="fever-meter-info">
+                  <span class="fever-status">
+                    {{
+                      isFeverMode
+                        ? '🔥 极速狂热金币雨中！'
+                        : feverEnergy >= 100
+                          ? '⚡ 储能已满！双击屏幕释放！'
+                          : '收集流星或持续连击可积攒储能'
+                    }}
+                  </span>
+                  <span class="fever-pct">{{ feverEnergy }}%</span>
+                </div>
+                <div class="fever-progress-bar">
                   <div
-                    :class="[
-                      'w-5 h-5 bg-white rounded-full shadow-sm transition-all',
-                      sfxOn ? 'translate-x-6' : 'translate-x-1'
-                    ]"
+                    class="fever-progress"
+                    :style="{ width: `${feverEnergy}%` }"
+                    :class="{ 'fever-active': isFeverMode, 'fever-ready': feverEnergy >= 100 }"
                   ></div>
-                </button>
-              </div>
-              <div class="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3">
-                <span class="text-gray-600 font-semibold">游戏音乐</span>
-                <button
-                  :class="[
-                    'w-12 h-7 rounded-full transition-all',
-                    musicOn ? 'bg-blue-500' : 'bg-gray-300'
-                  ]"
-                  @click="musicOn = !musicOn"
-                >
-                  <div
-                    :class="[
-                      'w-5 h-5 bg-white rounded-full shadow-sm transition-all',
-                      musicOn ? 'translate-x-6' : 'translate-x-1'
-                    ]"
-                  ></div>
-                </button>
+                </div>
               </div>
             </div>
-            <button
-              class="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-bold active:scale-95 transition-all shadow-md shadow-blue-500/30"
-              @click="activeModal = null"
-            >
-              确定
-            </button>
-          </template>
+          </div>
+
+          <!-- 面板 3：战绩与禅意金钱观 -->
+          <div class="brutal-pane stats-pane">
+            <div class="pane-header bg-pink">
+              <span>📊 街机统计与财富名言</span>
+            </div>
+            <div class="pane-body">
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <span class="stat-num">{{ coinsCaught }}</span>
+                  <span class="stat-desc">捕获金币数</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-num">{{ maxCombo }}</span>
+                  <span class="stat-desc">最高连击纪录</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-num">{{ diamondsCaught }}</span>
+                  <span class="stat-desc">捕获稀有钻石</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-num">{{ bombsHit }}</span>
+                  <span class="stat-desc">误碰炸弹次数</span>
+                </div>
+              </div>
+
+              <!-- 金钱哲理 -->
+              <div class="wisdom-box">
+                <div class="wisdom-title">💡 黄金禅意语录:</div>
+                <transition name="fade" mode="out-in">
+                  <p :key="currentQuote" class="wisdom-text">“ {{ currentQuote }} ”</p>
+                </transition>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </template>
+
+      <!-- ▸ 底部状态栏 -->
+      <footer class="brutal-status info">
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <span v-for="i in 5" :key="i"
+              >🪙 像素淘金小游戏 - 使用 A/D 键或鼠标快速滑动以开启狂热淘金模式 // KEYBOARD A/D MOVE
+              SUPPORTED // 财富如水，流过当下 // &nbsp;</span
+            >
+          </div>
+        </div>
+      </footer>
+    </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-  import musicStart from '@/assets/audio/niuniu/Pixel_Bloom.mp3';
-  import musicLoop from '@/assets/audio/niuniu/Pixel_Bloom_Loop.mp3';
-  import musicLullaby from '@/assets/audio/niuniu/Pixel_Bloom_Lullaby.mp3';
+  import { useRouter } from 'vue-router';
+  import { ElMessage } from 'element-plus';
 
-  const regionColors = [
-    'bg-[#a8e6cf]',
-    'bg-[#dcedc1]',
-    'bg-[#ffd3b6]',
-    'bg-[#80bdf6]',
-    'bg-[#ffaaa5]',
-    'bg-[#ff8b94]',
-    'bg-[#e0bbe4]',
-    'bg-[#fec8d8]'
-  ];
+  const router = useRouter();
+  const goBack = () => {
+    if (window.history.length > 1) router.back();
+    else router.push('/');
+  };
 
-  const LEVELS = [
+  // === 游戏基础状态 ===
+  const gameState = ref<'idle' | 'countdown' | 'playing' | 'gameover'>('idle');
+  const countdown = ref(0);
+  const score = ref(0);
+  const highScore = ref(parseInt(localStorage.getItem('coin_high_score') || '0'));
+  const lives = ref(3);
+  const gameLevel = ref(1);
+  const combo = ref(0);
+  const maxCombo = ref(0);
+  const feverEnergy = ref(0);
+  const isFeverMode = ref(false);
+  const hasMagnet = ref(false);
+
+  // 统计数据
+  const coinsCaught = ref(0);
+  const diamondsCaught = ref(0);
+  const bombsHit = ref(0);
+
+  // === 街机篮子与皮肤配置 ===
+  const playerX = ref(50); // 玩家篮子水平中心位置 0-100
+  const currentSkinIndex = ref(0);
+
+  const SKINS = [
     {
-      size: 4,
-      map: [
-        [0, 0, 0, 1],
-        [0, 2, 1, 1],
-        [2, 2, 3, 1],
-        [2, 3, 3, 3]
-      ],
-      solution: [
-        { r: 0, c: 1 },
-        { r: 1, c: 3 },
-        { r: 2, c: 0 },
-        { r: 3, c: 2 }
-      ]
+      name: '经典像素钱袋',
+      emoji: '🧺',
+      width: 72,
+      desc: '经典大小，手感最稳健的淘金基础装备。'
     },
     {
-      size: 5,
-      map: [
-        [0, 0, 0, 0, 1],
-        [0, 0, 0, 1, 1],
-        [2, 2, 2, 2, 3],
-        [2, 2, 2, 2, 3],
-        [4, 4, 4, 4, 4]
-      ],
-      solution: [
-        { r: 0, c: 0 },
-        { r: 1, c: 3 },
-        { r: 2, c: 1 },
-        { r: 3, c: 4 },
-        { r: 4, c: 2 }
-      ]
+      name: '招财太空金猫',
+      emoji: '🐱',
+      width: 84,
+      desc: '体态略宽，对周边金币有 15% 的磁性捕捉判定。'
     },
     {
-      size: 6,
-      map: [
-        [1, 1, 0, 0, 0, 0],
-        [1, 1, 1, 0, 0, 0],
-        [1, 3, 3, 2, 2, 2],
-        [3, 3, 3, 5, 2, 4],
-        [3, 3, 5, 5, 4, 4],
-        [3, 5, 5, 5, 4, 4]
-      ],
-      solution: [
-        { r: 0, c: 2 },
-        { r: 1, c: 0 },
-        { r: 2, c: 4 },
-        { r: 3, c: 1 },
-        { r: 4, c: 5 },
-        { r: 5, c: 3 }
-      ]
+      name: '赛博能量漏斗',
+      emoji: '🛸',
+      width: 62,
+      desc: '漏斗极小易漏，但捕获时有 1.3 倍得分加成。'
     },
     {
-      size: 7,
-      map: [
-        [0, 0, 0, 1, 1, 1, 1],
-        [3, 4, 4, 1, 1, 1, 2],
-        [3, 4, 4, 4, 4, 2, 2],
-        [3, 4, 4, 4, 4, 2, 2],
-        [3, 4, 4, 4, 4, 5, 5],
-        [3, 6, 6, 6, 6, 5, 5],
-        [6, 6, 6, 6, 6, 5, 5]
-      ],
-      solution: [
-        { r: 0, c: 1 },
-        { r: 1, c: 4 },
-        { r: 2, c: 6 },
-        { r: 3, c: 0 },
-        { r: 4, c: 3 },
-        { r: 5, c: 5 },
-        { r: 6, c: 2 }
-      ]
-    },
-    {
-      size: 8,
-      map: [
-        [0, 0, 1, 1, 1, 2, 2, 2],
-        [0, 0, 1, 1, 1, 2, 2, 2],
-        [3, 3, 4, 4, 4, 2, 2, 2],
-        [3, 3, 4, 4, 4, 5, 5, 5],
-        [3, 3, 4, 4, 4, 5, 5, 5],
-        [6, 6, 6, 7, 7, 5, 5, 5],
-        [6, 6, 6, 7, 7, 7, 7, 7],
-        [6, 6, 6, 6, 7, 7, 7, 7]
-      ],
-      solution: [
-        { r: 0, c: 0 },
-        { r: 1, c: 3 },
-        { r: 2, c: 6 },
-        { r: 3, c: 1 },
-        { r: 4, c: 4 },
-        { r: 5, c: 7 },
-        { r: 6, c: 2 },
-        { r: 7, c: 5 }
-      ]
+      name: '金库招财猪猪',
+      emoji: '🐷',
+      width: 78,
+      desc: '福气满满，连击加成时 20% 概率额外充能。'
     }
   ];
 
-  const currentLevelIndex = ref(0);
-  const grid = ref([]);
-  const mistakes = ref(new Set());
-  const isWon = ref(false);
-  const isGameOver = ref(false);
-  const cowCount = ref(0);
-  const health = ref(3);
-  const hintCount = ref(3);
-  const cowToolCount = ref(3);
-  const coins = ref(100);
-  const activeModal = ref(null);
-  const isInMenu = ref(true);
-  const selectedLevelIndex = ref(0);
-  const musicOn = ref(true);
-  const sfxOn = ref(true);
+  const activeSkin = computed(() => SKINS[currentSkinIndex.value]);
 
-  const isDragging = ref(false);
-  const dragAction = ref(null);
-  const lastClick = ref({ time: 0, r: null, c: null });
-  const levelRef = ref(0);
-  const musicTracksRef = ref([]);
-  const musicIndexRef = ref(0);
-  const fadeTimerRef = ref(null);
-  const musicSources = [musicStart, musicLoop, musicLullaby];
+  const selectSkin = (index: number) => {
+    if (gameState.value === 'playing') return;
+    currentSkinIndex.value = index;
+  };
 
-  watch(currentLevelIndex, value => {
-    levelRef.value = value;
+  // 分数倍数计算
+  const scoreMultiplier = computed(() => {
+    let mult = 1.0;
+    // 皮肤系数
+    if (currentSkinIndex.value === 2) mult *= 1.3;
+    // 连击加成
+    if (combo.value > 5) mult += Math.min(2.0, (combo.value - 5) * 0.1);
+    // 狂热模式加成
+    if (isFeverMode.value) mult *= 1.5;
+    return mult;
   });
 
-  const clearFadeTimer = () => {
-    if (fadeTimerRef.value) {
-      clearInterval(fadeTimerRef.value);
-      fadeTimerRef.value = null;
+  // === 物理引擎参数 ===
+  const screenRef = ref<HTMLElement | null>(null);
+  const items = ref<any[]>([]);
+  const particles = ref<any[]>([]);
+  let gameLoopId: number | null = null;
+  let spawnTimer: number | null = null;
+
+  // 移动参数
+  const keysPressed = ref<Record<string, boolean>>({});
+
+  // === 物品配方与池 ===
+  // 物品类型：coin (金币), diamond (钻石), bomb (炸弹), magnet (磁铁), fever (流星)
+  const getItemEmoji = (type: string) => {
+    switch (type) {
+      case 'coin':
+        return '🪙';
+      case 'diamond':
+        return '💎';
+      case 'bomb':
+        return '💣';
+      case 'magnet':
+        return '🧲';
+      case 'fever':
+        return '🌠';
+      default:
+        return '🪙';
     }
   };
 
-  const fadeAudioTo = (audio, target, duration = 800) => {
-    if (!audio) return;
-    clearFadeTimer();
-    const start = audio.volume ?? 0;
-    const diff = target - start;
-    const steps = Math.max(1, Math.floor(duration / 50));
-    let step = 0;
-    fadeTimerRef.value = setInterval(() => {
-      step += 1;
-      const next = start + diff * (step / steps);
-      audio.volume = Math.min(1, Math.max(0, next));
-      if (step >= steps) {
-        clearFadeTimer();
-        if (target === 0) {
-          audio.pause();
-        }
-      }
-    }, 50);
-  };
+  // === 音效合成 (Web Audio API) ===
+  const soundEnabled = ref(true);
+  let audioCtx: AudioContext | null = null;
 
-  const playCurrentTrack = () => {
-    const tracks = musicTracksRef.value;
-    const current = tracks[musicIndexRef.value];
-    if (!current) return;
-    tracks.forEach((track, index) => {
-      if (index !== musicIndexRef.value) {
-        track.pause();
-        track.currentTime = 0;
-        track.volume = 0;
-      }
-    });
-    current.currentTime = current.currentTime || 0;
-    current.volume = 0;
-    const playPromise = current.play();
-    if (playPromise && playPromise.catch) {
-      playPromise.catch(() => {});
-    }
-    fadeAudioTo(current, 1, 900);
-  };
-
-  onMounted(() => {
-    musicTracksRef.value = musicSources.map(src => {
-      const audio = new Audio(src);
-      audio.preload = 'auto';
-      audio.volume = 0;
-      return audio;
-    });
-    musicTracksRef.value.forEach(audio => {
-      audio.onended = () => {
-        musicIndexRef.value = (musicIndexRef.value + 1) % musicTracksRef.value.length;
-        if (musicOn.value) playCurrentTrack();
-      };
-    });
-    if (musicOn.value) playCurrentTrack();
-  });
-
-  onUnmounted(() => {
-    clearFadeTimer();
-    musicTracksRef.value.forEach(audio => {
-      audio.pause();
-      audio.currentTime = 0;
-      audio.onended = null;
-    });
-  });
-
-  watch(musicOn, value => {
-    const tracks = musicTracksRef.value;
-    if (!tracks.length) return;
-    const current = tracks[musicIndexRef.value];
-    if (value) {
-      const playPromise = current?.play();
-      if (playPromise && playPromise.catch) {
-        playPromise.catch(() => {});
-      }
-      fadeAudioTo(current, 1, 900);
-    } else {
-      fadeAudioTo(current, 0, 600);
-    }
-  });
-
-  const validateGridState = (gridToCheck, level) => {
-    const newMistakes = new Set();
-    let cowsPlaced = 0;
-    const size = level.size;
-    const rowCounts = Array(size).fill(0);
-    const colCounts = Array(size).fill(0);
-    const regionCounts = Array(size).fill(0);
-    const cowPositions = [];
-
-    for (let r = 0; r < size; r += 1) {
-      for (let c = 0; c < size; c += 1) {
-        if (gridToCheck[r][c] === 1) {
-          cowsPlaced += 1;
-          rowCounts[r] += 1;
-          colCounts[c] += 1;
-          regionCounts[level.map[r][c]] += 1;
-          cowPositions.push({ r, c });
-        }
-      }
-    }
-
-    for (let r = 0; r < size; r += 1) {
-      for (let c = 0; c < size; c += 1) {
-        if (gridToCheck[r][c] === 1) {
-          if (rowCounts[r] > 1) newMistakes.add(`${r},${c}`);
-          if (colCounts[c] > 1) newMistakes.add(`${r},${c}`);
-          if (regionCounts[level.map[r][c]] > 1) newMistakes.add(`${r},${c}`);
-        }
-      }
-    }
-
-    for (let i = 0; i < cowPositions.length; i += 1) {
-      for (let j = i + 1; j < cowPositions.length; j += 1) {
-        const cow1 = cowPositions[i];
-        const cow2 = cowPositions[j];
-        if (Math.abs(cow1.r - cow2.r) <= 1 && Math.abs(cow1.c - cow2.c) <= 1) {
-          newMistakes.add(`${cow1.r},${cow1.c}`);
-          newMistakes.add(`${cow2.r},${cow2.c}`);
-        }
-      }
-    }
-
-    for (let r = 0; r < size; r += 1) {
-      for (let c = 0; c < size; c += 1) {
-        if (gridToCheck[r][c] === 1) {
-          const isCorrect = level.solution.some(pos => pos.r === r && pos.c === c);
-          if (!isCorrect) newMistakes.add(`${r},${c}`);
-        }
-      }
-    }
-
-    return {
-      newMistakes,
-      cowsPlaced,
-      isWonStatus: cowsPlaced === size && newMistakes.size === 0
-    };
-  };
-
-  const updateGridState = updater => {
-    const next = updater(grid.value);
-    if (next === grid.value) return;
-    grid.value = next;
-    const { newMistakes, cowsPlaced, isWonStatus } = validateGridState(
-      next,
-      LEVELS[levelRef.value]
-    );
-    mistakes.value = newMistakes;
-    cowCount.value = cowsPlaced;
-    isWon.value = isWonStatus;
-  };
-
-  const loadLevel = index => {
-    const level = LEVELS[index];
-    const size = level.size;
-    const initialGrid = Array(size)
-      .fill(null)
-      .map(() => Array(size).fill(0));
-    const firstCow = level.solution[0];
-    initialGrid[firstCow.r][firstCow.c] = 1;
-
-    grid.value = initialGrid;
-    currentLevelIndex.value = index;
-    isGameOver.value = false;
-    health.value = 3;
-    hintCount.value = 3;
-    cowToolCount.value = 3;
-    activeModal.value = null;
-    selectedLevelIndex.value = index;
-    isDragging.value = false;
-    lastClick.value = { time: 0, r: null, c: null };
-
-    const { newMistakes, cowsPlaced, isWonStatus } = validateGridState(initialGrid, level);
-    mistakes.value = newMistakes;
-    cowCount.value = cowsPlaced;
-    isWon.value = isWonStatus;
-  };
-
-  onMounted(() => {
-    loadLevel(0);
-  });
-
-  const handleUp = () => {
-    isDragging.value = false;
-  };
-
-  onMounted(() => {
-    window.addEventListener('pointerup', handleUp);
-    window.addEventListener('pointercancel', handleUp);
-  });
-
-  onUnmounted(() => {
-    window.removeEventListener('pointerup', handleUp);
-    window.removeEventListener('pointercancel', handleUp);
-  });
-
-  const getCellCoords = e => {
-    const target = document.elementFromPoint(e.clientX, e.clientY);
-    if (!target) return null;
-    const r = target.getAttribute('data-r');
-    const c = target.getAttribute('data-c');
-    if (r !== null && c !== null) return { r: parseInt(r, 10), c: parseInt(c, 10) };
-    return null;
-  };
-
-  const handleDoubleClick = (r, c) => {
-    const level = LEVELS[levelRef.value];
-    let wasError = false;
-
-    updateGridState(prev => {
-      const isCurrentlyCow = prev[r][c] === 1;
-      if (!isCurrentlyCow) {
-        const isCorrect = level.solution.some(pos => pos.r === r && pos.c === c);
-        if (!isCorrect) {
-          wasError = true;
-          const nextHealth = health.value - 1;
-          health.value = nextHealth;
-          if (nextHealth <= 0) isGameOver.value = true;
-        }
-      }
-      const next = prev.map(row => [...row]);
-      next[r][c] = isCurrentlyCow ? 0 : 1;
-      return next;
-    });
-
-    if (wasError) {
-      setTimeout(() => {
-        updateGridState(prev => {
-          if (prev[r] && prev[r][c] === 1) {
-            const isCorrect = LEVELS[levelRef.value].solution.some(
-              pos => pos.r === r && pos.c === c
-            );
-            if (!isCorrect) {
-              const next = prev.map(row => [...row]);
-              next[r][c] = 0;
-              return next;
-            }
-          }
-          return prev;
-        });
-      }, 600);
+  const initAudio = () => {
+    if (audioCtx) return;
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    if (AudioCtx) {
+      audioCtx = new AudioCtx();
     }
   };
 
-  const onPointerDown = e => {
-    if (isWon.value || isGameOver.value) return;
-    const coords = getCellCoords(e);
-    if (!coords) return;
-    const { r, c } = coords;
-
-    const now = Date.now();
-    const lc = lastClick.value;
-
-    if (lc.r === r && lc.c === c && now - lc.time < 300) {
-      lastClick.value = { time: 0, r: null, c: null };
-      isDragging.value = false;
-      handleDoubleClick(r, c);
-    } else {
-      lastClick.value = { time: now, r, c };
-      if (grid.value[r] && grid.value[r][c] !== 1) {
-        isDragging.value = true;
-        dragAction.value = grid.value[r][c] === 0 ? 2 : 0;
-        applyDragAction(r, c);
-      }
-    }
+  const toggleSound = () => {
+    soundEnabled.value = !soundEnabled.value;
   };
 
-  const onPointerMove = e => {
-    if (!isDragging.value || isWon.value || isGameOver.value) return;
-    const coords = getCellCoords(e);
-    if (!coords) return;
-    applyDragAction(coords.r, coords.c);
+  const playCoinSound = () => {
+    if (!soundEnabled.value) return;
+    initAudio();
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const now = audioCtx.currentTime;
+
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = 'sine';
+    // 经典街机连音 B5 -> E6
+    osc.frequency.setValueAtTime(987.77, now);
+    osc.frequency.setValueAtTime(1318.51, now + 0.08);
+
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.12, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.23);
   };
 
-  const applyDragAction = (r, c) => {
-    updateGridState(prev => {
-      if (prev[r][c] === 1) return prev;
-      if (prev[r][c] === dragAction.value) return prev;
-      const next = prev.map(row => [...row]);
-      next[r][c] = dragAction.value;
-      return next;
+  const playDiamondSound = () => {
+    if (!soundEnabled.value) return;
+    initAudio();
+    if (!audioCtx) return;
+    const ctx = audioCtx;
+    const now = ctx.currentTime;
+
+    const notes = [1046.5, 1318.51, 1567.98, 2093.0]; // C6-E6-G6-C7 琶音
+    notes.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.05);
+      gain.gain.setValueAtTime(0, now + idx * 0.05);
+      gain.gain.linearRampToValueAtTime(0.1, now + idx * 0.05 + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.15);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + idx * 0.05);
+      osc.stop(now + idx * 0.05 + 0.18);
     });
   };
 
-  const openPurchaseModal = type => {
-    activeModal.value = { type: 'purchase', tool: type };
-  };
+  const playBombSound = () => {
+    if (!soundEnabled.value) return;
+    initAudio();
+    if (!audioCtx) return;
+    const ctx = audioCtx;
+    const now = ctx.currentTime;
 
-  const openInsufficientModal = type => {
-    activeModal.value = { type: 'insufficient', tool: type };
-  };
-
-  const openHintModal = (r, c) => {
-    activeModal.value = { type: 'hint', r, c };
-  };
-
-  const startAd = tool => {
-    activeModal.value = { type: 'ad', tool };
-  };
-
-  const openSettingsModal = () => {
-    activeModal.value = { type: 'settings' };
-  };
-
-  const getNextSolutionCell = () => {
-    const level = LEVELS[currentLevelIndex.value];
-    for (const pos of level.solution) {
-      if (grid.value[pos.r] && grid.value[pos.r][pos.c] !== 1) {
-        return pos;
-      }
+    // 白噪音模拟爆炸声
+    const bufferSize = audioCtx.sampleRate * 0.35;
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
     }
-    return null;
+
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buffer;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(280, now);
+    filter.frequency.exponentialRampToValueAtTime(10, now + 0.3);
+
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(0.3, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioCtx.destination);
+    noise.start(now);
   };
 
-  const handleCowTool = () => {
-    if (isWon.value || isGameOver.value) return;
-    if (cowToolCount.value <= 0) {
-      openPurchaseModal('cow');
-      return;
-    }
-    const nextPos = getNextSolutionCell();
-    if (!nextPos) return;
-    cowToolCount.value = Math.max(0, cowToolCount.value - 1);
-    updateGridState(prev => {
-      const next = prev.map(row => [...row]);
-      next[nextPos.r][nextPos.c] = 1;
-      return next;
+  const playFeverSound = () => {
+    if (!soundEnabled.value) return;
+    initAudio();
+    if (!audioCtx) return;
+    const ctx = audioCtx;
+    const now = ctx.currentTime;
+
+    // 凯旋式复古大和弦
+    const baseFreqs = [261.63, 329.63, 392.0, 523.25]; // C4大三和弦
+    baseFreqs.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, now);
+      osc.frequency.linearRampToValueAtTime(freq * 1.5, now + 0.4);
+
+      gain.gain.setValueAtTime(0.05, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.46);
     });
   };
 
-  const handleHint = () => {
-    if (isWon.value || isGameOver.value) return;
-    if (hintCount.value <= 0) {
-      openPurchaseModal('hint');
-      return;
+  // === 键盘控制逻辑 ===
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') {
+      keysPressed.value['left'] = true;
     }
-    const level = LEVELS[currentLevelIndex.value];
-    let rToPlace = -1;
-    let cToPlace = -1;
-
-    for (const pos of level.solution) {
-      if (grid.value[pos.r] && grid.value[pos.r][pos.c] !== 1) {
-        rToPlace = pos.r;
-        cToPlace = pos.c;
-        break;
-      }
-    }
-
-    if (rToPlace !== -1) {
-      hintCount.value = Math.max(0, hintCount.value - 1);
-      openHintModal(rToPlace, cToPlace);
+    if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') {
+      keysPressed.value['right'] = true;
     }
   };
 
-  watch(activeModal, (value, _, onCleanup) => {
-    if (!value || value.type !== 'ad') return;
-    const timer = setTimeout(() => {
-      if (value.tool === 'cow') {
-        cowToolCount.value += 1;
-      }
-      if (value.tool === 'hint') {
-        hintCount.value += 1;
-      }
-      activeModal.value = null;
-    }, 1200);
-    onCleanup(() => clearTimeout(timer));
-  });
-
-  const handleNextLevel = () => {
-    const nextIndex = (currentLevelIndex.value + 1) % LEVELS.length;
-    loadLevel(nextIndex);
+  const handleKeyUp = (e: KeyboardEvent) => {
+    if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') {
+      keysPressed.value['left'] = false;
+    }
+    if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') {
+      keysPressed.value['right'] = false;
+    }
   };
 
+  // === 滑动与触摸控制 ===
+  const handleMouseMove = (e: MouseEvent) => {
+    if (gameState.value !== 'playing') return;
+    if (!screenRef.value) return;
+    const rect = screenRef.value.getBoundingClientRect();
+    const relX = e.clientX - rect.left;
+    playerX.value = Math.max(0, Math.min(100, (relX / rect.width) * 100));
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    if (gameState.value !== 'playing') return;
+    if (!screenRef.value) return;
+    const rect = screenRef.value.getBoundingClientRect();
+    const touch = e.touches[0];
+    const relX = touch.clientX - rect.left;
+    playerX.value = Math.max(0, Math.min(100, (relX / rect.width) * 100));
+  };
+
+  const handleTouchStart = (e: TouchEvent) => {
+    // 阻止双击缩放默认行为
+    if (e.touches.length > 1) {
+      e.preventDefault();
+    }
+  };
+
+  // === 核心游戏回路 ===
   const startGame = () => {
-    loadLevel(selectedLevelIndex.value);
-    isInMenu.value = false;
+    initAudio();
+    gameState.value = 'countdown';
+    countdown.value = 3;
+    score.value = 0;
+    lives.value = 3;
+    gameLevel.value = 1;
+    combo.value = 0;
+    maxCombo.value = 0;
+    feverEnergy.value = 0;
+    isFeverMode.value = false;
+    hasMagnet.value = false;
+    items.value = [];
+    particles.value = [];
+    coinsCaught.value = 0;
+    diamondsCaught.value = 0;
+    bombsHit.value = 0;
+
+    const timer = setInterval(() => {
+      countdown.value--;
+      if (countdown.value === 0) {
+        clearInterval(timer);
+        gameState.value = 'playing';
+        startGameLoop();
+      }
+    }, 1000);
   };
 
-  const purchaseWithCoins = () => {
-    if (coins.value < 100) {
-      openInsufficientModal(activeModal.value?.tool);
-      return;
+  const startGameLoop = () => {
+    // 启动生成物品的时钟
+    startItemSpawning();
+
+    // 帧回路
+    const loop = () => {
+      if (gameState.value !== 'playing') return;
+
+      // 1. 处理键盘移动 (A/D & 左右键)
+      const speed = 2.4;
+      if (keysPressed.value['left']) {
+        playerX.value = Math.max(0, playerX.value - speed);
+      }
+      if (keysPressed.value['right']) {
+        playerX.value = Math.max(0, playerX.value + speed);
+      }
+
+      // 2. 更新掉落物物理
+      updateItemsPhysics();
+
+      // 3. 更新微粒碎屑特效
+      updateParticles();
+
+      // 4. 下一帧循环
+      gameLoopId = requestAnimationFrame(loop);
+    };
+    gameLoopId = requestAnimationFrame(loop);
+  };
+
+  const stopGameLoop = () => {
+    if (gameLoopId) {
+      cancelAnimationFrame(gameLoopId);
+      gameLoopId = null;
     }
-    coins.value -= 100;
-    if (activeModal.value?.tool === 'cow') cowToolCount.value += 1;
-    if (activeModal.value?.tool === 'hint') hintCount.value += 1;
-    activeModal.value = null;
+    if (spawnTimer) {
+      clearInterval(spawnTimer);
+      spawnTimer = null;
+    }
   };
 
-  const currentLevel = computed(() => LEVELS[currentLevelIndex.value]);
-  const size = computed(() => currentLevel.value.size);
-  const fontSize = computed(() =>
-    size.value >= 7 ? 'text-[1.5rem] sm:text-[1.8rem]' : 'text-3xl sm:text-4xl'
-  );
-  const svgSize = computed(() =>
-    size.value >= 7 ? 'w-6 h-6 sm:w-8 sm:h-8' : 'w-8 h-8 sm:w-10 sm:h-10'
-  );
-  const remainingCount = computed(() => size.value - cowCount.value);
+  // 物品生成机
+  const startItemSpawning = () => {
+    const getInterval = () => {
+      if (isFeverMode.value) return 180; // 狂热金币狂雨模式
+      return Math.max(350, 900 - gameLevel.value * 90); // 难度升级物品掉落越频密
+    };
 
-  const regionColor = (r, c) => regionColors[currentLevel.value.map[r][c]];
-  const isMistake = (r, c) => mistakes.value.has(`${r},${c}`);
+    const spawn = () => {
+      if (gameState.value !== 'playing') return;
+      spawnSingleItem();
+      // 动态修改定时器频率
+      if (spawnTimer) clearInterval(spawnTimer);
+      spawnTimer = window.setInterval(spawn, getInterval());
+    };
+
+    spawnTimer = window.setInterval(spawn, getInterval());
+  };
+
+  const spawnSingleItem = () => {
+    const x = 5 + Math.random() * 90; // 5% - 95%
+    let type = 'coin';
+
+    if (isFeverMode.value) {
+      // 狂热模式只产生金币和高分钻石
+      type = Math.random() < 0.85 ? 'coin' : 'diamond';
+    } else {
+      const rand = Math.random();
+      if (rand < 0.65) {
+        type = 'coin';
+      } else if (rand < 0.82) {
+        // 随关卡提高炸弹出现几率
+        const bombChance = 0.15 + gameLevel.value * 0.03;
+        type = Math.random() < bombChance ? 'bomb' : 'coin';
+      } else if (rand < 0.92) {
+        type = 'diamond';
+      } else if (rand < 0.96) {
+        type = 'magnet';
+      } else {
+        type = 'fever';
+      }
+    }
+
+    // 基础速度加成
+    const baseSpeed = 0.8 + gameLevel.value * 0.12;
+    const speed = baseSpeed + Math.random() * 0.7;
+
+    items.value.push({
+      id: Date.now() + Math.random(),
+      x,
+      y: -5,
+      speed,
+      type,
+      rotation: Math.random() * 360,
+      rotationSpeed: (Math.random() - 0.5) * 8
+    });
+  };
+
+  // 掉落物理学与碰撞检测
+  const updateItemsPhysics = () => {
+    const screenWidthPx = screenRef.value?.clientWidth || 400;
+    const basketWidthHalfPct = (activeSkin.value.width / 2 / screenWidthPx) * 100;
+
+    items.value.forEach((item, idx) => {
+      // 重力磁铁物理：如果磁铁生效，吸引周围的 coin 或 diamond 向篮子靠拢
+      if (hasMagnet.value && (item.type === 'coin' || item.type === 'diamond')) {
+        const dx = playerX.value - item.x;
+        const dy = 88 - item.y; // 88% 是篮子高度位置
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        // 磁力影响范围
+        if (dist < 35) {
+          item.x += (dx / dist) * 1.5;
+          item.y += (dy / dist) * 1.5;
+        }
+      }
+
+      // 普通向下坠落
+      item.y += item.speed;
+      item.rotation += item.rotationSpeed;
+
+      // 碰撞检测 (84% 到 91% 是篮子的受体厚度区)
+      if (item.y >= 84 && item.y <= 91) {
+        const distance = Math.abs(item.x - playerX.value);
+        // 判定碰撞：距离在半个篮子宽度百分比内
+        if (distance <= basketWidthHalfPct + 1.5) {
+          // 接到了！
+          handleItemCollected(item);
+          items.value.splice(idx, 1);
+          return;
+        }
+      }
+
+      // 漏掉了！流向屏幕底部
+      if (item.y > 100) {
+        if (item.type === 'coin' || item.type === 'diamond') {
+          // 漏掉金币重置 combo (狂热模式不重置)
+          if (!isFeverMode.value) {
+            combo.value = 0;
+          }
+        }
+        items.value.splice(idx, 1);
+      }
+    });
+  };
+
+  // 处理成功接到物品
+  const handleItemCollected = (item: any) => {
+    // 增加爆炸碎屑特效
+    createExplosionParticles(item.x, item.y, item.type);
+
+    if (item.type === 'coin') {
+      const added = Math.round(10 * scoreMultiplier.value);
+      score.value += added;
+      coinsCaught.value++;
+      combo.value++;
+      maxCombo.value = Math.max(maxCombo.value, combo.value);
+
+      // 狂热条充能 (蓄力速度：招财猪额外充能 20% 几率)
+      const isPiggyBonus = currentSkinIndex.value === 3 && Math.random() < 0.2;
+      const energyAdd = isPiggyBonus ? 5 : 3;
+      if (!isFeverMode.value) {
+        feverEnergy.value = Math.min(100, feverEnergy.value + energyAdd);
+      }
+
+      playCoinSound();
+    } else if (item.type === 'diamond') {
+      const added = Math.round(50 * scoreMultiplier.value);
+      score.value += added;
+      diamondsCaught.value++;
+      combo.value += 2;
+      maxCombo.value = Math.max(maxCombo.value, combo.value);
+
+      if (!isFeverMode.value) {
+        feverEnergy.value = Math.min(100, feverEnergy.value + 8);
+      }
+      playDiamondSound();
+    } else if (item.type === 'bomb') {
+      // 接到炸弹：扣血，重置连击
+      lives.value--;
+      bombsHit.value++;
+      combo.value = 0;
+      feverEnergy.value = Math.max(0, feverEnergy.value - 25);
+      playBombSound();
+
+      if (lives.value <= 0) {
+        gameOver();
+      } else {
+        ElMessage.error('💣 糟糕！你接到了炸弹，生命值 -1！');
+      }
+    } else if (item.type === 'magnet') {
+      // 磁铁道具
+      triggerMagnetPower();
+      playDiamondSound();
+      ElMessage.success('🧲 磁铁道具触发！自动在近距离吸引金币。');
+    } else if (item.type === 'fever') {
+      // 直接加满能量流星
+      feverEnergy.value = 100;
+      playFeverSound();
+      ElMessage({
+        message: '🌠 接到流星！狂热能量直接充盈！',
+        type: 'success'
+      });
+    }
+
+    // 4. 难度自动升级 (每200分升级一档)
+    const targetLevel = Math.min(10, Math.floor(score.value / 250) + 1);
+    if (targetLevel > gameLevel.value) {
+      gameLevel.value = targetLevel;
+      ElMessage({
+        message: `🚀 挑战难度升级！当前等级: LV.${gameLevel.value}`,
+        type: 'success',
+        duration: 1500
+      });
+    }
+  };
+
+  // 粒子特效
+  const createExplosionParticles = (x: number, y: number, type: string) => {
+    let color = '#fcd34d'; // gold
+    if (type === 'diamond') color = '#22d3ee';
+    if (type === 'bomb') color = '#f87171';
+    if (type === 'magnet') color = '#a78bfa';
+
+    const count = type === 'bomb' ? 15 : 6;
+    for (let i = 0; i < count; i++) {
+      particles.value.push({
+        id: Date.now() + Math.random(),
+        x,
+        y,
+        vx: (Math.random() - 0.5) * 3,
+        vy: (Math.random() - 0.5) * 3 - 1, // 微微向上喷射
+        color,
+        life: 1.0,
+        decay: 0.05 + Math.random() * 0.05
+      });
+    }
+  };
+
+  const updateParticles = () => {
+    particles.value.forEach((p, idx) => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= p.decay;
+      if (p.life <= 0) {
+        particles.value.splice(idx, 1);
+      }
+    });
+  };
+
+  // 道具：磁铁
+  const triggerMagnetPower = () => {
+    hasMagnet.value = true;
+    setTimeout(() => {
+      hasMagnet.value = false;
+    }, 7000); // 7秒磁力持续
+  };
+
+  // 释放狂热模式 (Fever)
+  const triggerFeverMode = () => {
+    if (isFeverMode.value) return;
+    isFeverMode.value = true;
+    feverEnergy.value = 100;
+    playFeverSound();
+    ElMessage({
+      message: '🔥 狂热模式启动！黄金流星雨降临！得分加倍！',
+      type: 'warning',
+      duration: 3000
+    });
+
+    // 倒计时减扣
+    const decayTimer = setInterval(() => {
+      feverEnergy.value -= 5;
+      if (feverEnergy.value <= 0) {
+        clearInterval(decayTimer);
+        isFeverMode.value = false;
+        feverEnergy.value = 0;
+        ElMessage.info('💤 狂热模式结束，街机正在逐渐冷却中。');
+      }
+    }, 300); // 约 6 秒
+  };
+
+  // 监听狂热蓄能，满了自动或提示双击触发
+  watch(feverEnergy, val => {
+    if (val >= 100 && !isFeverMode.value && gameState.value === 'playing') {
+      triggerFeverMode();
+    }
+  });
+
+  // 游戏结束
+  const gameOver = () => {
+    gameState.value = 'gameover';
+    stopGameLoop();
+
+    // 历史纪录
+    if (score.value > highScore.value) {
+      highScore.value = score.value;
+      localStorage.setItem('coin_high_score', score.value.toString());
+    }
+  };
+
+  // === 财富语录轮播 ===
+  const WISDOM_QUOTES = [
+    '金钱像水一样，流过来，流过去。握紧不如欣赏它的流动。',
+    '世界上只有一种真正的英雄主义，就是在看清金币有毒后依旧喜欢它们。',
+    '连击断了可以重来，但被炸弹直接吞噬的，往往是那颗贪婪的心。',
+    '太空猫咪虽有大吸力，但别忘了：飞得最高最闪耀的总是流星。',
+    '理财正如接金币，漏掉一两个是难免的，保住命才能接下一个。',
+    '狂热模式看似繁华夺目，最终依然会归于静止的深夜网格。',
+    '街机的金币接不完，但快乐只要有一个音响和一下午便已足够。'
+  ];
+
+  const currentQuote = ref(WISDOM_QUOTES[0]);
+  let quoteTimer: number | null = null;
+
+  const startQuoteCycle = () => {
+    quoteTimer = window.setInterval(() => {
+      const filterQuotes = WISDOM_QUOTES.filter(q => q !== currentQuote.value);
+      currentQuote.value = filterQuotes[Math.floor(Math.random() * filterQuotes.length)];
+    }, 9000);
+  };
+
+  const stopMic = () => {
+    // 预留麦克风停止功能
+  };
+
+  // === 生命周期 ===
+  onMounted(() => {
+    startQuoteCycle();
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+  });
+
+  onUnmounted(() => {
+    stopGameLoop();
+    stopMic();
+    if (quoteTimer) clearInterval(quoteTimer);
+    window.removeEventListener('keydown', handleKeyDown);
+    window.removeEventListener('keyup', handleKeyUp);
+  });
 </script>
 
-<style>
-  @keyframes popIn {
+<style scoped>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@600;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+
+  /* === 基础布局 === */
+  .brutal-wrapper {
+    background-color: #fdfae5;
+    background-image:
+      linear-gradient(#e5e5e5 2px, transparent 2px),
+      linear-gradient(90deg, #e5e5e5 2px, transparent 2px);
+    background-size: 40px 40px;
+    background-position: -2px -2px;
+    min-height: 100vh;
+    padding: 2rem;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+    color: #111;
+  }
+
+  .brutal-container {
+    max-width: 1350px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* === 标题栏 === */
+  .brutal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
+  }
+
+  .brutal-title {
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 3.2rem;
+    font-weight: 900;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    text-shadow: 4px 4px 0px #4b7bff;
+  }
+
+  .brutal-title span {
+    color: #4b7bff;
+    text-shadow: 4px 4px 0px #111;
+  }
+
+  .brutal-status-tag {
+    border: 3px solid #111;
+    padding: 0.5rem 1rem;
+    font-size: 1.1rem;
+    font-weight: 800;
+    box-shadow: 4px 4px 0px #111;
+    border-radius: 0px;
+  }
+
+  /* === 按钮 === */
+  .brutal-btn {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 5px 5px 0px #111;
+    transition: all 0.08s ease-in-out;
+    text-transform: uppercase;
+    outline: none;
+  }
+
+  .brutal-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0px #111;
+  }
+
+  .brutal-btn:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0px 0px 0px #111;
+  }
+
+  /* === 布局网格 === */
+  .brutal-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 2.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .control-column {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* === 面板 (Brutal Pane) === */
+  .brutal-pane {
+    background: #fff;
+    border: 3px solid #111;
+    box-shadow: 8px 8px 0px #111;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+  }
+
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1.2rem;
+    border-bottom: 3px solid #111;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: #111;
+  }
+
+  .pane-body {
+    padding: 1.5rem;
+    box-sizing: border-box;
+  }
+
+  /* 颜色辅助 */
+  .bg-yellow {
+    background: #ffd900;
+  }
+  .bg-blue {
+    background: #89b4f8;
+  }
+  .bg-green {
+    background: #00e572;
+  }
+  .bg-pink {
+    background: #ff9fb2;
+  }
+  .bg-yellow-pane {
+    background: #fffdf5;
+  }
+
+  /* === 街机显示屏视口 === */
+  .game-pane {
+    min-height: 580px;
+  }
+
+  .game-body {
+    flex: 1;
+    padding: 0;
+    position: relative;
+  }
+
+  .arcade-screen {
+    width: 100%;
+    height: 520px;
+    background: radial-gradient(circle at center, #1b2030 0%, #0d0f17 100%);
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    touch-action: none;
+  }
+
+  /* 连击徽章 */
+  .combo-badge {
+    background: #ff4b4b;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 900;
+    padding: 3px 8px;
+    border: 2px solid #111;
+    box-shadow: 2px 2px 0px #111;
+    animation: bounce 0.3s infinite alternate;
+  }
+
+  /* 狂热大招背景闪烁特效 */
+  .fever-overlay {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(253, 186, 116, 0.1) 0px,
+      rgba(253, 186, 116, 0.1) 15px,
+      rgba(244, 63, 94, 0.1) 15px,
+      rgba(244, 63, 94, 0.1) 30px
+    );
+    animation: fever-bg-shift 0.4s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @keyframes fever-bg-shift {
     0% {
-      transform: scale(0.3);
-      opacity: 0;
+      background-position: 0 0;
     }
-    70% {
-      transform: scale(1.1);
+    100% {
+      background-position: 42px 0;
+    }
+  }
+
+  /* 游戏遮罩面板 (开屏 & 结算) */
+  .screen-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 40;
+    padding: 1.5rem;
+  }
+
+  .overlay-card {
+    border: 3px solid #111;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 8px 8px 0px #111;
+    max-width: 320px;
+    width: 100%;
+  }
+
+  .overlay-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    animation: bounce 0.6s infinite alternate;
+  }
+
+  .overlay-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    margin: 0 0 1rem;
+    color: #111;
+  }
+
+  .overlay-desc {
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    color: #334155;
+  }
+
+  .final-score {
+    font-size: 2rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 900;
+    color: #cc0000;
+    text-shadow: 2px 2px 0px #fff;
+  }
+
+  .overlay-subdesc {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #15803d;
+    margin-top: -0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .start-btn {
+    width: 100%;
+    font-size: 1.2rem;
+  }
+
+  /* 倒计时 */
+  .countdown-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 38;
+  }
+
+  .countdown-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 6.5rem;
+    font-weight: 900;
+    color: #ffd900;
+    text-shadow: 6px 6px 0px #111;
+  }
+
+  /* 玩家控制的兜子 (Basket) */
+  .player-basket {
+    position: absolute;
+    bottom: 50px;
+    height: 48px;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+    pointer-events: none;
+    transition: left 0.08s ease-out; /* 微弱滞后性获得平滑动作 */
+  }
+
+  .basket-emoji {
+    font-size: 2.8rem;
+    filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.5));
+  }
+
+  /* 磁铁防护光晕 */
+  .magnet-circle {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border: 3px dashed rgba(167, 139, 250, 0.6);
+    border-radius: 50%;
+    animation: rotate 6s linear infinite;
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(167, 139, 250, 0.1) 0%, rgba(167, 139, 250, 0) 70%);
+  }
+
+  /* 掉落中的宝物 */
+  .falling-item {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+  }
+
+  .item-emoji {
+    font-size: 1.8rem;
+    filter: drop-shadow(0px 3px 4px rgba(0, 0, 0, 0.4));
+  }
+
+  .item-glow {
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(253, 224, 71, 0.4) 0%, rgba(253, 224, 71, 0) 70%);
+    filter: blur(2px);
+    z-index: -1;
+  }
+
+  .diamond .item-glow {
+    background: radial-gradient(circle, rgba(34, 211, 238, 0.45) 0%, rgba(34, 211, 238, 0) 70%);
+  }
+
+  /* 爆发粒子效果 */
+  .gold-particle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    z-index: 15;
+    pointer-events: none;
+  }
+
+  /* === 右侧控制面板样式 === */
+  .stats-bar-top {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-bubble {
+    flex: 1;
+    border: 3px solid #111;
+    padding: 0.6rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 800;
+    box-shadow: 4px 4px 0px #111;
+  }
+
+  .heart-row {
+    display: flex;
+    gap: 2px;
+  }
+
+  .text-bold {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+  }
+
+  .control-item {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .control-label {
+    font-size: 1rem;
+    font-weight: 800;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* 开关滑动条 */
+  .toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .toggle-switch {
+    width: 60px;
+    height: 30px;
+    background: #e2e8f0;
+    border: 3px solid #111;
+    position: relative;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px #111;
+    transition: background 0.1s;
+  }
+
+  .toggle-switch.on {
+    background: #00e572;
+  }
+
+  .switch-knob {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border: 3px solid #111;
+    left: 2px;
+    top: 2px;
+    transition: transform 0.1s;
+  }
+
+  .toggle-switch.on .switch-knob {
+    transform: translateX(28px);
+  }
+
+  /* 皮肤选择网格 */
+  .skin-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+  }
+
+  .skin-card {
+    background: #fff;
+    border: 3px solid #111;
+    padding: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #111;
+    transition: all 0.08s;
+  }
+
+  .skin-card:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px #111;
+  }
+
+  .skin-card.active {
+    background: #fdfae5;
+    border-color: #4b7bff;
+    box-shadow: 4px 4px 0px #4b7bff;
+  }
+
+  .skin-emoji-dot {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+  }
+
+  .skin-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .skin-name {
+    font-size: 0.85rem;
+    font-weight: 800;
+  }
+
+  .skin-desc {
+    font-size: 0.65rem;
+    color: #64748b;
+    line-height: 1.3;
+    margin-top: 2px;
+  }
+
+  /* === 狂热蓄能计 === */
+  .fever-meter-container {
+    background: #f1f5f9;
+    border: 3px solid #111;
+    padding: 0.8rem;
+    box-shadow: 4px 4px 0px #111;
+  }
+
+  .fever-meter-info {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 800;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+  }
+
+  .fever-pct {
+    color: #ff4b4b;
+  }
+
+  .fever-progress-bar {
+    width: 100%;
+    height: 20px;
+    background: #fff;
+    border: 3px solid #111;
+    overflow: hidden;
+  }
+
+  .fever-progress {
+    height: 100%;
+    background: #3b82f6;
+    transition: width 0.12s ease-out;
+  }
+
+  .fever-progress.fever-ready {
+    background: #eab308;
+    animation: flash 0.15s infinite alternate;
+  }
+
+  .fever-progress.fever-active {
+    background: linear-gradient(90deg, #ef4444 0%, #f97316 50%, #eab308 100%);
+    animation: fever-stream 0.5s linear infinite;
+  }
+
+  @keyframes fever-stream {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 100% 50%;
+    }
+  }
+
+  @keyframes flash {
+    0% {
+      filter: brightness(1);
+    }
+    100% {
+      filter: brightness(1.35);
+    }
+  }
+
+  /* === 统计卡片网格 === */
+  .stats-pane {
+    flex: 1;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-card {
+    background: #fdfae5;
+    border: 3px solid #111;
+    padding: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 3px 3px 0px #111;
+  }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #4b7bff;
+  }
+
+  .stat-desc {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+
+  /* 禅意财富框 */
+  .wisdom-box {
+    border: 3px solid #111;
+    background: #fff;
+    padding: 1rem;
+    box-shadow: 4px 4px 0px #111;
+    min-height: 85px;
+  }
+
+  .wisdom-title {
+    font-size: 0.85rem;
+    font-weight: 900;
+    color: #b25465;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+
+  .wisdom-text {
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.5;
+    margin: 0;
+    color: #334155;
+    font-style: italic;
+  }
+
+  /* Animations */
+  .animate-pop {
+    animation: pop 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  @keyframes pop {
+    0% {
+      transform: scale(0.6);
     }
     100% {
       transform: scale(1);
-      opacity: 1;
     }
   }
-  .animate-pop {
-    animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  }
-  @keyframes shake {
-    0%,
+
+  @keyframes bounce {
+    0% {
+      transform: translateY(0);
+    }
     100% {
-      transform: translateX(0);
+      transform: translateY(-5px);
     }
-    25% {
-      transform: translateX(-2px) rotate(-2deg);
-    }
-    75% {
-      transform: translateX(2px) rotate(2deg);
-    }
-  }
-  .animate-error {
-    animation: shake 0.3s ease-in-out infinite;
-  }
-  #root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
   }
 
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.react:hover {
-    filter: drop-shadow(0 0 2em #61dafbaa);
-  }
-
-  @keyframes logo-spin {
-    from {
+  @keyframes rotate {
+    0% {
       transform: rotate(0deg);
     }
-    to {
+    100% {
       transform: rotate(360deg);
     }
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    a:nth-of-type(2) .logo {
-      animation: logo-spin infinite 20s linear;
+  /* === 底部跑马灯状态栏 === */
+  .brutal-status {
+    background: #fff;
+    border: 3px solid #111;
+    box-shadow: 6px 6px 0px #111;
+    padding: 0.8rem;
+    font-family: 'Syne', 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    font-size: 1.05rem;
+    overflow: hidden;
+    text-transform: uppercase;
+  }
+
+  .marquee-wrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 25s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
     }
   }
 
-  .card {
-    padding: 2em;
+  /* === 响应式调整 === */
+  @media (max-width: 1024px) {
+    .brutal-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .brutal-title {
+      font-size: 2.3rem;
+    }
+    .brutal-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 
-  .read-the-docs {
-    color: #888;
+  /* === Dark Mode 适配 === */
+  [data-theme='dark'] .brutal-wrapper {
+    background-color: #111;
+    background-image:
+      linear-gradient(#222 2px, transparent 2px), linear-gradient(90deg, #222 2px, transparent 2px);
+    color: #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn,
+  [data-theme='dark'] .brutal-pane,
+  [data-theme='dark'] .brutal-status,
+  [data-theme='dark'] .stat-card,
+  [data-theme='dark'] .skin-card,
+  [data-theme='dark'] .wisdom-box,
+  [data-theme='dark'] .toggle-switch,
+  [data-theme='dark'] .stat-bubble,
+  [data-theme='dark'] .fever-progress-bar,
+  [data-theme='dark'] .fever-meter-container {
+    background: #1a1a1a;
+    border-color: #eee;
+    color: #eee;
+  }
+
+  [data-theme='dark'] .pane-header {
+    border-bottom-color: #eee;
+    color: #111;
+  }
+
+  [data-theme='dark'] .brutal-title span {
+    text-shadow: 4px 4px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-btn {
+    box-shadow: 4px 4px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:hover {
+    box-shadow: 6px 6px 0px #eee;
+  }
+  [data-theme='dark'] .brutal-btn:active {
+    box-shadow: 0px 0px 0px #eee;
+  }
+
+  [data-theme='dark'] .brutal-pane {
+    box-shadow: 8px 8px 0px #eee;
+  }
+
+  [data-theme='dark'] .stat-card,
+  [data-theme='dark'] .skin-card,
+  [data-theme='dark'] .wisdom-box,
+  [data-theme='dark'] .stat-bubble,
+  [data-theme='dark'] .toggle-switch,
+  [data-theme='dark'] .fever-meter-container {
+    box-shadow: 3px 3px 0px #eee;
+  }
+
+  [data-theme='dark'] .skin-card.active {
+    border-color: #89b4f8;
+    box-shadow: 3px 3px 0px #89b4f8;
+  }
+
+  [data-theme='dark'] .switch-knob {
+    background: #eee;
+    border-color: #1a1a1a;
+  }
+
+  [data-theme='dark'] .toggle-switch.on {
+    background: #00994c;
+  }
+
+  [data-theme='dark'] .wisdom-text {
+    color: #cbd5e1;
+  }
+
+  [data-theme='dark'] .bg-yellow {
+    background: #b28f00;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-blue {
+    background: #2a4eb2;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-green {
+    background: #00994c;
+    color: #fff;
+  }
+  [data-theme='dark'] .bg-pink {
+    background: #cc0000;
+    color: #fff;
   }
 </style>

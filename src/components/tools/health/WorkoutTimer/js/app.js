@@ -68,6 +68,7 @@ const App = {
     this.initCollapsibleCards();
     const hasRecoveryPrompt = this.maybePromptInterruptedSessionRecovery();
     this.initChangelog();
+    this.initSync(); // 初始化跨设备同步
     if (!hasRecoveryPrompt) this.maybeShowFirstVisitNotice();
     requestAnimationFrame(() => this.updateTabIndicator());
   },
@@ -199,19 +200,140 @@ const App = {
   },
 
   exportData() {
-    if (this.data.plans.length === 0) {
+    if (!this.data.plans || this.data.plans.length === 0) {
       this.confirm('错误', '当前没有可导出的训练计划', null);
       return;
     }
     this.openExportFormatModal();
   },
 
-  exportDataByFormat(format, fileName) {
-    if (format === 'csv') {
-      DataManager.exportCsvData(this.data.plans, fileName);
+  renderExportPlansSelector() {
+    const box = document.getElementById('export-plans-select-box');
+    if (!box) return;
+
+    box.style.display = 'block';
+
+    // 1. 三重保底获取计划列表数据
+    let plans = this.data?.plans;
+    if (!Array.isArray(plans) || plans.length === 0) {
+      if (window.App && Array.isArray(window.App.data?.plans)) {
+        plans = window.App.data.plans;
+      } else {
+        try {
+          plans = JSON.parse(localStorage.getItem('fitness_plans_v2') || '[]');
+        } catch {
+          plans = [];
+        }
+      }
+    }
+
+    if (!Array.isArray(plans) || plans.length === 0) {
+      box.innerHTML = `<div style="text-align:center;color:#94a3b8;padding:12px;font-size:12px;">暂无可导出的训练计划</div>`;
       return;
     }
-    DataManager.exportJsonData(this.data.plans, fileName);
+
+    // 2. 防爆聚合并构建 HTML
+    let html = '';
+    try {
+      const grouped = DataManager.getGroupedPlans(plans);
+      if (Array.isArray(grouped) && grouped.length > 0) {
+        grouped.forEach((item, idx) => {
+          if (item && item.isGroup && Array.isArray(item.plans) && item.plans.length > 0) {
+            html += `
+              <div style="margin-bottom:8px;padding:8px;background-color:rgba(238,242,255,0.7);border-radius:12px;border:1px solid #c7d2fe;font-size:12px;">
+                <label style="display:flex;align-items:center;justify-content:space-between;font-weight:800;color:#3730a3;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid #e0e7ff;cursor:pointer;">
+                  <span style="display:flex;align-items:center;gap:6px;">
+                    <i class="fa-solid fa-layer-group" style="color:#6366f1;"></i>
+                    <span style="font-weight:900;">${item.groupTitle || '训练套件'}</span>
+                    <span style="color:#6366f1;font-weight:normal;font-size:10px;">(${item.plans.length}天)</span>
+                  </span>
+                  <input type="checkbox" class="export-group-checkbox" data-group-idx="${idx}" checked="checked" style="width:16px;height:16px;cursor:pointer;" />
+                </label>
+                <div style="padding-left:4px;">
+                  ${item.plans
+                    .map(
+                      p => `
+                    <label style="display:flex;align-items:center;justify-content:space-between;background:#ffffff;padding:6px 10px;border-radius:8px;border:1px solid #e2e8f0;color:#334155;font-weight:700;margin-top:4px;cursor:pointer;">
+                      <span>${p.title || '未命名计划'}</span>
+                      <input type="checkbox" class="export-plan-checkbox" data-plan-id="${p.id}" data-group-idx="${idx}" checked="checked" style="width:16px;height:16px;cursor:pointer;" />
+                    </label>
+                  `
+                    )
+                    .join('')}
+                </div>
+              </div>
+            `;
+          } else if (item && item.plan) {
+            const p = item.plan;
+            html += `
+              <label style="display:flex;align-items:center;justify-content:space-between;background:#ffffff;padding:8px 12px;border-radius:12px;border:1px solid #cbd5e1;color:#1e293b;font-weight:700;font-size:12px;margin-bottom:6px;cursor:pointer;">
+                <span>${p.title || '未命名计划'}</span>
+                <input type="checkbox" class="export-plan-checkbox" data-plan-id="${p.id}" checked="checked" style="width:16px;height:16px;cursor:pointer;" />
+              </label>
+            `;
+          }
+        });
+      }
+    } catch (e) {
+      console.error('Group render failed:', e);
+    }
+
+    if (!html.trim()) {
+      plans.forEach(p => {
+        html += `
+          <label style="display:flex;align-items:center;justify-content:space-between;background:#ffffff;padding:8px 12px;border-radius:12px;border:1px solid #cbd5e1;color:#1e293b;font-weight:700;font-size:12px;margin-bottom:6px;cursor:pointer;">
+            <span>${p.title || '未命名计划'}</span>
+            <input type="checkbox" class="export-plan-checkbox" data-plan-id="${p.id}" checked="checked" style="width:16px;height:16px;cursor:pointer;" />
+          </label>
+        `;
+      });
+    }
+
+    box.innerHTML = html;
+
+    box.querySelectorAll('.export-group-checkbox').forEach(gCb => {
+      gCb.onchange = () => {
+        const gIdx = gCb.dataset.groupIdx;
+        box.querySelectorAll(`.export-plan-checkbox[data-group-idx="${gIdx}"]`).forEach(pCb => {
+          pCb.checked = gCb.checked;
+        });
+      };
+    });
+  },
+
+  exportDataByFormat(format, fileName) {
+    const box = document.getElementById('export-plans-select-box');
+    const checkedCbs = box ? box.querySelectorAll('.export-plan-checkbox:checked') : [];
+    let selectedIds = new Set(Array.from(checkedCbs).map(cb => cb.dataset.planId).filter(Boolean));
+
+    // 防错检查大组
+    if (selectedIds.size === 0 && box) {
+      const checkedGroupCbs = box.querySelectorAll('.export-group-checkbox:checked');
+      checkedGroupCbs.forEach(gCb => {
+        const gIdx = gCb.dataset.groupIdx;
+        box.querySelectorAll(`.export-plan-checkbox[data-group-idx="${gIdx}"]`).forEach(pCb => {
+          if (pCb.dataset.planId) selectedIds.add(pCb.dataset.planId);
+        });
+      });
+    }
+
+    let plansToExport = (this.data.plans || []).filter(p => selectedIds.has(p.id));
+
+    // 如果全没勾选但系统有计划，全量兜底导出
+    if (plansToExport.length === 0 && selectedIds.size === 0) {
+      plansToExport = this.data.plans || [];
+    }
+
+    if (plansToExport.length === 0) {
+      this.confirm('提示', '请至少勾选一个要导出的训练计划');
+      return;
+    }
+
+    if (format === 'csv') {
+      DataManager.exportCsvData(plansToExport, fileName);
+      return;
+    }
+    DataManager.exportJsonData(plansToExport, fileName);
   },
 
   importData(file) {
@@ -255,17 +377,38 @@ const App = {
             return;
           }
         }
+        // 对导入数据重新赋予独立的组标识，防止组ID冲突
+        const importGroupMap = new Map();
         const normalizedPlans = parsedPlans
-          .map((plan, idx) => DataManager.normalizePlan(plan, `imp_${idx}`))
+          .map((plan, idx) => {
+            const norm = DataManager.normalizePlan(plan, `imp_${idx}`);
+            if (norm.groupId) {
+              if (!importGroupMap.has(norm.groupId)) {
+                importGroupMap.set(norm.groupId, `group_imp_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`);
+              }
+              norm.groupId = importGroupMap.get(norm.groupId);
+            }
+            return norm;
+          })
           .filter(plan => plan.exercises.length > 0);
+
         if (!normalizedPlans.length) {
           this.confirm('错误', '导入失败：未发现有效训练计划。', null);
           return;
         }
-        const diff = DataManager.calculateImportDiff(normalizedPlans, this.data.plans);
-        const message = `导入前预览：共 ${normalizedPlans.length} 个计划，新增 ${diff.added}，更新 ${diff.updated}，删除 ${diff.removed}。确认导入后将覆盖现有计划。`;
-        this.confirm('导入计划', message, () => {
-          this.data.plans = normalizedPlans;
+
+        const message = `导入预览：解析到 ${normalizedPlans.length} 个训练计划。确认将这些计划合并追加保存到当前列表中吗？`;
+        this.confirm('导入合并计划', message, () => {
+          const existingMap = new Map((this.data.plans || []).map(p => [p.id, p]));
+          
+          normalizedPlans.forEach(newPlan => {
+            if (existingMap.has(newPlan.id)) {
+              // 若ID完全相同，重新赋予新ID，作为新增计划保留旧计划
+              newPlan.id = `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+            }
+            this.data.plans.push(newPlan);
+          });
+
           this.saveData();
         });
       } catch {
@@ -795,7 +938,8 @@ Object.assign(
   TimerModule,
   PlansModule,
   ChangelogModule,
-  BodyTrackModule
+  BodyTrackModule,
+  SyncModule
 );
 
 // 启动应用

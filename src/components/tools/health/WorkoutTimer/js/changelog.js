@@ -3,10 +3,24 @@
  * 管理版本更新历史的展示和新版本提示
  */
 const ChangelogModule = {
-  CURRENT_VERSION: 'v2.7.2',
+  CURRENT_VERSION: 'v2.8.0',
   STORAGE_KEY: 'fitness_changelog_last_seen',
 
   CHANGELOG: [
+    {
+      version: 'v2.8.0',
+      date: '2026-08-05',
+      tag: '重大功能升级',
+      tagColor: 'indigo',
+      items: [
+        { type: 'feat', text: '新增周期循环排期模式，支持设置“练3休1”、“练4休1”等灵活训练/休息节奏' },
+        { type: 'feat', text: '首页支持同一天多训练计划检测与排期冲突动态切换' },
+        { type: 'feat', text: '正计时功能升级：显示毫秒精度(MM:SS.mmm)，计次记录同步支持毫秒' },
+        { type: 'feat', text: '优化大套件卡片标题布局，名称过长不再截断，支持完整显示和自动换行' },
+        { type: 'fix', text: '修复导出计划时“选择导出对象”列表不显示训练计划的问题' },
+        { type: 'fix', text: '优化首页跨设备同步 UI 图标不显示问题' }
+      ]
+    },
     {
       version: 'v2.7.2',
       date: '2026-04-25',
@@ -73,7 +87,7 @@ const ChangelogModule = {
       tag: '架构重构',
       tagColor: 'purple',
       items: [
-        { type: 'refactor', text: '单文件拆分为模块化架构（8个JS模块 + 独立CSS）' },
+        { type: 'refactor', text: '单文件拆分为模块化架构' },
         { type: 'feat', text: '新增计划模板库（PPL/上下肢/全身/5天循环）' },
         { type: 'feat', text: '导入/导出支持 JSON 和 CSV 格式' },
         { type: 'feat', text: '新增自由计时器（正计时 & 倒计时）' },

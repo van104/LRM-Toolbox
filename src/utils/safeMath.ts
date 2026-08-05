@@ -8,7 +8,7 @@ const MATH_CONSTANTS: Record<string, number> = {
   e: Math.E
 };
 
-const MATH_FUNCTIONS: Record<string, (x: number) => number> = {
+const MATH_FUNCTIONS: Record<string, (...args: number[]) => number> = {
   sin: Math.sin,
   cos: Math.cos,
   tan: Math.tan,
@@ -58,7 +58,7 @@ function tokenize(expr: string): Token[] {
       continue;
     }
 
-    if (['+', '-', '*', '/', '%', '^', '(', ')'].includes(char)) {
+    if (['+', '-', '*', '/', '%', '^', '(', ')', ','].includes(char)) {
       tokens.push({ type: 'OPERATOR', value: char });
       i++;
       continue;
@@ -150,12 +150,22 @@ function parse(tokens: Token[], variables?: Record<string, number>): number {
           throw new Error(`Function ${name} requires parentheses`);
         }
         pos++;
-        const arg = parseExpression();
+        const args: number[] = [];
+
+        if (pos < tokens.length && !(tokens[pos].type === 'OPERATOR' && tokens[pos].value === ')')) {
+          args.push(parseExpression());
+
+          while (pos < tokens.length && tokens[pos].type === 'OPERATOR' && tokens[pos].value === ',') {
+            pos++;
+            args.push(parseExpression());
+          }
+        }
+
         if (pos >= tokens.length || tokens[pos].type !== 'OPERATOR' || tokens[pos].value !== ')') {
           throw new Error('Missing closing parenthesis');
         }
         pos++;
-        return MATH_FUNCTIONS[name](arg);
+        return MATH_FUNCTIONS[name](...args);
       }
 
       throw new Error(`Unknown identifier: ${name}`);

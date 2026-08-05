@@ -1023,6 +1023,19 @@ const UIModule = {
     this.dom.exportFormatModal.classList.add('flex');
     void this.dom.exportFormatModal.offsetHeight;
     this.dom.exportFormatModal.classList.add('active');
+    // 渲染可导出计划列表
+    this.renderExportPlansSelector();
+
+    // 全选/取消按钮
+    const toggleAllBtn = document.getElementById('export-toggle-all-btn');
+    if (toggleAllBtn) {
+      toggleAllBtn.onclick = () => {
+        const checkboxes = document.querySelectorAll('.export-plan-checkbox, .export-group-checkbox');
+        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+        checkboxes.forEach(cb => (cb.checked = !allChecked));
+      };
+    }
+
     // 聚焦并选中文件名
     setTimeout(() => {
       if (this.dom.exportFilenameInput) {

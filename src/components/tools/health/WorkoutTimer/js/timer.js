@@ -185,8 +185,8 @@ const TimerModule = {
         lap => `
                 <div class="flex items-center justify-between px-4 py-2">
                   <span class="font-semibold text-slate-600">第 ${lap.index} 次</span>
-                  <span class="text-slate-400 text-xs">分段 ${this.formatFreeTimer(lap.deltaSeconds * 1000, true, true)}</span>
-                  <span class="font-bold text-slate-800 tabular-nums">${this.formatFreeTimer(lap.totalSeconds * 1000, true, true)}</span>
+                  <span class="text-slate-400 text-xs">分段 ${this.formatStopwatch(lap.deltaMs != null ? lap.deltaMs : lap.deltaSeconds * 1000)}</span>
+                  <span class="font-bold text-slate-800 tabular-nums">${this.formatStopwatch(lap.totalMs != null ? lap.totalMs : lap.totalSeconds * 1000)}</span>
                 </div>
               `
       )
@@ -273,23 +273,23 @@ const TimerModule = {
     this.updateFreeTimerActionBtn('暂停', true);
     this.updateLapBtnState();
     if (!this.state.stopwatchStartedAt) {
-      this.state.stopwatchStartedAt = Date.now() - this.state.stopwatchElapsed * 1000;
+      this.state.stopwatchStartedAt = Date.now() - this.state.stopwatchElapsed;
     }
     this.persistInterruptedSession();
     this.state.timerId = setInterval(() => {
       this.state.stopwatchElapsed = Math.max(
         0,
-        Math.floor((Date.now() - this.state.stopwatchStartedAt) / 1000)
+        Date.now() - this.state.stopwatchStartedAt
       );
       this.updateStopwatchDisplay(this.state.stopwatchElapsed);
-    }, 250);
+    }, 33);
   },
 
   pauseStopwatch() {
     if (this.state.freeTimerType !== 'stopwatch') return;
     this.state.stopwatchElapsed = Math.max(
       0,
-      Math.floor((Date.now() - (this.state.stopwatchStartedAt || Date.now())) / 1000)
+      Date.now() - (this.state.stopwatchStartedAt || Date.now())
     );
     this.clearInterval();
     this.state.mode = 'timer_paused';
@@ -303,22 +303,39 @@ const TimerModule = {
 
   addStopwatchLap() {
     if (this.state.freeTimerType !== 'stopwatch' || this.state.mode !== 'timer_running') return;
-    const totalSeconds = this.state.stopwatchElapsed;
+    const totalMs = this.state.stopwatchElapsed;
     const lastLap = this.state.stopwatchLaps[0];
-    const deltaSeconds = lastLap ? totalSeconds - lastLap.totalSeconds : totalSeconds;
+    const deltaMs = lastLap ? totalMs - lastLap.totalMs : totalMs;
     this.state.stopwatchLaps.unshift({
       index: this.state.stopwatchLaps.length + 1,
-      totalSeconds,
-      deltaSeconds
+      totalMs,
+      deltaMs,
+      // 兼容旧字段
+      totalSeconds: Math.floor(totalMs / 1000),
+      deltaSeconds: Math.floor(deltaMs / 1000)
     });
     this.renderStopwatchLaps();
     this.persistInterruptedSession();
   },
 
-  updateStopwatchDisplay(seconds) {
-    const display = this.formatFreeTimer(seconds * 1000, false, true);
+  updateStopwatchDisplay(ms) {
+    const display = this.formatStopwatch(ms);
     this.dom.ftDisplay.textContent = display;
-    document.title = `${display} - 正计时`;
+    // title 不显示毫秒，避免标签栏闪烁
+    const safeMs = Math.max(0, Math.floor(ms));
+    const totalSec = Math.floor(safeMs / 1000);
+    const mm = Math.floor(totalSec / 60).toString().padStart(2, '0');
+    const ss = (totalSec % 60).toString().padStart(2, '0');
+    document.title = `${mm}:${ss} - 正计时`;
+  },
+
+  formatStopwatch(milliseconds) {
+    const safeMs = Math.max(0, Math.floor(milliseconds));
+    const totalSec = Math.floor(safeMs / 1000);
+    const mm = Math.floor(totalSec / 60).toString().padStart(2, '0');
+    const ss = (totalSec % 60).toString().padStart(2, '0');
+    const ms = (safeMs % 1000).toString().padStart(3, '0');
+    return `${mm}:${ss}.${ms}`;
   },
 
   formatFreeTimer(milliseconds, showMilliseconds = false, forceHour = false) {
@@ -331,7 +348,7 @@ const TimerModule = {
       .toString()
       .padStart(2, '0');
     const s = (totalSeconds % 60).toString().padStart(2, '0');
-    const ms = (safeMilliseconds % 1000).toString().padStart(3, '0');
+    const ms = Math.floor((safeMilliseconds % 1000) / 10).toString().padStart(2, '0');
     const base = forceHour || h !== '00' ? `${h}:${m}:${s}` : `${m}:${s}`;
     return showMilliseconds ? `${base}.${ms}` : base;
   }

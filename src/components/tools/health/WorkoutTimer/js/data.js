@@ -11,6 +11,16 @@ const DataManager = {
   normalizePlan(plan, fallbackId = '') {
     const idSeed = plan?.id ? String(plan.id) : `${Date.now()}_${fallbackId}`;
     const days = Array.isArray(plan?.days) ? plan.days.filter(Boolean).map(String) : [];
+    const scheduleType = plan?.scheduleType === 'cycle' ? 'cycle' : 'weekly';
+    const fallbackTotal = (parseInt(plan?.workDays) || 3) + (parseInt(plan?.restDays) || 1);
+    const cycleTotalDays = Math.max(1, parseInt(plan?.cycleTotalDays) || fallbackTotal || 4);
+    const cycleDayOffset = Math.max(1, parseInt(plan?.cycleDayOffset) || 1);
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const startDate = plan?.startDate ? String(plan.startDate).slice(0, 10) : todayStr;
+    const groupId = plan?.groupId ? String(plan.groupId) : null;
+    const groupTitle = plan?.groupTitle ? String(plan.groupTitle) : '';
+    const enabled = plan?.enabled !== false;
+
     const exercises = Array.isArray(plan?.exercises)
       ? plan.exercises
           .filter(ex => ex && ex.name)
@@ -25,9 +35,121 @@ const DataManager = {
     return {
       id: idSeed,
       title: plan?.title ? String(plan.title) : `训练计划 ${idSeed.slice(-4)}`,
+      scheduleType,
       days,
+      cycleTotalDays,
+      cycleDayOffset,
+      workDays: parseInt(plan?.workDays) || 3,
+      restDays: parseInt(plan?.restDays) || 1,
+      startDate,
+      groupId,
+      groupTitle,
+      enabled,
       exercises
     };
+  },
+
+  isPlanActiveOnDate(plan, targetDate = new Date()) {
+    if (!plan || plan.enabled === false) return false;
+    const d = targetDate instanceof Date ? targetDate : new Date(targetDate);
+    if (Number.isNaN(d.getTime())) return false;
+
+    const scheduleType = plan.scheduleType === 'cycle' ? 'cycle' : 'weekly';
+
+    if (scheduleType === 'cycle') {
+      const startStr = plan.startDate || new Date().toISOString().slice(0, 10);
+      const startDate = new Date(startStr + 'T00:00:00');
+      const targetZero = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+      const diffTime = targetZero.getTime() - startDate.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays < 0) return false; // 未到起始日期
+
+      const cycleTotalDays = Math.max(1, parseInt(plan.cycleTotalDays) || ((parseInt(plan.workDays) || 3) + (parseInt(plan.restDays) || 1)));
+      const cycleDayOffset = Math.max(1, parseInt(plan.cycleDayOffset) || 1);
+
+      const currentCycleDay = (diffDays % cycleTotalDays) + 1;
+      return currentCycleDay === cycleDayOffset;
+    } else {
+      const daysMap = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const dayName = daysMap[d.getDay()];
+      return Array.isArray(plan.days) && plan.days.includes(dayName);
+    }
+  },
+
+  getGroupedPlans(plans = []) {
+    if (!Array.isArray(plans)) return [];
+
+    const normPlans = plans.map((p, idx) => this.normalizePlan(p, `norm_${idx}`));
+    const result = [];
+    const processedIds = new Set();
+
+    // 1. 显式组 (拥有相同的 groupId)
+    const explicitGroupMap = new Map();
+    normPlans.forEach(p => {
+      if (p.groupId) {
+        if (!explicitGroupMap.has(p.groupId)) {
+          explicitGroupMap.set(p.groupId, []);
+        }
+        explicitGroupMap.get(p.groupId).push(p);
+      }
+    });
+
+    explicitGroupMap.forEach((groupPlans, gId) => {
+      groupPlans.forEach(p => processedIds.add(p.id));
+      const first = groupPlans[0];
+      const allEnabled = groupPlans.some(p => p.enabled !== false);
+      result.push({
+        isGroup: true,
+        groupId: gId,
+        groupTitle: first.groupTitle || `${first.scheduleType === 'cycle' ? first.cycleTotalDays + '天轮替' : '固定天'}训练套件`,
+        scheduleType: first.scheduleType,
+        enabled: allEnabled,
+        plans: groupPlans.sort((a, b) => (a.cycleDayOffset || 0) - (b.cycleDayOffset || 0))
+      });
+    });
+
+    // 2. 隐式周期组 (没有 groupId，但相同的 cycleTotalDays & startDate 且数量 >= 2)
+    const cycleImplicitMap = new Map();
+    normPlans.forEach(p => {
+      if (!processedIds.has(p.id) && p.scheduleType === 'cycle') {
+        const key = `${p.cycleTotalDays}_${p.startDate}`;
+        if (!cycleImplicitMap.has(key)) {
+          cycleImplicitMap.set(key, []);
+        }
+        cycleImplicitMap.get(key).push(p);
+      }
+    });
+
+    cycleImplicitMap.forEach((groupPlans, key) => {
+      if (groupPlans.length >= 2) {
+        groupPlans.forEach(p => processedIds.add(p.id));
+        const first = groupPlans[0];
+        const gId = `auto_group_${key}`;
+        const allEnabled = groupPlans.some(p => p.enabled !== false);
+        result.push({
+          isGroup: true,
+          groupId: gId,
+          groupTitle: `${first.cycleTotalDays}天轮替训练套件`,
+          scheduleType: 'cycle',
+          enabled: allEnabled,
+          plans: groupPlans.sort((a, b) => (a.cycleDayOffset || 0) - (b.cycleDayOffset || 0))
+        });
+      }
+    });
+
+    // 3. 独立散计划
+    normPlans.forEach(p => {
+      if (!processedIds.has(p.id)) {
+        result.push({
+          isGroup: false,
+          plan: p
+        });
+      }
+    });
+
+    return result;
   },
 
   normalizeBodyRecord(record, fallbackDate = '') {
