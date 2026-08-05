@@ -59,6 +59,9 @@ const SyncModule = {
     this.dom.remoteActionBtn = document.getElementById('remote-action-btn');
     this.dom.remoteSkipBtn = document.getElementById('remote-skip-btn');
     this.dom.remoteResetBtn = document.getElementById('remote-reset-btn');
+    this.dom.remoteMinus10Btn = document.getElementById('remote-minus-10-btn');
+    this.dom.remotePlus10Btn = document.getElementById('remote-plus-10-btn');
+    this.dom.remoteAdjustRestRow = document.getElementById('remote-adjust-rest-row');
 
     // 状态显示
     this.dom.syncStatusText = document.getElementById('sync-status-text');
@@ -112,6 +115,8 @@ const SyncModule = {
     this.dom.remoteActionBtn?.addEventListener('click', () => this.sendRemoteCommand('complete_set'));
     this.dom.remoteSkipBtn?.addEventListener('click', () => this.sendRemoteCommand('skip_rest'));
     this.dom.remoteResetBtn?.addEventListener('click', () => this.sendRemoteCommand('reset'));
+    this.dom.remoteMinus10Btn?.addEventListener('click', () => this.sendRemoteCommand('adjust_rest', { seconds: -10 }));
+    this.dom.remotePlus10Btn?.addEventListener('click', () => this.sendRemoteCommand('adjust_rest', { seconds: 10 }));
 
     // 输入框回车
     this.dom.syncCodeInput?.addEventListener('keydown', (e) => {
@@ -450,12 +455,13 @@ const SyncModule = {
   },
 
   // 处理状态更新（手机端接收）
+  // 处理状态更新（手机端接收）
   handleStatusUpdate(payload) {
     if (!payload) return;
 
-    const { mode, currentExercise, currentSet, totalSets, timeLeft, totalDuration } = payload;
+    const { mode, currentExercise, currentSet, totalSets, timeLeft } = payload;
 
-    // 更新手机端状态显示
+    // 更新手机端状态显示 Badge 样式
     if (this.dom.syncStatusText) {
       const modeTexts = {
         'idle': '待机中',
@@ -465,15 +471,26 @@ const SyncModule = {
         'timer_running': '计时中',
         'timer_paused': '已暂停'
       };
+
+      const modeBadges = {
+        'idle': 'bg-slate-700/60 text-slate-300 border-slate-600/50',
+        'workout_work': 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
+        'workout_rest': 'bg-amber-500/20 text-amber-300 border-amber-500/40',
+        'workout_rest_end': 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
+        'timer_running': 'bg-blue-500/20 text-blue-300 border-blue-500/40',
+        'timer_paused': 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40'
+      };
+
       this.dom.syncStatusText.textContent = modeTexts[mode] || mode;
+      this.dom.syncStatusText.className = `px-3 py-1 rounded-full text-xs font-bold border transition-all ${modeBadges[mode] || modeBadges.idle}`;
     }
 
     if (this.dom.syncCurrentExercise) {
-      this.dom.syncCurrentExercise.textContent = currentExercise || '-';
+      this.dom.syncCurrentExercise.textContent = currentExercise || '无';
     }
 
     if (this.dom.syncCurrentSet) {
-      this.dom.syncCurrentSet.textContent = totalSets ? `${currentSet}/${totalSets}` : '-';
+      this.dom.syncCurrentSet.textContent = totalSets ? `${currentSet} / ${totalSets}` : '-';
     }
 
     if (this.dom.syncTimeLeft) {
@@ -484,6 +501,12 @@ const SyncModule = {
       } else {
         this.dom.syncTimeLeft.textContent = '--:--';
       }
+    }
+
+    // 休息时显示 10 秒加减微调栏
+    if (this.dom.remoteAdjustRestRow) {
+      const isResting = mode === 'workout_rest' || mode === 'workout_rest_end';
+      this.dom.remoteAdjustRestRow.classList.toggle('hidden', !isResting);
     }
 
     // 更新手机端控制按钮状态
@@ -501,23 +524,25 @@ const SyncModule = {
       this.dom.syncRemoteControls.classList.toggle('hidden', !isWorkoutMode && mode !== 'idle');
     }
 
+    const baseClass = 'w-full py-4 rounded-2xl text-white font-extrabold text-base shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer';
+
     // 更新主按钮
     switch (mode) {
       case 'idle':
-        this.dom.remoteActionBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>开始训练</span>';
-        this.dom.remoteActionBtn.className = 'flex-1 py-4 rounded-2xl bg-blue-600 text-white font-bold text-lg shadow-lg';
+        this.dom.remoteActionBtn.innerHTML = '<i class="fa-solid fa-play text-sm"></i><span>开始训练</span>';
+        this.dom.remoteActionBtn.className = `${baseClass} bg-gradient-to-r from-blue-600 to-indigo-600 shadow-blue-500/25 hover:from-blue-700 hover:to-indigo-700`;
         break;
       case 'workout_work':
-        this.dom.remoteActionBtn.innerHTML = '<i class="fa-solid fa-check"></i><span>完成本组</span>';
-        this.dom.remoteActionBtn.className = 'flex-1 py-4 rounded-2xl bg-green-500 text-white font-bold text-lg shadow-lg';
+        this.dom.remoteActionBtn.innerHTML = '<i class="fa-solid fa-check text-base"></i><span>完成本组</span>';
+        this.dom.remoteActionBtn.className = `${baseClass} bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-500/25 hover:from-emerald-600 hover:to-teal-700`;
         break;
       case 'workout_rest':
-        this.dom.remoteActionBtn.innerHTML = '<i class="fa-solid fa-forward"></i><span>跳过休息</span>';
-        this.dom.remoteActionBtn.className = 'flex-1 py-4 rounded-2xl bg-amber-500 text-white font-bold text-lg shadow-lg';
+        this.dom.remoteActionBtn.innerHTML = '<i class="fa-solid fa-forward text-sm"></i><span>跳过休息</span>';
+        this.dom.remoteActionBtn.className = `${baseClass} bg-gradient-to-r from-amber-500 to-orange-500 shadow-amber-500/25 hover:from-amber-600 hover:to-orange-600`;
         break;
       case 'workout_rest_end':
-        this.dom.remoteActionBtn.innerHTML = '<i class="fa-solid fa-play"></i><span>开始下一组</span>';
-        this.dom.remoteActionBtn.className = 'flex-1 py-4 rounded-2xl bg-green-500 text-white font-bold text-lg shadow-lg';
+        this.dom.remoteActionBtn.innerHTML = '<i class="fa-solid fa-play text-sm"></i><span>开始下一组</span>';
+        this.dom.remoteActionBtn.className = `${baseClass} bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-500/25 hover:from-emerald-600 hover:to-teal-700`;
         break;
     }
   },
@@ -739,30 +764,32 @@ const SyncModule = {
     const existing = document.querySelector('.sync-toast');
     if (existing) existing.remove();
 
-    const colors = {
-      info: 'bg-blue-500',
-      success: 'bg-green-500',
-      warning: 'bg-yellow-500',
-      error: 'bg-red-500'
+    const config = {
+      info: { bg: 'bg-slate-900/90 border-slate-700/60', icon: 'fa-solid fa-circle-info text-blue-400' },
+      success: { bg: 'bg-slate-900/90 border-emerald-500/40', icon: 'fa-solid fa-circle-check text-emerald-400' },
+      warning: { bg: 'bg-slate-900/90 border-amber-500/40', icon: 'fa-solid fa-triangle-exclamation text-amber-400' },
+      error: { bg: 'bg-slate-900/90 border-rose-500/40', icon: 'fa-solid fa-circle-xmark text-rose-400' }
     };
 
+    const item = config[type] || config.info;
+
     const toast = document.createElement('div');
-    toast.className = `sync-toast fixed top-20 left-1/2 -translate-x-1/2 z-[300] px-4 py-2 rounded-full text-white text-sm font-medium shadow-lg ${colors[type] || colors.info} transition-all duration-300 opacity-0 translate-y-[-10px]`;
-    toast.textContent = text;
+    toast.className = `sync-toast fixed top-6 left-1/2 -translate-x-1/2 z-[999999] px-4 py-2.5 rounded-full text-white text-xs font-bold shadow-2xl backdrop-blur-md border ${item.bg} flex items-center gap-2 transition-all duration-300 opacity-0 -translate-y-4 pointer-events-none`;
+    toast.innerHTML = `<i class="${item.icon} text-sm"></i><span>${text}</span>`;
     document.body.appendChild(toast);
 
     // 动画显示
     requestAnimationFrame(() => {
-      toast.classList.remove('opacity-0', 'translate-y-[-10px]');
+      toast.classList.remove('opacity-0', '-translate-y-4');
       toast.classList.add('opacity-100', 'translate-y-0');
     });
 
     // 自动消失
     setTimeout(() => {
       toast.classList.remove('opacity-100', 'translate-y-0');
-      toast.classList.add('opacity-0', 'translate-y-[-10px]');
+      toast.classList.add('opacity-0', '-translate-y-4');
       setTimeout(() => toast.remove(), 300);
-    }, 2000);
+    }, 2200);
   }
 };
 
