@@ -263,9 +263,15 @@ const AudioMgr = {
       btn.classList.toggle('text-slate-400', !this.enabled);
       btn.classList.toggle('text-blue-600', this.enabled);
     }
-    const masterToggle = document.getElementById('sound-modal-master-toggle');
-    if (masterToggle) {
-      masterToggle.checked = this.enabled;
+
+    // 更新弹窗内独立滑块按钮 UI 状态
+    const toggleBtn = document.getElementById('sound-modal-master-toggle-btn');
+    const knob = document.getElementById('sound-modal-master-toggle-knob');
+    if (toggleBtn && knob) {
+      toggleBtn.classList.toggle('bg-blue-600', this.enabled);
+      toggleBtn.classList.toggle('bg-slate-300', !this.enabled);
+      knob.classList.toggle('translate-x-5', this.enabled);
+      knob.classList.toggle('translate-x-0', !this.enabled);
     }
   },
 
@@ -297,11 +303,11 @@ const AudioMgr = {
     closeBtn?.addEventListener('click', () => this.closeModal());
     backdrop?.addEventListener('click', () => this.closeModal());
 
-    // 模态框主开关
-    const masterToggle = document.getElementById('sound-modal-master-toggle');
-    if (masterToggle) {
-      masterToggle.checked = this.enabled;
-      masterToggle.onchange = () => {
+    // 模态框主开关滑块按钮点击
+    const masterToggleBtn = document.getElementById('sound-modal-master-toggle-btn');
+    if (masterToggleBtn) {
+      masterToggleBtn.onclick = (e) => {
+        e.preventDefault();
         this.toggle();
       };
     }
@@ -332,11 +338,9 @@ const AudioMgr = {
     const modal = document.getElementById('sound-settings-modal');
     const backdrop = document.getElementById('sound-settings-backdrop');
     const panel = document.getElementById('sound-settings-panel');
-    const masterToggle = document.getElementById('sound-modal-master-toggle');
 
     if (!modal) return;
 
-    if (masterToggle) masterToggle.checked = this.enabled;
     this.updateNavbarSoundIcon();
 
     modal.classList.remove('hidden');
