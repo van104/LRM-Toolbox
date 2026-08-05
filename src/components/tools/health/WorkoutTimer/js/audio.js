@@ -253,24 +253,39 @@ const AudioMgr = {
     this.renderModalLists();
   },
 
-  // 更新 Navbar 声音按钮状态图标
+  // 更新 Navbar 声音按钮状态图标 & 模态框内开关同步
   updateNavbarSoundIcon() {
     const btn = document.getElementById('sound-toggle');
-    if (!btn) return;
-    btn.innerHTML = this.enabled
-      ? '<i class="fa-solid fa-volume-high text-sm"></i>'
-      : '<i class="fa-solid fa-volume-xmark text-sm"></i>';
-    btn.classList.toggle('text-slate-400', !this.enabled);
-    btn.classList.toggle('text-blue-600', this.enabled);
+    if (btn) {
+      btn.innerHTML = this.enabled
+        ? '<i class="fa-solid fa-volume-high text-sm"></i>'
+        : '<i class="fa-solid fa-volume-xmark text-sm"></i>';
+      btn.classList.toggle('text-slate-400', !this.enabled);
+      btn.classList.toggle('text-blue-600', this.enabled);
+    }
+    const masterToggle = document.getElementById('sound-modal-master-toggle');
+    if (masterToggle) {
+      masterToggle.checked = this.enabled;
+    }
   },
 
   // 绑定事件
   bindEvents() {
-    // 点击音效按钮：直接打开音效与提示音设置模态框
-    const btn = document.getElementById('sound-toggle');
-    if (btn) {
-      btn.title = '提示音与音效设置';
-      btn.onclick = (e) => {
+    // 1. 原音频图标 (sound-toggle)：点击快速开启/静音音效
+    const toggleBtn = document.getElementById('sound-toggle');
+    if (toggleBtn) {
+      toggleBtn.title = '开启/静音提示音';
+      toggleBtn.onclick = (e) => {
+        e.preventDefault();
+        this.toggle();
+      };
+    }
+
+    // 2. 独立设置按钮 (sound-config-btn)：点击打开提示音与音效设置弹窗
+    const configBtn = document.getElementById('sound-config-btn');
+    if (configBtn) {
+      configBtn.title = '提示音与音效设置';
+      configBtn.onclick = (e) => {
         e.preventDefault();
         this.openModal();
       };
@@ -282,18 +297,12 @@ const AudioMgr = {
     closeBtn?.addEventListener('click', () => this.closeModal());
     backdrop?.addEventListener('click', () => this.closeModal());
 
-    // 主开关
+    // 模态框主开关
     const masterToggle = document.getElementById('sound-modal-master-toggle');
     if (masterToggle) {
       masterToggle.checked = this.enabled;
-      masterToggle.onchange = (e) => {
-        this.enabled = e.target.checked;
-        localStorage.setItem('fitness_sound_enabled_v1', this.enabled ? 'true' : 'false');
-        if (!this.enabled) {
-          this.stopEnd();
-          this.stopPreview();
-        }
-        this.updateNavbarSoundIcon();
+      masterToggle.onchange = () => {
+        this.toggle();
       };
     }
 

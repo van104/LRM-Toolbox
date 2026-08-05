@@ -786,15 +786,8 @@ const App = {
       });
     });
 
-    // 声音开关
-    document.getElementById('sound-toggle').addEventListener('click', e => {
-      const enabled = AudioMgr.toggle();
-      e.currentTarget.innerHTML = enabled
-        ? '<i class="fa-solid fa-volume-high text-sm"></i>'
-        : '<i class="fa-solid fa-volume-xmark text-sm"></i>';
-      e.currentTarget.classList.toggle('text-slate-400', !enabled);
-      e.currentTarget.classList.toggle('text-blue-600', enabled);
-    });
+    // 声音开关与提示音设置 (由 AudioMgr 统一托管事件绑定与状态同步)
+    AudioMgr.updateNavbarSoundIcon();
 
     // 自由计时器
     this.initFreeTimer();
