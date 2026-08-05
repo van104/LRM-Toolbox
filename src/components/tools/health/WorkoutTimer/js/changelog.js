@@ -13,6 +13,8 @@ const ChangelogModule = {
       tag: '重大功能升级',
       tagColor: 'indigo',
       items: [
+        { type: 'feat', text: '新增提示音与音效设置：内置12款 Pixabay 中文名称提示音，支持试听与切换' },
+        { type: 'feat', text: '新增自定义音频上传：支持上传专属提示音，音频数据100%纯本地存储（IndexedDB），绝不上传服务器' },
         { type: 'feat', text: '新增周期循环排期模式，支持设置“练3休1”、“练4休1”等灵活训练/休息节奏' },
         { type: 'feat', text: '首页支持同一天多训练计划检测与排期冲突动态切换' },
         { type: 'feat', text: '正计时功能升级：显示毫秒精度(MM:SS.mmm)，计次记录同步支持毫秒' },
