@@ -42,6 +42,9 @@ server/workout.db
 # Android App (本地构建，不同步 GitHub)
 android/
 
+# 独立下载站 (本地部署 workout.lrm123.site, 不同步 GitHub)
+download-site/
+
 # Backups
 _redundant_backup
 
