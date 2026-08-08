@@ -44,14 +44,17 @@ const WorkoutModule = {
       this.dom.statusSubtitle.textContent = '好好放松，点击下方按钮可随时恢复训练';
       this.dom.actionBtn.disabled = true;
       this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-bed"></i><span>休息中</span>';
-      this.dom.actionBtn.className = 'col-span-4 bg-slate-400 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg cursor-not-allowed';
+      this.dom.actionBtn.className =
+        'col-span-4 bg-slate-400 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg cursor-not-allowed';
       this.renderTodayRestOverrideSwitcher(true);
       this.resetWorkoutUI();
       return;
     }
 
     // 获取今天匹配的所有训练计划
-    const todayPlans = (this.data.plans || []).filter(p => DataManager.isPlanActiveOnDate(p, new Date()));
+    const todayPlans = (this.data.plans || []).filter(p =>
+      DataManager.isPlanActiveOnDate(p, new Date())
+    );
 
     if (todayPlans.length > 0) {
       // 保持当前选中的计划（如果在今日计划列表中），否则默认选用第一个
@@ -66,7 +69,8 @@ const WorkoutModule = {
       this.dom.statusSubtitle.textContent = '好好放松，或者添加一个临时计划';
       this.dom.actionBtn.disabled = true;
       this.dom.actionBtn.innerHTML = '<i class="fa-solid fa-bed"></i><span>暂无计划</span>';
-      this.dom.actionBtn.className = 'col-span-4 bg-slate-400 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg cursor-not-allowed';
+      this.dom.actionBtn.className =
+        'col-span-4 bg-slate-400 text-white rounded-2xl h-14 flex items-center justify-center gap-2 font-bold text-lg cursor-not-allowed';
       this.renderTodayPlansSwitcher([]);
       this.resetWorkoutUI();
     }
@@ -74,7 +78,9 @@ const WorkoutModule = {
 
   selectTodayPlan(plan, resetRecovery = true) {
     this.state.currentPlan = plan;
-    this.resetWorkoutState(resetRecovery ? true : !localStorage.getItem(this.INTERRUPTION_RECOVERY_KEY));
+    this.resetWorkoutState(
+      resetRecovery ? true : !localStorage.getItem(this.INTERRUPTION_RECOVERY_KEY)
+    );
     this.dom.statusTitle.textContent = plan.title;
     this.dom.statusSubtitle.textContent = `共 ${plan.exercises.length} 个动作，准备开始`;
     this.dom.actionBtn.disabled = false;
@@ -114,7 +120,9 @@ const WorkoutModule = {
       return;
     }
 
-    const plans = todayPlans || (this.data.plans || []).filter(p => DataManager.isPlanActiveOnDate(p, new Date()));
+    const plans =
+      todayPlans ||
+      (this.data.plans || []).filter(p => DataManager.isPlanActiveOnDate(p, new Date()));
     const currentActiveId = activePlanId || this.state.currentPlan?.id;
 
     // 训练已经开始（非待机状态）不显示选择器
@@ -257,6 +265,7 @@ const WorkoutModule = {
     this.startSessionIfNeeded();
     this.state.mode = 'workout_work';
     this.state.workoutRestEndsAt = 0;
+    this.state.timeLeft = 0;
     WakeLockMgr.request();
 
     this.renderTodayPlansSwitcher();

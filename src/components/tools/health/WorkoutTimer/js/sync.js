@@ -9,7 +9,7 @@ const SyncModule = {
   HEARTBEAT_INTERVAL: 25000,
   RECONNECT_DELAY: 3000,
   MAX_RECONNECT_ATTEMPTS: 10,
-  STATUS_SYNC_INTERVAL: 1000,
+  STATUS_SYNC_INTERVAL: 400,
   AUTO_RECONNECT_DELAY: 2000,
 
   syncState: {
@@ -112,24 +112,30 @@ const SyncModule = {
     });
 
     // 手机端控制按钮
-    this.dom.remoteActionBtn?.addEventListener('click', () => this.sendRemoteCommand('complete_set'));
+    this.dom.remoteActionBtn?.addEventListener('click', () =>
+      this.sendRemoteCommand('complete_set')
+    );
     this.dom.remoteSkipBtn?.addEventListener('click', () => this.sendRemoteCommand('skip_rest'));
     this.dom.remoteResetBtn?.addEventListener('click', () => this.sendRemoteCommand('reset'));
-    this.dom.remoteMinus10Btn?.addEventListener('click', () => this.sendRemoteCommand('adjust_rest', { seconds: -10 }));
-    this.dom.remotePlus10Btn?.addEventListener('click', () => this.sendRemoteCommand('adjust_rest', { seconds: 10 }));
+    this.dom.remoteMinus10Btn?.addEventListener('click', () =>
+      this.sendRemoteCommand('adjust_rest', { seconds: -10 })
+    );
+    this.dom.remotePlus10Btn?.addEventListener('click', () =>
+      this.sendRemoteCommand('adjust_rest', { seconds: 10 })
+    );
 
     // 输入框回车
-    this.dom.syncCodeInput?.addEventListener('keydown', (e) => {
+    this.dom.syncCodeInput?.addEventListener('keydown', e => {
       if (e.key === 'Enter') this.joinRoom();
     });
 
     // 自动大写输入
-    this.dom.syncCodeInput?.addEventListener('input', (e) => {
+    this.dom.syncCodeInput?.addEventListener('input', e => {
       e.target.value = e.target.value.toUpperCase();
     });
 
     // 持久化开关
-    this.dom.syncPersistToggle?.addEventListener('change', (e) => {
+    this.dom.syncPersistToggle?.addEventListener('change', e => {
       this.syncState.persistEnabled = e.target.checked;
       this.savePersistedSync();
     });
@@ -320,7 +326,7 @@ const SyncModule = {
         this.updateSyncUI();
       };
 
-      this.syncState.ws.onmessage = (event) => {
+      this.syncState.ws.onmessage = event => {
         try {
           const message = JSON.parse(event.data);
           this.handleMessage(message);
@@ -334,7 +340,7 @@ const SyncModule = {
         this.handleDisconnect();
       };
 
-      this.syncState.ws.onerror = (error) => {
+      this.syncState.ws.onerror = error => {
         console.error('[Sync] WebSocket 错误:', error);
         this.showSyncMessage('连接失败', 'error');
       };
@@ -354,7 +360,9 @@ const SyncModule = {
       case 'room_created':
         this.syncState.roomCode = code;
         this.showSyncMessage(`房间已创建: ${code}`, 'success');
+        this.updateRemoteCount(0);
         this.updateSyncUI();
+        this.renderSyncQr();
         this.startStatusSync();
         break;
 
@@ -371,11 +379,13 @@ const SyncModule = {
 
       case 'remote_connected':
         this.showSyncMessage(`手机端已连接 (${message.count})`, 'success');
+        this.updateRemoteCount(message.count);
         this.updateSyncUI();
         break;
 
       case 'remote_disconnected':
         this.showSyncMessage(`手机端已断开 (${message.count})`, 'info');
+        this.updateRemoteCount(message.count);
         this.updateSyncUI();
         break;
 
@@ -452,6 +462,9 @@ const SyncModule = {
       default:
         console.log('[Sync] 未知命令:', action);
     }
+
+    // 命令处理后立即推送状态，减少手机端反馈延迟
+    this.sendStatusUpdate();
   },
 
   // 处理状态更新（手机端接收）
@@ -463,21 +476,21 @@ const SyncModule = {
     // 更新手机端状态显示 Badge 样式
     if (this.dom.syncStatusText) {
       const modeTexts = {
-        'idle': '待机中',
-        'workout_work': '锻炼中',
-        'workout_rest': '休息中',
-        'workout_rest_end': '休息结束',
-        'timer_running': '计时中',
-        'timer_paused': '已暂停'
+        idle: '待机中',
+        workout_work: '锻炼中',
+        workout_rest: '休息中',
+        workout_rest_end: '休息结束',
+        timer_running: '计时中',
+        timer_paused: '已暂停'
       };
 
       const modeBadges = {
-        'idle': 'bg-slate-700/60 text-slate-300 border-slate-600/50',
-        'workout_work': 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
-        'workout_rest': 'bg-amber-500/20 text-amber-300 border-amber-500/40',
-        'workout_rest_end': 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
-        'timer_running': 'bg-blue-500/20 text-blue-300 border-blue-500/40',
-        'timer_paused': 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40'
+        idle: 'bg-slate-700/60 text-slate-300 border-slate-600/50',
+        workout_work: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
+        workout_rest: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
+        workout_rest_end: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
+        timer_running: 'bg-blue-500/20 text-blue-300 border-blue-500/40',
+        timer_paused: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40'
       };
 
       this.dom.syncStatusText.textContent = modeTexts[mode] || mode;
@@ -494,7 +507,9 @@ const SyncModule = {
 
     if (this.dom.syncTimeLeft) {
       if (timeLeft !== undefined && timeLeft > 0) {
-        const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+        const m = Math.floor(timeLeft / 60)
+          .toString()
+          .padStart(2, '0');
         const s = (timeLeft % 60).toString().padStart(2, '0');
         this.dom.syncTimeLeft.textContent = `${m}:${s}`;
       } else {
@@ -523,24 +538,29 @@ const SyncModule = {
       this.dom.syncRemoteControls.classList.toggle('hidden', !isWorkoutMode && mode !== 'idle');
     }
 
-    const baseClass = 'w-full py-4 rounded-2xl text-white font-extrabold text-base shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer';
+    const baseClass =
+      'w-full py-4 rounded-2xl text-white font-extrabold text-base shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer';
 
     // 更新主按钮
     switch (mode) {
       case 'idle':
-        this.dom.remoteActionBtn.innerHTML = '<i class="fa-solid fa-play text-sm"></i><span>开始训练</span>';
+        this.dom.remoteActionBtn.innerHTML =
+          '<i class="fa-solid fa-play text-sm"></i><span>开始训练</span>';
         this.dom.remoteActionBtn.className = `${baseClass} bg-gradient-to-r from-blue-600 to-indigo-600 shadow-blue-500/25 hover:from-blue-700 hover:to-indigo-700`;
         break;
       case 'workout_work':
-        this.dom.remoteActionBtn.innerHTML = '<i class="fa-solid fa-check text-base"></i><span>完成本组</span>';
+        this.dom.remoteActionBtn.innerHTML =
+          '<i class="fa-solid fa-check text-base"></i><span>完成本组</span>';
         this.dom.remoteActionBtn.className = `${baseClass} bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-500/25 hover:from-emerald-600 hover:to-teal-700`;
         break;
       case 'workout_rest':
-        this.dom.remoteActionBtn.innerHTML = '<i class="fa-solid fa-forward text-sm"></i><span>跳过休息</span>';
+        this.dom.remoteActionBtn.innerHTML =
+          '<i class="fa-solid fa-forward text-sm"></i><span>跳过休息</span>';
         this.dom.remoteActionBtn.className = `${baseClass} bg-gradient-to-r from-amber-500 to-orange-500 shadow-amber-500/25 hover:from-amber-600 hover:to-orange-600`;
         break;
       case 'workout_rest_end':
-        this.dom.remoteActionBtn.innerHTML = '<i class="fa-solid fa-play text-sm"></i><span>开始下一组</span>';
+        this.dom.remoteActionBtn.innerHTML =
+          '<i class="fa-solid fa-play text-sm"></i><span>开始下一组</span>';
         this.dom.remoteActionBtn.className = `${baseClass} bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-500/25 hover:from-emerald-600 hover:to-teal-700`;
         break;
     }
@@ -650,7 +670,9 @@ const SyncModule = {
     }
 
     this.syncState.reconnectAttempts++;
-    console.log(`[Sync] 尝试重连 (${this.syncState.reconnectAttempts}/${this.MAX_RECONNECT_ATTEMPTS})`);
+    console.log(
+      `[Sync] 尝试重连 (${this.syncState.reconnectAttempts}/${this.MAX_RECONNECT_ATTEMPTS})`
+    );
 
     this.syncState.reconnectTimer = setTimeout(() => {
       this.connectToServer();
@@ -696,6 +718,7 @@ const SyncModule = {
 
     this.updateSyncUI();
     this.showSyncMessage('已断开连接', 'info');
+    this.clearSyncQr();
   },
 
   // 更新同步UI
@@ -706,17 +729,21 @@ const SyncModule = {
     // 更新连接状态图标
     if (this.dom.syncBtn) {
       if (connected) {
-        this.dom.syncBtn.className = 'w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 hover:bg-green-200 transition-colors';
+        this.dom.syncBtn.className =
+          'w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 hover:bg-green-200 transition-colors';
         this.dom.syncBtn.innerHTML = '<i class="fa-solid fa-link text-sm"></i>';
       } else if (connecting) {
-        this.dom.syncBtn.className = 'w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 hover:bg-yellow-200 transition-colors animate-pulse';
+        this.dom.syncBtn.className =
+          'w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 hover:bg-yellow-200 transition-colors animate-pulse';
         this.dom.syncBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-sm"></i>';
       } else if (persistEnabled && roomCode) {
         // 持久化模式且有保存的配对码
-        this.dom.syncBtn.className = 'w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 hover:bg-blue-200 transition-colors';
+        this.dom.syncBtn.className =
+          'w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 hover:bg-blue-200 transition-colors';
         this.dom.syncBtn.innerHTML = '<i class="fa-solid fa-link text-sm"></i>';
       } else {
-        this.dom.syncBtn.className = 'w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors';
+        this.dom.syncBtn.className =
+          'w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors';
         this.dom.syncBtn.innerHTML = '<i class="fa-solid fa-link text-sm"></i>';
       }
     }
@@ -757,6 +784,48 @@ const SyncModule = {
     }
   },
 
+  // 更新已连接手机端数量
+  updateRemoteCount(count) {
+    if (this.dom.syncRemoteCount) {
+      this.dom.syncRemoteCount.textContent = count ?? 0;
+    }
+  },
+
+  // 渲染连接二维码 (电脑端 host)
+  renderSyncQr() {
+    if (this.syncState.role !== 'host' || !this.syncState.roomCode) return;
+    if (typeof QRCode === 'undefined') return;
+
+    const canvas = document.getElementById('sync-qr-canvas');
+    const wrap = document.getElementById('sync-qr-wrap');
+    if (!canvas || !wrap) return;
+
+    // 二维码内容：服务器地址 + 房间码，供手机 App 扫码自动连接
+    const content = JSON.stringify({
+      v: 1,
+      ws: this.getWsUrl(),
+      code: this.syncState.roomCode
+    });
+
+    QRCode.toCanvas(canvas, content, { width: 200, margin: 1 }, error => {
+      if (error) {
+        console.error('[Sync] 二维码生成失败:', error);
+        return;
+      }
+      wrap.classList.remove('hidden');
+    });
+  },
+
+  // 清除连接二维码
+  clearSyncQr() {
+    const canvas = document.getElementById('sync-qr-canvas');
+    const wrap = document.getElementById('sync-qr-wrap');
+    if (canvas && canvas.getContext) {
+      canvas.getContext('2d')?.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    if (wrap) wrap.classList.add('hidden');
+  },
+
   // 显示同步消息
   showSyncMessage(text, type = 'info') {
     // 移除旧消息
@@ -764,10 +833,22 @@ const SyncModule = {
     if (existing) existing.remove();
 
     const config = {
-      info: { bg: 'bg-slate-900/90 border-slate-700/60', icon: 'fa-solid fa-circle-info text-blue-400' },
-      success: { bg: 'bg-slate-900/90 border-emerald-500/40', icon: 'fa-solid fa-circle-check text-emerald-400' },
-      warning: { bg: 'bg-slate-900/90 border-amber-500/40', icon: 'fa-solid fa-triangle-exclamation text-amber-400' },
-      error: { bg: 'bg-slate-900/90 border-rose-500/40', icon: 'fa-solid fa-circle-xmark text-rose-400' }
+      info: {
+        bg: 'bg-slate-900/90 border-slate-700/60',
+        icon: 'fa-solid fa-circle-info text-blue-400'
+      },
+      success: {
+        bg: 'bg-slate-900/90 border-emerald-500/40',
+        icon: 'fa-solid fa-circle-check text-emerald-400'
+      },
+      warning: {
+        bg: 'bg-slate-900/90 border-amber-500/40',
+        icon: 'fa-solid fa-triangle-exclamation text-amber-400'
+      },
+      error: {
+        bg: 'bg-slate-900/90 border-rose-500/40',
+        icon: 'fa-solid fa-circle-xmark text-rose-400'
+      }
     };
 
     const item = config[type] || config.info;

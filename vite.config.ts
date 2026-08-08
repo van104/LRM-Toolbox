@@ -168,8 +168,24 @@ export default defineConfig(({ mode }) => {
     },
     // 开发服务器配置
     server: {
+      host: true, // 允许局域网访问，便于真机/模拟器联调
       hmr: {
         overlay: false // 禁用 HMR 错误覆盖层
+      },
+      // 反向代理到反馈/同步后端 (server/ 端口 3001)
+      proxy: {
+        '/lrm-api': {
+          target: 'http://localhost:3001',
+          changeOrigin: true
+        },
+        '/api': {
+          target: 'http://localhost:3001',
+          changeOrigin: true
+        },
+        '/ws-sync': {
+          target: 'ws://localhost:3001',
+          ws: true
+        }
       }
     }
   };

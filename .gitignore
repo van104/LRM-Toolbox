@@ -37,6 +37,10 @@ stats.html
 # Server Data
 server/data/feedback.json
 server/node_modules/
+server/workout.db
+
+# Android App (本地构建，不同步 GitHub)
+android/
 
 # Backups
 _redundant_backup
