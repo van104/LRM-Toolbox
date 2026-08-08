@@ -2,3 +2,5 @@ dist/
 node_modules/
 public/
 package-lock.json
+download-site/qrcode.min.js
+src/components/tools/health/WorkoutTimer/js/qrcode.min.js
