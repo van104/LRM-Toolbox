@@ -18,7 +18,7 @@
 
 **LRM工具箱** 是一个功能强大、设计超前的在线开源工具箱。它采用了 **新粗野主义 (Neobrutalism)** 设计风格，旨在为开发者、设计师及日常办公人员提供极致的效率体验。
 
-> **🌐 访问在线体验：[https://www.lrm123.site/](https://www.lrm123.site/)**
+> **🌐 访问在线体验：[https://www.lrmin.cn/](https://www.lrmin.cn/)**
 
 ---
 
